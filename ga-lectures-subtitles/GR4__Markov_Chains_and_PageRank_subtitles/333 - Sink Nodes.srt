@@ -1,0 +1,144 @@
+1
+00:00:00,000 --> 00:00:03,355
+ Let's consider the random surfer model we just defined.
+
+2
+00:00:03,355 --> 00:00:06,780
+ There's a problem in the current definition in particular suppose that
+
+3
+00:00:06,780 --> 00:00:10,350
+ a page x or web page x has no outgoing links.
+
+4
+00:00:10,350 --> 00:00:13,950
+ In a random surfer model with probability one minus alpha,
+
+5
+00:00:13,950 --> 00:00:16,720
+ we go to a random web page from the entire graph.
+
+6
+00:00:16,720 --> 00:00:18,390
+ And with probability alpha,
+
+7
+00:00:18,390 --> 00:00:21,885
+ we follow a random link from this current page x.
+
+8
+00:00:21,885 --> 00:00:26,395
+ Now what happens if this page x is a sink node and has no outgoing links?
+
+9
+00:00:26,395 --> 00:00:29,085
+ What do we do in this case with probability alpha?
+
+10
+00:00:29,085 --> 00:00:32,445
+ Currently the model is not well-defined because of this case.
+
+11
+00:00:32,445 --> 00:00:36,495
+ And there are several alternatives that we can consider which will make it well-defined.
+
+12
+00:00:36,495 --> 00:00:39,000
+ The simplest option is just to self-loop.
+
+13
+00:00:39,000 --> 00:00:40,225
+ What exactly do we mean?
+
+14
+00:00:40,225 --> 00:00:42,330
+ We mean that if there's no outgoing links,
+
+15
+00:00:42,330 --> 00:00:44,400
+ if this page acts as a sink node,
+
+16
+00:00:44,400 --> 00:00:46,080
+ then with probability alpha,
+
+17
+00:00:46,080 --> 00:00:48,010
+ we just stay at the page x.
+
+18
+00:00:48,010 --> 00:00:50,220
+ We had a link from x to itself.
+
+19
+00:00:50,220 --> 00:00:54,720
+ The downside of this approach is that we're adding an incoming link into x.
+
+20
+00:00:54,720 --> 00:00:58,590
+ So this is going to artificially boost the page rank of page x.
+
+21
+00:00:58,590 --> 00:01:02,005
+ Another option is to simply remove these sink nodes.
+
+22
+00:01:02,005 --> 00:01:04,035
+ Now once we remove some of these sink nodes,
+
+23
+00:01:04,035 --> 00:01:06,750
+ then there will be new sink nodes that might be created.
+
+24
+00:01:06,750 --> 00:01:09,050
+ So we have to recursively apply this approach.
+
+25
+00:01:09,050 --> 00:01:10,770
+ We have to keep removing sink nodes
+
+26
+00:01:10,770 --> 00:01:14,190
+ recursively until there are no sink nodes remaining in the graph.
+
+27
+00:01:14,190 --> 00:01:17,005
+ The problem with this approach is that we shrunk the graph,
+
+28
+00:01:17,005 --> 00:01:20,870
+ so there are some nodes which will not get a page rank.
+
+29
+00:01:20,870 --> 00:01:26,075
+ One more natural approach I want to consider is that in this case of a sink node x,
+
+30
+00:01:26,075 --> 00:01:28,440
+ with probability alpha, we'll go to
+
+31
+00:01:28,440 --> 00:01:32,615
+ a random web page chosen uniformly at random from the entire graph.
+
+32
+00:01:32,615 --> 00:01:37,855
+ In other words, we're going to set alpha equal zero for just these sink nodes.
+
+33
+00:01:37,855 --> 00:01:40,680
+ So, for a sink node with probability one,
+
+34
+00:01:40,680 --> 00:01:44,550
+ we'll choose a random web page from the entire graph and go to that random web page.
+
+35
+00:01:44,550 --> 00:01:46,800
+ This is a quite natural approach and this is
+
+36
+00:01:46,800 --> 00:01:46,800
+ apparently what page rank actually does according to Wikipedia.
+

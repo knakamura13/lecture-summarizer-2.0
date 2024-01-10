@@ -1,0 +1,44 @@
+1
+00:00:00,000 --> 00:00:03,175
+ Let us take a look at one of our flow network examples from earlier.
+
+2
+00:00:03,175 --> 00:00:06,390
+ And let us look at the feasible flow problem in this example.
+
+3
+00:00:06,390 --> 00:00:10,475
+ So here is a directed graph with the specified start and end vertex.
+
+4
+00:00:10,475 --> 00:00:13,620
+ Let's mark the demand and the capacities along every edge.
+
+5
+00:00:13,620 --> 00:00:15,900
+ The green numbers specify the demand along
+
+6
+00:00:15,900 --> 00:00:19,295
+ the edge and the red numbers specify the capacity along the edge.
+
+7
+00:00:19,295 --> 00:00:24,255
+ So along this edge we want the flow to be at least two units and at most eight units.
+
+8
+00:00:24,255 --> 00:00:26,940
+ Along this edge, there is no demand constraint.
+
+9
+00:00:26,940 --> 00:00:29,700
+ It has got to be at least zero and at most three.
+
+10
+00:00:29,700 --> 00:00:32,675
+ Here it has got to be at least three and at most six.
+
+11
+00:00:32,675 --> 00:00:32,675
+ Is there a feasible flow for this example?
+

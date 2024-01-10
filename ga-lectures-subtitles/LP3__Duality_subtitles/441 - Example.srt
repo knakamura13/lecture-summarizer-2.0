@@ -1,0 +1,68 @@
+1
+00:00:00,000 --> 00:00:02,735
+ Here is one of our earlier examples of an LP.
+
+2
+00:00:02,735 --> 00:00:06,270
+ This LP had three variables X_1, X_2,
+
+3
+00:00:06,270 --> 00:00:08,580
+ X_3 and four constraints,
+
+4
+00:00:08,580 --> 00:00:11,050
+ and the non-negativity constraints.
+
+5
+00:00:11,050 --> 00:00:15,300
+ Now this was an example where we illustrate the simplex algorithm on and we found that
+
+6
+00:00:15,300 --> 00:00:20,225
+ the optimal value was achieved at this vertex (200, 200, 100).
+
+7
+00:00:20,225 --> 00:00:23,490
+ And when you plug in this point into the objective function,
+
+8
+00:00:23,490 --> 00:00:27,330
+ the profit, the value of the objective function is 2400.
+
+9
+00:00:27,330 --> 00:00:31,250
+ Now suppose somebody simply gives us this point and claims that it's optimal.
+
+10
+00:00:31,250 --> 00:00:36,130
+ Is there some way that we can verify that this point is in fact an optimal solution?
+
+11
+00:00:36,130 --> 00:00:39,875
+ So what we're going to try to do is we're going to try to upper bound the profit,
+
+12
+00:00:39,875 --> 00:00:41,595
+ we're going to try to upper bound
+
+13
+00:00:41,595 --> 00:00:47,545
+ this objective function and show that the profit is at most 2400.
+
+14
+00:00:47,545 --> 00:00:50,815
+ How are we going to achieve an upper bound on this objective function?
+
+15
+00:00:50,815 --> 00:00:53,665
+ Well, we know that these constraints are all satisfied.
+
+16
+00:00:53,665 --> 00:00:57,150
+ So we're going to take linear combinations of these constraints and
+
+17
+00:00:57,150 --> 00:00:57,150
+ then try to achieve an upper bound on this objective function.
+

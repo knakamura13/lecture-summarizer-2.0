@@ -1,0 +1,72 @@
+1
+00:00:00,000 --> 00:00:02,670
+ This lesson is about the max flow problem.
+
+2
+00:00:02,670 --> 00:00:06,090
+ First, we'll focus on algorithms for solving the max flow problem.
+
+3
+00:00:06,090 --> 00:00:08,400
+ We'll start with the Ford-Fulkerson algorithm
+
+4
+00:00:08,400 --> 00:00:10,880
+ and then we'll look at the Edmonds-Karp algorithm.
+
+5
+00:00:10,880 --> 00:00:12,705
+ Both of these algorithms are very simple,
+
+6
+00:00:12,705 --> 00:00:17,045
+ but the analysis of the running time of Edmonds-Karp algorithm is a bit more involved.
+
+7
+00:00:17,045 --> 00:00:20,505
+ After that, we're going to look at the very beautiful and very important theorem
+
+8
+00:00:20,505 --> 00:00:23,530
+ known as the max flow equals min-cut theorem.
+
+9
+00:00:23,530 --> 00:00:25,440
+ Now, this theorem will imply correctness of
+
+10
+00:00:25,440 --> 00:00:28,445
+ the Ford-Fulkerson and Edmonds-Karp algorithms.
+
+11
+00:00:28,445 --> 00:00:31,320
+ It will also be key for several of our applications.
+
+12
+00:00:31,320 --> 00:00:32,850
+ In particular, we'll look at solving
+
+13
+00:00:32,850 --> 00:00:36,840
+ the image segmentation problem using the max flow problem.
+
+14
+00:00:36,840 --> 00:00:39,210
+ Now, in the image segmentation problem,
+
+15
+00:00:39,210 --> 00:00:41,840
+ we're given an image and we want to separate it
+
+16
+00:00:41,840 --> 00:00:44,510
+ into the foreground and background components.
+
+17
+00:00:44,510 --> 00:00:45,780
+ We'll solve this using
+
+18
+00:00:45,780 --> 00:00:45,780
+ the max flow problem and utilizing the max flow equals min- cut theorem.
+

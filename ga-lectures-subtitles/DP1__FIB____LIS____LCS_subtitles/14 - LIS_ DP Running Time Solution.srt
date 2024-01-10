@@ -1,0 +1,48 @@
+1
+00:00:00,000 --> 00:00:01,410
+ We have one for loop,
+
+2
+00:00:01,410 --> 00:00:04,305
+ which varies over order n elements,
+
+3
+00:00:04,305 --> 00:00:06,240
+ and we have another nested for loop,
+
+4
+00:00:06,240 --> 00:00:09,060
+ which varies over, at most, n elements.
+
+5
+00:00:09,060 --> 00:00:11,115
+ Within these two nested for loops,
+
+6
+00:00:11,115 --> 00:00:13,365
+ we have a if-then statement,
+
+7
+00:00:13,365 --> 00:00:15,195
+ which takes order one time.
+
+8
+00:00:15,195 --> 00:00:21,160
+ Therefore, the total time for these nested for loops is, order n-squared time.
+
+9
+00:00:21,160 --> 00:00:24,865
+ Finally, we have another for loop which finds a max entry in the table.
+
+10
+00:00:24,865 --> 00:00:25,950
+ This is one for loop,
+
+11
+00:00:25,950 --> 00:00:28,540
+ it's not nested, this is order n time.
+
+12
+00:00:28,540 --> 00:00:28,540
+ Therefore, the total run time of our algorithm is order n-squared time.
+

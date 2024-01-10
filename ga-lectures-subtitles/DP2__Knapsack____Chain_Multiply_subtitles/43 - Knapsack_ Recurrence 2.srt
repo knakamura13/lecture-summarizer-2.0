@@ -1,0 +1,212 @@
+1
+00:00:00,000 --> 00:00:02,280
+ Now, let's summarize the recurrence that we have.
+
+2
+00:00:02,280 --> 00:00:05,090
+ Now, a recurrence is going to have two scenarios.
+
+3
+00:00:05,090 --> 00:00:06,865
+ Either we include object i,
+
+4
+00:00:06,865 --> 00:00:08,885
+ or we don't include object i.
+
+5
+00:00:08,885 --> 00:00:12,785
+ First off, we have to know whether object i even fits in the backpack or not.
+
+6
+00:00:12,785 --> 00:00:15,795
+ If it doesn't fit, then we know we cannot exclude object i.
+
+7
+00:00:15,795 --> 00:00:19,230
+ So, we have to condition on whether the weight of the ith object,
+
+8
+00:00:19,230 --> 00:00:21,930
+ Wi, is smaller than b or not.
+
+9
+00:00:21,930 --> 00:00:23,844
+ If it is smaller than b,
+
+10
+00:00:23,844 --> 00:00:25,750
+ then the ith object can fit in the back pack.
+
+11
+00:00:25,750 --> 00:00:27,800
+ So, we're gonna take the best of the two scenarios,
+
+12
+00:00:27,800 --> 00:00:30,610
+ either including object i or not including object i.
+
+13
+00:00:30,610 --> 00:00:33,162
+ If we include object i, we gain value Vi,
+
+14
+00:00:33,162 --> 00:00:35,740
+ for object i, plus,
+
+15
+00:00:35,740 --> 00:00:41,610
+ we gain the value from the optimal solution to the subproblem which uses a subset of
+
+16
+00:00:41,610 --> 00:00:48,525
+ objects 1 through i-1 and has total capacity available b-Wi.
+
+17
+00:00:48,525 --> 00:00:51,070
+ The -Wi is because we included,
+
+18
+00:00:51,070 --> 00:00:54,770
+ we forced Wi and object i to be included in the backpack.
+
+19
+00:00:54,770 --> 00:00:59,970
+ The other scenario is that we don't include object i in the solution and then,
+
+20
+00:00:59,970 --> 00:01:03,555
+ the optimal solution to this subset of
+
+21
+00:01:03,555 --> 00:01:07,580
+ objects 1 though i is also going to be a subset of objects 1 through i-1,
+
+22
+00:01:07,580 --> 00:01:09,660
+ since object i is not being included.
+
+23
+00:01:09,660 --> 00:01:12,380
+ And the total capacity available, it stays the same.
+
+24
+00:01:12,380 --> 00:01:14,190
+ And we're going to take the best of these two scenarios,
+
+25
+00:01:14,190 --> 00:01:17,393
+ which means we're going to take the max of these two entries.
+
+26
+00:01:17,393 --> 00:01:22,890
+ In the other case, the weight of object i is strictly larger than b,
+
+27
+00:01:22,890 --> 00:01:25,315
+ and therefore it can't get included in the backpack.
+
+28
+00:01:25,315 --> 00:01:27,992
+ So then, our entry k(i,
+
+29
+00:01:27,992 --> 00:01:30,925
+ b) is just going to be the second scenario.
+
+30
+00:01:30,925 --> 00:01:32,300
+ This defines a recurrence,
+
+31
+00:01:32,300 --> 00:01:33,645
+ but to be complete,
+
+32
+00:01:33,645 --> 00:01:36,615
+ let's define the base cases and then we can go ahead
+
+33
+00:01:36,615 --> 00:01:40,410
+ and write the pseudo-code for our dynamic programming algorithm.
+
+34
+00:01:40,410 --> 00:01:43,710
+ For the first row of our table, then i=0.
+
+35
+00:01:43,710 --> 00:01:47,865
+ That means we're taking a subset of objects which are the empty set.
+
+36
+00:01:47,865 --> 00:01:49,705
+ We're taking a subset of the empty set.
+
+37
+00:01:49,705 --> 00:01:51,975
+ Therefore, there's no objects that can get included.
+
+38
+00:01:51,975 --> 00:01:54,960
+ So, the max value we can obtain is zero.
+
+39
+00:01:54,960 --> 00:01:56,930
+ Similarly, for the first column,
+
+40
+00:01:56,930 --> 00:01:59,145
+ we have total weight available, zero.
+
+41
+00:01:59,145 --> 00:02:02,280
+ Therefore, no objects can be included and therefore
+
+42
+00:02:02,280 --> 00:02:05,550
+ the max value we can obtain is, again, 0.
+
+43
+00:02:05,550 --> 00:02:08,010
+ Now, we can go ahead and write the pseudo-code for our algorithm,
+
+44
+00:02:08,010 --> 00:02:12,605
+ but let's take a look first at how we're going to do it. We have this table.
+
+45
+00:02:12,605 --> 00:02:16,780
+ It's a two dimensional table and we're going to fill this table row by row.
+
+46
+00:02:16,780 --> 00:02:19,986
+ And the point is, that when we fill the entry k(i,
+
+47
+00:02:19,986 --> 00:02:22,505
+ b), notice our recurrence,
+
+48
+00:02:22,505 --> 00:02:26,460
+ it always uses an entry from the previous row,
+
+49
+00:02:26,460 --> 00:02:29,833
+ either the entry right above is k(i-1,
+
+50
+00:02:29,833 --> 00:02:35,265
+ b) or an earlier entry in that previous row.
+
+51
+00:02:35,265 --> 00:02:38,380
+ So, if we filled the table row by row and the entries
+
+52
+00:02:38,380 --> 00:02:41,545
+ we need for the smaller subproblems for our recurrence will be there,
+
+53
+00:02:41,545 --> 00:02:41,545
+ already completed in the table.
+

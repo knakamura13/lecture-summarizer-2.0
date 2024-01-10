@@ -1,0 +1,132 @@
+1
+00:00:00,000 --> 00:00:04,140
+ Outlets formally state the recurrence for L of i in terms of smaller subproblems.
+
+2
+00:00:04,140 --> 00:00:09,535
+ L of i requires that ai is included in the subsequence.
+
+3
+00:00:09,535 --> 00:00:13,445
+ Therefore we get 1 for including element ai in it.
+
+4
+00:00:13,445 --> 00:00:19,380
+ And then we take the longest subsequence that we can append on to the beginning.
+
+5
+00:00:19,380 --> 00:00:22,890
+ So we're going to take the max over all earlier indices of
+
+6
+00:00:22,890 --> 00:00:26,980
+ the length of the subsequence ending at that character aj.
+
+7
+00:00:26,980 --> 00:00:31,230
+ Now that earlier subsequence allows us to append ai onto
+
+8
+00:00:31,230 --> 00:00:36,210
+ the end of it only if aj is strictly smaller than ai.
+
+9
+00:00:36,210 --> 00:00:40,345
+ So you only want to consider j's where aj is strictly smaller than ai.
+
+10
+00:00:40,345 --> 00:00:46,680
+ And then we can take that earlier subsequence ending at aj and append ai onto the end
+
+11
+00:00:46,680 --> 00:00:53,705
+ of it and we get L of j for that earlier subsequence plus 1 for ai.
+
+12
+00:00:53,705 --> 00:00:57,780
+ And of course, we need that j is earlier in the input array than ai.
+
+13
+00:00:57,780 --> 00:01:02,370
+ Just in case the mathematical notation is confusing for anybody let me re-express
+
+14
+00:01:02,370 --> 00:01:07,070
+ it with slightly different notation and re-explain what it's saying in words.
+
+15
+00:01:07,070 --> 00:01:09,540
+ So L of i, the length of
+
+16
+00:01:09,540 --> 00:01:14,155
+ the longest increasing subsequence on the first i elements, which includes ai.
+
+17
+00:01:14,155 --> 00:01:18,240
+ So we get one for that element ai and then we're taking,
+
+18
+00:01:18,240 --> 00:01:20,265
+ we have ai here.
+
+19
+00:01:20,265 --> 00:01:23,430
+ Then we're going to take the longest increasing subsequence
+
+20
+00:01:23,430 --> 00:01:26,455
+ that we can put at the beginning.
+
+21
+00:01:26,455 --> 00:01:29,550
+ It's going to end at some element aj.
+
+22
+00:01:29,550 --> 00:01:33,195
+ Okay. So we're going to try all possibilities for that j.
+
+23
+00:01:33,195 --> 00:01:38,230
+ Now, we need that index j is earlier in the input array.
+
+24
+00:01:38,230 --> 00:01:45,285
+ So we're going to try j's between i minus 1 and 1.
+
+25
+00:01:45,285 --> 00:01:51,295
+ And we only want to try j's where aj is strictly smaller than ai.
+
+26
+00:01:51,295 --> 00:01:55,710
+ So we're doing a max over j. J is the variable that we're varying.
+
+27
+00:01:55,710 --> 00:02:01,950
+ We're trying j's where it's between 1 and i minus 1 in such that
+
+28
+00:02:01,950 --> 00:02:08,820
+ aj is strictly smaller than ai and we're taking the value L of j.
+
+29
+00:02:08,820 --> 00:02:12,020
+ Finally, we have our sub-problem definition and we have
+
+30
+00:02:12,020 --> 00:02:15,925
+ our recursive relation that the sub-problems satisfy.
+
+31
+00:02:15,925 --> 00:02:19,330
+ Now to be straightforward to detail our dynamic programming algorithm.
+
+32
+00:02:19,330 --> 00:02:22,865
+ So let's give this pseudocode for a dynamic programming algorithm and then
+
+33
+00:02:22,865 --> 00:02:22,865
+ analyze its running time and then we'll have completed this problem.
+

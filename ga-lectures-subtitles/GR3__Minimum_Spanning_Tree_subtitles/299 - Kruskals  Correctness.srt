@@ -1,0 +1,304 @@
+1
+00:00:00,000 --> 00:00:02,615
+ Now, let's get the idea for the proof of correctness of
+
+2
+00:00:02,615 --> 00:00:05,980
+ Kruskal's algorithm by looking at our earlier example.
+
+3
+00:00:05,980 --> 00:00:09,190
+ So, recall what Kruskal's algorithm is going to do.
+
+4
+00:00:09,190 --> 00:00:12,295
+ It's going to consider these edges by increasing weight.
+
+5
+00:00:12,295 --> 00:00:14,920
+ So, we're going to add in these first five edges.
+
+6
+00:00:14,920 --> 00:00:18,965
+ The sixth edge we're going to skip because it creates a cycle.
+
+7
+00:00:18,965 --> 00:00:21,770
+ Then we add in these five edges of weight seven.
+
+8
+00:00:21,770 --> 00:00:26,058
+ And then finally we're going to consider one of these edges of weight nine.
+
+9
+00:00:26,058 --> 00:00:27,972
+ Now, which edge of weight nine do we consider first?
+
+10
+00:00:27,972 --> 00:00:29,810
+ Well, that's an arbitrary choice.
+
+11
+00:00:29,810 --> 00:00:32,575
+ Let's suppose we consider this edge of weight nine first.
+
+12
+00:00:32,575 --> 00:00:34,340
+ Let's mark the end points as V and
+
+13
+00:00:34,340 --> 00:00:38,200
+ W. Now in general how are we going to prove that this algorithm is correct?
+
+14
+00:00:38,200 --> 00:00:40,055
+ Well, we're going to do it by induction.
+
+15
+00:00:40,055 --> 00:00:43,445
+ So, let's suppose that the algorithm is correct so far,
+
+16
+00:00:43,445 --> 00:00:46,280
+ so that the current X is correct so far.
+
+17
+00:00:46,280 --> 00:00:48,770
+ What does that mean to be correct so far?
+
+18
+00:00:48,770 --> 00:00:51,775
+ That means that these edges are part of an MST.
+
+19
+00:00:51,775 --> 00:00:56,155
+ So, there is MST T and X is a sub-graph of T. So,
+
+20
+00:00:56,155 --> 00:01:00,075
+ we're on our way to an MST to a solution to this problem.
+
+21
+00:01:00,075 --> 00:01:01,700
+ So, we're assuming that these red edges,
+
+22
+00:01:01,700 --> 00:01:03,995
+ which I've now highlighted as green edges,
+
+23
+00:01:03,995 --> 00:01:05,980
+ are part of an MST.
+
+24
+00:01:05,980 --> 00:01:08,180
+ Now let's suppose that we add this edge that we're
+
+25
+00:01:08,180 --> 00:01:11,580
+ considering right now to this sub-graph X.
+
+26
+00:01:11,580 --> 00:01:13,940
+ If we don't at this edge to the sub-graph X,
+
+27
+00:01:13,940 --> 00:01:15,950
+ then X is still part of MST.
+
+28
+00:01:15,950 --> 00:01:19,520
+ But, if we add this edge E to this sub-graph X,
+
+29
+00:01:19,520 --> 00:01:23,385
+ then we want to make sure that X union E is part of MST.
+
+30
+00:01:23,385 --> 00:01:25,145
+ And that's our claim that we're going to prove.
+
+31
+00:01:25,145 --> 00:01:29,175
+ We're going to prove that X union E is part of MST.
+
+32
+00:01:29,175 --> 00:01:32,280
+ T prime, T prime might be different than T. So,
+
+33
+00:01:32,280 --> 00:01:37,010
+ we might be heading in the direction of a different a MST than we were headed for before,
+
+34
+00:01:37,010 --> 00:01:39,785
+ but we're still on our way to an MST.
+
+35
+00:01:39,785 --> 00:01:42,650
+ Now, what is the key property that ensures that adding E
+
+36
+00:01:42,650 --> 00:01:46,350
+ to X ensures that we're still on our way to an MST.
+
+37
+00:01:46,350 --> 00:01:49,118
+ Well, when are we adding this edge E to X?
+
+38
+00:01:49,118 --> 00:01:50,780
+ When we look at the component containing V,
+
+39
+00:01:50,780 --> 00:01:54,320
+ which are these six vertices and we look at the component containing W,
+
+40
+00:01:54,320 --> 00:01:55,820
+ which are these two vertices.
+
+41
+00:01:55,820 --> 00:01:57,560
+ These are different components.
+
+42
+00:01:57,560 --> 00:02:00,950
+ Therefore, we can add this edge and it doesn't create any cycles.
+
+43
+00:02:00,950 --> 00:02:03,800
+ Now, the key property is that if we consider one of these components,
+
+44
+00:02:03,800 --> 00:02:07,310
+ let's say the component containing V and we let S be the set of
+
+45
+00:02:07,310 --> 00:02:11,690
+ vertices and the component containing V. An S_bar is the complement of this set.
+
+46
+00:02:11,690 --> 00:02:13,675
+ So that's the rest of these vertices.
+
+47
+00:02:13,675 --> 00:02:17,390
+ Then the key property is that our current subset X,
+
+48
+00:02:17,390 --> 00:02:20,650
+ has no edges which go from S to S_bar.
+
+49
+00:02:20,650 --> 00:02:23,365
+ If there was an edge that goes from S to S_bar,
+
+50
+00:02:23,365 --> 00:02:30,260
+ then that vertex in S_bar which is connected to S would be added into S. So,
+
+51
+00:02:30,260 --> 00:02:35,315
+ it would be in the component containing V. This component is a maximal set.
+
+52
+00:02:35,315 --> 00:02:39,710
+ So, we know that nobody in S_bar is connected to anybody in S. Therefore,
+
+53
+00:02:39,710 --> 00:02:44,170
+ there are no edges of X going from S to the rest of the graph.
+
+54
+00:02:44,170 --> 00:02:46,405
+ That's the definition of a component.
+
+55
+00:02:46,405 --> 00:02:50,270
+ So X has no edges that go between S and S_bar.
+
+56
+00:02:50,270 --> 00:02:55,513
+ So, X doesn't cross between S and the rest of the graph, S_bar.
+
+57
+00:02:55,513 --> 00:02:58,442
+ But this edge E does cross between S and S_bar,
+
+58
+00:02:58,442 --> 00:03:02,810
+ because V is in S and W is not in S. Now,
+
+59
+00:03:02,810 --> 00:03:04,910
+ what is the key property about E?
+
+60
+00:03:04,910 --> 00:03:09,375
+ E is a minimum weight edge crossing from S to S_bar.
+
+61
+00:03:09,375 --> 00:03:11,540
+ Now, there are several edges of minimum weight crossing
+
+62
+00:03:11,540 --> 00:03:15,020
+ between S and S_bar, two in particular.
+
+63
+00:03:15,020 --> 00:03:17,375
+ We can take any of those minimum weight edges.
+
+64
+00:03:17,375 --> 00:03:21,245
+ For any minimum weight edge crossing between S and S_bar.
+
+65
+00:03:21,245 --> 00:03:23,514
+ If we add E to X,
+
+66
+00:03:23,514 --> 00:03:28,730
+ then X union E will be part of an MST. That's what we're going to prove.
+
+67
+00:03:28,730 --> 00:03:31,880
+ And we're going to prove in general that if we take a subset of edges,
+
+68
+00:03:31,880 --> 00:03:36,930
+ which are part of an MST and we take an edge which crosses from S
+
+69
+00:03:36,930 --> 00:03:39,625
+ to S_bar of minimum weight and no other
+
+70
+00:03:39,625 --> 00:03:43,050
+ edges of this current subset cross from S to S_bar.
+
+71
+00:03:43,050 --> 00:03:46,918
+ So, this minimum weight edge crossing from S to S_bar.
+
+72
+00:03:46,918 --> 00:03:52,530
+ Then we can add this edge into our current subset and that will still be part of MST.
+
+73
+00:03:52,530 --> 00:03:55,275
+ This general claim will be known as the cut property.
+
+74
+00:03:55,275 --> 00:03:58,375
+ Before we go ahead and formalize the cut property statement,
+
+75
+00:03:58,375 --> 00:04:00,880
+ let me formalize what I mean by a cut.
+
+76
+00:04:00,880 --> 00:04:00,880
+ This partition of vertices into S and S_bar.
+

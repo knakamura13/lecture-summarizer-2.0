@@ -1,0 +1,284 @@
+1
+00:00:00,000 --> 00:00:02,200
+ So, in a DAG, the vertex with
+
+2
+00:00:02,200 --> 00:00:06,210
+ the lowest post order number is guaranteed to be a sink vertex.
+
+3
+00:00:06,210 --> 00:00:08,310
+ Now, let's look in a general directed graph,
+
+4
+00:00:08,310 --> 00:00:09,750
+ so there may be cycles.
+
+5
+00:00:09,750 --> 00:00:12,470
+ Still, let's run DFS on this general directed graph.
+
+6
+00:00:12,470 --> 00:00:15,750
+ Is there's some property by post ordering numbers so that we can find
+
+7
+00:00:15,750 --> 00:00:19,305
+ a vertex which is guaranteed to lie in a sink SCC?
+
+8
+00:00:19,305 --> 00:00:21,555
+ While drawing inspiration from DAGs,
+
+9
+00:00:21,555 --> 00:00:24,685
+ we may say, the vertex with the lowest post order number.
+
+10
+00:00:24,685 --> 00:00:28,595
+ Maybe that happens to be guaranteed to lie in a sink SCC.
+
+11
+00:00:28,595 --> 00:00:32,150
+ Now we might hope for the following property in general directed graphs.
+
+12
+00:00:32,150 --> 00:00:36,450
+ We might run DFS on this general directed graph and we might hope that the vertex with
+
+13
+00:00:36,450 --> 00:00:41,200
+ the lowest post order number always is guaranteed to lie in the sink SCC.
+
+14
+00:00:41,200 --> 00:00:45,195
+ If that was the case, then in order to find a vertex in a sink SCC,
+
+15
+00:00:45,195 --> 00:00:47,690
+ we just run DFS on this general directed graph,
+
+16
+00:00:47,690 --> 00:00:49,920
+ take the vertex with the lowest post order number,
+
+17
+00:00:49,920 --> 00:00:52,855
+ and that has the guaranteed property that we're looking for.
+
+18
+00:00:52,855 --> 00:00:55,110
+ Now, this guess follows from our inspiration
+
+19
+00:00:55,110 --> 00:00:58,365
+ from the topological sorting algorithm for DAG.
+
+20
+00:00:58,365 --> 00:00:59,595
+ Now does this hold?
+
+21
+00:00:59,595 --> 00:01:01,045
+ Is this property true?
+
+22
+00:01:01,045 --> 00:01:02,745
+ Unfortunately, it's not true.
+
+23
+00:01:02,745 --> 00:01:04,980
+ Here's an easy example where it's not true.
+
+24
+00:01:04,980 --> 00:01:06,600
+ I have a graph on three vertices,
+
+25
+00:01:06,600 --> 00:01:08,085
+ A, B, and C. Now,
+
+26
+00:01:08,085 --> 00:01:11,820
+ A and B are strongly connected with each other and C is by itself.
+
+27
+00:01:11,820 --> 00:01:14,560
+ Now, let's say I run DFS starting from vertex A.
+
+28
+00:01:14,560 --> 00:01:16,440
+ So, A's a root and then from A,
+
+29
+00:01:16,440 --> 00:01:18,015
+ I visit vertex B,
+
+30
+00:01:18,015 --> 00:01:21,552
+ then from B, I pop back to A and then I visit vertex C,
+
+31
+00:01:21,552 --> 00:01:23,030
+ and then I pop back to A.
+
+32
+00:01:23,030 --> 00:01:25,283
+ Now, what are the pre order and post order numbers?
+
+33
+00:01:25,283 --> 00:01:27,515
+ I start with A. Then I go to B.
+
+34
+00:01:27,515 --> 00:01:29,715
+ Then I finished B, pop back to A,
+
+35
+00:01:29,715 --> 00:01:33,405
+ go to C. Then I finish C and then I pop back to A.
+
+36
+00:01:33,405 --> 00:01:36,825
+ So, which vertex has the lowest post order number? It's vertex B.
+
+37
+00:01:36,825 --> 00:01:39,540
+ But, B lies in this strongly connected component.
+
+38
+00:01:39,540 --> 00:01:41,165
+ Is this a sink SCC?
+
+39
+00:01:41,165 --> 00:01:43,840
+ No. In fact, it's a source SCC.
+
+40
+00:01:43,840 --> 00:01:49,160
+ So, in this example, the vertex with the lowest post order number lies in a source SCC.
+
+41
+00:01:49,160 --> 00:01:51,450
+ Complete opposite of what we're hoping for.
+
+42
+00:01:51,450 --> 00:01:54,090
+ But what if instead of finding a sink SCC,
+
+43
+00:01:54,090 --> 00:01:56,010
+ I want to find a source SCC.
+
+44
+00:01:56,010 --> 00:02:00,070
+ I don't know how to use that, but let's just say I wanted to find a source SCC.
+
+45
+00:02:00,070 --> 00:02:02,520
+ Let's go back to look at our DAG algorithm.
+
+46
+00:02:02,520 --> 00:02:04,360
+ So, I want to find a source vertex.
+
+47
+00:02:04,360 --> 00:02:06,590
+ Remember in our topological sorting algorithm,
+
+48
+00:02:06,590 --> 00:02:07,860
+ the vertex at the beginning of
+
+49
+00:02:07,860 --> 00:02:11,725
+ the topological ordering is the vertex with the highest post order number.
+
+50
+00:02:11,725 --> 00:02:13,890
+ So, the vertex with the highest post order number
+
+51
+00:02:13,890 --> 00:02:16,640
+ is guaranteed to be a source vertex in a DAG.
+
+52
+00:02:16,640 --> 00:02:18,405
+ So, in the general directed graph,
+
+53
+00:02:18,405 --> 00:02:23,740
+ does the vertex with highest post order number always lie in a source SCC?
+
+54
+00:02:23,740 --> 00:02:25,945
+ Well, in this example, that's actually true.
+
+55
+00:02:25,945 --> 00:02:28,815
+ The vertex with highest post order number is A,
+
+56
+00:02:28,815 --> 00:02:30,750
+ which lies in a source SCC.
+
+57
+00:02:30,750 --> 00:02:34,210
+ It turns out that this property is true and we're going to prove that it's true.
+
+58
+00:02:34,210 --> 00:02:35,925
+ So, in every directed graph,
+
+59
+00:02:35,925 --> 00:02:37,860
+ when we run DFS on that directed graph,
+
+60
+00:02:37,860 --> 00:02:42,340
+ it doesn't matter on which vertex we start at and which is the ordering on the neighbors,
+
+61
+00:02:42,340 --> 00:02:43,555
+ for every directed graph,
+
+62
+00:02:43,555 --> 00:02:46,170
+ for every DFS run on that directed graph,
+
+63
+00:02:46,170 --> 00:02:51,570
+ the vertex with the highest post order number is guaranteed to lie in a source SCC.
+
+64
+00:02:51,570 --> 00:02:53,040
+ Now, let's use this property to get
+
+65
+00:02:53,040 --> 00:02:56,670
+ an SCC algorithm and then we'll go back and we'll prove that this holds.
+
+66
+00:02:56,670 --> 00:02:57,985
+ First off, how can we use it?
+
+67
+00:02:57,985 --> 00:03:02,585
+ We notice before that we need a vertex that lies in a sink SCC.
+
+68
+00:03:02,585 --> 00:03:05,130
+ If we have a vertex which lies in the source SCC,
+
+69
+00:03:05,130 --> 00:03:06,325
+ that's not useful for us.
+
+70
+00:03:06,325 --> 00:03:10,570
+ But all we can guarantee is to find a vertex which lies in a source SCC.
+
+71
+00:03:10,570 --> 00:03:10,570
+ We don't know how to find a vertex in a sink SCC.
+

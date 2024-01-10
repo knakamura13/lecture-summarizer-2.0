@@ -1,0 +1,256 @@
+1
+00:00:00,000 --> 00:00:04,135
+ At this point, I suggest you try some practice dynamic programming problems.
+
+2
+00:00:04,135 --> 00:00:07,585
+ There are a lot of great practice problems in the Dasgupta book.
+
+3
+00:00:07,585 --> 00:00:09,805
+ Let me suggest a few problems for you.
+
+4
+00:00:09,805 --> 00:00:11,805
+ Now, these are problems from the textbook Algorithms
+
+5
+00:00:11,805 --> 00:00:14,285
+ by Dasgupta, Papadimitriou, Vazirani.
+
+6
+00:00:14,285 --> 00:00:20,095
+ This problem 6.1, which is about finding a contiguous sequence of maximum sum.
+
+7
+00:00:20,095 --> 00:00:24,330
+ Now, note a contiguous subsequence is the same as a substring.
+
+8
+00:00:24,330 --> 00:00:26,385
+ Now, whenever I sign you a homework problem,
+
+9
+00:00:26,385 --> 00:00:28,800
+ I'm always going to tell you some little blurb about
+
+10
+00:00:28,800 --> 00:00:31,750
+ what the problem is about, so you can identify it.
+
+11
+00:00:31,750 --> 00:00:36,000
+ Because, some of the online versions of this textbook have different numbering.
+
+12
+00:00:36,000 --> 00:00:37,755
+ So, you should always make sure it's the correct problem,
+
+13
+00:00:37,755 --> 00:00:39,600
+ if you have an online version.
+
+14
+00:00:39,600 --> 00:00:42,360
+ The next problem is 6.2 where you're planning
+
+15
+00:00:42,360 --> 00:00:46,655
+ a trip and you want to figure out the hotel stops to minimize the penalty.
+
+16
+00:00:46,655 --> 00:00:49,515
+ Problem 6.3 is about yuck Donald's.
+
+17
+00:00:49,515 --> 00:00:52,890
+ In 6.4, you're given a string and you wanted
+
+18
+00:00:52,890 --> 00:00:57,120
+ to see if you can break up that string into a set of words.
+
+19
+00:00:57,120 --> 00:01:00,330
+ Now, 6.11 is longest common subsequence.
+
+20
+00:01:00,330 --> 00:01:03,345
+ We already did that in this lecture, but for practice,
+
+21
+00:01:03,345 --> 00:01:07,415
+ you might try the variant where you did the longest common substring.
+
+22
+00:01:07,415 --> 00:01:10,910
+ It's useful to look at how dynamic programming solutions vary.
+
+23
+00:01:10,910 --> 00:01:15,210
+ What's the difference when you have substring versus subsequences?
+
+24
+00:01:15,210 --> 00:01:16,650
+ Once again, at this point,
+
+25
+00:01:16,650 --> 00:01:20,490
+ you should be able to do these practice problems: 6.1, 6.2, 6.3,
+
+26
+00:01:20,490 --> 00:01:28,075
+ 6.4, and 6.11, or this variant of 6.11 where you do substrings instead of subsequences.
+
+27
+00:01:28,075 --> 00:01:30,150
+ Let me give you a quick summary of the approach we
+
+28
+00:01:30,150 --> 00:01:32,865
+ used for designing a dynamic programming algorithm.
+
+29
+00:01:32,865 --> 00:01:37,140
+ And you can implement this approach when you try these practice problems.
+
+30
+00:01:37,140 --> 00:01:41,002
+ The first step is to define the subproblem in words. How do you do that?
+
+31
+00:01:41,002 --> 00:01:42,840
+ Well, you'd take the same problem,
+
+32
+00:01:42,840 --> 00:01:46,240
+ the original problem, on a prefix of the input.
+
+33
+00:01:46,240 --> 00:01:49,530
+ So, the subproblem should be of the same form as the original problem,
+
+34
+00:01:49,530 --> 00:01:54,190
+ but instead of being an input of length N try it on a prefix of the input.
+
+35
+00:01:54,190 --> 00:01:55,970
+ So, an input of length I.
+
+36
+00:01:55,970 --> 00:01:59,160
+ The second step is to define a recurrence relation.
+
+37
+00:01:59,160 --> 00:02:00,825
+ If you have a one dimensional table,
+
+38
+00:02:00,825 --> 00:02:03,570
+ then you wanna express T of I or
+
+39
+00:02:03,570 --> 00:02:07,935
+ the Ith entry of this one dimensional table in terms of smaller subproblems,
+
+40
+00:02:07,935 --> 00:02:10,395
+ T 1 through T I minus 1.
+
+41
+00:02:10,395 --> 00:02:12,165
+ This is what we did for LCS,
+
+42
+00:02:12,165 --> 00:02:14,700
+ though in that case, it was a two dimensional table.
+
+43
+00:02:14,700 --> 00:02:15,780
+ Now, when we did LIS,
+
+44
+00:02:15,780 --> 00:02:19,975
+ Longest Increasing Subsequence, we were unable to do this.
+
+45
+00:02:19,975 --> 00:02:22,615
+ And what we needed to do was strengthen the subproblem.
+
+46
+00:02:22,615 --> 00:02:25,155
+ So, we had to go back and redefine the subproblem.
+
+47
+00:02:25,155 --> 00:02:29,645
+ So, we've strengthen the subproblem by adding the constraint.
+
+48
+00:02:29,645 --> 00:02:32,325
+ Typically, we add the constraint that the last element,
+
+49
+00:02:32,325 --> 00:02:38,065
+ element I, is required to be included in this solution to this subproblem.
+
+50
+00:02:38,065 --> 00:02:39,930
+ So, for LIS, we said,
+
+51
+00:02:39,930 --> 00:02:47,010
+ LFI was the longest increasing subsequence in the prefix of the input of size I.
+
+52
+00:02:47,010 --> 00:02:51,495
+ But the last element A I had to be included in that solution.
+
+53
+00:02:51,495 --> 00:02:53,610
+ Now, one thing to keep in mind is typically,
+
+54
+00:02:53,610 --> 00:02:55,230
+ when we add in this constrain,
+
+55
+00:02:55,230 --> 00:02:59,130
+ and the final output is no longer the last element in the table,
+
+56
+00:02:59,130 --> 00:03:02,550
+ but instead we're going to have to do a max or a min.
+
+57
+00:03:02,550 --> 00:03:06,180
+ But we're going to have to go over the whole table and look for the best,
+
+58
+00:03:06,180 --> 00:03:08,370
+ the optimal solution in the table.
+
+59
+00:03:08,370 --> 00:03:11,225
+ Now, I want to show you how I solve these practice problems.
+
+60
+00:03:11,225 --> 00:03:14,325
+ So, I'm going to show you how I approach this problem 6.1.
+
+61
+00:03:14,325 --> 00:03:15,690
+ But to get the most out of it,
+
+62
+00:03:15,690 --> 00:03:17,805
+ I suggest that you try the problem first,
+
+63
+00:03:17,805 --> 00:03:19,530
+ and then if you're having difficulty,
+
+64
+00:03:19,530 --> 00:03:19,530
+ you can watch the next slide to see how to solve it.
+

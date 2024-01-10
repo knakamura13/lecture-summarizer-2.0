@@ -1,0 +1,220 @@
+1
+00:00:00,000 --> 00:00:04,045
+ Let's look now at a more sophisticated example of dynamic programming.
+
+2
+00:00:04,045 --> 00:00:08,160
+ The problem we're going to consider is the longest increasing subsequence problem.
+
+3
+00:00:08,160 --> 00:00:10,635
+ And for simplicity, we'll call it LAS.
+
+4
+00:00:10,635 --> 00:00:14,340
+ The input to the problem are N numbers which we'll denote as,
+
+5
+00:00:14,340 --> 00:00:16,555
+ A1, A2, up to AN.
+
+6
+00:00:16,555 --> 00:00:19,230
+ Our goal is to compute the length of
+
+7
+00:00:19,230 --> 00:00:23,850
+ the longest increasing subsequence in the N numbers of the input.
+
+8
+00:00:23,850 --> 00:00:25,830
+ One important note, we're only trying to find
+
+9
+00:00:25,830 --> 00:00:28,950
+ the length of the longest increasing subsequence.
+
+10
+00:00:28,950 --> 00:00:31,055
+ We're not trying to find the subsequence itself.
+
+11
+00:00:31,055 --> 00:00:32,550
+ But if we can find the length,
+
+12
+00:00:32,550 --> 00:00:34,650
+ then we're going to get to the heart of the problem and then it
+
+13
+00:00:34,650 --> 00:00:36,675
+ will be easy to transform that
+
+14
+00:00:36,675 --> 00:00:41,490
+ into an algorithm to output an actual subsequence of longest length.
+
+15
+00:00:41,490 --> 00:00:43,665
+ Let's take a look at a specific example to help
+
+16
+00:00:43,665 --> 00:00:46,440
+ illustrate the terminology in this problem.
+
+17
+00:00:46,440 --> 00:00:49,000
+ Here's an example where N equals 12.
+
+18
+00:00:49,000 --> 00:00:51,660
+ Before defining subsequence, let's recall
+
+19
+00:00:51,660 --> 00:00:54,490
+ the definition of the more common term substring.
+
+20
+00:00:54,490 --> 00:00:58,095
+ A substring is a string that occurs inside the larger string.
+
+21
+00:00:58,095 --> 00:01:00,525
+ So it's a set of consecutive elements.
+
+22
+00:01:00,525 --> 00:01:05,870
+ For instance, here's one substring negative 3, 9, 1, 10.
+
+23
+00:01:05,870 --> 00:01:08,730
+ Another substring is for itself.
+
+24
+00:01:08,730 --> 00:01:10,920
+ And another substring is 9,
+
+25
+00:01:10,920 --> 00:01:13,560
+ 1, 10, 4, 5, 8, 9, 3.
+
+26
+00:01:13,560 --> 00:01:15,130
+ These are all substrings.
+
+27
+00:01:15,130 --> 00:01:17,270
+ How many substrings are there possible?
+
+28
+00:01:17,270 --> 00:01:21,595
+ We can specify a substring by the start index and the ending index.
+
+29
+00:01:21,595 --> 00:01:24,750
+ Therefore, there is a most order N squared substrings.
+
+30
+00:01:24,750 --> 00:01:27,330
+ Now, our problem is not defined for substrings,
+
+31
+00:01:27,330 --> 00:01:29,340
+ it's defined for subsequences.
+
+32
+00:01:29,340 --> 00:01:34,680
+ A subsequence is a string you can obtain by deleting elements of the larger string.
+
+33
+00:01:34,680 --> 00:01:38,470
+ So it's a subset of elements in order but we can skip elements.
+
+34
+00:01:38,470 --> 00:01:40,465
+ It doesn't have to be consecutive elements.
+
+35
+00:01:40,465 --> 00:01:42,900
+ Let's look at some examples subsequences.
+
+36
+00:01:42,900 --> 00:01:46,760
+ For instance, four minus three,
+
+37
+00:01:46,760 --> 00:01:50,310
+ one, nine is a subsequence.
+
+38
+00:01:50,310 --> 00:01:53,445
+ Another subsequence is one itself.
+
+39
+00:01:53,445 --> 00:01:57,870
+ Another subsequence is 5, 7, 3.
+
+40
+00:01:57,870 --> 00:02:00,985
+ Now, we're trying to find a subsequence which is increasing.
+
+41
+00:02:00,985 --> 00:02:04,490
+ That means that each number is strictly larger than the previous.
+
+42
+00:02:04,490 --> 00:02:08,520
+ In this case, it's not increasing because of 3 is smaller than 7 but
+
+43
+00:02:08,520 --> 00:02:13,515
+ an increasing subsequence for instance, is 4, 9,10.
+
+44
+00:02:13,515 --> 00:02:19,155
+ Another subsequence is 4, 4, 8, 9.
+
+45
+00:02:19,155 --> 00:02:21,355
+ But that is not an increasing subsequence.
+
+46
+00:02:21,355 --> 00:02:23,440
+ That's a non-decreasing subsequence,
+
+47
+00:02:23,440 --> 00:02:25,860
+ and we don't allow that in our example.
+
+48
+00:02:25,860 --> 00:02:30,255
+ Our goal is to find the longest increasing subsequence in the input array.
+
+49
+00:02:30,255 --> 00:02:34,375
+ For this example, what is the longest increasing subsequence?
+
+50
+00:02:34,375 --> 00:02:38,610
+ The longest increasing subsequence in this example is minus 3,
+
+51
+00:02:38,610 --> 00:02:40,890
+ 1, 4, 5, 8,
+
+52
+00:02:40,890 --> 00:02:43,570
+ 9 which is of length 6.
+
+53
+00:02:43,570 --> 00:02:47,280
+ So, the output of our algorithm on this instance is six.
+
+54
+00:02:47,280 --> 00:02:48,480
+ Now, let's try to design
+
+55
+00:02:48,480 --> 00:02:48,480
+ a dynamic programming algorithm for this longest increasing subsequence.
+

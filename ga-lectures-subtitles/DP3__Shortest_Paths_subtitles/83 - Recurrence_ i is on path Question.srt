@@ -1,0 +1,8 @@
+1
+00:00:00,000 --> 00:00:03,360
+ Let's go ahead and take a break and see if you can express
+
+2
+00:00:03,360 --> 00:00:03,360
+ a recurrence for D of (i,s,t) in terms of smaller subproblems.
+

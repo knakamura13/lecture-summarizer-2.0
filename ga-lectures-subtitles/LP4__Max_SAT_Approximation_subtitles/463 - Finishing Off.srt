@@ -1,0 +1,192 @@
+1
+00:00:00,000 --> 00:00:02,670
+ Now, once again, we wanted to look at the expected number
+
+2
+00:00:02,670 --> 00:00:05,500
+ of satisfied clauses for this random assignment.
+
+3
+00:00:05,500 --> 00:00:09,480
+ We let W denote the random variable for the number of satisfied clauses,
+
+4
+00:00:09,480 --> 00:00:13,765
+ and we let WJ denote whether clause CJ is satisfied or not.
+
+5
+00:00:13,765 --> 00:00:17,575
+ And then this simplified to a sum over J from 1 to M,
+
+6
+00:00:17,575 --> 00:00:22,220
+ of whether the expectation of whether clause CJ is satisfied or not.
+
+7
+00:00:22,220 --> 00:00:24,945
+ And then we just prove that this expectation,
+
+8
+00:00:24,945 --> 00:00:27,825
+ the probability that clause CJ is satisfied,
+
+9
+00:00:27,825 --> 00:00:29,625
+ is at least 1/2.
+
+10
+00:00:29,625 --> 00:00:32,780
+ This is at least 1/2 for each of these M clauses.
+
+11
+00:00:32,780 --> 00:00:36,045
+ Therefore, this whole sum is at least M over 2.
+
+12
+00:00:36,045 --> 00:00:38,415
+ So what we've shown is a randomized algorithm,
+
+13
+00:00:38,415 --> 00:00:41,240
+ which achieves a one half approximation factor,
+
+14
+00:00:41,240 --> 00:00:44,820
+ though it's simply the expected performance of this algorithm.
+
+15
+00:00:44,820 --> 00:00:47,330
+ Now, it turns out we can de-randomize this algorithm.
+
+16
+00:00:47,330 --> 00:00:49,710
+ So we can find it's terministic algorithm which is
+
+17
+00:00:49,710 --> 00:00:52,305
+ guaranteed to find a 1/2 approximation,
+
+18
+00:00:52,305 --> 00:00:54,165
+ so the number of satisfied causes.
+
+19
+00:00:54,165 --> 00:00:57,513
+ And this uses the method of conditional expectations.
+
+20
+00:00:57,513 --> 00:01:00,930
+ It's quite simple, so let me quickly give you the idea of how it works.
+
+21
+00:01:00,930 --> 00:01:04,070
+ So we're going to run through the variables one by one,
+
+22
+00:01:04,070 --> 00:01:09,240
+ so let's let I go from 1 to N. Now we're going to try the two possible settings for XI,
+
+23
+00:01:09,240 --> 00:01:13,590
+ True or false, and we're going to compute the expected performance for each.
+
+24
+00:01:13,590 --> 00:01:15,180
+ So given this setting for XI,
+
+25
+00:01:15,180 --> 00:01:19,580
+ and given a fixed setting for X1 trough XI-1.
+
+26
+00:01:19,580 --> 00:01:21,503
+ So the early ones are fixed,
+
+27
+00:01:21,503 --> 00:01:24,400
+ and now we're trying both possible settings for XI.
+
+28
+00:01:24,400 --> 00:01:29,385
+ We compute the expected performance for a random assignment for the remaining variables.
+
+29
+00:01:29,385 --> 00:01:31,655
+ XI+1 to XN.
+
+30
+00:01:31,655 --> 00:01:34,020
+ Now this expected performance is quite easy to
+
+31
+00:01:34,020 --> 00:01:37,170
+ compute based on the analysis approach we just did.
+
+32
+00:01:37,170 --> 00:01:40,425
+ And what we're going to do is we're going to take the better of these two assignments,
+
+33
+00:01:40,425 --> 00:01:41,770
+ and then we're going to fix it,
+
+34
+00:01:41,770 --> 00:01:44,070
+ and then we're going to move on to the next variable.
+
+35
+00:01:44,070 --> 00:01:46,830
+ Now one interesting feature is that we're not saying
+
+36
+00:01:46,830 --> 00:01:50,210
+ something about the optimal number of satisfied clauses.
+
+37
+00:01:50,210 --> 00:01:53,505
+ For instance, our formula F might have 12 clauses,
+
+38
+00:01:53,505 --> 00:01:59,145
+ and maybe the maximum number of clauses that can be satisfied simultaneously is maybe 10.
+
+39
+00:01:59,145 --> 00:02:01,515
+ So M* in this instance would be 10,
+
+40
+00:02:01,515 --> 00:02:03,415
+ and M would be 12.
+
+41
+00:02:03,415 --> 00:02:06,360
+ Now, what we're proving is that a random assignment
+
+42
+00:02:06,360 --> 00:02:09,510
+ satisfies at least six of the clauses.
+
+43
+00:02:09,510 --> 00:02:13,735
+ Now since sets within a factor of 2 of the total number of clauses,
+
+44
+00:02:13,735 --> 00:02:19,688
+ therefore we're within half approximation of the maximum number of satisfied clauses.
+
+45
+00:02:19,688 --> 00:02:22,890
+ And actually, what was shown is that every formula
+
+46
+00:02:22,890 --> 00:02:27,140
+ has an assignment which satisfies at least half of the clauses.
+
+47
+00:02:27,140 --> 00:02:30,045
+ Intuitively, if the average is at least M/2,
+
+48
+00:02:30,045 --> 00:02:30,045
+ there must be at least one setting which achieves the average.
+

@@ -1,0 +1,140 @@
+1
+00:00:00,000 --> 00:00:04,995
+ Now, we have these two complexity classes we'll consider so far, P and NP.
+
+2
+00:00:04,995 --> 00:00:07,510
+ What are these abbreviations stand for?
+
+3
+00:00:07,510 --> 00:00:09,390
+ P Well, P stands for polynomial time.
+
+4
+00:00:09,390 --> 00:00:14,190
+ Why? Because this is the class of search problems that can be solved in polynomial time.
+
+5
+00:00:14,190 --> 00:00:18,695
+ Now you might think that NP stands for non not polynomial time. That's incorrect.
+
+6
+00:00:18,695 --> 00:00:23,215
+ It Is it may be the case that we can solve NP problems in polynomial time as well?
+
+7
+00:00:23,215 --> 00:00:25,170
+ It may be the case that P equals NP.
+
+8
+00:00:25,170 --> 00:00:28,050
+ We don't know. So what does NP stand for?
+
+9
+00:00:28,050 --> 00:00:31,860
+ NP stands for non-deterministic nondeterministic polynomial time.
+
+10
+00:00:31,860 --> 00:00:34,270
+ What does non-nondeterministic mean?
+
+11
+00:00:34,270 --> 00:00:36,660
+ This is a class of problems that can be solved in
+
+12
+00:00:36,660 --> 00:00:39,545
+ polynomial time on a non-nondeterministic machine.
+
+13
+00:00:39,545 --> 00:00:40,710
+ That doesn't do much good,
+
+14
+00:00:40,710 --> 00:00:43,240
+ I still haven't defined this term non-nondeterministic.
+
+15
+00:00:43,240 --> 00:00:46,440
+ By nondeterministic, I mean a machine where I'm allowed to
+
+16
+00:00:46,440 --> 00:00:49,830
+ guess at each step and there is a series of guesses.
+
+17
+00:00:49,830 --> 00:00:53,650
+ There is a series of choices which leads to an accepting state.
+
+18
+00:00:53,650 --> 00:00:55,590
+ If you think of it in terms of a terminal,
+
+19
+00:00:55,590 --> 00:00:56,675
+ typically for a terminal,
+
+20
+00:00:56,675 --> 00:01:00,970
+ I specify on a particular input, say 1 one.
+
+21
+00:01:00,970 --> 00:01:04,016
+ I move from this day to this day day,
+
+22
+00:01:04,016 --> 00:01:06,255
+ and maybe on a particular input 0,
+
+23
+00:01:06,255 --> 00:01:08,415
+ I moved move from this date day to this other day.
+
+24
+00:01:08,415 --> 00:01:10,680
+ But now now, I don't have to specify
+
+25
+00:01:10,680 --> 00:01:13,800
+ which particular input I move from this day to this day.
+
+26
+00:01:13,800 --> 00:01:15,420
+ I just specify that sometimes,
+
+27
+00:01:15,420 --> 00:01:19,185
+ I might move from this day to this day and sometimes, from this day to this day.
+
+28
+00:01:19,185 --> 00:01:20,670
+ And for the case I want to terminal,
+
+29
+00:01:20,670 --> 00:01:26,150
+ I just need that there is a path in this terminal that goes to an accepting state.
+
+30
+00:01:26,150 --> 00:01:30,240
+ So there is a choice of branchings which leads me to an accepting state.
+
+31
+00:01:30,240 --> 00:01:32,425
+ I can't really explain it much more than what I just did,
+
+32
+00:01:32,425 --> 00:01:33,990
+ because to be honest,
+
+33
+00:01:33,990 --> 00:01:35,570
+ I don't understand it much more than that.
+
+34
+00:01:35,570 --> 00:01:40,095
+ But the important thing to remember is that NP does not stand for not polynomial time.
+
+35
+00:01:40,095 --> 00:01:40,095
+ What it stands for is nondeterministic polynomial time.
+

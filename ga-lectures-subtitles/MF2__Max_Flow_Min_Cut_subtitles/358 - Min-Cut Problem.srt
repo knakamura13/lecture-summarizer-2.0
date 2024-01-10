@@ -1,0 +1,100 @@
+1
+00:00:00,000 --> 00:00:03,960
+ Now a cut of the graph is a partition of the vertices and two sets.
+
+2
+00:00:03,960 --> 00:00:07,320
+ We will think of these two sets as the left side and the right side.
+
+3
+00:00:07,320 --> 00:00:11,905
+ So we denote it as L and R. Then we are going to be looking at st-cuts.
+
+4
+00:00:11,905 --> 00:00:14,075
+ These are a particular type of cuts.
+
+5
+00:00:14,075 --> 00:00:18,720
+ This is the cut which separates S from T. So S is on one side,
+
+6
+00:00:18,720 --> 00:00:20,040
+ let's say the left side,
+
+7
+00:00:20,040 --> 00:00:21,820
+ and T is in the right side.
+
+8
+00:00:21,820 --> 00:00:25,175
+ Now here's our example of a flow network that we looked at earlier.
+
+9
+00:00:25,175 --> 00:00:28,280
+ Let's mark an example of an st-cut in this graph.
+
+10
+00:00:28,280 --> 00:00:30,470
+ Here's an example of an st-cut.
+
+11
+00:00:30,470 --> 00:00:33,405
+ We put these four vertices S, A,
+
+12
+00:00:33,405 --> 00:00:39,055
+ B and F in the set L. Notice this set doesn't have to be a connected set.
+
+13
+00:00:39,055 --> 00:00:42,270
+ F is not connected to A and B in this subset.
+
+14
+00:00:42,270 --> 00:00:46,530
+ And the set R are the remaining four vertices, C,
+
+15
+00:00:46,530 --> 00:00:51,650
+ D, E and T. Now we're going to be interested in the capacity of this st-cut.
+
+16
+00:00:51,650 --> 00:00:53,475
+ What exactly is the capacity?
+
+17
+00:00:53,475 --> 00:00:55,220
+ Recall is a directed graph.
+
+18
+00:00:55,220 --> 00:00:57,135
+ We're going to look at these directed edges
+
+19
+00:00:57,135 --> 00:01:02,040
+ VW where V is in the left side and W was in the right side.
+
+20
+00:01:02,040 --> 00:01:04,800
+ So these are all edges which go from the set L
+
+21
+00:01:04,800 --> 00:01:08,455
+ to the set R and we're going to look at the capacity of these edges.
+
+22
+00:01:08,455 --> 00:01:11,040
+ So we're looking at the total capacity of edges from
+
+23
+00:01:11,040 --> 00:01:15,780
+ the set L to R. But we're not looking at edges from R to L. So we're
+
+24
+00:01:15,780 --> 00:01:21,210
+ looking at sum of the capacities of these six edges which exit L. Notice that
+
+25
+00:01:21,210 --> 00:01:21,210
+ these edges such as C to F which go into L do not count in this count.
+

@@ -1,0 +1,264 @@
+1
+00:00:00,000 --> 00:00:02,385
+ Now, let's turn our attention back to hashing,
+
+2
+00:00:02,385 --> 00:00:04,260
+ which is our main focus.
+
+3
+00:00:04,260 --> 00:00:06,120
+ It will be useful to keep a running example in
+
+4
+00:00:06,120 --> 00:00:08,565
+ mind to motivate our various hashing schemes.
+
+5
+00:00:08,565 --> 00:00:12,105
+ The example we'll use is unacceptable passwords.
+
+6
+00:00:12,105 --> 00:00:15,600
+ We want to maintain a database of unacceptable passwords.
+
+7
+00:00:15,600 --> 00:00:18,580
+ For example, these might be words that are in the dictionary.
+
+8
+00:00:18,580 --> 00:00:22,410
+ Now the setting is, that a user will enter a proposed password and
+
+9
+00:00:22,410 --> 00:00:27,155
+ our system should quickly respond if that proposed password is acceptable or not.
+
+10
+00:00:27,155 --> 00:00:28,890
+ So we need to quickly check whether
+
+11
+00:00:28,890 --> 00:00:33,390
+ the proposed password is in the database of unacceptable passwords or not.
+
+12
+00:00:33,390 --> 00:00:36,120
+ Now let's formalize our setting a little bit more precisely.
+
+13
+00:00:36,120 --> 00:00:40,860
+ We have a huge set U which is the universe of possible passwords.
+
+14
+00:00:40,860 --> 00:00:42,495
+ Now this is an enormous set.
+
+15
+00:00:42,495 --> 00:00:47,690
+ For example, if we simply look at passwords as strings or words of length A,
+
+16
+00:00:47,690 --> 00:00:51,084
+ then this set is of size 52 to the A,
+
+17
+00:00:51,084 --> 00:00:54,175
+ hence this set U is too large to maintain.
+
+18
+00:00:54,175 --> 00:00:56,805
+ Instead, we're going to maintain a subset of this universe,
+
+19
+00:00:56,805 --> 00:01:02,570
+ which will denote a subset S. S will contain the set of unacceptable passwords.
+
+20
+00:01:02,570 --> 00:01:06,825
+ The main operation our data structure needs to perform are queries.
+
+21
+00:01:06,825 --> 00:01:09,195
+ So for an element X in our universe.
+
+22
+00:01:09,195 --> 00:01:12,435
+ So X is a proposed password in this setting.
+
+23
+00:01:12,435 --> 00:01:15,265
+ Is X in this subset S?
+
+24
+00:01:15,265 --> 00:01:18,105
+ So is X an unacceptable password?
+
+25
+00:01:18,105 --> 00:01:21,030
+ Now we want to build a data structure or hashing scheme,
+
+26
+00:01:21,030 --> 00:01:23,845
+ which answers these queries quickly.
+
+27
+00:01:23,845 --> 00:01:26,100
+ Let's first look at how the traditional hashing scheme
+
+28
+00:01:26,100 --> 00:01:29,205
+ known as chain hashing, works in this setting.
+
+29
+00:01:29,205 --> 00:01:31,275
+ Now in order to maintain this set S,
+
+30
+00:01:31,275 --> 00:01:34,906
+ we're going to use a hash table H of size N,
+
+31
+00:01:34,906 --> 00:01:37,050
+ little N. In chain hashing,
+
+32
+00:01:37,050 --> 00:01:40,270
+ this table H is an array of linked lists.
+
+33
+00:01:40,270 --> 00:01:44,010
+ We're going to use a hash function little H which maps elements in
+
+34
+00:01:44,010 --> 00:01:48,000
+ U two elements and H. So each of
+
+35
+00:01:48,000 --> 00:01:52,830
+ the possible passwords is mapped to one of these N bins by little
+
+36
+00:01:52,830 --> 00:01:58,470
+ H. Now to insert an element into this subset S we simply find its hash value,
+
+37
+00:01:58,470 --> 00:02:00,660
+ then we go to that bin and then we add
+
+38
+00:02:00,660 --> 00:02:03,670
+ the element onto the linked list at that particular location.
+
+39
+00:02:03,670 --> 00:02:05,070
+ And then to do a query,
+
+40
+00:02:05,070 --> 00:02:07,770
+ we simply go to the hash value and we look
+
+41
+00:02:07,770 --> 00:02:11,060
+ at the linked list to check whether it's there or not.
+
+42
+00:02:11,060 --> 00:02:13,065
+ For each element of the universe,
+
+43
+00:02:13,065 --> 00:02:17,445
+ little H of X maps to one of these N bins.
+
+44
+00:02:17,445 --> 00:02:20,065
+ Now we're going to analyze random hash functions.
+
+45
+00:02:20,065 --> 00:02:24,255
+ So we're going to assume that H of X maps to a random bin.
+
+46
+00:02:24,255 --> 00:02:26,445
+ Moreover, we'll assume this choice,
+
+47
+00:02:26,445 --> 00:02:30,710
+ this random map, is independent of all other hashes.
+
+48
+00:02:30,710 --> 00:02:33,030
+ So where H of X maps to is
+
+49
+00:02:33,030 --> 00:02:36,835
+ independent of where any other element of the universe maps to.
+
+50
+00:02:36,835 --> 00:02:40,565
+ So this little H is a completely random hash function.
+
+51
+00:02:40,565 --> 00:02:45,210
+ Now if you think of this hash table as bins and you think of these elements in S as
+
+52
+00:02:45,210 --> 00:02:48,360
+ balls then what this hash function is doing is
+
+53
+00:02:48,360 --> 00:02:52,085
+ its assigning these balls into random bins.
+
+54
+00:02:52,085 --> 00:02:55,980
+ So it's reminiscent of our balls into bins problem that we analyzed before.
+
+55
+00:02:55,980 --> 00:02:59,255
+ Now it will be useful to have a little bit of notation before we move on.
+
+56
+00:02:59,255 --> 00:03:01,020
+ This set U is huge,
+
+57
+00:03:01,020 --> 00:03:04,380
+ and we'll denote its size by capital N. The hash table,
+
+58
+00:03:04,380 --> 00:03:07,845
+ we'll denote its size by little N. Now capital N,
+
+59
+00:03:07,845 --> 00:03:11,820
+ as in RSA, will be exponential size in little N,
+
+60
+00:03:11,820 --> 00:03:15,954
+ and we'll use little M to denote the size of this database,
+
+61
+00:03:15,954 --> 00:03:18,330
+ capital S, that we're maintaining.
+
+62
+00:03:18,330 --> 00:03:21,165
+ And once again, capital N is much bigger than little N,
+
+63
+00:03:21,165 --> 00:03:26,670
+ and typically our hash table size is at least the size of the database we're maintaining.
+
+64
+00:03:26,670 --> 00:03:29,230
+ So little N is at least size M,
+
+65
+00:03:29,230 --> 00:03:31,530
+ and our goal of course is to try to maintain
+
+66
+00:03:31,530 --> 00:03:31,530
+ this database as not much larger than little M.
+

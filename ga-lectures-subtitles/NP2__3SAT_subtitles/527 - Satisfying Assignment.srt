@@ -1,0 +1,144 @@
+1
+00:00:00,000 --> 00:00:02,300
+ Now going back to our earlier reduction,
+
+2
+00:00:02,300 --> 00:00:05,000
+ we showed how to take input formula for
+
+3
+00:00:05,000 --> 00:00:09,730
+ SAT and transform it into an input formula for 3SAT.
+
+4
+00:00:09,730 --> 00:00:12,845
+ This was the reduction for creating f prime.
+
+5
+00:00:12,845 --> 00:00:15,590
+ And then we just proved that the original formula
+
+6
+00:00:15,590 --> 00:00:18,740
+ f is satisfiable if and only if this new formula,
+
+7
+00:00:18,740 --> 00:00:21,270
+ f prime is satisfiable. Now, what remains?
+
+8
+00:00:21,270 --> 00:00:23,345
+ While we run our 3SAT algorithm,
+
+9
+00:00:23,345 --> 00:00:26,030
+ our black box algorithm on f prime,
+
+10
+00:00:26,030 --> 00:00:27,635
+ if it produces no,
+
+11
+00:00:27,635 --> 00:00:29,360
+ that there is no satisfying assignment,
+
+12
+00:00:29,360 --> 00:00:32,625
+ then we say no, there is no satisfying assignment for f.
+
+13
+00:00:32,625 --> 00:00:35,325
+ What if it produces a satisfying assignment?
+
+14
+00:00:35,325 --> 00:00:41,235
+ So suppose it gives us a satisfying assignments Sigma prime which satisfies f prime.
+
+15
+00:00:41,235 --> 00:00:43,430
+ Well, we have to produce a satisfying assignment for
+
+16
+00:00:43,430 --> 00:00:46,150
+ f. How do we transform this satisfying assignment,
+
+17
+00:00:46,150 --> 00:00:50,580
+ Sigma prime, to a satisfying assignment for f?
+
+18
+00:00:50,580 --> 00:00:54,290
+ What we just saw from this proof is that if we ignore the assignment for
+
+19
+00:00:54,290 --> 00:00:58,790
+ the new variables and keep the assignment for the original variables the same,
+
+20
+00:00:58,790 --> 00:01:01,120
+ then we get a satisfying assignment for
+
+21
+00:01:01,120 --> 00:01:04,985
+ f. So we take this satisfying assignment for f prime,
+
+22
+00:01:04,985 --> 00:01:08,930
+ we ignore the assignment for all of the new variables and the assignment for
+
+23
+00:01:08,930 --> 00:01:10,850
+ the original variables gives us
+
+24
+00:01:10,850 --> 00:01:14,750
+ a satisfying assignment for f. And that completes our reduction.
+
+25
+00:01:14,750 --> 00:01:18,035
+ One last thing to note is what is the size of f prime.
+
+26
+00:01:18,035 --> 00:01:19,970
+ F our original input SAT,
+
+27
+00:01:19,970 --> 00:01:22,385
+ has n variables and m clauses.
+
+28
+00:01:22,385 --> 00:01:25,490
+ How many variables does f prime have in the worst case?
+
+29
+00:01:25,490 --> 00:01:28,700
+ Well we might create n new variables for each clause.
+
+30
+00:01:28,700 --> 00:01:31,845
+ So it has order nm variables in the worst case.
+
+31
+00:01:31,845 --> 00:01:37,280
+ And we're also replacing every clause by order n clauses, in the worst case.
+
+32
+00:01:37,280 --> 00:01:39,455
+ So we have order nm clauses.
+
+33
+00:01:39,455 --> 00:01:43,780
+ But this is okay because the size of f prime is polynomial in the size of
+
+34
+00:01:43,780 --> 00:01:49,610
+ f. So we have an algorithm which is polynomial running time in the size of f prime.
+
+35
+00:01:49,610 --> 00:01:52,520
+ It's still polynomial in the size of f as well.
+
+36
+00:01:52,520 --> 00:01:52,520
+ So this completes our first NP completeness proof.
+

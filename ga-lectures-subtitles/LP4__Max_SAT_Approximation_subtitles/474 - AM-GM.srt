@@ -1,0 +1,84 @@
+1
+00:00:00,000 --> 00:00:02,310
+ Let's take a look at the arithmetic mean,
+
+2
+00:00:02,310 --> 00:00:04,275
+ geometric mean and inequality.
+
+3
+00:00:04,275 --> 00:00:06,120
+ Let's take a look at its general form.
+
+4
+00:00:06,120 --> 00:00:10,370
+ We have K non-negative numbers, W1 through WK.
+
+5
+00:00:10,370 --> 00:00:12,010
+ Think of these as weights.
+
+6
+00:00:12,010 --> 00:00:14,175
+ We want to look at the mean of these weights.
+
+7
+00:00:14,175 --> 00:00:17,155
+ So we can look at the arithmetic mean and the geometric mean.
+
+8
+00:00:17,155 --> 00:00:21,715
+ The arithmetic mean takes the sum and divides by the number of terms.
+
+9
+00:00:21,715 --> 00:00:25,380
+ The geometric mean takes the product and takes the K through.
+
+10
+00:00:25,380 --> 00:00:26,895
+ How do these two things relate?
+
+11
+00:00:26,895 --> 00:00:31,065
+ While the arithmetic mean is always at least the geometric mean.
+
+12
+00:00:31,065 --> 00:00:33,630
+ And this holds for any non-negative weights.
+
+13
+00:00:33,630 --> 00:00:35,620
+ How do we relate this to our problem?
+
+14
+00:00:35,620 --> 00:00:40,215
+ Well, we're going to set WI to be one minus YI star hat.
+
+15
+00:00:40,215 --> 00:00:44,610
+ And then the arithmetic mean is one over K times the sum
+
+16
+00:00:44,610 --> 00:00:49,755
+ of one minus Yi hat star And this is at least the geometric mean,
+
+17
+00:00:49,755 --> 00:00:52,668
+ which is the product over I of
+
+18
+00:00:52,668 --> 00:00:57,970
+ one minus YI hat star and then we take the K through of the right hand side.
+
+19
+00:00:57,970 --> 00:01:00,990
+ Now, alternatively, instead of taking the K through to the right hand side,
+
+20
+00:01:00,990 --> 00:01:05,370
+ we can take the Kth power of both sides and we have the following inequality.
+
+21
+00:01:05,370 --> 00:01:05,370
+ This is the one we're going to use.
+

@@ -1,0 +1,148 @@
+1
+00:00:00,000 --> 00:00:03,775
+ In this example, we'll have four variables which we'll label X,
+
+2
+00:00:03,775 --> 00:00:05,525
+ Y, W, and Z.
+
+3
+00:00:05,525 --> 00:00:08,275
+ Now, our three-set input is the following formula.
+
+4
+00:00:08,275 --> 00:00:10,960
+ X-bar or Y or Z-bar,
+
+5
+00:00:10,960 --> 00:00:12,295
+ that's the first clause.
+
+6
+00:00:12,295 --> 00:00:19,620
+ Second clause is X or Y-bar or W. The third clause is X-bar or W-bar.
+
+7
+00:00:19,620 --> 00:00:23,635
+ Fourth clause is Y-bar or Z or W. Now,
+
+8
+00:00:23,635 --> 00:00:26,555
+ to start a construction of the graph, for each clause,
+
+9
+00:00:26,555 --> 00:00:30,530
+ we construct a vertex corresponding to each of the literals.
+
+10
+00:00:30,530 --> 00:00:33,145
+ So for this clause, we have three vertices
+
+11
+00:00:33,145 --> 00:00:37,195
+ corresponding to the literals X-bar, Y, and Z-bar.
+
+12
+00:00:37,195 --> 00:00:40,140
+ We have three vertices corresponding to this clause,
+
+13
+00:00:40,140 --> 00:00:42,040
+ two vertices for this clause,
+
+14
+00:00:42,040 --> 00:00:44,080
+ three vertices for this clause.
+
+15
+00:00:44,080 --> 00:00:46,080
+ Now we add the clause edges.
+
+16
+00:00:46,080 --> 00:00:48,570
+ So we add a triangle on these three vertices,
+
+17
+00:00:48,570 --> 00:00:50,375
+ a triangle on these three,
+
+18
+00:00:50,375 --> 00:00:51,955
+ an edge on this pair,
+
+19
+00:00:51,955 --> 00:00:53,835
+ and a triangle on these three.
+
+20
+00:00:53,835 --> 00:00:56,065
+ Finally, we want to add the variable edges.
+
+21
+00:00:56,065 --> 00:01:00,095
+ So we run an edge from X to all copies of X-bar.
+
+22
+00:01:00,095 --> 00:01:03,295
+ Similarly, from Y to all copies of Y-bar.
+
+23
+00:01:03,295 --> 00:01:05,970
+ From all copies of W to W-bar.
+
+24
+00:01:05,970 --> 00:01:08,295
+ Finally, from Z to Z-bar.
+
+25
+00:01:08,295 --> 00:01:12,160
+ Now let's look at an example independent set of size four in this graph.
+
+26
+00:01:12,160 --> 00:01:14,755
+ Let's say we take X-bar from this triangle,
+
+27
+00:01:14,755 --> 00:01:18,994
+ Y-bar, W-bar, and Y-bar.
+
+28
+00:01:18,994 --> 00:01:20,950
+ This independent set corresponds to
+
+29
+00:01:20,950 --> 00:01:24,220
+ the assignment X equals false because of this literal,
+
+30
+00:01:24,220 --> 00:01:27,335
+ Y equals false because of this and this literal,
+
+31
+00:01:27,335 --> 00:01:29,830
+ W equals false because of this literal,
+
+32
+00:01:29,830 --> 00:01:31,710
+ and Z has no constraints.
+
+33
+00:01:31,710 --> 00:01:35,630
+ And notice that such an assignment satisfies this formula.
+
+34
+00:01:35,630 --> 00:01:36,910
+ Let's prove that in general,
+
+35
+00:01:36,910 --> 00:01:39,535
+ that an independent set of size m in this graph
+
+36
+00:01:39,535 --> 00:01:42,490
+ corresponds to a satisfying assignment of this formula,
+
+37
+00:01:42,490 --> 00:01:42,490
+ and a satisfying assignment of this formula corresponds to an independent set of size m.
+

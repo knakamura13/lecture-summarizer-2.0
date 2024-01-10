@@ -1,0 +1,104 @@
+1
+00:00:00,000 --> 00:00:04,050
+ Now let's go back and see how we show that a particular problem is NP complete.
+
+2
+00:00:04,050 --> 00:00:05,720
+ Later we're going to consider this problem,
+
+3
+00:00:05,720 --> 00:00:07,650
+ independent sets problem, and we're going to
+
+4
+00:00:07,650 --> 00:00:10,520
+ prove that the independent sets problem is NP complete.
+
+5
+00:00:10,520 --> 00:00:14,025
+ Now the details of the independent sets problem is not important at this point.
+
+6
+00:00:14,025 --> 00:00:16,140
+ But, what exactly do we need to show in order to
+
+7
+00:00:16,140 --> 00:00:18,800
+ show that independent sets problem is NP complete?
+
+8
+00:00:18,800 --> 00:00:20,700
+ We need to show the following.
+
+9
+00:00:20,700 --> 00:00:24,745
+ I'm a bit lazy, so let me denote independent sets problem by IS.
+
+10
+00:00:24,745 --> 00:00:26,820
+ First, we need to show that the Independent sets problem
+
+11
+00:00:26,820 --> 00:00:29,755
+ is in the class NP, that we know how to do.
+
+12
+00:00:29,755 --> 00:00:33,690
+ We need to show that we can verify solutions in polynomial time.
+
+13
+00:00:33,690 --> 00:00:34,950
+ The second thing we need to show,
+
+14
+00:00:34,950 --> 00:00:38,415
+ is that if we can solve independent sets problem in polynomial time,
+
+15
+00:00:38,415 --> 00:00:41,940
+ then we can solve every problem in NP in polynomial time.
+
+16
+00:00:41,940 --> 00:00:43,350
+ Now the second thing we need to show,
+
+17
+00:00:43,350 --> 00:00:45,920
+ is that for every problem A in the class NP,
+
+18
+00:00:45,920 --> 00:00:50,540
+ there is a reduction from A to the problem independent sets.
+
+19
+00:00:50,540 --> 00:00:54,705
+ That means that if we have a polynomial time algorithm for the independent sets problem,
+
+20
+00:00:54,705 --> 00:01:00,570
+ then we can use that as a subroutine to solve the problem A in polynomial time.
+
+21
+00:01:00,570 --> 00:01:03,640
+ And since we can do this for every problem A in the class NP,
+
+22
+00:01:03,640 --> 00:01:08,175
+ then if there is a polynomial time algorithm for the independent sets problem,
+
+23
+00:01:08,175 --> 00:01:12,950
+ then there is a polynomial time algorithm for every problem in NP.
+
+24
+00:01:12,950 --> 00:01:15,020
+ But how can we do this second step?
+
+25
+00:01:15,020 --> 00:01:17,350
+ We need to take every problem in NP,
+
+26
+00:01:17,350 --> 00:01:17,350
+ and show reduction from every problem in NP to the independent sets problem.
+

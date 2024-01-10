@@ -1,0 +1,28 @@
+1
+00:00:00,000 --> 00:00:04,815
+ My input is undirected graph as before and also a goal g.
+
+2
+00:00:04,815 --> 00:00:11,205
+ My output is an independent set S with size at least g. I want to output such a set S,
+
+3
+00:00:11,205 --> 00:00:15,180
+ if one exists, and if there is no independent set of such a size,
+
+4
+00:00:15,180 --> 00:00:16,770
+ then I simply output NO.
+
+5
+00:00:16,770 --> 00:00:19,770
+ It will be straightforward to show that this version of the problem
+
+6
+00:00:19,770 --> 00:00:23,505
+ is a search problem and therefore lies in the class NP.
+
+7
+00:00:23,505 --> 00:00:23,505
+ And, in fact, will prove now that the independent set problem is NP-complete.
+

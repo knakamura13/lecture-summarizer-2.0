@@ -1,0 +1,152 @@
+1
+00:00:00,000 --> 00:00:04,260
+ Once again, FFT when we run it with input little a.
+
+2
+00:00:04,260 --> 00:00:09,180
+ Which are the coefficients for this polynomial a of X and the nth root of unity,
+
+3
+00:00:09,180 --> 00:00:12,000
+ then it outputs capital A,
+
+4
+00:00:12,000 --> 00:00:15,450
+ which is a value of this polynomial at the nth root of unity,
+
+5
+00:00:15,450 --> 00:00:21,350
+ which corresponds to the product of this matrix M times little a.
+
+6
+00:00:21,350 --> 00:00:22,920
+ Now for inverse FFT,
+
+7
+00:00:22,920 --> 00:00:28,515
+ we want to take these values of this polynomial and multiply by the inverse of them.
+
+8
+00:00:28,515 --> 00:00:31,905
+ And that will give us little a the coefficients.
+
+9
+00:00:31,905 --> 00:00:34,530
+ What does the inverse of M look like?
+
+10
+00:00:34,530 --> 00:00:39,057
+ Well what we show is that the inverse of M equals one over n,
+
+11
+00:00:39,057 --> 00:00:40,945
+ just a scaling factor,
+
+12
+00:00:40,945 --> 00:00:50,585
+ times Mn with instead of Mn with omegas of n It's omegas of n to the inverse.
+
+13
+00:00:50,585 --> 00:00:53,035
+ So we take the same matrix Mn,
+
+14
+00:00:53,035 --> 00:00:56,295
+ and instead of plugging in the nth root of unity,
+
+15
+00:00:56,295 --> 00:00:59,370
+ we plug in the inverse of the nth root of unity.
+
+16
+00:00:59,370 --> 00:01:03,165
+ Now what exactly is the inverse of the nth root of unity?
+
+17
+00:01:03,165 --> 00:01:08,235
+ Well, this is the number when multiplied by omegas of n equals one.
+
+18
+00:01:08,235 --> 00:01:11,400
+ You multiply a number by its inverse you get one.
+
+19
+00:01:11,400 --> 00:01:12,900
+ So what is the inverse?
+
+20
+00:01:12,900 --> 00:01:15,405
+ It's omegas of n to the n minus one.
+
+21
+00:01:15,405 --> 00:01:18,470
+ It's the last of the nth roots of unity.
+
+22
+00:01:18,470 --> 00:01:21,155
+ Notice that if you multiply omegas of n times
+
+23
+00:01:21,155 --> 00:01:24,225
+ omega of n to the nth minus one, what do you get?
+
+24
+00:01:24,225 --> 00:01:26,160
+ You get omegas of n, to the nth.
+
+25
+00:01:26,160 --> 00:01:31,635
+ Which is the same as omegas of n to the zeroth power, which is one.
+
+26
+00:01:31,635 --> 00:01:36,315
+ So the inverse of omegas of n is omegas of n to the nth minus one.
+
+27
+00:01:36,315 --> 00:01:41,125
+ So the inverse of omegas of n is omegas of n to the n minus one.
+
+28
+00:01:41,125 --> 00:01:42,370
+ Now this is the basic facts,
+
+29
+00:01:42,370 --> 00:01:44,480
+ so we should make sure that is clear for you.
+
+30
+00:01:44,480 --> 00:01:46,200
+ If it's not intuitively clear,
+
+31
+00:01:46,200 --> 00:01:49,650
+ I would either convince yourself by plugging in these points
+
+32
+00:01:49,650 --> 00:01:53,270
+ in polar coordinates and also you can look at it geometrically.
+
+33
+00:01:53,270 --> 00:01:59,160
+ So draw the picture of the complex plane and look at these points on the unit circle.
+
+34
+00:01:59,160 --> 00:02:01,795
+ Now we can plug this in and simplify.
+
+35
+00:02:01,795 --> 00:02:04,450
+ So the inverse of this matrix M,
+
+36
+00:02:04,450 --> 00:02:06,675
+ with parameter omegas of n,
+
+37
+00:02:06,675 --> 00:02:10,605
+ is one over n times this matrix with
+
+38
+00:02:10,605 --> 00:02:10,605
+ the inverse of omegas of n which is omega of n to the n minus one.
+

@@ -1,0 +1,100 @@
+1
+00:00:00,000 --> 00:00:03,810
+ So we need to check that the flow into every vertex,
+
+2
+00:00:03,810 --> 00:00:05,550
+ except for S prime and T prime,
+
+3
+00:00:05,550 --> 00:00:08,760
+ under F prime, equals the flow out.
+
+4
+00:00:08,760 --> 00:00:10,150
+ Now we started from F,
+
+5
+00:00:10,150 --> 00:00:13,575
+ and we know that the flow into the vertex V, under F,
+
+6
+00:00:13,575 --> 00:00:16,165
+ equals the flow out from the vertex V.
+
+7
+00:00:16,165 --> 00:00:19,075
+ So now we're going to do a little bit of algebra that's similar to before.
+
+8
+00:00:19,075 --> 00:00:22,770
+ So we want to go from this fact, to this fact.
+
+9
+00:00:22,770 --> 00:00:26,087
+ Now, what is the flow into the vertex V under F prime?
+
+10
+00:00:26,087 --> 00:00:29,195
+ Where we have the flow from S prime,
+
+11
+00:00:29,195 --> 00:00:35,420
+ we set that equal to the demand into the vertex V. So this is the flow from S prime.
+
+12
+00:00:35,420 --> 00:00:36,615
+ Now for every other edge,
+
+13
+00:00:36,615 --> 00:00:41,565
+ the flow from that vertex U to V in F prime,
+
+14
+00:00:41,565 --> 00:00:46,860
+ is it defined to be the flow in F minus the demand along this edge?
+
+15
+00:00:46,860 --> 00:00:54,090
+ As before, this sum over U of this demand into V is the same as this quantity.
+
+16
+00:00:54,090 --> 00:00:58,145
+ They're both equal to the total demand into V. So they offset each other,
+
+17
+00:00:58,145 --> 00:01:03,360
+ and we're left with the total flow into V under F. So as before,
+
+18
+00:01:03,360 --> 00:01:05,400
+ the flow into V under F,
+
+19
+00:01:05,400 --> 00:01:08,730
+ is the same as the flow into V under F prime.
+
+20
+00:01:08,730 --> 00:01:11,340
+ And similarly, the flow out of V under F prime,
+
+21
+00:01:11,340 --> 00:01:15,900
+ equals the flow out of V under F, by similar calculation.
+
+22
+00:01:15,900 --> 00:01:20,020
+ Therefore, since the flow into V equals the flow out of V under F,
+
+23
+00:01:20,020 --> 00:01:22,200
+ and these are equal to F prime,
+
+24
+00:01:22,200 --> 00:01:24,630
+ we also have this factor F prime.
+
+25
+00:01:24,630 --> 00:01:24,630
+ And therefore, F prime is a va.
+

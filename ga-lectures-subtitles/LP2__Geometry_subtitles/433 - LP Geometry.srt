@@ -1,0 +1,76 @@
+1
+00:00:00,000 --> 00:00:02,790
+ Let's discuss the geometry of linear programs.
+
+2
+00:00:02,790 --> 00:00:05,490
+ Consider a linear program in standard form.
+
+3
+00:00:05,490 --> 00:00:07,550
+ Let's say, that there are N variables.
+
+4
+00:00:07,550 --> 00:00:12,885
+ So, X is a column vector of size N. And let's let M denote the number of constraints.
+
+5
+00:00:12,885 --> 00:00:15,390
+ As we discussed earlier, the feasible region,
+
+6
+00:00:15,390 --> 00:00:18,345
+ the set of axes which satisfy these constrains,
+
+7
+00:00:18,345 --> 00:00:20,055
+ forms a convex set.
+
+8
+00:00:20,055 --> 00:00:23,918
+ Each constraint defines a half space in N dimensions.
+
+9
+00:00:23,918 --> 00:00:27,585
+ The set a points satisfying all M constraints are in
+
+10
+00:00:27,585 --> 00:00:31,975
+ the intersection of these M half spaces defined by the constraints.
+
+11
+00:00:31,975 --> 00:00:35,340
+ So, this forms a convex polyhedron in N dimensions.
+
+12
+00:00:35,340 --> 00:00:39,705
+ We illustrated the simplex algorithm on our earlier example and recall
+
+13
+00:00:39,705 --> 00:00:41,430
+ that the simplex algorithm is walking on
+
+14
+00:00:41,430 --> 00:00:44,520
+ the vertices or the corners of this feasible region.
+
+15
+00:00:44,520 --> 00:00:48,870
+ Now, the key point is that since this feasible region is convex, the optimum,
+
+16
+00:00:48,870 --> 00:00:51,975
+ the points maximizing this objective function,
+
+17
+00:00:51,975 --> 00:00:55,620
+ are going to be achieved at vertices of the feasible region.
+
+18
+00:00:55,620 --> 00:00:56,850
+ Now, that's not always true.
+
+19
+00:00:56,850 --> 00:00:56,850
+ So, let's explore exactly when it is true.
+

@@ -1,0 +1,32 @@
+1
+00:00:00,000 --> 00:00:02,355
+ Now one last point about the cut property.
+
+2
+00:00:02,355 --> 00:00:04,615
+ There's another algorithm,
+
+3
+00:00:04,615 --> 00:00:07,190
+ Prim's algorithm. Prim's algorithm is for Minimum Spanning Tree problem.
+
+4
+00:00:07,190 --> 00:00:11,600
+ And is very similar to Dijkstra's algorithm for the shortest path.
+
+5
+00:00:11,600 --> 00:00:14,025
+ Now to make sure you understand the cut property,
+
+6
+00:00:14,025 --> 00:00:17,460
+ you should use it to prove correctness of Prim's algorithm.
+
+7
+00:00:17,460 --> 00:00:20,505
+ Make sure you understand why Prim's algorithm is correct,
+
+8
+00:00:20,505 --> 00:00:20,505
+ by using the cut property.
+

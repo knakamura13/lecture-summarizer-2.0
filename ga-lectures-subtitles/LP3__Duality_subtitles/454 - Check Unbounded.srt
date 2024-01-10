@@ -1,0 +1,152 @@
+1
+00:00:00,000 --> 00:00:02,880
+ Now let's go back to one of our questions from earlier.
+
+2
+00:00:02,880 --> 00:00:05,410
+ Can we check whether an LP is unbounded?
+
+3
+00:00:05,410 --> 00:00:07,555
+ So consider an LP in canonical form,
+
+4
+00:00:07,555 --> 00:00:09,710
+ maximize C transpose X,
+
+5
+00:00:09,710 --> 00:00:11,415
+ AX is at most B,
+
+6
+00:00:11,415 --> 00:00:13,140
+ and X is non-negative.
+
+7
+00:00:13,140 --> 00:00:17,910
+ Now, can we check whether this LP is infeasible or not? Well, we saw how to do that.
+
+8
+00:00:17,910 --> 00:00:21,540
+ We make a new LP by adding another variable Z,
+
+9
+00:00:21,540 --> 00:00:27,210
+ and we maximize Z and we change the constraint to AX plus Z is at most B,
+
+10
+00:00:27,210 --> 00:00:31,395
+ and we check whether there's a solution where Z is non-negative.
+
+11
+00:00:31,395 --> 00:00:35,715
+ If there is such a non-negative Z which satisfies this new LP,
+
+12
+00:00:35,715 --> 00:00:39,970
+ then that gives us a feasible point of the original LP.
+
+13
+00:00:39,970 --> 00:00:41,530
+ So we saw how to do this,
+
+14
+00:00:41,530 --> 00:00:46,575
+ and we saw how to obtain a feasible point of this LP, if it is feasible.
+
+15
+00:00:46,575 --> 00:00:49,875
+ Now, how do we check whether this LP is unbounded or not?
+
+16
+00:00:49,875 --> 00:00:55,470
+ Well, what do we know? We know if it's unbounded then the dual LP will be infeasible.
+
+17
+00:00:55,470 --> 00:00:59,170
+ So we could simply check the dual LP and check whether it's feasible or not.
+
+18
+00:00:59,170 --> 00:01:03,090
+ Well, if we simply check the dual LP and we see it's infeasible,
+
+19
+00:01:03,090 --> 00:01:04,950
+ then what do we know about the primal?
+
+20
+00:01:04,950 --> 00:01:06,885
+ Well, if the dual LP is infeasible,
+
+21
+00:01:06,885 --> 00:01:12,135
+ then the primal is either unbounded or infeasible.
+
+22
+00:01:12,135 --> 00:01:14,010
+ We don't know which of these two is the case because
+
+23
+00:01:14,010 --> 00:01:17,750
+ the weak duality theorem just tells us that if the primal is unbounded,
+
+24
+00:01:17,750 --> 00:01:19,585
+ then the dual is infeasible.
+
+25
+00:01:19,585 --> 00:01:21,060
+ But it's non-equivalence.
+
+26
+00:01:21,060 --> 00:01:25,070
+ So how do we check whether this original LP is unbounded or not?
+
+27
+00:01:25,070 --> 00:01:27,375
+ Well, first we check whether it's feasible or not,
+
+28
+00:01:27,375 --> 00:01:30,780
+ whether there is a feasible point for this primal LP.
+
+29
+00:01:30,780 --> 00:01:35,545
+ Assuming there is at least one feasible point so the feasible region is non-empty.
+
+30
+00:01:35,545 --> 00:01:37,530
+ So it is not infeasible.
+
+31
+00:01:37,530 --> 00:01:40,895
+ And then we check whether the dual LP is infeasible.
+
+32
+00:01:40,895 --> 00:01:44,070
+ So now we know that the primal is not infeasible.
+
+33
+00:01:44,070 --> 00:01:45,610
+ So it's true to this case.
+
+34
+00:01:45,610 --> 00:01:47,850
+ So now if the dual LP is infeasible,
+
+35
+00:01:47,850 --> 00:01:49,780
+ then we know the primal is unbounded.
+
+36
+00:01:49,780 --> 00:01:52,665
+ So we simply have two feasibility questions.
+
+37
+00:01:52,665 --> 00:01:55,465
+ We check whether the primal is feasible or not.
+
+38
+00:01:55,465 --> 00:01:55,465
+ And then we check whether the dual is infeasible or not.
+

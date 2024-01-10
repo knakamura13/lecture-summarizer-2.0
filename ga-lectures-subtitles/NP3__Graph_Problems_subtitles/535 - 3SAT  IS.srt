@@ -1,0 +1,108 @@
+1
+00:00:00,000 --> 00:00:02,855
+ So take an input to the three subproblem,
+
+2
+00:00:02,855 --> 00:00:05,115
+ it is defined by a formula F,
+
+3
+00:00:05,115 --> 00:00:09,035
+ and we'll say the formula F has variables X1 through Xn,
+
+4
+00:00:09,035 --> 00:00:10,915
+ and clauses C1 through CM.
+
+5
+00:00:10,915 --> 00:00:13,580
+ So it has N variables and M clauses.
+
+6
+00:00:13,580 --> 00:00:16,875
+ And now we have to find an input to the independent set problem.
+
+7
+00:00:16,875 --> 00:00:18,955
+ And recall since this is three set,
+
+8
+00:00:18,955 --> 00:00:21,120
+ each of the clauses has size at most three,
+
+9
+00:00:21,120 --> 00:00:22,418
+ so it contains one,
+
+10
+00:00:22,418 --> 00:00:23,900
+ two or three literals.
+
+11
+00:00:23,900 --> 00:00:27,180
+ The input to the independence set problem is a graph G. We're
+
+12
+00:00:27,180 --> 00:00:30,655
+ going to define a graph G based on this formula F,
+
+13
+00:00:30,655 --> 00:00:32,970
+ which is the input to the three set problem.
+
+14
+00:00:32,970 --> 00:00:35,700
+ We also need to specify our goal little g. It
+
+15
+00:00:35,700 --> 00:00:39,353
+ turns out we're going to set our goal g to be M,
+
+16
+00:00:39,353 --> 00:00:40,715
+ the number of clauses.
+
+17
+00:00:40,715 --> 00:00:45,210
+ Here's the high level ideal for the construction of our graph G. For each of the clauses,
+
+18
+00:00:45,210 --> 00:00:47,640
+ we're going to create a vertex in our graph
+
+19
+00:00:47,640 --> 00:00:51,210
+ G corresponding to each of the literals in this clause.
+
+20
+00:00:51,210 --> 00:00:53,770
+ So this clause has three literals,
+
+21
+00:00:53,770 --> 00:00:55,610
+ then we're going to create three vertices.
+
+22
+00:00:55,610 --> 00:00:57,175
+ Since there are M clauses,
+
+23
+00:00:57,175 --> 00:00:59,940
+ there's going to be at most three M vertices in our graph
+
+24
+00:00:59,940 --> 00:01:03,540
+ G. And then we're going to add edges to encode this clause.
+
+25
+00:01:03,540 --> 00:01:08,180
+ And then we're going to add additional edges between vertices in different clauses,
+
+26
+00:01:08,180 --> 00:01:10,855
+ in order to ensure a consistent assignment.
+
+27
+00:01:10,855 --> 00:01:10,855
+ Let's define it more precisely.
+

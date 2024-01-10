@@ -1,0 +1,144 @@
+1
+00:00:00,000 --> 00:00:02,600
+ Let's prove this equivalence and hopefully it seems
+
+2
+00:00:02,600 --> 00:00:04,970
+ obvious given what we've shown so far.
+
+3
+00:00:04,970 --> 00:00:08,990
+ So let's start with the forward implication So let's take an assignment to
+
+4
+00:00:08,990 --> 00:00:13,370
+ the original n variables which satisfies the original formula f. Now we
+
+5
+00:00:13,370 --> 00:00:18,695
+ want to show that keeping this assignment the same for these original n variables there
+
+6
+00:00:18,695 --> 00:00:24,545
+ is an assignment to the new variables so that this new formula f prime is satisfied.
+
+7
+00:00:24,545 --> 00:00:27,290
+ Now since we're keeping the assignment for these n variables the
+
+8
+00:00:27,290 --> 00:00:32,401
+ same and the new variables are as distinct for each new clause.
+
+9
+00:00:32,401 --> 00:00:35,250
+ Therefore, we can look at it a clause by clause.
+
+10
+00:00:35,250 --> 00:00:37,820
+ So let's look at clause C in the original formula
+
+11
+00:00:37,820 --> 00:00:41,495
+ f. If C has at most three literals then it's obvious.
+
+12
+00:00:41,495 --> 00:00:45,530
+ If C is bigger than size three then we replace C by
+
+13
+00:00:45,530 --> 00:00:50,510
+ this sequence of K minus two clauses called C prime.
+
+14
+00:00:50,510 --> 00:00:54,620
+ Now the key is that C prime uses K minus three new variables.
+
+15
+00:00:54,620 --> 00:00:57,500
+ These variables only appear in C prime for
+
+16
+00:00:57,500 --> 00:01:01,415
+ C. They don't appear in any other sequence of clauses.
+
+17
+00:01:01,415 --> 00:01:06,430
+ So the new variables for C are distinct from the new variables for any other clause.
+
+18
+00:01:06,430 --> 00:01:09,410
+ So we can set these variables however you want with respect
+
+19
+00:01:09,410 --> 00:01:12,825
+ to C and this won't affect any other clauses.
+
+20
+00:01:12,825 --> 00:01:17,070
+ And what we saw before is that there is an assignment to these K minus
+
+21
+00:01:17,070 --> 00:01:21,850
+ three new variables so that this new formulas C prime is satisfied.
+
+22
+00:01:21,850 --> 00:01:25,315
+ In particular, we took the first literal was satisfied in C,
+
+23
+00:01:25,315 --> 00:01:29,055
+ call it Ai and then we set the first Ai minus
+
+24
+00:01:29,055 --> 00:01:34,285
+ 2 new variables to true and the remaining new variables to false.
+
+25
+00:01:34,285 --> 00:01:37,020
+ And we show that that satisfied C prime.
+
+26
+00:01:37,020 --> 00:01:39,420
+ Now let's look at the reversed implication.
+
+27
+00:01:39,420 --> 00:01:42,135
+ Let's take a satisfying assignment for f prime.
+
+28
+00:01:42,135 --> 00:01:46,080
+ And we want to ignore the assignment for the new variables and show that
+
+29
+00:01:46,080 --> 00:01:50,100
+ this assignment for the original n variable satisfies f. Consider
+
+30
+00:01:50,100 --> 00:01:54,870
+ a sequence of clauses corresponding to sum C prime in f. What we saw
+
+31
+00:01:54,870 --> 00:02:01,590
+ before is that at least one of the literals in the original clause C must be satisfied.
+
+32
+00:02:01,590 --> 00:02:05,760
+ If all of these literals in the original clause were set to false then
+
+33
+00:02:05,760 --> 00:02:09,890
+ there would be no way to satisfy this sequence of clauses C prime.
+
+34
+00:02:09,890 --> 00:02:11,988
+ So therefore we can ignore the setting on
+
+35
+00:02:11,988 --> 00:02:16,200
+ the new variables and just looking at the setting on the original n variables.
+
+36
+00:02:16,200 --> 00:02:16,200
+ That's going to satisfy each of the clauses in the original formula f.
+

@@ -1,0 +1,84 @@
+1
+00:00:00,000 --> 00:00:04,410
+ Recall, our goal is to compute A x B x C x D. Now,
+
+2
+00:00:04,410 --> 00:00:06,785
+ matrix multiplication is associative.
+
+3
+00:00:06,785 --> 00:00:08,387
+ So, there are many ways to compute them.
+
+4
+00:00:08,387 --> 00:00:11,380
+ The standard ways to compute A x B.
+
+5
+00:00:11,380 --> 00:00:13,650
+ Take that product, x C,
+
+6
+00:00:13,650 --> 00:00:17,475
+ take that product, x D. But there are other things we can do.
+
+7
+00:00:17,475 --> 00:00:20,580
+ For instance, we can do A x B first,
+
+8
+00:00:20,580 --> 00:00:22,630
+ then we can do C x D second,
+
+9
+00:00:22,630 --> 00:00:26,050
+ and then we can multiply these two together.
+
+10
+00:00:26,050 --> 00:00:28,690
+ Or we can start with B x C,
+
+11
+00:00:28,690 --> 00:00:31,060
+ multiply that with A, and finally,
+
+12
+00:00:31,060 --> 00:00:34,895
+ multiply that with D. Or you start with C x D,
+
+13
+00:00:34,895 --> 00:00:38,890
+ multiply that with B, finally multiply that with A.
+
+14
+00:00:38,890 --> 00:00:40,640
+ Which of these is best?
+
+15
+00:00:40,640 --> 00:00:42,200
+ That's what we want to determine.
+
+16
+00:00:42,200 --> 00:00:47,825
+ Which is the best or what is the cost of the optimal parenthesization.
+
+17
+00:00:47,825 --> 00:00:49,400
+ In order to figure out which is
+
+18
+00:00:49,400 --> 00:00:53,540
+ the best or most efficient method for computing the product of these matrices,
+
+19
+00:00:53,540 --> 00:00:57,185
+ we need to assign a cost for each of these operations.
+
+20
+00:00:57,185 --> 00:00:59,720
+ So, let's take a look again at matrix multiplication and then we
+
+21
+00:00:59,720 --> 00:00:59,720
+ can figure out a reasonable notion of cost.
+

@@ -1,0 +1,168 @@
+1
+00:00:00,000 --> 00:00:03,120
+ Let's first prove that the existence of a saturating flow
+
+2
+00:00:03,120 --> 00:00:06,690
+ G prime implies the existence of a feasible flow
+
+3
+00:00:06,690 --> 00:00:09,150
+ in G. So what we're going to do is we're going to take
+
+4
+00:00:09,150 --> 00:00:13,300
+ a saturating flow F prime in this graph G prime that we constructed,
+
+5
+00:00:13,300 --> 00:00:17,070
+ and we're going to use that to construct the feasible flow F in
+
+6
+00:00:17,070 --> 00:00:21,330
+ the original flow network G. Now the construction is quite straightforward.
+
+7
+00:00:21,330 --> 00:00:24,105
+ Recall that the capacities in G prime,
+
+8
+00:00:24,105 --> 00:00:25,965
+ where the capacities in G,
+
+9
+00:00:25,965 --> 00:00:29,040
+ shifted by the demand D. So,
+
+10
+00:00:29,040 --> 00:00:35,515
+ we're going to let the flow in G be equal to the flow in G prime, plus the demand.
+
+11
+00:00:35,515 --> 00:00:38,325
+ So if we had zero flow in G prime,
+
+12
+00:00:38,325 --> 00:00:41,280
+ then we'll have the minimum flow possible in G,
+
+13
+00:00:41,280 --> 00:00:44,280
+ which is the demand D of E. And if we send,
+
+14
+00:00:44,280 --> 00:00:47,990
+ say two units of flow in G prime along this edge E,
+
+15
+00:00:47,990 --> 00:00:51,285
+ then will send two plus the demand along
+
+16
+00:00:51,285 --> 00:00:55,560
+ the edge E in the graph G. Now there's two things we need to check.
+
+17
+00:00:55,560 --> 00:00:58,020
+ We need to check that F is a valid flow.
+
+18
+00:00:58,020 --> 00:01:00,870
+ So for all the internal vertices in this graph G,
+
+19
+00:01:00,870 --> 00:01:04,285
+ the flow in has to equal the flow out, and to be valid,
+
+20
+00:01:04,285 --> 00:01:07,520
+ we need that to flow along an edge is in most the capacity,
+
+21
+00:01:07,520 --> 00:01:11,060
+ and additionally, we need to check that F is a feasible flow.
+
+22
+00:01:11,060 --> 00:01:13,875
+ That means it satisfies all the demand constraints.
+
+23
+00:01:13,875 --> 00:01:15,870
+ Let's start with the second condition.
+
+24
+00:01:15,870 --> 00:01:18,130
+ Let's check that F is a feasible flow.
+
+25
+00:01:18,130 --> 00:01:19,925
+ Now F prime is a flow.
+
+26
+00:01:19,925 --> 00:01:22,570
+ What does that mean for the flow along a particular edge E?
+
+27
+00:01:22,570 --> 00:01:24,440
+ It's got to be non-negative.
+
+28
+00:01:24,440 --> 00:01:27,765
+ So what does that imply about this flow F that we just constructed?
+
+29
+00:01:27,765 --> 00:01:31,205
+ Well then the flow F along the edge E is
+
+30
+00:01:31,205 --> 00:01:35,490
+ at least D of E. Zero flow corresponds to D of E flow,
+
+31
+00:01:35,490 --> 00:01:37,740
+ and since the flow is now-negative,
+
+32
+00:01:37,740 --> 00:01:41,490
+ that means these flows F satisfy the demand constraints,
+
+33
+00:01:41,490 --> 00:01:42,795
+ so F is feasible.
+
+34
+00:01:42,795 --> 00:01:45,360
+ While we're at it, let's look at the capacity constraints,
+
+35
+00:01:45,360 --> 00:01:47,145
+ the upper bound on these flows.
+
+36
+00:01:47,145 --> 00:01:53,068
+ We know this flow is at most C prime E along the edge E. That implies that the flow F
+
+37
+00:01:53,068 --> 00:01:59,205
+ along this edge E is at most C prime of E plus demand E. Recall,
+
+38
+00:01:59,205 --> 00:02:04,890
+ C prime of E was defined as C of E minus the demand long E. Therefore,
+
+39
+00:02:04,890 --> 00:02:08,580
+ this quantity equals the capacity along the edge in the original network
+
+40
+00:02:08,580 --> 00:02:12,300
+ G. So this flow F that we constructed,
+
+41
+00:02:12,300 --> 00:02:16,205
+ satisfies demand constraints and satisfies the capacity constraints.
+
+42
+00:02:16,205 --> 00:02:16,205
+ So all that remains is to check that the flow in to every vertex equals the flow out.
+

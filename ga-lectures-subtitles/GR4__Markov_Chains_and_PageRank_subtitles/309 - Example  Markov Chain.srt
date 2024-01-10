@@ -1,0 +1,216 @@
+1
+00:00:00,000 --> 00:00:03,485
+ Now, this directed graph is an example of a Markov Chain.
+
+2
+00:00:03,485 --> 00:00:06,240
+ Now this example is meant to illustrate your state of being
+
+3
+00:00:06,240 --> 00:00:09,420
+ at various times while sitting in CS 6210.
+
+4
+00:00:09,420 --> 00:00:13,740
+ It certainly doesn't illustrate 6505 since we have this sleep here.
+
+5
+00:00:13,740 --> 00:00:15,660
+ Now we think a discretizing time.
+
+6
+00:00:15,660 --> 00:00:20,510
+ So that the time is a parameter t which goes from zero, one, two.
+
+7
+00:00:20,510 --> 00:00:22,040
+ It has integer values.
+
+8
+00:00:22,040 --> 00:00:26,530
+ You can think of the time as being like the time in seconds or the time in minutes.
+
+9
+00:00:26,530 --> 00:00:30,705
+ Now for this particular example there are four possible states at each time.
+
+10
+00:00:30,705 --> 00:00:34,260
+ You can be listening to Kishore, you can be sleeping,
+
+11
+00:00:34,260 --> 00:00:38,580
+ you can be checking your email or you can be playing this video game StarCraft.
+
+12
+00:00:38,580 --> 00:00:43,200
+ So each vertex in this directed graph corresponds to a state of the Markov Chain.
+
+13
+00:00:43,200 --> 00:00:46,050
+ So there's a Markov Chain has four possible states.
+
+14
+00:00:46,050 --> 00:00:48,675
+ Now the edges of this directed graph have weights.
+
+15
+00:00:48,675 --> 00:00:52,475
+ The weights correspond to the probability of a transition.
+
+16
+00:00:52,475 --> 00:00:54,930
+ So the weight of the edge is between say,
+
+17
+00:00:54,930 --> 00:00:58,860
+ checking email and StarCraft is the probability of changing
+
+18
+00:00:58,860 --> 00:01:04,705
+ from checking email at time t to playing Starcraft at time t plus one.
+
+19
+00:01:04,705 --> 00:01:06,975
+ So let's say I'm checking email at times zero.
+
+20
+00:01:06,975 --> 00:01:08,430
+ Then at time one,
+
+21
+00:01:08,430 --> 00:01:11,010
+ with probability point three I'll be sleeping,
+
+22
+00:01:11,010 --> 00:01:14,400
+ with probability point five I'll be playing Starcraft,
+
+23
+00:01:14,400 --> 00:01:17,880
+ and with probability point two I'll be listening to Kishore.
+
+24
+00:01:17,880 --> 00:01:23,125
+ Similarly, if I'm listening to Kishore at some time t then at time t plus one with
+
+25
+00:01:23,125 --> 00:01:25,770
+ probability point five I'll be listening to Kishore
+
+26
+00:01:25,770 --> 00:01:29,480
+ again and with probability point five I'll be checking email.
+
+27
+00:01:29,480 --> 00:01:31,470
+ So in general, a Markov Chain is defined by
+
+28
+00:01:31,470 --> 00:01:35,760
+ a directed graph and one key thing is that this directed graph might have self loops.
+
+29
+00:01:35,760 --> 00:01:38,190
+ For instance, if I'm listening to Kishore at time
+
+30
+00:01:38,190 --> 00:01:42,740
+ t then with probability point five I'm listening to Kishore at time t plus one.
+
+31
+00:01:42,740 --> 00:01:45,005
+ Now notice that the out edges out of each vertex
+
+32
+00:01:45,005 --> 00:01:49,050
+ to find the probability distribution for the next state.
+
+33
+00:01:49,050 --> 00:01:50,400
+ So if I'm checking email at time
+
+34
+00:01:50,400 --> 00:01:53,715
+ t then I'm listening to Kishore with probability point two,
+
+35
+00:01:53,715 --> 00:01:55,935
+ sleeping with probability point three,
+
+36
+00:01:55,935 --> 00:01:59,920
+ and playing Starcraft with probability point five in the next time-step.
+
+37
+00:01:59,920 --> 00:02:03,840
+ Notice that these edge weights point two plus point three plus point
+
+38
+00:02:03,840 --> 00:02:09,320
+ five have to sum up to one because this is a probability distribution for the next state.
+
+39
+00:02:09,320 --> 00:02:11,040
+ So for every state i,
+
+40
+00:02:11,040 --> 00:02:14,310
+ in this case i equals check e-mail,
+
+41
+00:02:14,310 --> 00:02:16,215
+ if I sum over the out edges,
+
+42
+00:02:16,215 --> 00:02:20,065
+ so I sum over the weights of these out edges, this is P(i,j).
+
+43
+00:02:20,065 --> 00:02:21,355
+ Then, what do these some to?
+
+44
+00:02:21,355 --> 00:02:23,340
+ They have to sum up to one because this is
+
+45
+00:02:23,340 --> 00:02:26,220
+ a probability distribution for the next state given I'm
+
+46
+00:02:26,220 --> 00:02:31,675
+ in state i at time t then I'm going to be in state j at time t plus one.
+
+47
+00:02:31,675 --> 00:02:33,690
+ Also, what are valid edge weights?
+
+48
+00:02:33,690 --> 00:02:35,895
+ Will these correspond to probabilities?
+
+49
+00:02:35,895 --> 00:02:38,815
+ Probabilities have to be between zero and one.
+
+50
+00:02:38,815 --> 00:02:41,105
+ So all the edge weights are between zero and one.
+
+51
+00:02:41,105 --> 00:02:45,060
+ You give me any directed graph with edge weights between zero and one,
+
+52
+00:02:45,060 --> 00:02:47,015
+ that defines a Markov Chain.
+
+53
+00:02:47,015 --> 00:02:49,230
+ And similarly, any Markov Chain can be
+
+54
+00:02:49,230 --> 00:02:49,230
+ viewed as a directed graph with these edge weights.
+

@@ -1,0 +1,76 @@
+1
+00:00:00,000 --> 00:00:02,160
+ Let's take a look at this algorithm for a moment.
+
+2
+00:00:02,160 --> 00:00:07,155
+ Often, when we get a solution which uses a two or three dimensional table,
+
+3
+00:00:07,155 --> 00:00:11,325
+ it's useful to look at it and see if we can simplify it to get a smaller table.
+
+4
+00:00:11,325 --> 00:00:17,110
+ And we might get a faster or less space or just a simpler solution.
+
+5
+00:00:17,110 --> 00:00:19,615
+ Okay? And that's what we're going to try to do here.
+
+6
+00:00:19,615 --> 00:00:21,870
+ So, look at our solution here.
+
+7
+00:00:21,870 --> 00:00:24,730
+ Now, why do we have this parameter i?
+
+8
+00:00:24,730 --> 00:00:29,835
+ The point of the parameter i in the original version of the knapsack problem,
+
+9
+00:00:29,835 --> 00:00:33,525
+ was to keep track of which objects we've considered or not.
+
+10
+00:00:33,525 --> 00:00:35,640
+ So, after we consider object i,
+
+11
+00:00:35,640 --> 00:00:40,885
+ then we can look at the first i minus 1 objects and look at a subset of those.
+
+12
+00:00:40,885 --> 00:00:42,735
+ But in this version of knapsack,
+
+13
+00:00:42,735 --> 00:00:45,425
+ we're allowed to use the object multiple times.
+
+14
+00:00:45,425 --> 00:00:50,865
+ So actually, it's not at all clear that we need to consider this parameter i.
+
+15
+00:00:50,865 --> 00:00:53,670
+ And in fact, we can get rid of it.
+
+16
+00:00:53,670 --> 00:00:57,520
+ So, let's write a new version of knapsack solution which,
+
+17
+00:00:57,520 --> 00:01:01,310
+ for this version, we're only going to have a single parameter.
+
+18
+00:01:01,310 --> 00:01:05,390
+ So, we'll just have a parameter for the weight available and we'll
+
+19
+00:01:05,390 --> 00:01:05,390
+ drop this parameter for the subset of objects that we consider.
+

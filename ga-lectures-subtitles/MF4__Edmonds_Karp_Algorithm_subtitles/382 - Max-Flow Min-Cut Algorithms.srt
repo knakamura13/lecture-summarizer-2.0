@@ -1,0 +1,112 @@
+1
+00:00:00,000 --> 00:00:04,230
+ Now we've seen the Ford-Fulkerson algorithm for solving the max-flow problem.
+
+2
+00:00:04,230 --> 00:00:05,640
+ And in this lecture, we'll look at
+
+3
+00:00:05,640 --> 00:00:08,850
+ the Edmonds-Karp algorithm for solving the max-flow problem.
+
+4
+00:00:08,850 --> 00:00:10,860
+ Before we dive into the Edmonds-Karp algorithm,
+
+5
+00:00:10,860 --> 00:00:13,600
+ let's do a quick contrast of the two algorithms.
+
+6
+00:00:13,600 --> 00:00:14,750
+ Now in the Ford-Fulkerson algorithm,
+
+7
+00:00:14,750 --> 00:00:18,090
+ the main step is to find augmenting paths which
+
+8
+00:00:18,090 --> 00:00:21,840
+ are paths from S to T in the residual graph and to do that,
+
+9
+00:00:21,840 --> 00:00:24,320
+ we either use DFS or BFS.
+
+10
+00:00:24,320 --> 00:00:26,880
+ Now the running time of Ford-Fulkerson algorithm is order M*C,
+
+11
+00:00:26,880 --> 00:00:29,880
+ and recall capital C,
+
+12
+00:00:29,880 --> 00:00:31,440
+ is the size of the max-flow.
+
+13
+00:00:31,440 --> 00:00:36,465
+ And recall that this running time analysis assume that the capacities are integer value.
+
+14
+00:00:36,465 --> 00:00:40,940
+ Now in contrast, Edmonds-Karp finds augmenting paths using BFS.
+
+15
+00:00:40,940 --> 00:00:44,685
+ So Edmonds-Karp algorithm is an example of a Ford-Fulkerson algorithm.
+
+16
+00:00:44,685 --> 00:00:47,730
+ Does the running time analysis for Ford-Fulkerson algorithms still
+
+17
+00:00:47,730 --> 00:00:51,305
+ applies to Edmonds-Karp algorithm when we assume integer capacities?
+
+18
+00:00:51,305 --> 00:00:55,152
+ But in fact, we can often make a stronger guarantee on the running time.
+
+19
+00:00:55,152 --> 00:00:57,910
+ We'll prove that the running time is order m-squared n,
+
+20
+00:00:57,910 --> 00:01:00,840
+ and this doesn't require that the capacities are integer values.
+
+21
+00:01:00,840 --> 00:01:02,970
+ We have no assumptions on the capacities other than,
+
+22
+00:01:02,970 --> 00:01:04,750
+ of course, that they're positive valued.
+
+23
+00:01:04,750 --> 00:01:06,360
+ Now the algorithms are quite similar,
+
+24
+00:01:06,360 --> 00:01:07,590
+ so we'll give a quick recap with
+
+25
+00:01:07,590 --> 00:01:09,600
+ a Ford-Fulkerson algorithm and then we'll
+
+26
+00:01:09,600 --> 00:01:12,165
+ point out the differences in the Edmonds-Karp algorithm.
+
+27
+00:01:12,165 --> 00:01:13,680
+ And then afterwards, we'll dive into
+
+28
+00:01:13,680 --> 00:01:13,680
+ the running time analysis for the Edmonds-Karp algorithm.
+

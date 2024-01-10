@@ -1,0 +1,32 @@
+1
+00:00:00,000 --> 00:00:05,630
+ The input to the SAT problem is a formula f in conjunctive normal form,
+
+2
+00:00:05,630 --> 00:00:08,150
+ which is composed of n variables;
+
+3
+00:00:08,150 --> 00:00:11,490
+ x1 through xn, and m clauses.
+
+4
+00:00:11,490 --> 00:00:14,885
+ The output is a satisfying assignment if one exists.
+
+5
+00:00:14,885 --> 00:00:17,020
+ This is an assignment of true or false to each of
+
+6
+00:00:17,020 --> 00:00:21,010
+ the variables so that the formula evaluates to true.
+
+7
+00:00:21,010 --> 00:00:22,585
+ Now if there is no satisfying assignment,
+
+8
+00:00:22,585 --> 00:00:22,585
+ no assignment where the formula evaluates true, then we output no.
+

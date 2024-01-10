@@ -1,0 +1,100 @@
+1
+00:00:00,000 --> 00:00:02,560
+ Let's first look at the proof for the diagonal entries.
+
+2
+00:00:02,560 --> 00:00:05,515
+ So let's look at the product of these two matrices,
+
+3
+00:00:05,515 --> 00:00:10,790
+ capital M parameterized by omega sub n inverse
+
+4
+00:00:10,790 --> 00:00:13,130
+ and capital M parameterized by
+
+5
+00:00:13,130 --> 00:00:16,345
+ omega sub n. And we want to show that the diagonal entries,
+
+6
+00:00:16,345 --> 00:00:20,315
+ so the entries k, k equal n. First off,
+
+7
+00:00:20,315 --> 00:00:23,340
+ let's recall what this matrix capital M is.
+
+8
+00:00:23,340 --> 00:00:28,305
+ So capital M parameterized by omega sub n is this matrix.
+
+9
+00:00:28,305 --> 00:00:31,245
+ This is what we saw before when we analyzed FFT.
+
+10
+00:00:31,245 --> 00:00:36,110
+ Now this matrix capital M parameterized by omega sub n inverse is
+
+11
+00:00:36,110 --> 00:00:41,920
+ just this same matrix with omega sub n replaced by omega sub n to the negative 1.
+
+12
+00:00:41,920 --> 00:00:43,550
+ So we get this matrix here.
+
+13
+00:00:43,550 --> 00:00:45,030
+ Now we're looking at the entry k,
+
+14
+00:00:45,030 --> 00:00:49,615
+ k. So when you take the kth row and the kth column.
+
+15
+00:00:49,615 --> 00:00:53,150
+ The kth row of this matrix is the vector
+
+16
+00:00:53,150 --> 00:00:58,400
+ 1 omega sub n to the negative k and then powers up to
+
+17
+00:00:58,400 --> 00:01:02,480
+ omega sub n to the negative n minus 1 times k.
+
+18
+00:01:02,480 --> 00:01:07,430
+ The kth column of this matrix is this vector the entry k,
+
+19
+00:01:07,430 --> 00:01:12,105
+ k in the product matrix is the dot product of these two vectors.
+
+20
+00:01:12,105 --> 00:01:17,070
+ First term is one and then we do omega sub n to negative k times
+
+21
+00:01:17,070 --> 00:01:23,600
+ omega sub n to the k. This is the same as omega sub n to the 0, which is 1.
+
+22
+00:01:23,600 --> 00:01:25,570
+ So this term is 1.
+
+23
+00:01:25,570 --> 00:01:27,935
+ And similarly the third term is also 1.
+
+24
+00:01:27,935 --> 00:01:31,250
+ All the terms are 1. How many terms are there?
+
+25
+00:01:31,250 --> 00:01:31,250
+ There's n terms. So we get n. So we proved what we want for the diagonal entry.
+

@@ -1,0 +1,72 @@
+1
+00:00:00,000 --> 00:00:02,725
+ Let's get some practice writing the dual LP.
+
+2
+00:00:02,725 --> 00:00:07,800
+ Here's a simple example LP with three variables: x_1, x_2, and x_3.
+
+3
+00:00:07,800 --> 00:00:14,555
+ The objective function is to maximize five times x_1 minus 7x_2 plus 2x_3.
+
+4
+00:00:14,555 --> 00:00:16,265
+ There are two constraints.
+
+5
+00:00:16,265 --> 00:00:21,035
+ The first constraint is that x_1 plus x_2 minus 4x_3 is in most one.
+
+6
+00:00:21,035 --> 00:00:25,710
+ The second constraint is that 2x_1 minus x_2 is at least three.
+
+7
+00:00:25,710 --> 00:00:28,890
+ And, finally, there's the non-negativity constraint x_1,
+
+8
+00:00:28,890 --> 00:00:30,895
+ x_2, and x_3 are at least zero.
+
+9
+00:00:30,895 --> 00:00:32,325
+ For this primal LP,
+
+10
+00:00:32,325 --> 00:00:34,275
+ what is its dual LP?
+
+11
+00:00:34,275 --> 00:00:36,040
+ Now, let's break it up into several parts,
+
+12
+00:00:36,040 --> 00:00:37,715
+ then do it more slowly.
+
+13
+00:00:37,715 --> 00:00:41,470
+ The first question is: how many variables are in this dual LP?
+
+14
+00:00:41,470 --> 00:00:45,010
+ And the second question is: how many constraints in this dual LP?
+
+15
+00:00:45,010 --> 00:00:48,584
+ And by constraints we're not counting the non-negativity constraints,
+
+16
+00:00:48,584 --> 00:00:50,475
+ so this one has two constraints.
+
+17
+00:00:50,475 --> 00:00:52,890
+ So, let's first address these two questions and
+
+18
+00:00:52,890 --> 00:00:52,890
+ then we'll address the details of the dual LP.
+

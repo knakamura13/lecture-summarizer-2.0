@@ -1,0 +1,312 @@
+1
+00:00:00,000 --> 00:00:02,940
+ To summarize, K of i is the max value we can
+
+2
+00:00:02,940 --> 00:00:06,270
+ obtain using a subset of the first i objects.
+
+3
+00:00:06,270 --> 00:00:09,885
+ And we're trying to find a recurrence which expresses K of i,
+
+4
+00:00:09,885 --> 00:00:14,530
+ the solution to the i's subproblem in terms of smaller subproblems.
+
+5
+00:00:14,530 --> 00:00:16,860
+ So let's go back and look at our earlier example and see if we
+
+6
+00:00:16,860 --> 00:00:19,590
+ get some idea for a recursive relation.
+
+7
+00:00:19,590 --> 00:00:25,020
+ In our earlier example, the objects had values 15, the object 1,
+
+8
+00:00:25,020 --> 00:00:27,300
+ 10, the object 2,
+
+9
+00:00:27,300 --> 00:00:31,500
+ 8 for object 3 and, 1 for object 4.
+
+10
+00:00:31,500 --> 00:00:39,620
+ And their weights were 15, 12, and 5.
+
+11
+00:00:39,620 --> 00:00:42,050
+ Now, let's look at this one dimensional table K
+
+12
+00:00:42,050 --> 00:00:45,665
+ that we're trying to find a recursive relation for.
+
+13
+00:00:45,665 --> 00:00:48,145
+ Now let's look at our one dimensional table K,
+
+14
+00:00:48,145 --> 00:00:51,620
+ in this example and see if we can figure out a recursive relation for
+
+15
+00:00:51,620 --> 00:00:55,670
+ the solutions of K of i in terms of smaller subproblems.
+
+16
+00:00:55,670 --> 00:00:57,830
+ So let's fill it in for this example.
+
+17
+00:00:57,830 --> 00:00:59,580
+ Let's start with K-1.
+
+18
+00:00:59,580 --> 00:01:03,290
+ In this case we're looking at a subset of object 1.
+
+19
+00:01:03,290 --> 00:01:06,515
+ So either we use object 1 or we use the empty set.
+
+20
+00:01:06,515 --> 00:01:12,895
+ Clearly using object 1 is better because it fits in a backpack and has total value 15.
+
+21
+00:01:12,895 --> 00:01:15,650
+ So K of 1 is 15. In this case.
+
+22
+00:01:15,650 --> 00:01:18,680
+ Now let's look at K of two, i equals two.
+
+23
+00:01:18,680 --> 00:01:21,735
+ In this case we're looking at a subset of objects 1 and 2.
+
+24
+00:01:21,735 --> 00:01:26,515
+ So either we use both objects in this case they have total weight 27.
+
+25
+00:01:26,515 --> 00:01:29,230
+ So they don't fit in the backpack so we can't use both objects.
+
+26
+00:01:29,230 --> 00:01:32,010
+ We can use either object 1 or object 2 or neither.
+
+27
+00:01:32,010 --> 00:01:36,120
+ And in this case in this example it's better to use object 1.
+
+28
+00:01:36,120 --> 00:01:37,635
+ Now let's go to i equals 3.
+
+29
+00:01:37,635 --> 00:01:40,585
+ What's the optimal solution for i equals 3.
+
+30
+00:01:40,585 --> 00:01:44,610
+ Well in this case we want to use objects 2 and 3.
+
+31
+00:01:44,610 --> 00:01:46,500
+ They have total weight 22.
+
+32
+00:01:46,500 --> 00:01:49,730
+ And this is our optimal solution to the entire problem as we saw
+
+33
+00:01:49,730 --> 00:01:53,780
+ before and that has total value which is a team.
+
+34
+00:01:53,780 --> 00:01:56,810
+ Now note this solution is obtained by using
+
+35
+00:01:56,810 --> 00:02:01,295
+ subsets 2 and 3 whereas our earlier subproblems,
+
+36
+00:02:01,295 --> 00:02:03,825
+ their solution was obtained by using object 1 only.
+
+37
+00:02:03,825 --> 00:02:07,670
+ Now the question is can we obtain this K of 3
+
+38
+00:02:07,670 --> 00:02:12,140
+ which in this case is 18 using K of 1 and K of 2.
+
+39
+00:02:12,140 --> 00:02:19,155
+ But K of 3 is obtained by taking a sub optimal solution to i equals 2.
+
+40
+00:02:19,155 --> 00:02:21,620
+ We don't want to use the optimal solution because that doesn't allow
+
+41
+00:02:21,620 --> 00:02:24,480
+ us to add in object 3 into the backpack.
+
+42
+00:02:24,480 --> 00:02:27,080
+ There's not enough spare capacity available so
+
+43
+00:02:27,080 --> 00:02:29,890
+ we need to take a sub optimal solution to i equals 2.
+
+44
+00:02:29,890 --> 00:02:33,045
+ The key is that that sub optimal solution to
+
+45
+00:02:33,045 --> 00:02:38,465
+ i equals 2 has enough spare capacity to allow us to add in object 3.
+
+46
+00:02:38,465 --> 00:02:41,519
+ What we really want to do is we want to take the optimal solution to i
+
+47
+00:02:41,519 --> 00:02:45,215
+ equals 2 where the total capacity available
+
+48
+00:02:45,215 --> 00:02:47,300
+ is in most the total capacity in
+
+49
+00:02:47,300 --> 00:02:52,340
+ the original subproblem minus the weight from using object 3.
+
+50
+00:02:52,340 --> 00:02:57,965
+ If we're going to add object 3 to our solution then that takes weight W3.
+
+51
+00:02:57,965 --> 00:03:01,385
+ And then our capacity available goes down by W3.
+
+52
+00:03:01,385 --> 00:03:03,410
+ And we want to take the optimal solution to
+
+53
+00:03:03,410 --> 00:03:06,380
+ that smaller subproblem which is i equals 2 in this case
+
+54
+00:03:06,380 --> 00:03:12,335
+ and we want to look at the optimal solution with this capacity with the smaller capacity.
+
+55
+00:03:12,335 --> 00:03:15,065
+ In this case that capacity is 12.
+
+56
+00:03:15,065 --> 00:03:19,130
+ And if we take the optimal solution for i equals 2 with total capacity
+
+57
+00:03:19,130 --> 00:03:24,515
+ 12 than object 1 no longer fits and only object 2 fits in there.
+
+58
+00:03:24,515 --> 00:03:27,560
+ So the optimal solution will be just using object
+
+59
+00:03:27,560 --> 00:03:31,430
+ 2 and add the total value we obtain from that is 10.
+
+60
+00:03:31,430 --> 00:03:36,080
+ So this will have total value 10 and therefore we can append on object
+
+61
+00:03:36,080 --> 00:03:41,790
+ 3 onto it and we get the solution 2 and 3 and we get the total value 18.
+
+62
+00:03:41,790 --> 00:03:46,845
+ What we see from this example is that this definition of the subproblem does not suffice.
+
+63
+00:03:46,845 --> 00:03:52,505
+ We're not able to express K of 3 in terms of K-1 and K-2
+
+64
+00:03:52,505 --> 00:03:55,400
+ because the solution to K of
+
+65
+00:03:55,400 --> 00:03:58,960
+ 3 does not y- build upon the solution to K- i equals 1 and 1 equals 2.
+
+66
+00:03:58,960 --> 00:04:06,025
+ Instead it uses a sub optimal solution 2, i equals 2.
+
+67
+00:04:06,025 --> 00:04:07,460
+ What is that suboptimal solution?
+
+68
+00:04:07,460 --> 00:04:11,330
+ That suboptimal solution has limited capacity available.
+
+69
+00:04:11,330 --> 00:04:15,260
+ It has limited capacity available in order to allow us to later
+
+70
+00:04:15,260 --> 00:04:19,760
+ add in object 3 and obtain a better solution for i equals 3.
+
+71
+00:04:19,760 --> 00:04:22,730
+ This points us in the right direction because what we need to do is limit
+
+72
+00:04:22,730 --> 00:04:26,225
+ the capacity available for these subproblems.
+
+73
+00:04:26,225 --> 00:04:29,405
+ So in some sense we want to take a prefix of the objects,
+
+74
+00:04:29,405 --> 00:04:34,640
+ 1 through i, and we want to take a prefix of the capacity available.
+
+75
+00:04:34,640 --> 00:04:37,055
+ This is going to lead us to our second attempt for
+
+76
+00:04:37,055 --> 00:04:40,760
+ the design of a dynamic programming algorithm for this problem.
+
+77
+00:04:40,760 --> 00:04:43,760
+ We're going to define the subproblems so that it considers a prefix of
+
+78
+00:04:43,760 --> 00:04:43,760
+ the objects and it varies the capacity available.
+

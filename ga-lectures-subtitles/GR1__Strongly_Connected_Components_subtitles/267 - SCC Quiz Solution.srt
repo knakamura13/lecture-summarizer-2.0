@@ -1,0 +1,128 @@
+1
+00:00:00,000 --> 00:00:02,845
+ In this graph, there are five strongly connected components.
+
+2
+00:00:02,845 --> 00:00:04,500
+ Let's go ahead and mark them.
+
+3
+00:00:04,500 --> 00:00:07,345
+ An easy one to notice is A by itself.
+
+4
+00:00:07,345 --> 00:00:08,840
+ Notice that from vertex A,
+
+5
+00:00:08,840 --> 00:00:12,270
+ I can reach many other vertices but no other vertices can reach A,
+
+6
+00:00:12,270 --> 00:00:15,285
+ so A is not strongly connected to any other vertices,
+
+7
+00:00:15,285 --> 00:00:19,290
+ therefore A is a strongly connected component by itself.
+
+8
+00:00:19,290 --> 00:00:22,315
+ These five vertices form a strongly connected component.
+
+9
+00:00:22,315 --> 00:00:27,105
+ Notice that all five vertices are strongly connected with each other, in particular,
+
+10
+00:00:27,105 --> 00:00:29,180
+ from vertex J, I can reach all of
+
+11
+00:00:29,180 --> 00:00:34,105
+ the other vertices and all the other vertices can reach vertex A via I.
+
+12
+00:00:34,105 --> 00:00:38,155
+ Similarly, these three vertices form a strongly connected component.
+
+13
+00:00:38,155 --> 00:00:42,360
+ These two vertices B and E form a strongly connected component and D is
+
+14
+00:00:42,360 --> 00:00:47,070
+ by itself because other vertices can reach D but D can't reach anybody else.
+
+15
+00:00:47,070 --> 00:00:49,479
+ So I have these five strongly connected components,
+
+16
+00:00:49,479 --> 00:00:52,650
+ A by itself, B and E, C, F,
+
+17
+00:00:52,650 --> 00:00:55,590
+ G, D by itself and then H,
+
+18
+00:00:55,590 --> 00:00:58,302
+ I, J, K, L are together.
+
+19
+00:00:58,302 --> 00:01:00,180
+ I want to point out some interesting properties of
+
+20
+00:01:00,180 --> 00:01:04,493
+ strongly connected components so I want to look at this graph on five vertices.
+
+21
+00:01:04,493 --> 00:01:07,945
+ I'm going to make a meta vertex for each strongly connected component.
+
+22
+00:01:07,945 --> 00:01:10,365
+ So when I have a meta vertex for A by itself,
+
+23
+00:01:10,365 --> 00:01:12,080
+ B and E together C, F, G,
+
+24
+00:01:12,080 --> 00:01:15,765
+ D and H through L. So I'm going to think of
+
+25
+00:01:15,765 --> 00:01:19,770
+ compressing each of these purple blobs into a vertex,
+
+26
+00:01:19,770 --> 00:01:22,530
+ a meta vertex and then there's going to be an edge from
+
+27
+00:01:22,530 --> 00:01:28,020
+ this meta vertex to this meta vertex because there is an edge from some vertex in C, F,
+
+28
+00:01:28,020 --> 00:01:33,500
+ G to some vertex in this strongly connected component namely from F to I
+
+29
+00:01:33,500 --> 00:01:35,670
+ and similarly there will be an edge between
+
+30
+00:01:35,670 --> 00:01:39,665
+ these meta vertices and these meta vertices and so on.
+
+31
+00:01:39,665 --> 00:01:42,600
+ So when we look at this graph on the meta vertices
+
+32
+00:01:42,600 --> 00:01:42,600
+ of strongly connected components we're going to see some interesting properties.
+

@@ -1,0 +1,132 @@
+1
+00:00:00,000 --> 00:00:02,605
+ Now what is this Stationery Distribution PI?
+
+2
+00:00:02,605 --> 00:00:04,842
+ Is there a nice formula for this PI?
+
+3
+00:00:04,842 --> 00:00:08,100
+ In general no but in some cases yes, there is.
+
+4
+00:00:08,100 --> 00:00:11,555
+ A simple case is when P is symmetric, what does this mean?
+
+5
+00:00:11,555 --> 00:00:15,955
+ That means the entry p_i_j is equal to the entry p_j_i.
+
+6
+00:00:15,955 --> 00:00:19,035
+ So if I look at row I and column J,
+
+7
+00:00:19,035 --> 00:00:21,600
+ the probability of going from I to J,
+
+8
+00:00:21,600 --> 00:00:24,785
+ is the same as the probability of going from J to I,
+
+9
+00:00:24,785 --> 00:00:28,405
+ if that's the case then PI is the uniform distribution.
+
+10
+00:00:28,405 --> 00:00:30,980
+ PI of I is one over N for all I.
+
+11
+00:00:30,980 --> 00:00:32,625
+ Now that's the simplest case,
+
+12
+00:00:32,625 --> 00:00:34,855
+ a generalization is known as reversibility.
+
+13
+00:00:34,855 --> 00:00:37,125
+ It's kind of a weighted version of symmetry,
+
+14
+00:00:37,125 --> 00:00:42,300
+ in which case PI is not necessarily uniform but we can still figure out the PI easily.
+
+15
+00:00:42,300 --> 00:00:44,505
+ But what reversibility requires is that,
+
+16
+00:00:44,505 --> 00:00:49,095
+ if there's an edge from I to J then there has to be edge from J to I.
+
+17
+00:00:49,095 --> 00:00:52,780
+ Now symmetry says that these probabilities are the same.
+
+18
+00:00:52,780 --> 00:00:54,435
+ We don't necessarily need them to be the same
+
+19
+00:00:54,435 --> 00:00:56,610
+ but we need that if there's an edge from I to J,
+
+20
+00:00:56,610 --> 00:00:59,685
+ then there's an edge from J to I and vice versa.
+
+21
+00:00:59,685 --> 00:01:03,195
+ Now this is the case, then we might be able to figure out what PI is,
+
+22
+00:01:03,195 --> 00:01:05,695
+ we might have a nice formula for what PI is.
+
+23
+00:01:05,695 --> 00:01:06,900
+ If this is not the case,
+
+24
+00:01:06,900 --> 00:01:08,960
+ so the chain is not reversible.
+
+25
+00:01:08,960 --> 00:01:13,270
+ So for instance there might be an edge from I to J but there is no edge from J to I.
+
+26
+00:01:13,270 --> 00:01:16,524
+ Then, in general we have no idea what the stationary distribution,
+
+27
+00:01:16,524 --> 00:01:19,440
+ there is no way to figure it out with a close formula.
+
+28
+00:01:19,440 --> 00:01:23,130
+ Now we can try to look at P to some high power and figure out what
+
+29
+00:01:23,130 --> 00:01:25,260
+ the stationary distribution is but we're not
+
+30
+00:01:25,260 --> 00:01:27,540
+ going to get some nice formulas such as this,
+
+31
+00:01:27,540 --> 00:01:29,235
+ for the stationary distribution.
+
+32
+00:01:29,235 --> 00:01:33,130
+ That completes our description of the introduction to Markov chains.
+
+33
+00:01:33,130 --> 00:01:33,130
+ Now we can dive into the details of the page rank algorithm.
+

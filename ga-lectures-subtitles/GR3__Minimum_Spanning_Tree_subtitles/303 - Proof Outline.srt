@@ -1,0 +1,196 @@
+1
+00:00:00,000 --> 00:00:02,660
+ Now let's outline the proof of the code property.
+
+2
+00:00:02,660 --> 00:00:04,260
+ Let's first fix a graph G,
+
+3
+00:00:04,260 --> 00:00:06,470
+ here's our running example of a graph.
+
+4
+00:00:06,470 --> 00:00:10,500
+ Let's fix the subset of edges x which are past solutions so far.
+
+5
+00:00:10,500 --> 00:00:12,105
+ These are the green edges here.
+
+6
+00:00:12,105 --> 00:00:14,890
+ Our assumption is that x is a subset of T,
+
+7
+00:00:14,890 --> 00:00:16,510
+ where T is an MST.
+
+8
+00:00:16,510 --> 00:00:19,800
+ Let's mark this tree T by the red edges.
+
+9
+00:00:19,800 --> 00:00:21,175
+ Now we don't know these red edges,
+
+10
+00:00:21,175 --> 00:00:24,090
+ we don't know this MSTT but we know there exists
+
+11
+00:00:24,090 --> 00:00:28,170
+ such a tree T. So even though our algorithm doesn't know this tree T,
+
+12
+00:00:28,170 --> 00:00:31,230
+ we can use it in the proof because we are assuming
+
+13
+00:00:31,230 --> 00:00:34,965
+ the existence of this tree T. Now in addition to this tree T,
+
+14
+00:00:34,965 --> 00:00:40,010
+ I want to fix the subset of vertices which form the cut which no edge of x crosses.
+
+15
+00:00:40,010 --> 00:00:42,780
+ So I want to fix this subset S. In this example,
+
+16
+00:00:42,780 --> 00:00:45,305
+ this is x and this is s bar.
+
+17
+00:00:45,305 --> 00:00:47,535
+ Now our assumption was that none of the green edges,
+
+18
+00:00:47,535 --> 00:00:50,800
+ none of the edges of x cross between s and s bar.
+
+19
+00:00:50,800 --> 00:00:52,860
+ Now here are the green edges once again.
+
+20
+00:00:52,860 --> 00:00:56,505
+ And notice none of these green edges cross between s and s bar.
+
+21
+00:00:56,505 --> 00:00:59,425
+ Now there are edges of T which cross between s and s bar.
+
+22
+00:00:59,425 --> 00:01:02,970
+ Now that has to happen because T as an MST, is connected.
+
+23
+00:01:02,970 --> 00:01:06,505
+ So it has to connect s to s bar. But we're just asking that
+
+24
+00:01:06,505 --> 00:01:10,610
+ no edge of the partial solution crosses between s and s bar.
+
+25
+00:01:10,610 --> 00:01:13,775
+ So no edge of x crosses s to s bar.
+
+26
+00:01:13,775 --> 00:01:17,550
+ No edge of x is part of the cut between s and s bar.
+
+27
+00:01:17,550 --> 00:01:20,910
+ Now we're going to take a particular edge e star which crosses this cut.
+
+28
+00:01:20,910 --> 00:01:22,620
+ Which edge are we allowed to choose?
+
+29
+00:01:22,620 --> 00:01:26,560
+ We're allowed to choose any edge of minimum weight across this cut.
+
+30
+00:01:26,560 --> 00:01:29,580
+ So there are four other edges crossing this cut,
+
+31
+00:01:29,580 --> 00:01:31,410
+ and our assumption is that the weight of
+
+32
+00:01:31,410 --> 00:01:35,340
+ e star is at most the weight of any of these other edges.
+
+33
+00:01:35,340 --> 00:01:36,435
+ Now they may be equal,
+
+34
+00:01:36,435 --> 00:01:42,150
+ but no other edge crossing this cut has strictly smaller weight than e star.
+
+35
+00:01:42,150 --> 00:01:44,490
+ Now finally, what's our goal in this proof?
+
+36
+00:01:44,490 --> 00:01:46,995
+ Our goal is to construct a tree T prime,
+
+37
+00:01:46,995 --> 00:01:50,505
+ where T prime is a minimal spanning tree and
+
+38
+00:01:50,505 --> 00:01:54,745
+ where x union e star are all part of T prime.
+
+39
+00:01:54,745 --> 00:01:58,180
+ So x union e star are a subset of T prime.
+
+40
+00:01:58,180 --> 00:02:00,940
+ Now how can we possibly construct this T prime?
+
+41
+00:02:00,940 --> 00:02:07,890
+ Well we have this tree T. T is an M S T and T contains the partial solution x.
+
+42
+00:02:07,890 --> 00:02:13,475
+ Now the problem is that this tree T might not contain this edge e star.
+
+43
+00:02:13,475 --> 00:02:19,745
+ For example, in this case e star is not in one of the red edges. So what do we do?
+
+44
+00:02:19,745 --> 00:02:23,990
+ Well we try to modify this tree T to construct a new tree,
+
+45
+00:02:23,990 --> 00:02:28,555
+ T prime, and we'll show that this new tree T prime is a minimal spanning tree.
+
+46
+00:02:28,555 --> 00:02:31,305
+ So the weight of T prime is at most the weight of T,
+
+47
+00:02:31,305 --> 00:02:33,090
+ actually the weights must be equal,
+
+48
+00:02:33,090 --> 00:02:37,830
+ and this new tree T prime is modified a little bit from T so
+
+49
+00:02:37,830 --> 00:02:37,830
+ that it contains e star in addition to containing the partial solution x.
+

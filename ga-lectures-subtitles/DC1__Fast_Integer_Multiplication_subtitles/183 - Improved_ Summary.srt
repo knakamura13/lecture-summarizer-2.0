@@ -1,0 +1,172 @@
+1
+00:00:00,000 --> 00:00:03,420
+ That completes the description and the analysis of our algorithm.
+
+2
+00:00:03,420 --> 00:00:04,440
+ But before we move on,
+
+3
+00:00:04,440 --> 00:00:09,220
+ I want to look at a particular example to illustrate the cleverness of the approach.
+
+4
+00:00:09,220 --> 00:00:10,435
+ So, let's take this example.
+
+5
+00:00:10,435 --> 00:00:14,210
+ X equals 182 and Y equals 154.
+
+6
+00:00:14,210 --> 00:00:19,495
+ If I write 182 in binary, it's 10110110.
+
+7
+00:00:19,495 --> 00:00:25,170
+ And 154 in binary is 10011010.
+
+8
+00:00:25,170 --> 00:00:29,730
+ Our approach breaks up X into the two halves, XL and XR.
+
+9
+00:00:29,730 --> 00:00:35,295
+ And similarly, we have YL and YR. XL is 1011,
+
+10
+00:00:35,295 --> 00:00:36,940
+ which is 11 in decimal,
+
+11
+00:00:36,940 --> 00:00:39,070
+ and XR corresponds to 6,
+
+12
+00:00:39,070 --> 00:00:42,710
+ YL corresponds to 9 and YR corresponds to 10.
+
+13
+00:00:42,710 --> 00:00:46,335
+ Now what our algorithm does is it first computes XL times YL,
+
+14
+00:00:46,335 --> 00:00:48,920
+ which is 11 times nine which is 99.
+
+15
+00:00:48,920 --> 00:00:53,220
+ Then we compute XR times YR which is 6 times 10, which is 60.
+
+16
+00:00:53,220 --> 00:00:55,545
+ Finally, we get the non-trivial weird idea.
+
+17
+00:00:55,545 --> 00:00:57,630
+ We take XL plus XR,
+
+18
+00:00:57,630 --> 00:00:59,430
+ which is 11 plus 6,
+
+19
+00:00:59,430 --> 00:01:02,280
+ and we multiply that by 9 plus 10.
+
+20
+00:01:02,280 --> 00:01:06,440
+ That gives us 17 times 19, which equals 323.
+
+21
+00:01:06,440 --> 00:01:08,655
+ How from this number 182,
+
+22
+00:01:08,655 --> 00:01:11,320
+ which can be broken up into 11 and 6,
+
+23
+00:01:11,320 --> 00:01:13,890
+ somehow we're working with 17?
+
+24
+00:01:13,890 --> 00:01:15,155
+ We combine these two,
+
+25
+00:01:15,155 --> 00:01:18,075
+ then we get 182 times 154.
+
+26
+00:01:18,075 --> 00:01:23,055
+ That equals 99 times two to the n. In this case, n equals eight.
+
+27
+00:01:23,055 --> 00:01:25,380
+ So, two to the eight is 256.
+
+28
+00:01:25,380 --> 00:01:29,940
+ Then we take 323 minus 99 minus 60,
+
+29
+00:01:29,940 --> 00:01:33,660
+ and we multiply that by two to the four, which is 16.
+
+30
+00:01:33,660 --> 00:01:36,045
+ Finally, we add in the last term, 60.
+
+31
+00:01:36,045 --> 00:01:37,830
+ And if you plug that into your calculator,
+
+32
+00:01:37,830 --> 00:01:40,935
+ that exactly equals 28,028,
+
+33
+00:01:40,935 --> 00:01:44,139
+ which is exactly 182 times 154.
+
+34
+00:01:44,139 --> 00:01:48,060
+ And the amazing part is this 17 and this 19.
+
+35
+00:01:48,060 --> 00:01:49,240
+ How do we get those?
+
+36
+00:01:49,240 --> 00:01:50,990
+ That's a very non-intuitive part.
+
+37
+00:01:50,990 --> 00:01:55,680
+ That completes the description of this faster multiplication of n-bit integers.
+
+38
+00:01:55,680 --> 00:01:58,020
+ There are similar ideas for multiplying matrices,
+
+39
+00:01:58,020 --> 00:02:00,305
+ that's referred to as Strassen's algorithm.
+
+40
+00:02:00,305 --> 00:02:03,125
+ You can look in the textbook to learn about Strassen's algorithm.
+
+41
+00:02:03,125 --> 00:02:06,180
+ I'm going to skip it because algebra gets a bit messy for that.
+
+42
+00:02:06,180 --> 00:02:08,950
+ Next we're going to look at linear-time median algorithm.
+
+43
+00:02:08,950 --> 00:02:08,950
+ It's a very clever divide and conquer approach.
+

@@ -1,0 +1,16 @@
+1
+00:00:00,000 --> 00:00:02,985
+ Let's take for granted that there's an order n times t,
+
+2
+00:00:02,985 --> 00:00:05,610
+ time algorithm for the subset-sum problem.
+
+3
+00:00:05,610 --> 00:00:06,900
+ Now given that fact,
+
+4
+00:00:06,900 --> 00:00:06,900
+ the subset-sum problem is known to be in the class P. Is that true or false?
+

@@ -1,0 +1,128 @@
+1
+00:00:00,000 --> 00:00:03,665
+ So, we can summarize our solution to the image segmentation problem.
+
+2
+00:00:03,665 --> 00:00:06,475
+ Given our original input to the image segmentation problem,
+
+3
+00:00:06,475 --> 00:00:10,170
+ this consists of an undirected graph corresponding to the image,
+
+4
+00:00:10,170 --> 00:00:13,170
+ the foreground likelihoods, background likelihoods,
+
+5
+00:00:13,170 --> 00:00:14,985
+ and the separation penalties.
+
+6
+00:00:14,985 --> 00:00:16,805
+ Then we define a flow network.
+
+7
+00:00:16,805 --> 00:00:18,725
+ This consists of a directed graph.
+
+8
+00:00:18,725 --> 00:00:20,215
+ We take this undirected graph,
+
+9
+00:00:20,215 --> 00:00:22,725
+ make each edge bi-directional,
+
+10
+00:00:22,725 --> 00:00:27,920
+ and then we add s, which directs to every vertex in the original undirected graph.
+
+11
+00:00:27,920 --> 00:00:30,090
+ And, we add vertex t, which has
+
+12
+00:00:30,090 --> 00:00:32,790
+ an edge from every pixel in the original undirected graph,
+
+13
+00:00:32,790 --> 00:00:35,243
+ to t that defines the directed graph,
+
+14
+00:00:35,243 --> 00:00:37,120
+ and then we define our capacities.
+
+15
+00:00:37,120 --> 00:00:39,795
+ Then we run max flow on this flow network,
+
+16
+00:00:39,795 --> 00:00:41,197
+ and we get a flow,
+
+17
+00:00:41,197 --> 00:00:42,821
+ f* of maximum size.
+
+18
+00:00:42,821 --> 00:00:45,420
+ Now, the size of this max flow,
+
+19
+00:00:45,420 --> 00:00:48,070
+ equals the capacity of the min st-cut,
+
+20
+00:00:48,070 --> 00:00:50,290
+ this is the max flow min-cut theorem.
+
+21
+00:00:50,290 --> 00:00:56,070
+ And in fact, we can take this max flow and construct a cut of minimum capacity.
+
+22
+00:00:56,070 --> 00:01:00,720
+ And, we just saw that the capacity of a particular st-cut equals the weight,
+
+23
+00:01:00,720 --> 00:01:02,715
+ w prime of FB.
+
+24
+00:01:02,715 --> 00:01:06,000
+ Therefore, by finding the cut of minimum capacity,
+
+25
+00:01:06,000 --> 00:01:10,572
+ it's equivalent to finding the partition of minimum weight w prime.
+
+26
+00:01:10,572 --> 00:01:15,540
+ Now, our original problem was to find the partition of maximum weight, w. Well,
+
+27
+00:01:15,540 --> 00:01:17,706
+ this is the same as capital L,
+
+28
+00:01:17,706 --> 00:01:23,730
+ this normalizing factor, minus the min over partitions of w prime.
+
+29
+00:01:23,730 --> 00:01:27,442
+ So, if we find the partition which minimizes w prime,
+
+30
+00:01:27,442 --> 00:01:31,050
+ that's the same partition which maximizes w. And therefore,
+
+31
+00:01:31,050 --> 00:01:33,960
+ we've shown how to solve the original image segmentation problem
+
+32
+00:01:33,960 --> 00:01:33,960
+ using the max flow problem.
+

@@ -1,0 +1,52 @@
+1
+00:00:00,000 --> 00:00:03,762
+ Now if we look at this entry (i,j) , in this matrix P,
+
+2
+00:00:03,762 --> 00:00:05,259
+ this transition matrix P,
+
+3
+00:00:05,259 --> 00:00:07,755
+ corresponding to the way to the adjacency matrix.
+
+4
+00:00:07,755 --> 00:00:12,570
+ This tells me the probability of making the transition from I to J in one step.
+
+5
+00:00:12,570 --> 00:00:14,670
+ So if I'm in state I at time T,
+
+6
+00:00:14,670 --> 00:00:19,680
+ then PIJ is the probability that I'm in State J at time T plus one.
+
+7
+00:00:19,680 --> 00:00:21,990
+ Now what we just saw is that if we look at the square of
+
+8
+00:00:21,990 --> 00:00:24,622
+ the transition matrix, so P squared,
+
+9
+00:00:24,622 --> 00:00:27,210
+ then the entry (i,j) tells me the probability of going
+
+10
+00:00:27,210 --> 00:00:30,340
+ from state I to state J in two steps.
+
+11
+00:00:30,340 --> 00:00:33,600
+ And in general for any non-negative integer K,
+
+12
+00:00:33,600 --> 00:00:38,070
+ P to the K. So the Kth power of this transition matrix
+
+13
+00:00:38,070 --> 00:00:38,070
+ P. This tells me the probability of making a transition in exactly K steps.
+

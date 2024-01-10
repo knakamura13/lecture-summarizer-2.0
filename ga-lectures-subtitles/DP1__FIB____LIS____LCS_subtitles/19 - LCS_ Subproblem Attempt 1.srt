@@ -1,0 +1,92 @@
+1
+00:00:00,000 --> 00:00:02,310
+ So let's dive into the first two steps in
+
+2
+00:00:02,310 --> 00:00:05,425
+ our recipe for designing a dynamic programming algorithm.
+
+3
+00:00:05,425 --> 00:00:08,970
+ Our first step, is to define the subproblem in words.
+
+4
+00:00:08,970 --> 00:00:12,770
+ Recall our subproblem definition from some of our earlier examples.
+
+5
+00:00:12,770 --> 00:00:17,475
+ For Fibonacci numbers, we set F(i) to be the i-th Fibonacci number.
+
+6
+00:00:17,475 --> 00:00:19,710
+ In the longest increasing sub sequence problem,
+
+7
+00:00:19,710 --> 00:00:22,230
+ we set L(i) to be the length of
+
+8
+00:00:22,230 --> 00:00:26,750
+ the longest increasing sub sequence on the first i numbers in the input.
+
+9
+00:00:26,750 --> 00:00:29,520
+ What are we going to do here? Our first attempt is always to try
+
+10
+00:00:29,520 --> 00:00:34,575
+ this same problem on a prefix of an input. So it's key.
+
+11
+00:00:34,575 --> 00:00:38,280
+ It's just identical to the original problem and it's just on a prefix.
+
+12
+00:00:38,280 --> 00:00:44,425
+ So all we've changed is from doing it on length N to length I, first I characters.
+
+13
+00:00:44,425 --> 00:00:45,915
+ So let's formalize that.
+
+14
+00:00:45,915 --> 00:00:48,630
+ So we're going to have a variable I which is
+
+15
+00:00:48,630 --> 00:00:52,260
+ the prefix length and the prefix length varies
+
+16
+00:00:52,260 --> 00:00:59,003
+ between 0 corresponding to the empty string and length N which is our original input.
+
+17
+00:00:59,003 --> 00:01:01,690
+ And we define a new function L(i),
+
+18
+00:01:01,690 --> 00:01:04,290
+ which is the length of the longest common sub sequence in
+
+19
+00:01:04,290 --> 00:01:09,250
+ the first I characters of X and the first I characters of Y.
+
+20
+00:01:09,250 --> 00:01:11,890
+ Our second step, is to define a recurrence.
+
+21
+00:01:11,890 --> 00:01:17,510
+ We want to express L(i) in terms of L(1) through L(i-1).
+
+22
+00:01:17,510 --> 00:01:19,410
+ So let's take a look at how to define
+
+23
+00:01:19,410 --> 00:01:19,410
+ the recurrence in this example, that we saw earlier.
+

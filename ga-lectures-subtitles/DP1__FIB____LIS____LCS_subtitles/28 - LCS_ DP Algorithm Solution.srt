@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:02,940
+ Finally, let's take a look at the running time of our algorithm.
+
+2
+00:00:02,940 --> 00:00:06,780
+ The two base cases are each order one per
+
+3
+00:00:06,780 --> 00:00:10,590
+ step and then they are in order n sized for loop.
+
+4
+00:00:10,590 --> 00:00:13,830
+ Therefore, they take order n total time.
+
+5
+00:00:13,830 --> 00:00:17,250
+ Then we have a for loop of size order n and a nested for loop
+
+6
+00:00:17,250 --> 00:00:21,375
+ of a size order n and inside it takes order one time.
+
+7
+00:00:21,375 --> 00:00:25,350
+ So the total time is order n square with these nested for
+
+8
+00:00:25,350 --> 00:00:30,120
+ loops and the total run time of our algorithm is dominated by the order n square,
+
+9
+00:00:30,120 --> 00:00:32,915
+ so we get order n square total time.
+
+10
+00:00:32,915 --> 00:00:36,900
+ This completes the dynamic programming algorithm
+
+11
+00:00:36,900 --> 00:00:39,270
+ for the longest common subsequence problem.
+
+12
+00:00:39,270 --> 00:00:42,180
+ The interesting thing that arose in this solution was that we
+
+13
+00:00:42,180 --> 00:00:45,450
+ needed to use a two dimensional table.
+
+14
+00:00:45,450 --> 00:00:48,090
+ This came about because we needed to consider prefixes
+
+15
+00:00:48,090 --> 00:00:48,090
+ of x of different length than prefixes of y.
+

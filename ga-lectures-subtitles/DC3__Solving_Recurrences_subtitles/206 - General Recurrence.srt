@@ -1,0 +1,196 @@
+1
+00:00:00,000 --> 00:00:02,960
+ Now, let's look at the more general form of recurrences.
+
+2
+00:00:02,960 --> 00:00:07,805
+ So for positive constants a and b greater than one.
+
+3
+00:00:07,805 --> 00:00:12,870
+ Let's look at the recurrence T(n) = a T(n/b) + O(n).
+
+4
+00:00:12,870 --> 00:00:15,880
+ Our previous two examples had b=2,
+
+5
+00:00:15,880 --> 00:00:19,615
+ and we did a case where a=4, and a=3.
+
+6
+00:00:19,615 --> 00:00:25,911
+ Now, the recurrence for the median finding algorithm has a = 1 and has b = 4/3.
+
+7
+00:00:25,911 --> 00:00:30,160
+ And merge sort has a = 2 and b = 2.
+
+8
+00:00:30,160 --> 00:00:33,536
+ Now, when you expand this out you get c*n from this O(n),
+
+9
+00:00:33,536 --> 00:00:35,505
+ times the following quantity,
+
+10
+00:00:35,505 --> 00:00:38,960
+ 1+ (a/b) + (a /b²).
+
+11
+00:00:38,960 --> 00:00:41,030
+ And so on up to a/b.
+
+12
+00:00:41,030 --> 00:00:44,205
+ And then, it's going to stop when we get the logb(n).
+
+13
+00:00:44,205 --> 00:00:46,815
+ In the last term is going to be a,
+
+14
+00:00:46,815 --> 00:00:52,320
+ ^logb(n)/T(1 ), which is O(1).
+
+15
+00:00:52,320 --> 00:00:55,195
+ Now, the key is what happens for this geometric series?
+
+16
+00:00:55,195 --> 00:00:58,110
+ It depends on whether a/b > 1,
+
+17
+00:00:58,110 --> 00:00:59,790
+ = 1, or < 1.
+
+18
+00:00:59,790 --> 00:01:01,785
+ If a is bigger than b,
+
+19
+00:01:01,785 --> 00:01:05,690
+ then we get an increasing geometric series and the last term dominates.
+
+20
+00:01:05,690 --> 00:01:07,170
+ If a = b,
+
+21
+00:01:07,170 --> 00:01:10,770
+ then we get a geometric series where I term is one.
+
+22
+00:01:10,770 --> 00:01:15,690
+ If a < b, then we get a decreasing geometric series and the first term dominates.
+
+23
+00:01:15,690 --> 00:01:17,570
+ Let's do the easy case first,
+
+24
+00:01:17,570 --> 00:01:20,485
+ a < b, so the first term dominates.
+
+25
+00:01:20,485 --> 00:01:23,625
+ So this geometric series is on the O(1).
+
+26
+00:01:23,625 --> 00:01:25,950
+ So we get O(1) for this geometric series,
+
+27
+00:01:25,950 --> 00:01:29,620
+ get O(n) here, so the whole thing is going to be O(n),
+
+28
+00:01:29,620 --> 00:01:31,515
+ so we get O(n), in this case.
+
+29
+00:01:31,515 --> 00:01:33,510
+ What happens when a = b?
+
+30
+00:01:33,510 --> 00:01:35,685
+ Then each of these terms is one.
+
+31
+00:01:35,685 --> 00:01:37,410
+ So we get log n terms.
+
+32
+00:01:37,410 --> 00:01:40,050
+ So the geometric series is on the order of log n,
+
+33
+00:01:40,050 --> 00:01:42,910
+ so we have O(n) times O(logn).
+
+34
+00:01:42,910 --> 00:01:45,250
+ So that's going to be O(n) logn.
+
+35
+00:01:45,250 --> 00:01:47,468
+ So in the case, a = b, we get O(n),
+
+36
+00:01:47,468 --> 00:01:50,040
+ log n that's for merge sort.
+
+37
+00:01:50,040 --> 00:01:53,030
+ Finally, what happens in the case when a > b?
+
+38
+00:01:53,030 --> 00:01:54,930
+ Now, the last term dominates.
+
+39
+00:01:54,930 --> 00:02:00,315
+ Notice the denominator here is b ^logb(n) which is n,
+
+40
+00:02:00,315 --> 00:02:04,200
+ so this term, cancels this term.
+
+41
+00:02:04,200 --> 00:02:08,375
+ So the whole thing is on the order of a ^logb(n).
+
+42
+00:02:08,375 --> 00:02:10,683
+ Converting that into a polynomial,
+
+43
+00:02:10,683 --> 00:02:19,020
+ we get that this recurrence in the case a > b is on the order of n, ^logb(a).
+
+44
+00:02:19,020 --> 00:02:22,910
+ And of course, one can look at more general forms of recurrences where here,
+
+45
+00:02:22,910 --> 00:02:24,350
+ we have instead of O(n),
+
+46
+00:02:24,350 --> 00:02:27,110
+ we have O(n) ^d,
+
+47
+00:02:27,110 --> 00:02:29,100
+ where d is a constant.
+
+48
+00:02:29,100 --> 00:02:32,570
+ This is commonly referred to as the master theorem and you can look at
+
+49
+00:02:32,570 --> 00:02:32,570
+ your textbook for the form of the master theorem and the solution to the master theorem.
+

@@ -1,0 +1,176 @@
+1
+00:00:00,000 --> 00:00:02,550
+ Let's go ahead and detail this straightforward divide and
+
+2
+00:00:02,550 --> 00:00:05,335
+ conquer algorithm for multiplying x times y.
+
+3
+00:00:05,335 --> 00:00:08,280
+ The input to the problem are these two integers x and y,
+
+4
+00:00:08,280 --> 00:00:10,637
+ which are both at most n-bits long.
+
+5
+00:00:10,637 --> 00:00:12,270
+ And we assume for simplicity,
+
+6
+00:00:12,270 --> 00:00:13,665
+ that n is a power of two.
+
+7
+00:00:13,665 --> 00:00:18,150
+ So n equals two to the k for some non-negative integer k. And
+
+8
+00:00:18,150 --> 00:00:23,300
+ the output of our algorithm is this number z which is equal to the product of x times y.
+
+9
+00:00:23,300 --> 00:00:26,190
+ First thing we do, is we break x and y into two,
+
+10
+00:00:26,190 --> 00:00:27,960
+ n over two bit numbers.
+
+11
+00:00:27,960 --> 00:00:31,410
+ So XL is the number corresponding to the first n over two bits of
+
+12
+00:00:31,410 --> 00:00:35,620
+ x. XR is the number corresponding to last n over two bits of x.
+
+13
+00:00:35,620 --> 00:00:37,435
+ Since n is a power two,
+
+14
+00:00:37,435 --> 00:00:39,680
+ these always divide evenly.
+
+15
+00:00:39,680 --> 00:00:41,070
+ So we don't have to worry about putting
+
+16
+00:00:41,070 --> 00:00:44,190
+ any floors or ceilings on either of these two terms.
+
+17
+00:00:44,190 --> 00:00:47,550
+ Similarly, we partition y into the first n over two bits,
+
+18
+00:00:47,550 --> 00:00:50,893
+ call that YL, and the last n over two bits of Y,
+
+19
+00:00:50,893 --> 00:00:54,210
+ that's YR. Now what we can do is we can recursively
+
+20
+00:00:54,210 --> 00:00:58,325
+ compute the product of pairs of these n over two bit numbers.
+
+21
+00:00:58,325 --> 00:01:00,150
+ We have four n over two bit numbers.
+
+22
+00:01:00,150 --> 00:01:01,965
+ We're going to take particular pairs,
+
+23
+00:01:01,965 --> 00:01:03,645
+ recursively compute their product,
+
+24
+00:01:03,645 --> 00:01:07,235
+ and combine those together to get this answer z.
+
+25
+00:01:07,235 --> 00:01:11,850
+ First pair of n over two bit numbers that we're going to use is XL and YL.
+
+26
+00:01:11,850 --> 00:01:14,145
+ We're going to recursively compute their product
+
+27
+00:01:14,145 --> 00:01:17,195
+ and we're going to store that answer in capital A.
+
+28
+00:01:17,195 --> 00:01:19,155
+ The second one we're going to use is
+
+29
+00:01:19,155 --> 00:01:23,405
+ XR times YR and we're going to store that answer in capital B.
+
+30
+00:01:23,405 --> 00:01:27,885
+ The last two recursive subproblems that we're going to do are XL times YR,
+
+31
+00:01:27,885 --> 00:01:31,080
+ store that in C, XR times YL,
+
+32
+00:01:31,080 --> 00:01:36,735
+ store that in D. Now we can get the product x times y using these for quantities A,
+
+33
+00:01:36,735 --> 00:01:40,950
+ B, C, and D. In particular, Z,
+
+34
+00:01:40,950 --> 00:01:42,855
+ which is x times y,
+
+35
+00:01:42,855 --> 00:01:46,530
+ that's equal to two to the n times A,
+
+36
+00:01:46,530 --> 00:01:48,600
+ that's a times that's not an X,
+
+37
+00:01:48,600 --> 00:01:52,555
+ plus two to the n over two times the quantity C plus D,
+
+38
+00:01:52,555 --> 00:01:54,075
+ that's these cross terms,
+
+39
+00:01:54,075 --> 00:01:58,600
+ XL times YR and XR times YL plus B.
+
+40
+00:01:58,600 --> 00:02:01,430
+ We got this expression on the last slide.
+
+41
+00:02:01,430 --> 00:02:04,600
+ Finally, Z is the quantity that we want to return.
+
+42
+00:02:04,600 --> 00:02:07,675
+ Z is equal to the product x times y.
+
+43
+00:02:07,675 --> 00:02:11,305
+ That completes the pseudocode for this easy divide and conquer algorithm.
+
+44
+00:02:11,305 --> 00:02:11,305
+ Let's take a look at the running time of this algorithm now.
+

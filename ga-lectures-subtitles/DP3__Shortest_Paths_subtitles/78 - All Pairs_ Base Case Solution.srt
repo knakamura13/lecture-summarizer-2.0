@@ -1,0 +1,16 @@
+1
+00:00:00,000 --> 00:00:01,950
+ As in the Bellman-Ford algorithm,
+
+2
+00:00:01,950 --> 00:00:05,055
+ the base case is the situation when i equals zero.
+
+3
+00:00:05,055 --> 00:00:08,845
+ That's when we have the empty set as possible intermediate vertices.
+
+4
+00:00:08,845 --> 00:00:08,845
+ So we have to go directly from s to t without any intermediate vertices allowed.
+

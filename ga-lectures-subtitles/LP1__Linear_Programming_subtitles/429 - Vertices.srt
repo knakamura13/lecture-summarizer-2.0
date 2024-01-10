@@ -1,0 +1,104 @@
+1
+00:00:00,000 --> 00:00:03,090
+ Now, how do you specify the vertices of the feasible region?
+
+2
+00:00:03,090 --> 00:00:06,185
+ Well, let's take a look back at our simple two dimensional example.
+
+3
+00:00:06,185 --> 00:00:08,970
+ How do I specify this vertex of this polygon?
+
+4
+00:00:08,970 --> 00:00:11,765
+ It satisfies these two lines with equality.
+
+5
+00:00:11,765 --> 00:00:18,395
+ The first line is X1 equals 300 and the second line is X1plus 3X2 equals 700.
+
+6
+00:00:18,395 --> 00:00:22,645
+ Now, satisfying these two constraints with equality specifies this point,
+
+7
+00:00:22,645 --> 00:00:27,000
+ but then I have to check that this point satisfies the other inequalities.
+
+8
+00:00:27,000 --> 00:00:29,085
+ So in general, in n dimensional space,
+
+9
+00:00:29,085 --> 00:00:32,595
+ a vertex of this convex polyhedron is specified
+
+10
+00:00:32,595 --> 00:00:36,945
+ by specifying the end constraints that you satisfy with equality,
+
+11
+00:00:36,945 --> 00:00:41,250
+ and then we have to check that the remaining m constraints are still satisfied.
+
+12
+00:00:41,250 --> 00:00:45,840
+ Now we can get a trivial upper bound on the number of vertices of this convex polyhedron,
+
+13
+00:00:45,840 --> 00:00:49,395
+ we have to specify the constraints that are satisfied with equality.
+
+14
+00:00:49,395 --> 00:00:52,195
+ There are n plus m constraints to choose from.
+
+15
+00:00:52,195 --> 00:00:56,307
+ So the number of vertices is most n plus m, choose n,
+
+16
+00:00:56,307 --> 00:00:58,920
+ this is exponential in n. So in the worst case,
+
+17
+00:00:58,920 --> 00:01:02,080
+ there are a huge number of vertices in this convex polyhedron,
+
+18
+00:01:02,080 --> 00:01:03,630
+ in this feasible region.
+
+19
+00:01:03,630 --> 00:01:05,205
+ Now for a particular vertex,
+
+20
+00:01:05,205 --> 00:01:07,075
+ how many neighbors does it have?
+
+21
+00:01:07,075 --> 00:01:10,825
+ Can we get an upper bound on the number of neighbors for a specific vertex?
+
+22
+00:01:10,825 --> 00:01:13,230
+ Well, neighbor would correspond to swapping out
+
+23
+00:01:13,230 --> 00:01:16,980
+ one constraint with equality with a different constraint.
+
+24
+00:01:16,980 --> 00:01:19,960
+ So we have n choices for which one we swap out,
+
+25
+00:01:19,960 --> 00:01:23,160
+ and then we have m choices for which when we swap in.
+
+26
+00:01:23,160 --> 00:01:23,160
+ So the number of neighbors for a specific vertex is at most, n times m.
+

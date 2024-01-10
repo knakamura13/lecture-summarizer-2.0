@@ -1,0 +1,120 @@
+1
+00:00:00,000 --> 00:00:03,195
+ To reduce colorings to SAT, what do we need to show?
+
+2
+00:00:03,195 --> 00:00:05,310
+ We need to find these two functions,
+
+3
+00:00:05,310 --> 00:00:07,860
+ f and h. f takes an input for
+
+4
+00:00:07,860 --> 00:00:11,658
+ the colorings problem and produces an input for the SAT problem.
+
+5
+00:00:11,658 --> 00:00:15,944
+ If you think of the input for the colorings problem as a graph and a number of colors,
+
+6
+00:00:15,944 --> 00:00:17,430
+ so it's a G and a k,
+
+7
+00:00:17,430 --> 00:00:20,705
+ then there are input for the SAT problem is f of Gk.
+
+8
+00:00:20,705 --> 00:00:27,275
+ Now, h takes a solution to this SAT problem o this f of Gk is a Boolean formula.
+
+9
+00:00:27,275 --> 00:00:28,680
+ It's going to take an assignment,
+
+10
+00:00:28,680 --> 00:00:31,950
+ a satisfying assignment for this boolean formula and it's going to
+
+11
+00:00:31,950 --> 00:00:35,805
+ produce a solution to the original colorings problem on Gk.
+
+12
+00:00:35,805 --> 00:00:37,650
+ So it's going to take an assignment which
+
+13
+00:00:37,650 --> 00:00:40,200
+ satisfies this boolean formula and it's going to
+
+14
+00:00:40,200 --> 00:00:45,995
+ produce h of S which is a colorings for this graph using k colors.
+
+15
+00:00:45,995 --> 00:00:48,160
+ We need to define these two functions f,
+
+16
+00:00:48,160 --> 00:00:52,270
+ which transforms inputs to colorings to inputs to SAT and h,
+
+17
+00:00:52,270 --> 00:00:56,970
+ which transform solutions to SAT into solutions for two colorings.
+
+18
+00:00:56,970 --> 00:01:00,585
+ Now, what do we need to prove in order to prove that this reduction is valid.
+
+19
+00:01:00,585 --> 00:01:01,725
+ Well, we need to prove that,
+
+20
+00:01:01,725 --> 00:01:04,380
+ if S was a solution to f,
+
+21
+00:01:04,380 --> 00:01:07,350
+ then h of S is a solution to the original
+
+22
+00:01:07,350 --> 00:01:11,175
+ G. But we also need that if there was no solution to f,
+
+23
+00:01:11,175 --> 00:01:13,880
+ then there is no solution to the colorings problem.
+
+24
+00:01:13,880 --> 00:01:17,770
+ So we need to show that if S was a solution to this SAT input,
+
+25
+00:01:17,770 --> 00:01:23,003
+ then h of S is a solution to this colorings input and vice versa.
+
+26
+00:01:23,003 --> 00:01:24,540
+ We need to show this equivalence,
+
+27
+00:01:24,540 --> 00:01:28,320
+ this if and only if statement because we need to know that the solutions
+
+28
+00:01:28,320 --> 00:01:33,870
+ here map to solutions here and no instances here are mapped to no instance here.
+
+29
+00:01:33,870 --> 00:01:35,420
+ We need both directions.
+
+30
+00:01:35,420 --> 00:01:35,420
+ We need solutions here if and only if solutions here.
+

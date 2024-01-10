@@ -1,0 +1,156 @@
+1
+00:00:00,000 --> 00:00:03,360
+ Now les take a look at what it means for an LP to be unbounded.
+
+2
+00:00:03,360 --> 00:00:07,530
+ This means that the optimal value of the objective function is arbitrarily large.
+
+3
+00:00:07,530 --> 00:00:10,305
+ Let's take a look at an example of an unbounded LP.
+
+4
+00:00:10,305 --> 00:00:11,625
+ Let's look at the following LP.
+
+5
+00:00:11,625 --> 00:00:13,785
+ We have two variables x and y,
+
+6
+00:00:13,785 --> 00:00:18,360
+ we're maximizing x plus y subject to the following constraints,
+
+7
+00:00:18,360 --> 00:00:20,640
+ x minus y is at most 1,
+
+8
+00:00:20,640 --> 00:00:23,970
+ x plus 5y is at least three.
+
+9
+00:00:23,970 --> 00:00:26,365
+ And then we have the non negativity constraints.
+
+10
+00:00:26,365 --> 00:00:28,925
+ Let's take a look at the feasible region for this LP.
+
+11
+00:00:28,925 --> 00:00:32,087
+ Here's the feasible region based on the non-negativity constraints.
+
+12
+00:00:32,087 --> 00:00:33,660
+ We're in the upper right quadrant.
+
+13
+00:00:33,660 --> 00:00:36,405
+ The first constraint x minus y is at most one,
+
+14
+00:00:36,405 --> 00:00:40,420
+ defines this half space and x plus 5y is at least three,
+
+15
+00:00:40,420 --> 00:00:43,395
+ defines this upper half space.
+
+16
+00:00:43,395 --> 00:00:46,170
+ And this colored region are the feasible points.
+
+17
+00:00:46,170 --> 00:00:48,760
+ Now the picture is truncated at y equals five
+
+18
+00:00:48,760 --> 00:00:51,890
+ but actually this feasible region is unbounded set.
+
+19
+00:00:51,890 --> 00:00:54,910
+ Now let's look at this objective function x plus y.
+
+20
+00:00:54,910 --> 00:00:57,600
+ What we've illustrated here are the heat map and the level
+
+21
+00:00:57,600 --> 00:01:00,670
+ set for this object to function x plus y.
+
+22
+00:01:00,670 --> 00:01:02,820
+ So the blue regions are the lower values of
+
+23
+00:01:02,820 --> 00:01:06,330
+ this objective function and as we get up to the red regions,
+
+24
+00:01:06,330 --> 00:01:08,875
+ we get the higher values of this objective function.
+
+25
+00:01:08,875 --> 00:01:12,030
+ So notice the objective function is increasing as we move up.
+
+26
+00:01:12,030 --> 00:01:14,520
+ And we've also illustrated the level sets so we look at x plus
+
+27
+00:01:14,520 --> 00:01:17,830
+ y equals c for different values of c. So here c equals two,
+
+28
+00:01:17,830 --> 00:01:21,315
+ c equals four and as we keep going up,
+
+29
+00:01:21,315 --> 00:01:24,260
+ we get larger values of this objective function.
+
+30
+00:01:24,260 --> 00:01:26,833
+ And once again, the picture is truncated y equals five,
+
+31
+00:01:26,833 --> 00:01:29,055
+ but the feasible set is unbounded.
+
+32
+00:01:29,055 --> 00:01:33,290
+ So we get unbounded values of feasible points x, y.
+
+33
+00:01:33,290 --> 00:01:39,090
+ For unbounded values of c. Now one important point is the fact that this LP is unbounded,
+
+34
+00:01:39,090 --> 00:01:42,115
+ is a function of this objective function.
+
+35
+00:01:42,115 --> 00:01:44,700
+ The optimal value for this objective function is
+
+36
+00:01:44,700 --> 00:01:48,455
+ achieved in this unbounded region of this feasible region.
+
+37
+00:01:48,455 --> 00:01:50,940
+ Now there could be some objective functions
+
+38
+00:01:50,940 --> 00:01:54,060
+ where their optimum are achieved at these vertices.
+
+39
+00:01:54,060 --> 00:01:54,060
+ Let's take a look at such an example.
+

@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:02,420
+ Now let's formally state the max flow problem.
+
+2
+00:00:02,420 --> 00:00:06,330
+ The input to the max flow problem is what is called a flow network.
+
+3
+00:00:06,330 --> 00:00:08,190
+ A flow network consists of
+
+4
+00:00:08,190 --> 00:00:12,240
+ a directed graph G. Here's an example of a directed graph again.
+
+5
+00:00:12,240 --> 00:00:16,890
+ Now in this directed graph we have two vertices labeled s and t,
+
+6
+00:00:16,890 --> 00:00:21,380
+ corresponding to the source and the sync for the flow in our problem.
+
+7
+00:00:21,380 --> 00:00:22,785
+ Finally for each edge,
+
+8
+00:00:22,785 --> 00:00:26,070
+ we're given a capacity which is a positive number.
+
+9
+00:00:26,070 --> 00:00:29,410
+ Here are the example capacities from before for this network.
+
+10
+00:00:29,410 --> 00:00:32,860
+ And our goal is to maximize the flow which is sent from s to
+
+11
+00:00:32,860 --> 00:00:36,960
+ t. So the flow originates at s and it ends at
+
+12
+00:00:36,960 --> 00:00:40,740
+ t. Now we use the variable f_sub_e to denote
+
+13
+00:00:40,740 --> 00:00:45,390
+ the flow along edge e. Now these are the variables which we're trying to determine.
+
+14
+00:00:45,390 --> 00:00:48,035
+ So our goal is to specify the flow along
+
+15
+00:00:48,035 --> 00:00:48,035
+ every edge so that we maximize the flow from s to t.
+

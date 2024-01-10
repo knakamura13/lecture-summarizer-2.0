@@ -1,0 +1,108 @@
+1
+00:00:00,000 --> 00:00:03,350
+ We're trying to find recurrence for the entry C(i,j).
+
+2
+00:00:03,350 --> 00:00:06,120
+ This corresponds to computing the product of
+
+3
+00:00:06,120 --> 00:00:09,935
+ the matrices defined by the substring from i to j.
+
+4
+00:00:09,935 --> 00:00:12,800
+ Let's go back and look at our graphical representation.
+
+5
+00:00:12,800 --> 00:00:14,790
+ The root of the tree that we're trying to compute,
+
+6
+00:00:14,790 --> 00:00:19,705
+ corresponds to the product of the matrices Ai through Aj. Now, what are we trying to do?
+
+7
+00:00:19,705 --> 00:00:21,455
+ We're trying to find the split.
+
+8
+00:00:21,455 --> 00:00:24,440
+ Let's say at L and then the left subtree
+
+9
+00:00:24,440 --> 00:00:28,265
+ corresponds to the product of the matrices Ai through Al.
+
+10
+00:00:28,265 --> 00:00:33,900
+ The right subtree corresponds to the product of the matrices Al +1 through Aj.
+
+11
+00:00:33,900 --> 00:00:35,740
+ How is our recurrence going to work?
+
+12
+00:00:35,740 --> 00:00:39,470
+ We're going to try all possibilities for this index L for the split,
+
+13
+00:00:39,470 --> 00:00:45,695
+ and then we're going to look up in our table to minimum cost for computing this subtree,
+
+14
+00:00:45,695 --> 00:00:48,820
+ which corresponds to a smaller substring,
+
+15
+00:00:48,820 --> 00:00:53,375
+ and we're going to look up in our table the minimal costs for computing this subtree,
+
+16
+00:00:53,375 --> 00:00:55,570
+ and then we're going to combine those together.
+
+17
+00:00:55,570 --> 00:00:57,780
+ How much does it cost to combine them together?
+
+18
+00:00:57,780 --> 00:01:01,920
+ Well, this matrix is of size.Mi -1 by Ml,
+
+19
+00:01:01,920 --> 00:01:05,740
+ and this matrix is of size Ml by Mj.
+
+20
+00:01:05,740 --> 00:01:10,955
+ Sort of multiply these together it cost Mi -1 times Ml times Mj.
+
+21
+00:01:10,955 --> 00:01:12,510
+ So computing the root cause,
+
+22
+00:01:12,510 --> 00:01:15,820
+ this amount computing the left subtree costs,
+
+23
+00:01:15,820 --> 00:01:21,350
+ this entry corresponding to this substring which is C(i,l) and similarly,
+
+24
+00:01:21,350 --> 00:01:26,435
+ the right subtree corresponds to the entry Cl +1 j.
+
+25
+00:01:26,435 --> 00:01:33,745
+ So the total cost for this split at index L is the sum of these three.
+
+26
+00:01:33,745 --> 00:01:36,310
+ And what are we going to do? We're going to try all possibilities for L and we're
+
+27
+00:01:36,310 --> 00:01:36,310
+ going to take the one which has minimum sum.
+

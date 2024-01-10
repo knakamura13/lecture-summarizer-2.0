@@ -1,0 +1,88 @@
+1
+00:00:00,000 --> 00:00:02,085
+ The solution is linear time.
+
+2
+00:00:02,085 --> 00:00:07,965
+ It takes O(n+m) time to check whether a particular flow f is maximum or not.
+
+3
+00:00:07,965 --> 00:00:11,560
+ This follows as a consequence of the lemma we stated on the previous slide.
+
+4
+00:00:11,560 --> 00:00:13,320
+ For a flow f*,
+
+5
+00:00:13,320 --> 00:00:15,105
+ if there's no augmenting path,
+
+6
+00:00:15,105 --> 00:00:20,055
+ no path from s to t in the residual graph for this particular flow,
+
+7
+00:00:20,055 --> 00:00:23,350
+ then this flow f* is a max-flow.
+
+8
+00:00:23,350 --> 00:00:25,980
+ So to check whether f is a max-flow,
+
+9
+00:00:25,980 --> 00:00:28,860
+ we build its residual graph which takes linear time,
+
+10
+00:00:28,860 --> 00:00:34,090
+ O(n+m) time, and then we check for a path from s to t in this residual graph.
+
+11
+00:00:34,090 --> 00:00:39,795
+ To do that, we simply run DFS from s to check whether t is reachable from
+
+12
+00:00:39,795 --> 00:00:45,562
+ s. What this lemma says is if there is no path from s to t in this residual graph,
+
+13
+00:00:45,562 --> 00:00:48,935
+ then this particular flow f is a max-flow.
+
+14
+00:00:48,935 --> 00:00:50,310
+ So we output yes.
+
+15
+00:00:50,310 --> 00:00:52,420
+ Now what if there is a path from s to t?
+
+16
+00:00:52,420 --> 00:00:55,485
+ Well, then we can augment a flow along this path.
+
+17
+00:00:55,485 --> 00:00:58,230
+ And then we get a flow of larger value.
+
+18
+00:00:58,230 --> 00:01:01,590
+ And therefore, this particular flow f is not
+
+19
+00:01:01,590 --> 00:01:05,880
+ a max-flow because we can build a flow of larger size.
+
+20
+00:01:05,880 --> 00:01:08,255
+ Now we'll get back to the proof of this lemma shortly.
+
+21
+00:01:08,255 --> 00:01:11,850
+ But let's go back first to the max-flow min-cut theorem,
+
+22
+00:01:11,850 --> 00:01:11,850
+ and let's see what min-cut actually means.
+

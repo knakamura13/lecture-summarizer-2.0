@@ -1,0 +1,68 @@
+1
+00:00:00,000 --> 00:00:02,669
+ Let's take a look at a simple example of a linear program.
+
+2
+00:00:02,669 --> 00:00:05,415
+ This is motivated by a basic production problem.
+
+3
+00:00:05,415 --> 00:00:07,365
+ Consider a company that makes two products,
+
+4
+00:00:07,365 --> 00:00:08,925
+ let's call them A and B.
+
+5
+00:00:08,925 --> 00:00:11,009
+ We want to figure out how many of each product
+
+6
+00:00:11,009 --> 00:00:13,589
+ to produce in order to maximize our profit.
+
+7
+00:00:13,589 --> 00:00:15,554
+ Now let's make some modeling assumptions.
+
+8
+00:00:15,554 --> 00:00:20,324
+ Each unit of A that we sell makes a profit of one dollar and for each unit of B,
+
+9
+00:00:20,324 --> 00:00:23,100
+ we'll assume that it makes a profit of six dollars.
+
+10
+00:00:23,100 --> 00:00:26,125
+ Now let's make some assumptions about the demand for each product.
+
+11
+00:00:26,125 --> 00:00:28,350
+ We'll assume that the demand for A is
+
+12
+00:00:28,350 --> 00:00:32,825
+ at most 300 units per day and at most 200 units per day for B.
+
+13
+00:00:32,825 --> 00:00:35,509
+ We'll also assumes some supply constraints.
+
+14
+00:00:35,509 --> 00:00:38,850
+ We'll assume our employees can work at most 700 hours per
+
+15
+00:00:38,850 --> 00:00:42,615
+ day and each unit of A that we produce takes one hour,
+
+16
+00:00:42,615 --> 00:00:45,780
+ whereas each unit of B takes three hours.
+
+17
+00:00:45,780 --> 00:00:45,780
+ Now let's express this is as a linear.
+

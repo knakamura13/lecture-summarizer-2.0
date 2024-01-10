@@ -1,0 +1,64 @@
+1
+00:00:00,000 --> 00:00:02,380
+ So we've got a web page X.
+
+2
+00:00:02,380 --> 00:00:04,745
+ We're going to look at the In neighbors.
+
+3
+00:00:04,745 --> 00:00:08,095
+ So these are the web pages Y which have a link to X.
+
+4
+00:00:08,095 --> 00:00:10,030
+ So we're going to sum over these.
+
+5
+00:00:10,030 --> 00:00:14,190
+ The old scheme just counted the number of these In neighbors.
+
+6
+00:00:14,190 --> 00:00:17,012
+ So the old scheme you can view it as a sum over the in
+
+7
+00:00:17,012 --> 00:00:20,770
+ neighbors and we get plus one for each in neighbor.
+
+8
+00:00:20,770 --> 00:00:23,335
+ In the new scheme, we want to scale it by number of
+
+9
+00:00:23,335 --> 00:00:25,795
+ outgoing links from each of these web pages.
+
+10
+00:00:25,795 --> 00:00:28,590
+ So if Y1 has a lot of outgoing links, let's say it has 1000,
+
+11
+00:00:28,590 --> 00:00:32,860
+ then this link is going to give us one over 1000.
+
+12
+00:00:32,860 --> 00:00:35,980
+ And if this web page has only one link to X,
+
+13
+00:00:35,980 --> 00:00:38,120
+ then this one gives us one.
+
+14
+00:00:38,120 --> 00:00:40,765
+ And in general, from a web page Y,
+
+15
+00:00:40,765 --> 00:00:45,170
+ we're going to get one over the number of out links from Y.
+
+16
+00:00:45,170 --> 00:00:45,170
+ And we're going to sum this up over the Ys which have a link to X.
+

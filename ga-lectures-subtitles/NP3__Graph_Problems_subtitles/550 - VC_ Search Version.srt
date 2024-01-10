@@ -1,0 +1,44 @@
+1
+00:00:00,000 --> 00:00:03,510
+ The input to the vertex cover problem is undirected graph G,
+
+2
+00:00:03,510 --> 00:00:07,185
+ and the goal which we'll call a budget, little b.
+
+3
+00:00:07,185 --> 00:00:10,310
+ Why do we change a terminology from goal to budget?
+
+4
+00:00:10,310 --> 00:00:14,140
+ Because instead of trying to find the maximum size clique or independent set,
+
+5
+00:00:14,140 --> 00:00:17,198
+ we're trying to find the minimum size vertex cover.
+
+6
+00:00:17,198 --> 00:00:19,285
+ The output to the problem is a vertex cover,
+
+7
+00:00:19,285 --> 00:00:21,905
+ S, of size at most, little b.
+
+8
+00:00:21,905 --> 00:00:25,260
+ We're trying to find the smallest possible, if one exists.
+
+9
+00:00:25,260 --> 00:00:28,560
+ And if no such vertex cover exists in the graph G,
+
+10
+00:00:28,560 --> 00:00:30,480
+ then we simply output NO.
+
+11
+00:00:30,480 --> 00:00:30,480
+ We're going to prove now that the vertex cover problem is NP-complete.
+

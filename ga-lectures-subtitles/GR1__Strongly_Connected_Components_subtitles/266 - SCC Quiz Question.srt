@@ -1,0 +1,24 @@
+1
+00:00:00,000 --> 00:00:02,935
+ Here's a directed graph on 12 vertices.
+
+2
+00:00:02,935 --> 00:00:06,090
+ Let's go ahead and mark the strongly connected components in this graph,
+
+3
+00:00:06,090 --> 00:00:09,420
+ to make sure everybody understands the definition of SCCs.
+
+4
+00:00:09,420 --> 00:00:15,030
+ And then we can dive into some interesting properties of strongly connected points.
+
+5
+00:00:15,030 --> 00:00:18,860
+ First off, how many strongly connected components does this graph have?
+
+6
+00:00:18,860 --> 00:00:18,860
+ And now can you mark what are the strongly connected components in this graph?
+

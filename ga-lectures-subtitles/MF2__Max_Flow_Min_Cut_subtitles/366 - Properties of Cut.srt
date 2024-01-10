@@ -1,0 +1,292 @@
+1
+00:00:00,000 --> 00:00:03,660
+ Let's take a look now at the properties of this cut we just constructed and
+
+2
+00:00:03,660 --> 00:00:07,605
+ let's use as an illustration our earlier example of a flow network.
+
+3
+00:00:07,605 --> 00:00:11,780
+ Here's our example of a flow network G with the capacities marked in red.
+
+4
+00:00:11,780 --> 00:00:15,045
+ We're looking at a flow f star which has no ST path
+
+5
+00:00:15,045 --> 00:00:18,720
+ in the residual network G superscript f star.
+
+6
+00:00:18,720 --> 00:00:23,940
+ Here's an example of such a flow f star with the green numbers indicating the flow.
+
+7
+00:00:23,940 --> 00:00:26,827
+ Now let's look at this residual network for this flow f star.
+
+8
+00:00:26,827 --> 00:00:30,055
+ Recall some properties of this residual network.
+
+9
+00:00:30,055 --> 00:00:32,850
+ For example, this edge from E to D has
+
+10
+00:00:32,850 --> 00:00:37,790
+ positive flow so the reverse edge from D to E appears in this graph.
+
+11
+00:00:37,790 --> 00:00:41,340
+ Also the edge from E to D has some spare capacity
+
+12
+00:00:41,340 --> 00:00:45,070
+ available so the edge from E to D itself appears there.
+
+13
+00:00:45,070 --> 00:00:47,910
+ Similarly, this edge from D to C has some flow
+
+14
+00:00:47,910 --> 00:00:50,995
+ along it so the reverse edge from C to D appears.
+
+15
+00:00:50,995 --> 00:00:54,300
+ But the edge from D to C has no leftover capacity
+
+16
+00:00:54,300 --> 00:00:58,160
+ available so the forward edge does not appear in this residual network.
+
+17
+00:00:58,160 --> 00:01:01,510
+ Now the capacities on these edges in the residual network are not important.
+
+18
+00:01:01,510 --> 00:01:04,825
+ What's important are simply which edges are present or not.
+
+19
+00:01:04,825 --> 00:01:07,500
+ We define this set L, to be the set of vertices
+
+20
+00:01:07,500 --> 00:01:11,070
+ reachable from the source vertex in this residual network.
+
+21
+00:01:11,070 --> 00:01:13,445
+ Let's look at the set L in this example.
+
+22
+00:01:13,445 --> 00:01:16,160
+ So certainly s itself is reachable from S,
+
+23
+00:01:16,160 --> 00:01:21,360
+ also B is reachable and then we reach E and D and A.
+
+24
+00:01:21,360 --> 00:01:24,810
+ So these five vertices are the set L and
+
+25
+00:01:24,810 --> 00:01:29,715
+ the remaining three vertices are the set R and that defines our ST cut LR.
+
+26
+00:01:29,715 --> 00:01:36,225
+ By assumption, T is not reachable from S in this residual network therefore T is an R,
+
+27
+00:01:36,225 --> 00:01:38,195
+ so it's a valid ST cut.
+
+28
+00:01:38,195 --> 00:01:41,325
+ Let's look at some properties of this ST cut LR.
+
+29
+00:01:41,325 --> 00:01:45,120
+ For convenience let me draw this L on the original graph as well.
+
+30
+00:01:45,120 --> 00:01:50,290
+ Let's look at edges in the original graph which go from the set L outside to R,
+
+31
+00:01:50,290 --> 00:01:52,670
+ D to T is one such example,
+
+32
+00:01:52,670 --> 00:01:57,335
+ D to C is another example and S to C is another example.
+
+33
+00:01:57,335 --> 00:02:01,260
+ Now notice that none of these edges appear in the residual network.
+
+34
+00:02:01,260 --> 00:02:05,135
+ Why? Because L is the set of vertices reachable from S
+
+35
+00:02:05,135 --> 00:02:09,480
+ so this edge from D to T appeared in this residual network,
+
+36
+00:02:09,480 --> 00:02:14,370
+ then T would be added into the set L. It would be reachable from S and
+
+37
+00:02:14,370 --> 00:02:16,320
+ then we'd have a contradiction with the definition of
+
+38
+00:02:16,320 --> 00:02:19,095
+ L. So for any edge in the original graph,
+
+39
+00:02:19,095 --> 00:02:21,045
+ say from V to W,
+
+40
+00:02:21,045 --> 00:02:23,325
+ if this edge leaves the set L,
+
+41
+00:02:23,325 --> 00:02:25,700
+ so V is in L and W is in R,
+
+42
+00:02:25,700 --> 00:02:28,200
+ well we know that this edge does not appear in
+
+43
+00:02:28,200 --> 00:02:31,950
+ the residual network so what does that say about the flow along this edge?
+
+44
+00:02:31,950 --> 00:02:36,570
+ This edge must be fully capacitated and therefore the forward edge does
+
+45
+00:02:36,570 --> 00:02:41,530
+ not appear in the residual network so the flow along this edge equals its capacity.
+
+46
+00:02:41,530 --> 00:02:45,675
+ Now since every edge from L to R is fully capacitated,
+
+47
+00:02:45,675 --> 00:02:48,585
+ what does this say about the total flow out of L?
+
+48
+00:02:48,585 --> 00:02:51,960
+ Well it's equal to the capacity from L to R.
+
+49
+00:02:51,960 --> 00:02:57,330
+ The total flow out is equal to the total capacity from L to R. Recall that
+
+50
+00:02:57,330 --> 00:03:01,740
+ this capacity was defined as edges going from L to R. It doesn't count
+
+51
+00:03:01,740 --> 00:03:06,630
+ edges going from R to L. Well that's good we're close to what we want to prove.
+
+52
+00:03:06,630 --> 00:03:10,950
+ Now let's take a look at the edges that are going from R into L in the original graph.
+
+53
+00:03:10,950 --> 00:03:13,110
+ There is only one such edge in this example,
+
+54
+00:03:13,110 --> 00:03:19,160
+ the edge going from F into E. So consider an edge Z to Y in the original graph whereas
+
+55
+00:03:19,160 --> 00:03:22,025
+ Z is in R and Y is in this set L.
+
+56
+00:03:22,025 --> 00:03:26,220
+ What do we know about the flow along this edge from Z to Y,
+
+57
+00:03:26,220 --> 00:03:28,180
+ say from F to E?
+
+58
+00:03:28,180 --> 00:03:30,300
+ What's flow zero, why?
+
+59
+00:03:30,300 --> 00:03:32,355
+ Because this edge from E to F,
+
+60
+00:03:32,355 --> 00:03:36,095
+ the reverse edge does not appear in this residual network.
+
+61
+00:03:36,095 --> 00:03:39,465
+ If it did appear then F would be included in the set L
+
+62
+00:03:39,465 --> 00:03:43,905
+ which it's not so since the back edge does not appear in the residual network,
+
+63
+00:03:43,905 --> 00:03:46,715
+ then this forward edge has to have flow zero.
+
+64
+00:03:46,715 --> 00:03:49,935
+ Since this is true for all edges into the set L,
+
+65
+00:03:49,935 --> 00:03:55,080
+ we conclude that the total flow into L is zero in this flow f star.
+
+66
+00:03:55,080 --> 00:04:00,860
+ Now we proved earlier for any flow f star and any ST cut, LR,
+
+67
+00:04:00,860 --> 00:04:05,130
+ that the size of this flow f star equals the flow out of
+
+68
+00:04:05,130 --> 00:04:10,485
+ L minus the flow into L. What we've seen so far for this ST cut LR,
+
+69
+00:04:10,485 --> 00:04:18,270
+ the flow out of this set L is equal to the capacity and the flow in equal zero.
+
+70
+00:04:18,270 --> 00:04:22,455
+ So that means the size of this flow equals the capacity of this cut LR.
+
+71
+00:04:22,455 --> 00:04:25,380
+ This statement is exactly what we need to prove in order to
+
+72
+00:04:25,380 --> 00:04:28,380
+ finish the proof of the max flow main cut theorem.
+
+73
+00:04:28,380 --> 00:04:28,380
+ So that completes the proof of the theorem.
+

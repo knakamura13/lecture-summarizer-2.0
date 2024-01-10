@@ -1,0 +1,28 @@
+1
+00:00:00,000 --> 00:00:03,030
+ Let's take a quick quiz to make sure you're familiar with multiplying
+
+2
+00:00:03,030 --> 00:00:06,060
+ polynomials and let's consider the polynomial A(x),
+
+3
+00:00:06,060 --> 00:00:08,775
+ which is 1 + 2x + 3x squared.
+
+4
+00:00:08,775 --> 00:00:13,125
+ And B(x), let's define as 2 - x + 4x squared.
+
+5
+00:00:13,125 --> 00:00:15,642
+ So the vector of coefficients for A(x) is (1, 2,
+
+6
+00:00:15,642 --> 00:00:20,275
+ 3), and the vector for B(x) is (2, -1, 4).
+
+7
+00:00:20,275 --> 00:00:20,275
+ And now compute the convolution of A and B.
+

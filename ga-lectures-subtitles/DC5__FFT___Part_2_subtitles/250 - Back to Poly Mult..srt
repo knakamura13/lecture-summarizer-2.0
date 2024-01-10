@@ -1,0 +1,100 @@
+1
+00:00:00,000 --> 00:00:04,830
+ Let's go back to this earlier slide with our polynomial multiplication algorithm.
+
+2
+00:00:04,830 --> 00:00:06,565
+ Now we know how to do this last step.
+
+3
+00:00:06,565 --> 00:00:09,660
+ We know how to do inverse FFT which goes from
+
+4
+00:00:09,660 --> 00:00:14,880
+ the values of this polynomial C_of_x to the coefficients of this polynomial.
+
+5
+00:00:14,880 --> 00:00:17,280
+ So let's add in the details of this last step which
+
+6
+00:00:17,280 --> 00:00:20,450
+ will complete our polynomial multiplication algorithm.
+
+7
+00:00:20,450 --> 00:00:25,365
+ Now in this last step, we're going to run FFT using these values t,
+
+8
+00:00:25,365 --> 00:00:30,060
+ t are the values of C_of_x at the 2nth roots of unity.
+
+9
+00:00:30,060 --> 00:00:34,360
+ Now we treat these values t as the coefficients for a polynomial.
+
+10
+00:00:34,360 --> 00:00:38,105
+ So this vector t is the first parameter in our input.
+
+11
+00:00:38,105 --> 00:00:40,250
+ The second parameter is a root of unity.
+
+12
+00:00:40,250 --> 00:00:42,280
+ What root of unity do we choose?
+
+13
+00:00:42,280 --> 00:00:45,135
+ We want to use the inverse of the 2nth root of unity,
+
+14
+00:00:45,135 --> 00:00:48,570
+ which is the last of the 2nth roots of unity,
+
+15
+00:00:48,570 --> 00:00:53,970
+ namely its omega sub-2n raised to the 2n minus one power.
+
+16
+00:00:53,970 --> 00:00:56,290
+ Now when we run FFT on this input,
+
+17
+00:00:56,290 --> 00:00:58,485
+ we're going to get 2n points return.
+
+18
+00:00:58,485 --> 00:01:02,015
+ Let's use this vector C as the return value,
+
+19
+00:01:02,015 --> 00:01:05,715
+ so C_nought through C_sub_2n minus one.
+
+20
+00:01:05,715 --> 00:01:08,295
+ But recall, we have to scale this output,
+
+21
+00:01:08,295 --> 00:01:11,330
+ so we have to take the vector that's returned by FFT,
+
+22
+00:01:11,330 --> 00:01:13,395
+ scale it by one over 2n,
+
+23
+00:01:13,395 --> 00:01:18,240
+ and that gives us the coefficients of this polynomial C_of_x, and that's it.
+
+24
+00:01:18,240 --> 00:01:20,907
+ That completes our polynomial multiplication algorithm
+
+25
+00:01:20,907 --> 00:01:20,907
+ and similarly, our convolution algorithm.
+

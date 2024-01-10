@@ -1,0 +1,28 @@
+1
+00:00:00,000 --> 00:00:04,530
+ The solution to this problem is 2,3,8,5,12.
+
+2
+00:00:04,530 --> 00:00:07,665
+ To get the x cubed coefficient 5,
+
+3
+00:00:07,665 --> 00:00:09,390
+ we obtain it in the following way,
+
+4
+00:00:09,390 --> 00:00:13,035
+ multiplying 3x square by negative x,
+
+5
+00:00:13,035 --> 00:00:15,060
+ we get negative 3x cubed.
+
+6
+00:00:15,060 --> 00:00:19,670
+ Multiplying 2x by 4x square, we get 8x cubed.
+
+7
+00:00:19,670 --> 00:00:19,670
+ Adding these up, we get 5x cubed.
+

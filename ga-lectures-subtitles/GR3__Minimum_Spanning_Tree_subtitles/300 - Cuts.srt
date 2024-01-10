@@ -1,0 +1,92 @@
+1
+00:00:00,000 --> 00:00:02,100
+ Before we give the statement of the cut property,
+
+2
+00:00:02,100 --> 00:00:04,045
+ let's do a little bit of terminology.
+
+3
+00:00:04,045 --> 00:00:06,740
+ Here again is our running example of a graph.
+
+4
+00:00:06,740 --> 00:00:08,625
+ In general, we have an undirected graph,
+
+5
+00:00:08,625 --> 00:00:14,010
+ G and a cut of the graph is a set of edges which partition the vertices into two sets,
+
+6
+00:00:14,010 --> 00:00:17,835
+ S and the complement of S. So for a particular set S,
+
+7
+00:00:17,835 --> 00:00:23,805
+ the cut edges are those edges with one endpoint in S and the other endpoint in S bar.
+
+8
+00:00:23,805 --> 00:00:26,010
+ In words, what are the cut edges?
+
+9
+00:00:26,010 --> 00:00:29,560
+ The cut edges are the edges crossing between S and S bar.
+
+10
+00:00:29,560 --> 00:00:32,395
+ Let's take a look at a particular cut in this graph.
+
+11
+00:00:32,395 --> 00:00:36,810
+ So I partitioned it into S and S bar.
+
+12
+00:00:36,810 --> 00:00:38,460
+ Now what are the cut edges?
+
+13
+00:00:38,460 --> 00:00:42,065
+ The cut edges are the five edges which are crossing between S and S bar.
+
+14
+00:00:42,065 --> 00:00:45,425
+ These five edges are the cut S, S bar.
+
+15
+00:00:45,425 --> 00:00:49,460
+ Later in the course, we're going to look at various optimization problems involving cuts.
+
+16
+00:00:49,460 --> 00:00:51,405
+ We're going to try to find a minimum cut.
+
+17
+00:00:51,405 --> 00:00:53,690
+ So the fewest number of edges in order
+
+18
+00:00:53,690 --> 00:00:56,930
+ to disconnect the graph into at least two components.
+
+19
+00:00:56,930 --> 00:00:59,233
+ And we're also going to look at the max cut problem
+
+20
+00:00:59,233 --> 00:01:02,440
+ where we're trying to find the cut of largest size.
+
+21
+00:01:02,440 --> 00:01:05,415
+ But for now we're just looking at the general notion of what is a cut.
+
+22
+00:01:05,415 --> 00:01:09,035
+ So to summarize, if I give you a set S and S bar,
+
+23
+00:01:09,035 --> 00:01:09,035
+ then the cut S, S bar is a set of edges crossing between S and S bar.
+

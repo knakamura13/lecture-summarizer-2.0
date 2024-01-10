@@ -1,0 +1,48 @@
+1
+00:00:00,000 --> 00:00:01,890
+ Now for the background, we do similar,
+
+2
+00:00:01,890 --> 00:00:03,780
+ using this vertex t. So,
+
+3
+00:00:03,780 --> 00:00:05,490
+ we have an edge from every vertex of
+
+4
+00:00:05,490 --> 00:00:10,220
+ the original undirected graph to t. So these edges are going to T,
+
+5
+00:00:10,220 --> 00:00:14,655
+ whereas edges came out of S. So S was a source and T is a sync,
+
+6
+00:00:14,655 --> 00:00:19,370
+ and the capacity of these edges two t will be the background likelihood.
+
+7
+00:00:19,370 --> 00:00:23,325
+ So now we've got the foreground likelihood and the background likelihood encoded,
+
+8
+00:00:23,325 --> 00:00:25,940
+ and we have the separation penalties encoded.
+
+9
+00:00:25,940 --> 00:00:27,300
+ So here's our final graph,
+
+10
+00:00:27,300 --> 00:00:30,335
+ and we've specified the capacities along every edge.
+
+11
+00:00:30,335 --> 00:00:32,460
+ Therefore, we've defined a flow network,
+
+12
+00:00:32,460 --> 00:00:32,460
+ and we can use this as our input to the max-flow problem.
+

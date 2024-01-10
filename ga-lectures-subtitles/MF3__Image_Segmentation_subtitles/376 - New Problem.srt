@@ -1,0 +1,64 @@
+1
+00:00:00,000 --> 00:00:02,040
+ Here is our new problem formulation.
+
+2
+00:00:02,040 --> 00:00:05,250
+ The input is an undirected graph corresponding to the image,
+
+3
+00:00:05,250 --> 00:00:07,755
+ once again, and we're given the following weights.
+
+4
+00:00:07,755 --> 00:00:10,595
+ For each pixel, for each vertex I,
+
+5
+00:00:10,595 --> 00:00:14,445
+ we're given fi and bi and these are non-negative weights.
+
+6
+00:00:14,445 --> 00:00:15,845
+ And, for each edge,
+
+7
+00:00:15,845 --> 00:00:17,550
+ we are given the weight Pij,
+
+8
+00:00:17,550 --> 00:00:19,070
+ which is also non-negative.
+
+9
+00:00:19,070 --> 00:00:22,935
+ And, our goal is to find the partition of the vertices or pixels into two sets,
+
+10
+00:00:22,935 --> 00:00:27,480
+ F and B, and we want the partition which minimizes the weight,
+
+11
+00:00:27,480 --> 00:00:29,310
+ w prime of FB.
+
+12
+00:00:29,310 --> 00:00:31,555
+ Recall the partition, FB,
+
+13
+00:00:31,555 --> 00:00:34,260
+ which minimizes w prime of FB,
+
+14
+00:00:34,260 --> 00:00:37,920
+ is the same partition which maximizes w
+
+15
+00:00:37,920 --> 00:00:42,330
+ of FB and therefore it solves the original image segmentation problem.
+
+16
+00:00:42,330 --> 00:00:42,330
+ Now, let's see how to reduce this to the max flow problem.
+

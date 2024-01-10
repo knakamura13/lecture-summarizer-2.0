@@ -1,0 +1,48 @@
+1
+00:00:00,000 --> 00:00:01,890
+ The input once again is specified by
+
+2
+00:00:01,890 --> 00:00:05,520
+ an undirected graph G where the vertices correspond to the pixels.
+
+3
+00:00:05,520 --> 00:00:07,890
+ And in addition, we have the following parameters;
+
+4
+00:00:07,890 --> 00:00:11,230
+ for each pixel, we have two parameters, fi and bi.
+
+5
+00:00:11,230 --> 00:00:15,284
+ Fi is the likelihood or weight that vertex i,
+
+6
+00:00:15,284 --> 00:00:17,520
+ pixel i is in the foreground.
+
+7
+00:00:17,520 --> 00:00:22,825
+ And bi is the weight or likelihood that pixel i is in the background.
+
+8
+00:00:22,825 --> 00:00:25,705
+ Now, we'll assume that both of these parameters are non-negative.
+
+9
+00:00:25,705 --> 00:00:29,035
+ In addition, we're given a parameter for each pair of neighboring pixels.
+
+10
+00:00:29,035 --> 00:00:32,520
+ Pij is a separation penalty for this edge.
+
+11
+00:00:32,520 --> 00:00:36,670
+ It's the cost of separating i and j into different objects.
+
+12
+00:00:36,670 --> 00:00:36,670
+ And once again, we'll assume that pij is not negative.
+

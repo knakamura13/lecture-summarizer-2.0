@@ -1,0 +1,324 @@
+1
+00:00:00,000 --> 00:00:03,005
+ This is the property that we just claimed is true.
+
+2
+00:00:03,005 --> 00:00:05,835
+ When we run DFS on any directed graph,
+
+3
+00:00:05,835 --> 00:00:10,610
+ the vertex with the highest post order number lies in a source SCC.
+
+4
+00:00:10,610 --> 00:00:13,270
+ We'll go back and prove this property momentarily,
+
+5
+00:00:13,270 --> 00:00:16,140
+ but let's first use it to get an SCC algorithm.
+
+6
+00:00:16,140 --> 00:00:19,538
+ We need a vertex which lies in a sink SCC.
+
+7
+00:00:19,538 --> 00:00:23,994
+ How can we find such a vertex W which is guaranteed to lie in a sink SCC?
+
+8
+00:00:23,994 --> 00:00:27,505
+ Well, we know how to find a vertex which lies in a source SCC.
+
+9
+00:00:27,505 --> 00:00:30,360
+ I claim we can use this as a subroutine in order to
+
+10
+00:00:30,360 --> 00:00:33,800
+ find a vertex which is guaranteed to lie in a sink SCC.
+
+11
+00:00:33,800 --> 00:00:36,250
+ And then we're all done then we have our SCC algorithm.
+
+12
+00:00:36,250 --> 00:00:37,650
+ Why don't you go ahead and think about this?
+
+13
+00:00:37,650 --> 00:00:41,580
+ How can we find a vertex which is guaranteed to lie in a sink SCC using
+
+14
+00:00:41,580 --> 00:00:46,195
+ this property that the highest post order number lies in a source SCC?
+
+15
+00:00:46,195 --> 00:00:48,885
+ In some sense we just want to redefine the terms.
+
+16
+00:00:48,885 --> 00:00:50,970
+ We want to redefine a source to be a sink
+
+17
+00:00:50,970 --> 00:00:53,390
+ and a sink to be a source. What do we mean by that?
+
+18
+00:00:53,390 --> 00:00:56,520
+ Think about our topologically ordering of a DAG.
+
+19
+00:00:56,520 --> 00:00:58,045
+ The edges go left to right,
+
+20
+00:00:58,045 --> 00:01:01,825
+ and the beginning of the ordering is a source and at the end is a sink.
+
+21
+00:01:01,825 --> 00:01:04,575
+ What if we flipped all the edges to go backwards?
+
+22
+00:01:04,575 --> 00:01:08,010
+ Then this vertex which used to be a sink would now be a source,
+
+23
+00:01:08,010 --> 00:01:10,290
+ and this vertex which used to be a source will now
+
+24
+00:01:10,290 --> 00:01:12,865
+ be a sink because all the edges go right to left.
+
+25
+00:01:12,865 --> 00:01:14,430
+ So the ordering will be opposite.
+
+26
+00:01:14,430 --> 00:01:16,850
+ That's what we want to do now for our general directed graph.
+
+27
+00:01:16,850 --> 00:01:18,315
+ We want to flip the graph.
+
+28
+00:01:18,315 --> 00:01:21,210
+ We want to look at the opposite graph or the reverse graph.
+
+29
+00:01:21,210 --> 00:01:24,435
+ And then the source component will become a sink component,
+
+30
+00:01:24,435 --> 00:01:27,330
+ and the sink component will become a source component.
+
+31
+00:01:27,330 --> 00:01:31,085
+ Now, for a general directed graph G which has vertex set V,
+
+32
+00:01:31,085 --> 00:01:34,260
+ and edge set E. We're going to look at GR.
+
+33
+00:01:34,260 --> 00:01:38,165
+ This is going to be the reverse of the graph G. The vertex set is going to stay the same.
+
+34
+00:01:38,165 --> 00:01:41,625
+ The edge set is going to change from E to E-reversed.
+
+35
+00:01:41,625 --> 00:01:43,525
+ We're just going to reverse all the edges.
+
+36
+00:01:43,525 --> 00:01:46,915
+ These are directed edges so we're just going to look at the reverse edges.
+
+37
+00:01:46,915 --> 00:01:48,530
+ What exactly is E-R?
+
+38
+00:01:48,530 --> 00:01:50,370
+ For every edge in E,
+
+39
+00:01:50,370 --> 00:01:52,245
+ if we have an edge from V to W,
+
+40
+00:01:52,245 --> 00:01:53,695
+ we're going to add into E-R,
+
+41
+00:01:53,695 --> 00:01:56,970
+ we're going to add in the edge from W to V. E-R is simply
+
+42
+00:01:56,970 --> 00:02:01,050
+ the reverse of every edge in E. Notice if we flip all the edges,
+
+43
+00:02:01,050 --> 00:02:05,430
+ we look from G to G-R then all of the sources and sinks get flipped.
+
+44
+00:02:05,430 --> 00:02:07,500
+ Now, how does these strongly connected components of
+
+45
+00:02:07,500 --> 00:02:10,570
+ G compared to the strongly connected componentes of G-R?
+
+46
+00:02:10,570 --> 00:02:14,100
+ Notice that if a pair of vertices are strongly connected in G
+
+47
+00:02:14,100 --> 00:02:18,458
+ then they're also strongly connected in G-R There's a path from V to W and G,
+
+48
+00:02:18,458 --> 00:02:24,050
+ and a path from W to V. Then in G-R there also is a path from V to W and W to B.
+
+49
+00:02:24,050 --> 00:02:27,510
+ The set of strongly connected components are the same in the two graphs.
+
+50
+00:02:27,510 --> 00:02:31,200
+ Now, how is the meta graph on the strongly connected components?
+
+51
+00:02:31,200 --> 00:02:33,855
+ Look in these two graphs It might be different.
+
+52
+00:02:33,855 --> 00:02:38,160
+ In particular, the meta graph of strongly connected components in G is a DAG.
+
+53
+00:02:38,160 --> 00:02:40,450
+ And now, what does it look like in G-R?
+
+54
+00:02:40,450 --> 00:02:43,950
+ Well, we flipped that DAG so all the strongly connected components which were
+
+55
+00:02:43,950 --> 00:02:48,100
+ at the beginning of the topological ordering are now at the end.
+
+56
+00:02:48,100 --> 00:02:51,420
+ The edges are not going right to left instead of left to right.
+
+57
+00:02:51,420 --> 00:02:55,200
+ If we take a component which was a source SCC and G
+
+58
+00:02:55,200 --> 00:02:59,910
+ then it becomes a sink as SCC in G-R because the ordering goes backwards.
+
+59
+00:02:59,910 --> 00:03:03,120
+ Similarly, if we take a component which was at the end of the ordering for
+
+60
+00:03:03,120 --> 00:03:06,570
+ G then it's going to be at the beginning of the ordering for G-R. Now,
+
+61
+00:03:06,570 --> 00:03:08,185
+ how do we address our original problem?
+
+62
+00:03:08,185 --> 00:03:12,510
+ We want to find a vertex which is guaranteed to lie in a sink SCC
+
+63
+00:03:12,510 --> 00:03:18,030
+ of G. All we can do is find vertices which are guaranteed to lie in a source SCC.
+
+64
+00:03:18,030 --> 00:03:22,353
+ Well, the sink SCC of G corresponds to a source of G-R.
+
+65
+00:03:22,353 --> 00:03:24,540
+ So we take this input graph G,
+
+66
+00:03:24,540 --> 00:03:26,655
+ we construct its reverse graph,
+
+67
+00:03:26,655 --> 00:03:29,370
+ and then we run DFS on this reverse graph,
+
+68
+00:03:29,370 --> 00:03:32,565
+ and then we take the vertex with highest post order number as
+
+69
+00:03:32,565 --> 00:03:36,430
+ guaranteed to be in a source SCC of this graph G-R.
+
+70
+00:03:36,430 --> 00:03:40,845
+ This vertex which is guaranteed to be in a source SCC of G-R, or that SCC,
+
+71
+00:03:40,845 --> 00:03:45,810
+ is a sink in G. So this vertex with highest post order number for
+
+72
+00:03:45,810 --> 00:03:52,555
+ the DFS run on G-R is guaranteed to be in a sink SCC of G, the original graph.
+
+73
+00:03:52,555 --> 00:03:56,610
+ That's it. That's our algorithm for finding a vertex which is guaranteed to lie in
+
+74
+00:03:56,610 --> 00:04:00,900
+ a sink SCC of a graph G. You just reverse the graph, run DFS,
+
+75
+00:04:00,900 --> 00:04:03,030
+ take the highest post order number of vertex,
+
+76
+00:04:03,030 --> 00:04:05,955
+ and is guaranteed to be in a source of G-R,
+
+77
+00:04:05,955 --> 00:04:09,665
+ and therefore a sink of G. And now we have our algorithm for finding
+
+78
+00:04:09,665 --> 00:04:11,880
+ strongly connected components and is going to
+
+79
+00:04:11,880 --> 00:04:14,920
+ find the strongly connected components in topological ordering.
+
+80
+00:04:14,920 --> 00:04:17,490
+ We're going to find a sink SCC and move on,
+
+81
+00:04:17,490 --> 00:04:17,490
+ so we're going to find this ordering from right to left.
+

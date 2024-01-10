@@ -1,0 +1,180 @@
+1
+00:00:00,000 --> 00:00:03,760
+ Let alpha to note ZJ hat star.
+
+2
+00:00:03,760 --> 00:00:08,480
+ What we've shown so far is that the probability that this clause CJ satisfied
+
+3
+00:00:08,480 --> 00:00:13,650
+ is at least one minus one minus over alpha over K to the K. Now,
+
+4
+00:00:13,650 --> 00:00:16,825
+ once again, we want to get this alpha outside of this power.
+
+5
+00:00:16,825 --> 00:00:19,130
+ We want to make it a linear function of alpha.
+
+6
+00:00:19,130 --> 00:00:21,855
+ Let's look at this function of alpha.
+
+7
+00:00:21,855 --> 00:00:25,475
+ Let's define F of alpha to be this right hand side.
+
+8
+00:00:25,475 --> 00:00:27,820
+ And our claim is that F of alpha,
+
+9
+00:00:27,820 --> 00:00:29,550
+ so this right hand side here,
+
+10
+00:00:29,550 --> 00:00:32,930
+ is at least some constant times alpha.
+
+11
+00:00:32,930 --> 00:00:35,855
+ It's a constant in the sense it's independent of alpha.
+
+12
+00:00:35,855 --> 00:00:39,150
+ It does depend on K, the size of this clause.
+
+13
+00:00:39,150 --> 00:00:40,570
+ Now, what does that constant there?
+
+14
+00:00:40,570 --> 00:00:43,180
+ Well, it's going to be similar to this without the alpha.
+
+15
+00:00:43,180 --> 00:00:48,590
+ It's going to be one minus quantity one minus one over K raised to the Kth power.
+
+16
+00:00:48,590 --> 00:00:50,910
+ Once we prove that, then we can apply that
+
+17
+00:00:50,910 --> 00:00:54,930
+ here and we get that this is at least this quantity,
+
+18
+00:00:54,930 --> 00:00:57,890
+ which is this constant times alpha.
+
+19
+00:00:57,890 --> 00:01:02,355
+ We got the alpha outside of the power so it's now linear in alpha.
+
+20
+00:01:02,355 --> 00:01:04,260
+ It's linear in this Z.
+
+21
+00:01:04,260 --> 00:01:05,806
+ Now, how do we prove this claim?
+
+22
+00:01:05,806 --> 00:01:10,325
+ First off, you take the second derivative and you prove that it's negative.
+
+23
+00:01:10,325 --> 00:01:12,400
+ Therefore, this function is concave.
+
+24
+00:01:12,400 --> 00:01:14,610
+ Since F alpha is a concave function,
+
+25
+00:01:14,610 --> 00:01:16,490
+ it's going to look something like this.
+
+26
+00:01:16,490 --> 00:01:19,470
+ We're trying to relate F of alpha,
+
+27
+00:01:19,470 --> 00:01:22,230
+ this curve, to this linear function.
+
+28
+00:01:22,230 --> 00:01:24,930
+ Let's denote this linear function is beta-alpha,
+
+29
+00:01:24,930 --> 00:01:27,120
+ so this quantity here is beta.
+
+30
+00:01:27,120 --> 00:01:29,515
+ Let's look at this line beta-alpha.
+
+31
+00:01:29,515 --> 00:01:32,090
+ For large values of alpha it might not be bigger.
+
+32
+00:01:32,090 --> 00:01:36,010
+ But notice, what values of alpha are we interested in?
+
+33
+00:01:36,010 --> 00:01:39,020
+ We're interested in alphas between zero and one,
+
+34
+00:01:39,020 --> 00:01:43,070
+ so we only need this claim for values of alpha between zero and one.
+
+35
+00:01:43,070 --> 00:01:47,327
+ So, since it's a concave function it's got one peak.
+
+36
+00:01:47,327 --> 00:01:51,070
+ If we look at the end points that we're interested in, one and zero,
+
+37
+00:01:51,070 --> 00:01:56,190
+ and if we prove that this curve is above this line at these two points,
+
+38
+00:01:56,190 --> 00:02:00,440
+ zero and one, then it's also above at every intermediate point.
+
+39
+00:02:00,440 --> 00:02:02,640
+ So once we take the second derivative and prove it's
+
+40
+00:02:02,640 --> 00:02:06,180
+ concave then it suffices to check the point zero alpha,
+
+41
+00:02:06,180 --> 00:02:08,235
+ equals zero and alpha equals one.
+
+42
+00:02:08,235 --> 00:02:09,885
+ And if you plug in alpha equals zero,
+
+43
+00:02:09,885 --> 00:02:11,550
+ we get zero on both sides,
+
+44
+00:02:11,550 --> 00:02:13,260
+ and alpha equals one,
+
+45
+00:02:13,260 --> 00:02:13,260
+ it's straightforward to check that that's also true.
+

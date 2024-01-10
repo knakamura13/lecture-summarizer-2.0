@@ -1,0 +1,160 @@
+1
+00:00:00,000 --> 00:00:04,615
+ Let's recap what we know so far about stationary distributions of a Markov Chain.
+
+2
+00:00:04,615 --> 00:00:08,485
+ So let's consider a Markov Chain defined by the transition matrix P,
+
+3
+00:00:08,485 --> 00:00:12,240
+ now if our Markov Chain is defined on end states then
+
+4
+00:00:12,240 --> 00:00:16,010
+ we consider any distribution pi on those end states,
+
+5
+00:00:16,010 --> 00:00:17,840
+ so this is a row vector of size N,
+
+6
+00:00:17,840 --> 00:00:23,710
+ so for any pi which satisfies pi times P equals pi,
+
+7
+00:00:23,710 --> 00:00:27,660
+ so pi once again is a eigenvector with eigenvalue
+
+8
+00:00:27,660 --> 00:00:32,550
+ 1 for P then such a pi is a stationary distribution.
+
+9
+00:00:32,550 --> 00:00:34,110
+ What this equation says is that,
+
+10
+00:00:34,110 --> 00:00:38,070
+ if we start in distribution pi and we do one step of our random walk
+
+11
+00:00:38,070 --> 00:00:42,890
+ defined by P then we'll stay in the stationary distribution pi,
+
+12
+00:00:42,890 --> 00:00:44,105
+ so pi' isn't variant.
+
+13
+00:00:44,105 --> 00:00:46,230
+ Once we reach it we stay in it.
+
+14
+00:00:46,230 --> 00:00:48,660
+ Now this defines a stationary distribution.
+
+15
+00:00:48,660 --> 00:00:50,730
+ Now, when is there such a pi?
+
+16
+00:00:50,730 --> 00:00:53,715
+ What Markov Chains have a stationary distribution?
+
+17
+00:00:53,715 --> 00:00:57,055
+ And if there is one, is it unique or there's multiple ones?
+
+18
+00:00:57,055 --> 00:01:01,200
+ Under what properties do we have multiple or unique stationary distributions?
+
+19
+00:01:01,200 --> 00:01:03,690
+ And for our simple 62-10 example,
+
+20
+00:01:03,690 --> 00:01:05,895
+ we noticed that no matter where you started,
+
+21
+00:01:05,895 --> 00:01:09,030
+ you always reached the stationary distribution.
+
+22
+00:01:09,030 --> 00:01:11,955
+ So in this case when there's a unique stationary distribution,
+
+23
+00:01:11,955 --> 00:01:13,340
+ regardless of where we start,
+
+24
+00:01:13,340 --> 00:01:16,045
+ do we always reach this stationary distribution?
+
+25
+00:01:16,045 --> 00:01:17,860
+ Finally, in this case where there is
+
+26
+00:01:17,860 --> 00:01:20,755
+ a unique stationary distribution and we always reach it,
+
+27
+00:01:20,755 --> 00:01:22,603
+ we could ask how fast we reach it.
+
+28
+00:01:22,603 --> 00:01:25,270
+ This is known as the mixing time of the Markov Chain.
+
+29
+00:01:25,270 --> 00:01:29,490
+ How fast the Markov Chain reaches its stationary distribution.
+
+30
+00:01:29,490 --> 00:01:31,560
+ This is one of the things I study in my research,
+
+31
+00:01:31,560 --> 00:01:35,125
+ trying to prove bounds about the mixing time of Markov Chains.
+
+32
+00:01:35,125 --> 00:01:38,625
+ We're not going to look at the mixing time here but what we are going to look at,
+
+33
+00:01:38,625 --> 00:01:41,670
+ our properties of the Markov Chain which ensure that we have
+
+34
+00:01:41,670 --> 00:01:46,905
+ a unique stationary distribution and that we always reach the stationary distribution.
+
+35
+00:01:46,905 --> 00:01:48,750
+ So regardless of where we started from,
+
+36
+00:01:48,750 --> 00:01:52,605
+ we eventually in the limit over time will reach a stationary distribution.
+
+37
+00:01:52,605 --> 00:01:56,940
+ In order to see which properties ensure a unique stationary distribution,
+
+38
+00:01:56,940 --> 00:02:00,330
+ let's look at examples where we have multiple stationary distributions.
+
+39
+00:02:00,330 --> 00:02:02,730
+ That will give us some insight into the properties
+
+40
+00:02:02,730 --> 00:02:02,730
+ needed to guarantee a unique stationary distribution.
+

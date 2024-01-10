@@ -1,0 +1,132 @@
+1
+00:00:00,000 --> 00:00:03,775
+ So, here's a Pseudocode for our repeat solution for this version of knapsack.
+
+2
+00:00:03,775 --> 00:00:08,565
+ This is a knapsack version where we allow objects to be used multiple times.
+
+3
+00:00:08,565 --> 00:00:10,570
+ So, the repeat version of the knapsack.
+
+4
+00:00:10,570 --> 00:00:16,575
+ As before, the input to the problem are the weights of the n objects W1 through Wn,
+
+5
+00:00:16,575 --> 00:00:19,661
+ the values of the n objects V1 through Vn,
+
+6
+00:00:19,661 --> 00:00:23,065
+ and the total capacity available capital B.
+
+7
+00:00:23,065 --> 00:00:26,000
+ Now, it's a one-dimensional table so has no base case to worry about.
+
+8
+00:00:26,000 --> 00:00:31,590
+ And now, we're just going to go through that one-dimensional array from bottom up.
+
+9
+00:00:31,590 --> 00:00:36,860
+ Little b is going to be the index for our current position in the array.
+
+10
+00:00:36,860 --> 00:00:39,115
+ We start off by setting it equal to zero,
+
+11
+00:00:39,115 --> 00:00:43,770
+ in case there are no objects which fit in the current capacity available.
+
+12
+00:00:43,770 --> 00:00:46,080
+ Now, we go through each object and we consider
+
+13
+00:00:46,080 --> 00:00:49,930
+ that object as a last object to add it in the backpack.
+
+14
+00:00:49,930 --> 00:00:54,360
+ And we see if that gives us a better solution than anything we've obtained before.
+
+15
+00:00:54,360 --> 00:00:57,360
+ First, we need to check whether this object,
+
+16
+00:00:57,360 --> 00:00:59,600
+ object i, fits in the current capacity of (l,b).
+
+17
+00:00:59,600 --> 00:01:01,725
+ So, it's if Wi is,
+
+18
+00:01:01,725 --> 00:01:03,654
+ at most, little b.
+
+19
+00:01:03,654 --> 00:01:04,860
+ And now, if it is,
+
+20
+00:01:04,860 --> 00:01:07,950
+ we check whether this obtains a solution which is
+
+21
+00:01:07,950 --> 00:01:11,830
+ better than anything we've seen previously for this index.
+
+22
+00:01:11,830 --> 00:01:18,060
+ So, the previous best solution is K(b) and the new solution we obtain is Vi,
+
+23
+00:01:18,060 --> 00:01:19,630
+ for adding object i,
+
+24
+00:01:19,630 --> 00:01:26,273
+ plus the best solution for capacity (b-Wi) which is K(B-Wi).
+
+25
+00:01:26,273 --> 00:01:30,715
+ So, this is the solution we obtain now by using object i.
+
+26
+00:01:30,715 --> 00:01:32,820
+ And this is the previous best solution.
+
+27
+00:01:32,820 --> 00:01:36,000
+ So, if the new solution is better than the previous best,
+
+28
+00:01:36,000 --> 00:01:38,670
+ then we're going to update the current best.
+
+29
+00:01:38,670 --> 00:01:41,220
+ Now finally, we just returned the last entry of
+
+30
+00:01:41,220 --> 00:01:44,330
+ the table and that's our solution to our problem.
+
+31
+00:01:44,330 --> 00:01:47,475
+ That's the max value we can obtain using total weight,
+
+32
+00:01:47,475 --> 00:01:48,840
+ at most, capital B,
+
+33
+00:01:48,840 --> 00:01:48,840
+ which is the solution to the original problem.
+

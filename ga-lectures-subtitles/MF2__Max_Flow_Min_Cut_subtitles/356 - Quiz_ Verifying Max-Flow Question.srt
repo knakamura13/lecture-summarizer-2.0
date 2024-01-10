@@ -1,0 +1,32 @@
+1
+00:00:00,000 --> 00:00:04,175
+ Let's look at an important consequence of dilemma we just stated on the previous slide.
+
+2
+00:00:04,175 --> 00:00:05,565
+ Given a flow network,
+
+3
+00:00:05,565 --> 00:00:07,755
+ so an input to the Max-flow problem,
+
+4
+00:00:07,755 --> 00:00:10,020
+ and given a particular flow F,
+
+5
+00:00:10,020 --> 00:00:15,910
+ what is the time required to check whether this particular flow F is a Max-flow or not?
+
+6
+00:00:15,910 --> 00:00:19,332
+ Specify your answer in big O notation, in terms of N,
+
+7
+00:00:19,332 --> 00:00:21,560
+ the number of vertices in the flow network,
+
+8
+00:00:21,560 --> 00:00:21,560
+ and M, the number of edges in the flow network.
+

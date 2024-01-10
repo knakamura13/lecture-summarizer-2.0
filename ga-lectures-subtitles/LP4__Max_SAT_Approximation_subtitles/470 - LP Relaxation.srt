@@ -1,0 +1,236 @@
+1
+00:00:00,000 --> 00:00:04,230
+ Take this ILP, this interlinear program that we just defined,
+
+2
+00:00:04,230 --> 00:00:07,245
+ and consider an optimal point for this ILP.
+
+3
+00:00:07,245 --> 00:00:10,785
+ Of course we don't know how to find this optimal point in polynomial time,
+
+4
+00:00:10,785 --> 00:00:12,765
+ and we're not in fact finding it.
+
+5
+00:00:12,765 --> 00:00:16,800
+ We're just considering this optimal point for the purposes of the proof.
+
+6
+00:00:16,800 --> 00:00:22,070
+ So let Y-star and Z-star denote the optimal point for this ILP.
+
+7
+00:00:22,070 --> 00:00:25,750
+ Now what's the value of the objective function at the optimal point?
+
+8
+00:00:25,750 --> 00:00:30,490
+ Where the value of the objective function is simply the sum of the Z-stars.
+
+9
+00:00:30,490 --> 00:00:34,545
+ What do we know about the value of the objective function at this optimal point?
+
+10
+00:00:34,545 --> 00:00:37,830
+ Well it equals M-star, what is M-star?
+
+11
+00:00:37,830 --> 00:00:42,169
+ M-star is the maximum number of satisfied clauses in the original formula
+
+12
+00:00:42,169 --> 00:00:48,270
+ F. M-star is what we're trying to find and we can't solve this ILP in polynomial time,
+
+13
+00:00:48,270 --> 00:00:51,565
+ but we can solve any linear program in polynomial time.
+
+14
+00:00:51,565 --> 00:00:55,950
+ Can we convert this ILP into a similar LP?
+
+15
+00:00:55,950 --> 00:01:01,195
+ While this last constraint is what makes this an ILP so let's drop this last constraint.
+
+16
+00:01:01,195 --> 00:01:05,353
+ So, now the feasible points are no longer constrained to be integer value
+
+17
+00:01:05,353 --> 00:01:07,920
+ and then this changes from an ILP to
+
+18
+00:01:07,920 --> 00:01:10,875
+ a linear program this is simply a linear program now.
+
+19
+00:01:10,875 --> 00:01:13,815
+ We can solve this linear program in polynomial time,
+
+20
+00:01:13,815 --> 00:01:19,580
+ and let's denote the solution to this linear program instead of by Y-star and Z-star,
+
+21
+00:01:19,580 --> 00:01:21,295
+ let's put the-hat there.
+
+22
+00:01:21,295 --> 00:01:27,453
+ So, Y-hat-star and Z-hat-star are the optimal solution to this linear program,
+
+23
+00:01:27,453 --> 00:01:29,250
+ these points we can find.
+
+24
+00:01:29,250 --> 00:01:32,865
+ What's the relation between the objective function for the linear program
+
+25
+00:01:32,865 --> 00:01:37,280
+ compared to the ILP objective function at the optimal point?
+
+26
+00:01:37,280 --> 00:01:41,460
+ Where the value of the objective function for this LP at this optimal point,
+
+27
+00:01:41,460 --> 00:01:45,380
+ is the sum of the Z-hat-stars. How do these compare?
+
+28
+00:01:45,380 --> 00:01:50,220
+ Well any feasible point for the ILP is also a feasible point for the LP.
+
+29
+00:01:50,220 --> 00:01:53,800
+ Because the ILP constrains it to lie in this grid,
+
+30
+00:01:53,800 --> 00:01:56,215
+ the LP considers any point.
+
+31
+00:01:56,215 --> 00:01:59,930
+ So, the LP is considered more points so,
+
+32
+00:01:59,930 --> 00:02:04,570
+ since the ILP optimal point is also feasible for the LP,
+
+33
+00:02:04,570 --> 00:02:07,700
+ and the optimal solution for the LP is
+
+34
+00:02:07,700 --> 00:02:11,060
+ at least as good as the optimal solution for the ILP.
+
+35
+00:02:11,060 --> 00:02:14,405
+ So, we know that this is the objective function value,
+
+36
+00:02:14,405 --> 00:02:19,885
+ is at least this objective function value for the ILP optimal solution.
+
+37
+00:02:19,885 --> 00:02:22,500
+ So, we can find upper bound on the maximum number of
+
+38
+00:02:22,500 --> 00:02:25,680
+ satisfied clauses in F. Does that do us any good?
+
+39
+00:02:25,680 --> 00:02:29,380
+ Well not necessarily, that doesn't help us find M-star in any way.
+
+40
+00:02:29,380 --> 00:02:31,440
+ What we're going to do now, is we're going to convert
+
+41
+00:02:31,440 --> 00:02:37,200
+ this LP optimal solution into a feasible point for the ILP.
+
+42
+00:02:37,200 --> 00:02:41,865
+ It may not be an optimal solution to the ILP but it will be feasible.
+
+43
+00:02:41,865 --> 00:02:43,145
+ How do we do this?
+
+44
+00:02:43,145 --> 00:02:48,560
+ Will we have to convert this LP solution into a point on the grid.
+
+45
+00:02:48,560 --> 00:02:52,470
+ The simplest way to do that is to convert these fractional points
+
+46
+00:02:52,470 --> 00:02:59,160
+ these Y-hat-stars to integer points by rounding them to the nearest integer point,
+
+47
+00:02:59,160 --> 00:03:01,260
+ and we're going to do this in a probabilistic way.
+
+48
+00:03:01,260 --> 00:03:07,185
+ Now once we round these to integer points then we have a valid true false assignment for
+
+49
+00:03:07,185 --> 00:03:10,800
+ our set input F. And then we're going to
+
+50
+00:03:10,800 --> 00:03:14,955
+ prove that this rounded integer point is not that far,
+
+51
+00:03:14,955 --> 00:03:18,760
+ not that much worse than the original LP solution,
+
+52
+00:03:18,760 --> 00:03:21,000
+ than the fractional solution.
+
+53
+00:03:21,000 --> 00:03:26,253
+ And since this fractional solution is at least as good as the optimal integer solution,
+
+54
+00:03:26,253 --> 00:03:29,115
+ then we know that the integer solution that we found
+
+55
+00:03:29,115 --> 00:03:32,790
+ is not that far off from the optimal integer solution.
+
+56
+00:03:32,790 --> 00:03:36,180
+ So, we're going to take this LP solution around it,
+
+57
+00:03:36,180 --> 00:03:40,045
+ that'll get worse than this optimal solution,
+
+58
+00:03:40,045 --> 00:03:43,140
+ we will show that this integer solution that we find is
+
+59
+00:03:43,140 --> 00:03:43,140
+ not far off from this fractional solution.
+

@@ -1,0 +1,164 @@
+1
+00:00:00,000 --> 00:00:02,790
+ Let's look at the following example with an array of
+
+2
+00:00:02,790 --> 00:00:05,525
+ n numbers and let's choose a specific pivot.
+
+3
+00:00:05,525 --> 00:00:08,310
+ Let's say the pivot is number 11.
+
+4
+00:00:08,310 --> 00:00:10,039
+ So we make these three buckets.
+
+5
+00:00:10,039 --> 00:00:14,369
+ Those less than p, those equal to p and those bigger than p. And we're going to
+
+6
+00:00:14,369 --> 00:00:16,500
+ take a scan through the array and we're going to
+
+7
+00:00:16,500 --> 00:00:19,289
+ put each of these elements in one of these three buckets.
+
+8
+00:00:19,289 --> 00:00:21,640
+ Five is smaller than the pivot,
+
+9
+00:00:21,640 --> 00:00:25,420
+ two is smaller than the pivot and so on.
+
+10
+00:00:25,420 --> 00:00:27,300
+ Eleven happens to appear twice,
+
+11
+00:00:27,300 --> 00:00:29,230
+ so it appears twice in this equal list.
+
+12
+00:00:29,230 --> 00:00:31,989
+ And these are the final buckets.
+
+13
+00:00:31,989 --> 00:00:33,950
+ Now, what is the K we're searching for?
+
+14
+00:00:33,950 --> 00:00:35,829
+ Depending on the K we're searching for,
+
+15
+00:00:35,829 --> 00:00:38,439
+ the Kth smallest will be in one of these three lists.
+
+16
+00:00:38,439 --> 00:00:42,039
+ And we can figure out where it resides based on how large these lists are in
+
+17
+00:00:42,039 --> 00:00:46,030
+ comparison to K. The smallest list is those of size four.
+
+18
+00:00:46,030 --> 00:00:47,500
+ So if K is, at most,
+
+19
+00:00:47,500 --> 00:00:50,649
+ four then we know the Kth smallest is in this list.
+
+20
+00:00:50,649 --> 00:00:54,070
+ So in this case, what we can do is we can recursively search for
+
+21
+00:00:54,070 --> 00:00:58,200
+ the Kth smallest in this list and we can discard these two other lists.
+
+22
+00:00:58,200 --> 00:01:01,960
+ Now if K is five or six, then what do we know?
+
+23
+00:01:01,960 --> 00:01:05,094
+ Then we know the Kth smallest is in this list and then,
+
+24
+00:01:05,094 --> 00:01:07,250
+ therefore, it's equal to 11.
+
+25
+00:01:07,250 --> 00:01:08,799
+ So we don't need to recurse at all,
+
+26
+00:01:08,799 --> 00:01:11,269
+ we can just output 11.
+
+27
+00:01:11,269 --> 00:01:13,385
+ Finally, if K is bigger than six,
+
+28
+00:01:13,385 --> 00:01:14,989
+ then what do we know?
+
+29
+00:01:14,989 --> 00:01:17,971
+ We know that the Kth smallest is in this list,
+
+30
+00:01:17,971 --> 00:01:20,165
+ so we don't search for the Kth smallest in this list
+
+31
+00:01:20,165 --> 00:01:23,269
+ because we discarded six elements from these lists.
+
+32
+00:01:23,269 --> 00:01:27,260
+ So we're going to search for the K minus six smallest in this list,
+
+33
+00:01:27,260 --> 00:01:32,049
+ A greater than p. Now the key is that we're always recursing on at most one list,
+
+34
+00:01:32,049 --> 00:01:34,456
+ either the small list or the big list.
+
+35
+00:01:34,456 --> 00:01:35,780
+ Or, in the middle case,
+
+36
+00:01:35,780 --> 00:01:37,280
+ we don't even have to recurse at all.
+
+37
+00:01:37,280 --> 00:01:41,246
+ Whereas QuickSort has to recursively sort these two lists,
+
+38
+00:01:41,246 --> 00:01:45,155
+ less than p and bigger than p. In this case,
+
+39
+00:01:45,155 --> 00:01:48,650
+ we only have to recursively search in one of the two lists.
+
+40
+00:01:48,650 --> 00:01:50,120
+ Now let's go ahead and detail this for
+
+41
+00:01:50,120 --> 00:01:50,120
+ the general case and let's write the pseudo code to make sure it's all clear.
+

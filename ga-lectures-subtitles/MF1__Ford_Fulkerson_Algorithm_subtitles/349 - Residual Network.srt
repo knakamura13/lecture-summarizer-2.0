@@ -1,0 +1,160 @@
+1
+00:00:00,000 --> 00:00:02,480
+ Let's formally define a residual network.
+
+2
+00:00:02,480 --> 00:00:06,880
+ First off, we have our input to the max-flow problem which is the flow network,
+
+3
+00:00:06,880 --> 00:00:10,155
+ the directed graph with capacities for each edge,
+
+4
+00:00:10,155 --> 00:00:13,560
+ and our residual network will be a function of the current flow.
+
+5
+00:00:13,560 --> 00:00:15,550
+ So fe is the current flow.
+
+6
+00:00:15,550 --> 00:00:18,525
+ So we'll denote the residual network as this graph
+
+7
+00:00:18,525 --> 00:00:21,420
+ G superscript f because it is
+
+8
+00:00:21,420 --> 00:00:25,515
+ a function of the current flow f. This will be a directed graph.
+
+9
+00:00:25,515 --> 00:00:28,230
+ The vertices will be the same as the flow network,
+
+10
+00:00:28,230 --> 00:00:29,910
+ but the edges will differ.
+
+11
+00:00:29,910 --> 00:00:32,505
+ So the edges will be a function of the current flow.
+
+12
+00:00:32,505 --> 00:00:34,830
+ And then these edges will also have weights.
+
+13
+00:00:34,830 --> 00:00:39,510
+ But even the actual edges that exist will be dependent on the current flow.
+
+14
+00:00:39,510 --> 00:00:42,930
+ And these might differ from the flow network or edges.
+
+15
+00:00:42,930 --> 00:00:45,495
+ For example, in the previous toy example,
+
+16
+00:00:45,495 --> 00:00:49,050
+ we saw that the flow network had an edge from a to b,
+
+17
+00:00:49,050 --> 00:00:52,535
+ but the residual network will have an edge from b to a.
+
+18
+00:00:52,535 --> 00:00:56,490
+ So how specifically do we define the edges of this residual network?
+
+19
+00:00:56,490 --> 00:01:00,630
+ Well, if there's an edge from v to w in the original flow network,
+
+20
+00:01:00,630 --> 00:01:04,500
+ and this edge has some available capacity.
+
+21
+00:01:04,500 --> 00:01:09,300
+ So, the flow along this edge is strictly smaller than its available capacity,
+
+22
+00:01:09,300 --> 00:01:13,155
+ then we add the same edge to the residual network
+
+23
+00:01:13,155 --> 00:01:17,695
+ where the capacity in this residual network is the available capacity.
+
+24
+00:01:17,695 --> 00:01:20,910
+ So it's the total capacity minus the current flow.
+
+25
+00:01:20,910 --> 00:01:23,020
+ These are, in some sense, the forward edges.
+
+26
+00:01:23,020 --> 00:01:25,170
+ These are the original type of edges we considered
+
+27
+00:01:25,170 --> 00:01:27,600
+ when we talked about available capacity network.
+
+28
+00:01:27,600 --> 00:01:31,553
+ Now, for this edge in the original flow network,
+
+29
+00:01:31,553 --> 00:01:36,020
+ if the flow is positive so there is some flow going along this edge,
+
+30
+00:01:36,020 --> 00:01:39,989
+ then we add the reverse of the edge to the residual network.
+
+31
+00:01:39,989 --> 00:01:44,124
+ Notice that this was the edge v to w and now we added the edge from w to
+
+32
+00:01:44,124 --> 00:01:48,705
+ v. This is the backward edge that we talked about earlier in the toy example.
+
+33
+00:01:48,705 --> 00:01:53,823
+ And the capacity of this backward edge is the current flow along the edge v to
+
+34
+00:01:53,823 --> 00:02:00,870
+ w so we can send most f or vw units of flow along this edge from w to v,
+
+35
+00:02:00,870 --> 00:02:07,260
+ and we send this flow from w to v by decreasing the flow along v to w. Now,
+
+36
+00:02:07,260 --> 00:02:10,935
+ since we sometimes have the forward edge and the backward edge,
+
+37
+00:02:10,935 --> 00:02:14,070
+ this is why, in our original flow network,
+
+38
+00:02:14,070 --> 00:02:16,380
+ we removed antiparallel edges.
+
+39
+00:02:16,380 --> 00:02:19,560
+ This way we're allowed to add the forward edge and
+
+40
+00:02:19,560 --> 00:02:19,560
+ the backward edge and we don't have to worry about any inequalities.
+

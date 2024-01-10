@@ -1,0 +1,92 @@
+1
+00:00:00,000 --> 00:00:02,355
+ Now, one interesting feature of this example,
+
+2
+00:00:02,355 --> 00:00:04,260
+ is that there is a cycle in this graph.
+
+3
+00:00:04,260 --> 00:00:10,030
+ There's a cycle that goes from C to F,
+
+4
+00:00:10,030 --> 00:00:13,990
+ to E, to D and back to C. Now,
+
+5
+00:00:13,990 --> 00:00:17,710
+ this is a cycle in the original input graph in the flow network.
+
+6
+00:00:17,710 --> 00:00:19,300
+ Now, we've seen for some other examples
+
+7
+00:00:19,300 --> 00:00:24,475
+ such a shortest path problem that cycles in the input graph can cause some issues.
+
+8
+00:00:24,475 --> 00:00:28,705
+ In that formulation, it's negative weight cycles which cause problems.
+
+9
+00:00:28,705 --> 00:00:30,730
+ So a natural question is whether cycles are
+
+10
+00:00:30,730 --> 00:00:33,100
+ okay in a flow network for the max flow problem.
+
+11
+00:00:33,100 --> 00:00:37,090
+ Notice that a flow network has a cycle but our flow,
+
+12
+00:00:37,090 --> 00:00:40,700
+ our maximum flow is not utilizing this cycle.
+
+13
+00:00:40,700 --> 00:00:42,925
+ And why is it not utilizing this cycle?
+
+14
+00:00:42,925 --> 00:00:47,530
+ Well, suppose that I had one unit of flow coming into D and then I send one unit flow
+
+15
+00:00:47,530 --> 00:00:52,870
+ along this entire cycle back to T and then send that one unit out of D. Well,
+
+16
+00:00:52,870 --> 00:00:56,910
+ I could just send it right from this edge into D and then out of
+
+17
+00:00:56,910 --> 00:01:01,720
+ D directly without going around the cycle so I could have bypassed the cycle.
+
+18
+00:01:01,720 --> 00:01:05,460
+ So there's no reason to utilize a cycle in a flow network.
+
+19
+00:01:05,460 --> 00:01:07,900
+ Now I may want to utilize part of this cycle and I don't
+
+20
+00:01:07,900 --> 00:01:11,400
+ know a priority which part of the cycle I might want to utilize.
+
+21
+00:01:11,400 --> 00:01:16,085
+ So the main conclusion is that cycles are okay in a flow network.
+
+22
+00:01:16,085 --> 00:01:19,305
+ In fact they simplify the problem in some sense but the problem is
+
+23
+00:01:19,305 --> 00:01:19,305
+ well-defined regardless of whether there are cycles in the flow network or not.
+

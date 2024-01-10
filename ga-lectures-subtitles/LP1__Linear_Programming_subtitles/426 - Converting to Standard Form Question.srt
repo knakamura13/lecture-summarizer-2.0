@@ -1,0 +1,180 @@
+1
+00:00:00,000 --> 00:00:04,434
+ Now how can we convert an arbitrary linear program into this standard form?
+
+2
+00:00:04,434 --> 00:00:06,389
+ For instance, suppose that we want to minimize
+
+3
+00:00:06,389 --> 00:00:09,599
+ this linear function instead of maximize this linear function,
+
+4
+00:00:09,599 --> 00:00:12,800
+ where we simply multiply this whole thing by negative one.
+
+5
+00:00:12,800 --> 00:00:17,210
+ And this is equivalent to maximizing negative C times X.
+
+6
+00:00:17,210 --> 00:00:19,370
+ So, we can replace this vector C by
+
+7
+00:00:19,370 --> 00:00:23,164
+ negative C and then we can maximize and it's equivalent to LP.
+
+8
+00:00:23,164 --> 00:00:28,440
+ Now, what if we have a constraint that says A1X1 through AnXn is at least B,
+
+9
+00:00:28,440 --> 00:00:30,065
+ instead of at most B.
+
+10
+00:00:30,065 --> 00:00:32,600
+ Once again we can multiply this by negative one.
+
+11
+00:00:32,600 --> 00:00:41,460
+ And this is equivalent to -A1 times X1 through An times Xn is at most negative B.
+
+12
+00:00:41,460 --> 00:00:43,409
+ Now, what if we have an equality constraint?
+
+13
+00:00:43,409 --> 00:00:45,042
+ So we want to set it equal to B,
+
+14
+00:00:45,042 --> 00:00:48,659
+ where we can replace this by two inequality constraints.
+
+15
+00:00:48,659 --> 00:00:55,304
+ We can say that A1X1 through AnXn is at most B and at least B.
+
+16
+00:00:55,304 --> 00:00:58,384
+ And the second of these at least B constraint.
+
+17
+00:00:58,384 --> 00:01:04,400
+ We can replace in this manner by an inequality at most negative B.
+
+18
+00:01:04,400 --> 00:01:06,484
+ Now, what if we have a strict inequality?
+
+19
+00:01:06,484 --> 00:01:09,420
+ So we say that X is strictly less than 100.
+
+20
+00:01:09,420 --> 00:01:12,390
+ How do we convert this into a non-strict inequality?
+
+21
+00:01:12,390 --> 00:01:15,060
+ Well, suppose the LP just said maximize
+
+22
+00:01:15,060 --> 00:01:19,170
+ X subject to the constraint that X is strictly less than 100.
+
+23
+00:01:19,170 --> 00:01:23,655
+ What's the solution, what's the optimal value of this function, this linear program?
+
+24
+00:01:23,655 --> 00:01:25,599
+ Well, it's not clear what the optimal is.
+
+25
+00:01:25,599 --> 00:01:27,825
+ So this ill defined linear program.
+
+26
+00:01:27,825 --> 00:01:31,459
+ So strict inequalities are not allowed in linear programming.
+
+27
+00:01:31,459 --> 00:01:34,799
+ Now, geometrically the way to view these strict inequalities.
+
+28
+00:01:34,799 --> 00:01:37,364
+ Well, first off look at these non-strict inequalities.
+
+29
+00:01:37,364 --> 00:01:43,269
+ In this case the feasible region corresponds to this closed convex polyhedron.
+
+30
+00:01:43,269 --> 00:01:48,269
+ So the optimal points will lie on the boundary of this polyhedron.
+
+31
+00:01:48,269 --> 00:01:50,250
+ But if we have strict inequalities,
+
+32
+00:01:50,250 --> 00:01:55,319
+ then the points on the boundary of the polyhedron do not lie in the feasible region.
+
+33
+00:01:55,319 --> 00:01:56,829
+ So it's an open set.
+
+34
+00:01:56,829 --> 00:02:00,015
+ And the problem is ill defined because we don't know what the optimal is.
+
+35
+00:02:00,015 --> 00:02:02,430
+ So strict inequalities are not allowed.
+
+36
+00:02:02,430 --> 00:02:05,579
+ Finally, what do we do if we have an unconstrained variable X?
+
+37
+00:02:05,579 --> 00:02:08,199
+ So X can be positive or negative.
+
+38
+00:02:08,199 --> 00:02:10,455
+ We don't have this non-negativity constraint.
+
+39
+00:02:10,455 --> 00:02:13,025
+ How do we add in this non-negativity constraint?
+
+40
+00:02:13,025 --> 00:02:15,580
+ Well, we create two new variables,
+
+41
+00:02:15,580 --> 00:02:19,560
+ the positive magnitude of X and the negative magnitude of X,
+
+42
+00:02:19,560 --> 00:02:21,689
+ X plus and X minus.
+
+43
+00:02:21,689 --> 00:02:28,300
+ We constrain X plus to be non-negative and X minus to be non-negative.
+
+44
+00:02:28,300 --> 00:02:35,240
+ So these corresponds to the magnitudes and we replace X by X plus minus X minus.
+
+45
+00:02:35,240 --> 00:02:35,240
+ And in this manner we can consider all variables to be non-negative.
+

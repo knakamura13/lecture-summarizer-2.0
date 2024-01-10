@@ -1,0 +1,116 @@
+1
+00:00:00,000 --> 00:00:04,625
+ Now let's take a look at the actual specification of the input to the subset sum problem.
+
+2
+00:00:04,625 --> 00:00:08,025
+ Let's start with these numbers corresponding to the two n literals,
+
+3
+00:00:08,025 --> 00:00:11,945
+ in particular Vi corresponds to Xi.
+
+4
+00:00:11,945 --> 00:00:15,405
+ So we're going to include this number Vi in the subset S,
+
+5
+00:00:15,405 --> 00:00:18,840
+ if and only if the literal Xi is set to true.
+
+6
+00:00:18,840 --> 00:00:23,370
+ Similarly Vi prime corresponds to Xi bar and will include
+
+7
+00:00:23,370 --> 00:00:28,460
+ Vi prime in this subset S if and only if the variable Xi is set to false.
+
+8
+00:00:28,460 --> 00:00:34,335
+ And assignment for the three set formula either sets Xi to true or Xi to false.
+
+9
+00:00:34,335 --> 00:00:37,980
+ Therefore, we need for the subset sum problem that either we include
+
+10
+00:00:37,980 --> 00:00:41,854
+ Vi in S or Vi prime in S. Well,
+
+11
+00:00:41,854 --> 00:00:44,293
+ we can't include both and we can include neither,
+
+12
+00:00:44,293 --> 00:00:46,545
+ because then we don't know how to set Xi.
+
+13
+00:00:46,545 --> 00:00:52,615
+ So we need to ensure that exactly one of Vi or Vi prime is in S. How do we achieve this?
+
+14
+00:00:52,615 --> 00:00:55,635
+ Well, in the Ith digit of these three numbers Vi,
+
+15
+00:00:55,635 --> 00:00:58,125
+ Vi prime and T we put a one.
+
+16
+00:00:58,125 --> 00:00:59,750
+ In all other numbers,
+
+17
+00:00:59,750 --> 00:01:01,685
+ we put a zero in the Ith digit.
+
+18
+00:01:01,685 --> 00:01:03,141
+ Now by using base 10,
+
+19
+00:01:03,141 --> 00:01:05,610
+ we will ensure that there is no carrys between the digits.
+
+20
+00:01:05,610 --> 00:01:08,585
+ So each digit is going to behave independently of each other.
+
+21
+00:01:08,585 --> 00:01:10,470
+ Recall that T is our desire sum,
+
+22
+00:01:10,470 --> 00:01:15,195
+ so the only way to achieve a desired sum that has a one in the Ith digit,
+
+23
+00:01:15,195 --> 00:01:19,005
+ is to include either Vi or Vi prime in S,
+
+24
+00:01:19,005 --> 00:01:21,240
+ but not both and not neither.
+
+25
+00:01:21,240 --> 00:01:23,640
+ So this specification ensures that
+
+26
+00:01:23,640 --> 00:01:27,435
+ our solution to the subset sum problem is going to correspond to an assignment.
+
+27
+00:01:27,435 --> 00:01:29,948
+ Whether it's satisfying or not is another issue,
+
+28
+00:01:29,948 --> 00:01:32,825
+ but for now at least we know that we have an assignment.
+
+29
+00:01:32,825 --> 00:01:32,825
+ So either we're going to correspond to Xi being set to true or Xi being set.
+

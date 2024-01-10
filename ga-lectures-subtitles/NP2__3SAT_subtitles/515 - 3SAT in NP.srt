@@ -1,0 +1,80 @@
+1
+00:00:00,000 --> 00:00:01,720
+ Now to prove that 3SAT is in the class ϵNP,
+
+2
+00:00:01,720 --> 00:00:06,135
+ we have to show that we can verify solutions efficiently.
+
+3
+00:00:06,135 --> 00:00:09,310
+ So, let's take a particular input for the 3SAT problem.
+
+4
+00:00:09,310 --> 00:00:12,260
+ So f is our input for the 3SAT problem.
+
+5
+00:00:12,260 --> 00:00:14,080
+ And let's take a proposed solution.
+
+6
+00:00:14,080 --> 00:00:17,650
+ So this is a true false assignment for the n variables.
+
+7
+00:00:17,650 --> 00:00:22,140
+ Now we need to check that this assignment is a satisfying assignment for this formula.
+
+8
+00:00:22,140 --> 00:00:25,650
+ Now, how are we going to verify that this assignment is a satisfying assignment?
+
+9
+00:00:25,650 --> 00:00:27,525
+ Well, we're going to go through the clauses.
+
+10
+00:00:27,525 --> 00:00:29,300
+ So let's take each clause.
+
+11
+00:00:29,300 --> 00:00:31,470
+ For a particular clause C,
+
+12
+00:00:31,470 --> 00:00:33,945
+ you will take us order one time to check
+
+13
+00:00:33,945 --> 00:00:36,710
+ that at least one of the literals in C is satisfied.
+
+14
+00:00:36,710 --> 00:00:38,220
+ Why is it order one time?
+
+15
+00:00:38,220 --> 00:00:41,130
+ Because each clause has at most three literals.
+
+16
+00:00:41,130 --> 00:00:43,665
+ Now if every clause C is satisfied,
+
+17
+00:00:43,665 --> 00:00:45,850
+ then the formula f is satisfied.
+
+18
+00:00:45,850 --> 00:00:49,560
+ It takes order one time per clause, there's M clauses,
+
+19
+00:00:49,560 --> 00:00:55,880
+ so it takes order M total time to verify that this assignment satisfies the formula.
+
+20
+00:00:55,880 --> 00:00:55,880
+ So this proves that the 3SAT problem is in the class ϵNP.
+

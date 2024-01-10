@@ -1,0 +1,136 @@
+1
+00:00:00,000 --> 00:00:04,300
+ Let's take a look at how this simple Primality testing algorithm performs.
+
+2
+00:00:04,300 --> 00:00:06,140
+ If r happens to be prime,
+
+3
+00:00:06,140 --> 00:00:08,105
+ what does the algorithm do?
+
+4
+00:00:08,105 --> 00:00:10,855
+ It always outputs that r is prime,
+
+5
+00:00:10,855 --> 00:00:13,660
+ because for every z in this set,
+
+6
+00:00:13,660 --> 00:00:16,735
+ z raised to the power r_minus_one is congruent to one_mod_r,
+
+7
+00:00:16,735 --> 00:00:18,460
+ by Fermat's little theorem.
+
+8
+00:00:18,460 --> 00:00:22,690
+ So, the probability that the algorithm outputs that r is prime,
+
+9
+00:00:22,690 --> 00:00:25,575
+ is one, this is always going to do so.
+
+10
+00:00:25,575 --> 00:00:28,300
+ So, it's always correct when r is prime.
+
+11
+00:00:28,300 --> 00:00:30,280
+ Now, what happens when r is composite?
+
+12
+00:00:30,280 --> 00:00:33,495
+ And let's assume that r is not a Carmichael number.
+
+13
+00:00:33,495 --> 00:00:36,550
+ Now, sometimes the algorithm is going to be correct,
+
+14
+00:00:36,550 --> 00:00:38,585
+ it's going to output that r is composite.
+
+15
+00:00:38,585 --> 00:00:42,770
+ When is that the case? When it finds a z which is a Fermat witness.
+
+16
+00:00:42,770 --> 00:00:45,790
+ So z raised to the power r_minus_one is not congruent to one_mod_r.
+
+17
+00:00:45,790 --> 00:00:49,122
+ But sometimes it's going to get confused,
+
+18
+00:00:49,122 --> 00:00:50,755
+ it's going to make a mistake,
+
+19
+00:00:50,755 --> 00:00:53,545
+ and it's going to find a z, which
+
+20
+00:00:53,545 --> 00:00:57,740
+ z raised to the power r_minus_one is congruent to one_mod_r.
+
+21
+00:00:57,740 --> 00:00:59,920
+ So it's going to think that r is prime.
+
+22
+00:00:59,920 --> 00:01:04,360
+ What is the probability that the algorithm outputs that r is prime,
+
+23
+00:01:04,360 --> 00:01:06,840
+ so, it makes a false positive statement?
+
+24
+00:01:06,840 --> 00:01:12,615
+ Well, we know that at least half the zs in this set are Fermat witnesses.
+
+25
+00:01:12,615 --> 00:01:16,570
+ So what's the chance that it finds a non witness?
+
+26
+00:01:16,570 --> 00:01:20,185
+ Well, at most half of them are not witnesses,
+
+27
+00:01:20,185 --> 00:01:24,130
+ so therefore, the probability of finding a non-witnesses is,
+
+28
+00:01:24,130 --> 00:01:26,225
+ at most, a half.
+
+29
+00:01:26,225 --> 00:01:29,185
+ So, the probability of a false positive is, at most, a half.
+
+30
+00:01:29,185 --> 00:01:31,900
+ Okay, so, we have a reasonable algorithm with
+
+31
+00:01:31,900 --> 00:01:34,565
+ probability of most a half that we get a false positive,
+
+32
+00:01:34,565 --> 00:01:36,460
+ and when it is prime, it's always correct.
+
+33
+00:01:36,460 --> 00:01:37,950
+ But can we get this better?
+
+34
+00:01:37,950 --> 00:01:37,950
+ Can we improve this error probability of a false positive?
+

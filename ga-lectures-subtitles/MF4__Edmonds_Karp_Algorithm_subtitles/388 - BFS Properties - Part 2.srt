@@ -1,0 +1,120 @@
+1
+00:00:00,000 --> 00:00:04,580
+ Now, to approve our main demo about the number of rounds of the Edmonds-Karp algorithm,
+
+2
+00:00:04,580 --> 00:00:06,320
+ we're going to analyze the level of
+
+3
+00:00:06,320 --> 00:00:09,175
+ a vertex during the course of the Edmonds-Karp algorithm.
+
+4
+00:00:09,175 --> 00:00:11,550
+ Now, in particular we want to look at the vertex Z,
+
+5
+00:00:11,550 --> 00:00:16,530
+ and we want to look at how it's level changes as the residual network changes.
+
+6
+00:00:16,530 --> 00:00:18,340
+ Now, what can happen in the residual network?
+
+7
+00:00:18,340 --> 00:00:19,915
+ Well, edges can get deleted.
+
+8
+00:00:19,915 --> 00:00:22,776
+ For instance, suppose we delete this edge from A to D,
+
+9
+00:00:22,776 --> 00:00:24,790
+ then what happens to the level of D?
+
+10
+00:00:24,790 --> 00:00:29,720
+ Well, now the minimum number of edges to get from S to D is one, two, three.
+
+11
+00:00:29,720 --> 00:00:31,500
+ So, D will be at level three.
+
+12
+00:00:31,500 --> 00:00:35,880
+ So, the level of D will increase when we delete this edge from A to D. Now,
+
+13
+00:00:35,880 --> 00:00:38,510
+ we're also going to add edges into the residual network.
+
+14
+00:00:38,510 --> 00:00:41,540
+ For instance, what if we add an edge from B to D?
+
+15
+00:00:41,540 --> 00:00:44,930
+ Or maybe we'll even add this edge back from A to D,
+
+16
+00:00:44,930 --> 00:00:48,580
+ then will the level of D decrease back to level two.
+
+17
+00:00:48,580 --> 00:00:50,590
+ Well, we're going to prove that that does not occur.
+
+18
+00:00:50,590 --> 00:00:54,075
+ Even though we're adding edges into the residual network sometimes,
+
+19
+00:00:54,075 --> 00:00:56,955
+ the level of vertex is never going to decrease.
+
+20
+00:00:56,955 --> 00:00:59,325
+ We're going to prove, that for every vertex Z,
+
+21
+00:00:59,325 --> 00:01:03,300
+ it's level over the course of the algorithm does not decrease.
+
+22
+00:01:03,300 --> 00:01:06,480
+ It can stay the same or can increase in some levels.
+
+23
+00:01:06,480 --> 00:01:08,730
+ But if for instance, this vertex D,
+
+24
+00:01:08,730 --> 00:01:10,740
+ it's level increases to three,
+
+25
+00:01:10,740 --> 00:01:12,970
+ then it can never go back down to two.
+
+26
+00:01:12,970 --> 00:01:15,660
+ It can only stay the same or increase further.
+
+27
+00:01:15,660 --> 00:01:16,680
+ Now, to prove this claim,
+
+28
+00:01:16,680 --> 00:01:19,665
+ we have to understand which edges are added into the residual network,
+
+29
+00:01:19,665 --> 00:01:22,105
+ and which edges are removed from the residual network.
+
+30
+00:01:22,105 --> 00:01:22,105
+ So, let's look at that in more detail.
+

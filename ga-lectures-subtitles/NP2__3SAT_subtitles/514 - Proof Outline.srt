@@ -1,0 +1,88 @@
+1
+00:00:00,000 --> 00:00:03,855
+ We're going to show now that 3SAT problem is NP complete.
+
+2
+00:00:03,855 --> 00:00:05,580
+ Before we dive into the proof,
+
+3
+00:00:05,580 --> 00:00:07,380
+ let's outline what we need to show in order to
+
+4
+00:00:07,380 --> 00:00:10,275
+ establish that the 3SAT problem is NP complete.
+
+5
+00:00:10,275 --> 00:00:14,670
+ The first thing we need to show is that the 3SAT problem lies in the class NP.
+
+6
+00:00:14,670 --> 00:00:16,965
+ This will be straightforward to prove.
+
+7
+00:00:16,965 --> 00:00:20,730
+ Now our main task is to take a known NP complete problem.
+
+8
+00:00:20,730 --> 00:00:23,790
+ In this case, all we know is that SAT is NP complete.
+
+9
+00:00:23,790 --> 00:00:26,415
+ So we have to just show a reduction from SAT problem,
+
+10
+00:00:26,415 --> 00:00:28,285
+ to the 3SAT problem.
+
+11
+00:00:28,285 --> 00:00:30,701
+ Now once we've shown this reduction from SAT to 3SAT,
+
+12
+00:00:30,701 --> 00:00:32,036
+ what does that establish?
+
+13
+00:00:32,036 --> 00:00:34,995
+ That establishes that for every problem in NP,
+
+14
+00:00:34,995 --> 00:00:38,435
+ we have a reduction from this problem A to SAT.
+
+15
+00:00:38,435 --> 00:00:41,110
+ And then we have this reduction from SAT to 3SAT,
+
+16
+00:00:41,110 --> 00:00:44,445
+ therefore, we have a reduction from A to 3SAT.
+
+17
+00:00:44,445 --> 00:00:45,750
+ The implication of this is,
+
+18
+00:00:45,750 --> 00:00:48,780
+ that if we have a polynomial time algorithm for 3SAT,
+
+19
+00:00:48,780 --> 00:00:52,570
+ then we have a polynomial time algorithm for every problem in NP,
+
+20
+00:00:52,570 --> 00:00:56,600
+ because we can reduce every problem in NP to 3SAT.
+
+21
+00:00:56,600 --> 00:00:57,860
+ So let's start with the easy task.
+
+22
+00:00:57,860 --> 00:00:57,860
+ Let's prove that 3SAT is in the class N-
+

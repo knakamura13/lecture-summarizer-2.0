@@ -1,0 +1,84 @@
+1
+00:00:00,000 --> 00:00:02,190
+ Now, we can state that weak duality theorem.
+
+2
+00:00:02,190 --> 00:00:06,300
+ This is an immediate consequence of how we formulated the dual LP.
+
+3
+00:00:06,300 --> 00:00:08,775
+ Take a feasible point for the primal LP.
+
+4
+00:00:08,775 --> 00:00:13,080
+ The value of the objective function in this case is C transpose X.
+
+5
+00:00:13,080 --> 00:00:17,490
+ And recall, we're trying to find the X which maximizes this objective function.
+
+6
+00:00:17,490 --> 00:00:19,440
+ Now, let's look at the dual LP.
+
+7
+00:00:19,440 --> 00:00:22,740
+ Take a feasible point Y for the dual LP.
+
+8
+00:00:22,740 --> 00:00:25,795
+ What's the value of the objective function for this dual LP?
+
+9
+00:00:25,795 --> 00:00:28,105
+ Well, that's B transpose Y.
+
+10
+00:00:28,105 --> 00:00:31,560
+ Now what we need to know is that any feasible Y gives
+
+11
+00:00:31,560 --> 00:00:35,440
+ an upper bound on the objective function of the primal LP.
+
+12
+00:00:35,440 --> 00:00:40,145
+ So this B transpose Y is an upper bound on the objective function.
+
+13
+00:00:40,145 --> 00:00:42,565
+ So we know that C transpose X,
+
+14
+00:00:42,565 --> 00:00:47,125
+ this is a value of the objective function that we can obtain at the point X.
+
+15
+00:00:47,125 --> 00:00:52,005
+ This is upper bounded by the value of the objective function at Y which is
+
+16
+00:00:52,005 --> 00:00:57,580
+ B transpose Y. Y gives an upper bound on the objective function of the primal LP.
+
+17
+00:00:57,580 --> 00:01:02,105
+ And this is the value of an primal LP objective function that we can obtain.
+
+18
+00:01:02,105 --> 00:01:05,520
+ So the left hand side is the primal LP objective function,
+
+19
+00:01:05,520 --> 00:01:08,490
+ and the right hand side is a dual LP objective function.
+
+20
+00:01:08,490 --> 00:01:15,220
+ Since any feasible point gives an upper bound on the primal LP objective function,
+
+21
+00:01:15,220 --> 00:01:15,220
+ we have this week duality theory.
+

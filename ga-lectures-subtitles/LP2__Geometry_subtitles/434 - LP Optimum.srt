@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:01,440
+ Now, the key, once again,
+
+2
+00:00:01,440 --> 00:00:05,550
+ for algorithms which solve linear programs is that the optimum is
+
+3
+00:00:05,550 --> 00:00:10,000
+ achieved at a vertex of the feasible region except for the following cases.
+
+4
+00:00:10,000 --> 00:00:14,035
+ The two exceptions to this are when the LP is infeasible,
+
+5
+00:00:14,035 --> 00:00:15,890
+ and when the LP is unbounded.
+
+6
+00:00:15,890 --> 00:00:19,525
+ An LP is infeasible means that the feasible region is empty.
+
+7
+00:00:19,525 --> 00:00:22,980
+ There are no points which satisfy all of the constraints.
+
+8
+00:00:22,980 --> 00:00:25,665
+ Here's a simple example of an infeasible LP.
+
+9
+00:00:25,665 --> 00:00:27,630
+ We have two variables, x and y,
+
+10
+00:00:27,630 --> 00:00:31,230
+ and objective function is to maximize 5x minus 7y.
+
+11
+00:00:31,230 --> 00:00:34,401
+ And this is subject to the following constraints,
+
+12
+00:00:34,401 --> 00:00:35,560
+ x plus y is at most one,
+
+13
+00:00:35,560 --> 00:00:38,005
+ 3x plus 2y is at least six,
+
+14
+00:00:38,005 --> 00:00:40,190
+ and x and y are non-negative.
+
+15
+00:00:40,190 --> 00:00:40,190
+ Now let's take a look at the feasible region for this LP.
+

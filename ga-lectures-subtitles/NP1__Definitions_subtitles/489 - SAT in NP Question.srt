@@ -1,0 +1,52 @@
+1
+00:00:00,000 --> 00:00:05,370
+ Now, we just saw a particular input formula f and we saw satisfying assignment for it.
+
+2
+00:00:05,370 --> 00:00:08,820
+ And then we checked that that satisfying assignment was
+
+3
+00:00:08,820 --> 00:00:12,090
+ in fact satisfied this formula f. So,
+
+4
+00:00:12,090 --> 00:00:15,330
+ when we plugged in that assignment of true and false to the variables,
+
+5
+00:00:15,330 --> 00:00:18,270
+ that the formula f evaluated to true.
+
+6
+00:00:18,270 --> 00:00:19,950
+ Now, let's look at the general problem.
+
+7
+00:00:19,950 --> 00:00:22,785
+ Suppose I give you a formula f and I give you
+
+8
+00:00:22,785 --> 00:00:26,100
+ assignment of true or false to each of the variables.
+
+9
+00:00:26,100 --> 00:00:28,140
+ Now, what is the running time to verify that
+
+10
+00:00:28,140 --> 00:00:32,460
+ this assignment actually evaluates this formula to true?
+
+11
+00:00:32,460 --> 00:00:35,055
+ So, this assignment satisfies the formula.
+
+12
+00:00:35,055 --> 00:00:39,005
+ As a function of n and m, what is the running time to do that?
+
+13
+00:00:39,005 --> 00:00:39,005
+ Why don't you go ahead and write the running time in big O notation.
+

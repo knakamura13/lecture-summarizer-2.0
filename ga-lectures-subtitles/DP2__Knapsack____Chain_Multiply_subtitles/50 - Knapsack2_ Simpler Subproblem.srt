@@ -1,0 +1,200 @@
+1
+00:00:00,000 --> 00:00:02,940
+ So, let's try to do our dynamic programming solution to
+
+2
+00:00:02,940 --> 00:00:06,495
+ this version of knapsack where we have a single parameter.
+
+3
+00:00:06,495 --> 00:00:07,770
+ The single parameter is going to be,
+
+4
+00:00:07,770 --> 00:00:11,025
+ little b, corresponding to the total weight available.
+
+5
+00:00:11,025 --> 00:00:15,870
+ And this little b is going to vary between the maximum capacity available,
+
+6
+00:00:15,870 --> 00:00:18,805
+ capital B, and zero.
+
+7
+00:00:18,805 --> 00:00:20,655
+ Now, we can define our subproblem.
+
+8
+00:00:20,655 --> 00:00:26,280
+ We define K(b) as the max value obtainable using total weight,
+
+9
+00:00:26,280 --> 00:00:28,045
+ at most, little b.
+
+10
+00:00:28,045 --> 00:00:30,315
+ And we allow ourselves to use a subset of
+
+11
+00:00:30,315 --> 00:00:34,350
+ all n objects or actually a multiset of all n objects, whereas,
+
+12
+00:00:34,350 --> 00:00:37,070
+ in the previous subproblem, we have an extra parameter i,
+
+13
+00:00:37,070 --> 00:00:42,300
+ and we only allowed ourselves to use a subset of the first i objects.
+
+14
+00:00:42,300 --> 00:00:45,615
+ I was trying to write a recurrence for this new subproblem definition.
+
+15
+00:00:45,615 --> 00:00:47,805
+ For the previous subproblem definition,
+
+16
+00:00:47,805 --> 00:00:49,110
+ in order to write a recurrence,
+
+17
+00:00:49,110 --> 00:00:52,195
+ we decided whether to include object i or not.
+
+18
+00:00:52,195 --> 00:00:56,200
+ Now, in this case, we don't have an object i, the last object.
+
+19
+00:00:56,200 --> 00:00:59,455
+ So, we want to try all possibilities for the last object to add.
+
+20
+00:00:59,455 --> 00:01:02,673
+ So, the recurrence for k of b is going to be,
+
+21
+00:01:02,673 --> 00:01:04,800
+ we're going to try all possibilities for
+
+22
+00:01:04,800 --> 00:01:08,245
+ the last object to add and we're going to take the best of those. How do we get the best?
+
+23
+00:01:08,245 --> 00:01:14,610
+ We take the max, and we'll use i to denote the last object that we're trying to add.
+
+24
+00:01:14,610 --> 00:01:17,580
+ So, last object that we're going at is going to be object i,
+
+25
+00:01:17,580 --> 00:01:21,990
+ and we'll consider all i between one and n. If we add in object i,
+
+26
+00:01:21,990 --> 00:01:24,105
+ we gain value, Vi.
+
+27
+00:01:24,105 --> 00:01:27,750
+ And in addition, we gain the optimal solution to
+
+28
+00:01:27,750 --> 00:01:33,175
+ the subproblem where the total weight goes down by Wi.
+
+29
+00:01:33,175 --> 00:01:36,022
+ This is expressed in K(b-Wi).
+
+30
+00:01:36,022 --> 00:01:39,820
+ And we're trying all possibilities for i between one
+
+31
+00:01:39,820 --> 00:01:43,995
+ and n. But we need that the ith object fits in the backpack.
+
+32
+00:01:43,995 --> 00:01:45,675
+ We can have this weight,
+
+33
+00:01:45,675 --> 00:01:47,940
+ this could possibly be a negative number.
+
+34
+00:01:47,940 --> 00:01:50,520
+ So, we need that Wi's and most little b.
+
+35
+00:01:50,520 --> 00:01:53,550
+ So, we're trying all possibilities for the last object to
+
+36
+00:01:53,550 --> 00:01:57,895
+ add where that last object can be anything between object one and object n,
+
+37
+00:01:57,895 --> 00:01:59,925
+ trying all these n objects.
+
+38
+00:01:59,925 --> 00:02:02,820
+ And, if that object fits in the current capacity,
+
+39
+00:02:02,820 --> 00:02:05,130
+ so Wi is smaller than Little b.
+
+40
+00:02:05,130 --> 00:02:07,285
+ We look at adding that objects.
+
+41
+00:02:07,285 --> 00:02:12,890
+ So, we gain value Vi4 and then our capacity available goes down by Wi.
+
+42
+00:02:12,890 --> 00:02:14,400
+ So, with the remaining capacity,
+
+43
+00:02:14,400 --> 00:02:16,175
+ we take the best solution.
+
+44
+00:02:16,175 --> 00:02:17,880
+ Now, since it's a one-dimensional table,
+
+45
+00:02:17,880 --> 00:02:20,895
+ be a straightforward to write the pseudo code.
+
+46
+00:02:20,895 --> 00:02:22,110
+ The table is one dimensional.
+
+47
+00:02:22,110 --> 00:02:24,595
+ There's not much choice in how we fill up the table.
+
+48
+00:02:24,595 --> 00:02:30,491
+ We're just going to fill it starting from K of 0 up to K of B.
+
+49
+00:02:30,491 --> 00:02:35,230
+ An this last entry is the solution to our problem.
+
+50
+00:02:35,230 --> 00:02:35,230
+ Let's go ahead and write the pseudo code for this algorithm just to detail it.
+

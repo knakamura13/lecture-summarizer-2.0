@@ -1,0 +1,52 @@
+1
+00:00:00,000 --> 00:00:02,700
+ Now let's formally define the Clique problem.
+
+2
+00:00:02,700 --> 00:00:05,625
+ The input to the clique problem is an undirected graph G,
+
+3
+00:00:05,625 --> 00:00:10,420
+ and it goal little g. The output from the clique problem is a subset of vertices S,
+
+4
+00:00:10,420 --> 00:00:13,310
+ which is a clique of size at least
+
+5
+00:00:13,310 --> 00:00:16,810
+ g. Now we're trying to find the largest clique possible.
+
+6
+00:00:16,810 --> 00:00:19,420
+ Therefore we're trying to output a clique of size at least
+
+7
+00:00:19,420 --> 00:00:22,143
+ g. If we outputted a clique of size at most g,
+
+8
+00:00:22,143 --> 00:00:23,475
+ that would be quite trivial,
+
+9
+00:00:23,475 --> 00:00:26,250
+ because we could always output the empty set.
+
+10
+00:00:26,250 --> 00:00:28,675
+ Now we output such a clique if one exists,
+
+11
+00:00:28,675 --> 00:00:32,740
+ and if no such clique exists in the graph, then we output NO.
+
+12
+00:00:32,740 --> 00:00:33,930
+ And what we're going to prove now,
+
+13
+00:00:33,930 --> 00:00:33,930
+ is that the Clique problem is NP-complete.
+

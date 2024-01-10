@@ -1,0 +1,32 @@
+1
+00:00:00,000 --> 00:00:02,400
+ In this lecture, we'll look at an application of
+
+2
+00:00:02,400 --> 00:00:04,755
+ max flow to a problem from computer vision,
+
+3
+00:00:04,755 --> 00:00:06,485
+ known as Image Segmentation.
+
+4
+00:00:06,485 --> 00:00:08,830
+ We're given an image, such as this one,
+
+5
+00:00:08,830 --> 00:00:11,745
+ and our goal is to separate the image into objects.
+
+6
+00:00:11,745 --> 00:00:14,040
+ The easier tests that we're going to look at is to
+
+7
+00:00:14,040 --> 00:00:16,965
+ simply separate the image into foreground and background.
+
+8
+00:00:16,965 --> 00:00:16,965
+ For example, in this image we want to discern the triangle from the rest of the image.
+

@@ -1,0 +1,112 @@
+1
+00:00:00,000 --> 00:00:02,850
+ Now let's formalize what we've just said.
+
+2
+00:00:02,850 --> 00:00:06,300
+ If for some i, xi the positive literal
+
+3
+00:00:06,300 --> 00:00:10,350
+ and the negative literal xi bar are both in the same SCC,
+
+4
+00:00:10,350 --> 00:00:14,310
+ so these two literals are strongly connected with each other,
+
+5
+00:00:14,310 --> 00:00:17,040
+ then the formula is not satisfiable.
+
+6
+00:00:17,040 --> 00:00:18,540
+ We just solved why this is true,
+
+7
+00:00:18,540 --> 00:00:20,865
+ because if we set xi to be true,
+
+8
+00:00:20,865 --> 00:00:25,070
+ then we get a contradiction because we have to set xi to be false.
+
+9
+00:00:25,070 --> 00:00:26,861
+ And if we set xi to be false,
+
+10
+00:00:26,861 --> 00:00:30,990
+ then we get a contradiction because that leads to xi being true.
+
+11
+00:00:30,990 --> 00:00:33,525
+ Now suppose this is not the case, for every i,
+
+12
+00:00:33,525 --> 00:00:36,965
+ xi and xi bar are in different SCCs.
+
+13
+00:00:36,965 --> 00:00:39,835
+ Now in this case f is satisfiable.
+
+14
+00:00:39,835 --> 00:00:45,105
+ So for every i, xi and xi bar are in different strongly connected components,
+
+15
+00:00:45,105 --> 00:00:47,325
+ then f is satisfiable.
+
+16
+00:00:47,325 --> 00:00:50,525
+ We'll prove this part by finding a satisfying assignment.
+
+17
+00:00:50,525 --> 00:00:56,915
+ So this statement that if xi and xi bar are in the same SCC then f is not satisfiable.
+
+18
+00:00:56,915 --> 00:00:58,740
+ We already discussed why that's true.
+
+19
+00:00:58,740 --> 00:01:01,175
+ For this one, where for every i,
+
+20
+00:01:01,175 --> 00:01:04,945
+ xi and xi bar are in different strongly connected components we're
+
+21
+00:01:04,945 --> 00:01:09,435
+ going to prove that f is satisfiable by finding a satisfying assignment.
+
+22
+00:01:09,435 --> 00:01:12,030
+ So we're going to construct an algorithm which is
+
+23
+00:01:12,030 --> 00:01:14,610
+ going to find a satisfying assignment and therefore we're
+
+24
+00:01:14,610 --> 00:01:16,770
+ going to prove that f is satisfiable by actually
+
+25
+00:01:16,770 --> 00:01:20,370
+ satisfying this f. Let's go ahead and construct the algorithm.
+
+26
+00:01:20,370 --> 00:01:22,485
+ So we're going to assume that for every i,
+
+27
+00:01:22,485 --> 00:01:26,445
+ xi and xi bar are in different strongly connected components.
+
+28
+00:01:26,445 --> 00:01:26,445
+ And we're going to use that fact to construct a satisfying assignment for f.
+

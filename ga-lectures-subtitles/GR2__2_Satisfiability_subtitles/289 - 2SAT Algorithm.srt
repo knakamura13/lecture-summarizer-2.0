@@ -1,0 +1,148 @@
+1
+00:00:00,000 --> 00:00:03,880
+ Now the key fact that we just discussed and we haven't proven but we're going to
+
+2
+00:00:03,880 --> 00:00:08,125
+ use it for the algorithm is that if for all i, Xi,
+
+3
+00:00:08,125 --> 00:00:11,585
+ and Xi bar are in different strongly connected components,
+
+4
+00:00:11,585 --> 00:00:18,300
+ then we have the important property that if a set of vertices S is a sink SCC,
+
+5
+00:00:18,300 --> 00:00:23,185
+ then its compliment is a source SCC and vice versa.
+
+6
+00:00:23,185 --> 00:00:24,619
+ If S bar is a source SCC,
+
+7
+00:00:24,619 --> 00:00:27,130
+ then S is a sink SCC.
+
+8
+00:00:27,130 --> 00:00:32,160
+ So let's take this fact for granted and let's use it to design an algorithm for 2SAT,
+
+9
+00:00:32,160 --> 00:00:34,780
+ and then we'll go back and we'll prove this key fact.
+
+10
+00:00:34,780 --> 00:00:38,890
+ Here's our 2SAT algorithm for the input formula f. First off,
+
+11
+00:00:38,890 --> 00:00:43,000
+ we're going to simplify f,so that we eliminate all unit clauses.
+
+12
+00:00:43,000 --> 00:00:46,600
+ So now, we'll assume that f has all clauses of size exactly 2.
+
+13
+00:00:46,600 --> 00:00:51,220
+ Then, what we do is we construct the graph of implications corresponding to f. Now,
+
+14
+00:00:51,220 --> 00:00:54,520
+ we run a strongly connected component algorithm on this graph,
+
+15
+00:00:54,520 --> 00:00:57,580
+ G. So we have this strongly connected components
+
+16
+00:00:57,580 --> 00:01:01,745
+ of G and we have the strongly connected components in topological order.
+
+17
+00:01:01,745 --> 00:01:03,475
+ So we're going to take the last component.
+
+18
+00:01:03,475 --> 00:01:05,435
+ That's going to be a sink component.
+
+19
+00:01:05,435 --> 00:01:07,191
+ Let's call it S. What are we going to do?
+
+20
+00:01:07,191 --> 00:01:09,520
+ We're going to set this component to be true.
+
+21
+00:01:09,520 --> 00:01:12,220
+ So we're going to satisfy all the literals in this component.
+
+22
+00:01:12,220 --> 00:01:16,595
+ If we satisfy f, then that means S bar is unsatisfied.
+
+23
+00:01:16,595 --> 00:01:17,915
+ So what are we doing?
+
+24
+00:01:17,915 --> 00:01:21,085
+ We're taking this sink component and setting it to true.
+
+25
+00:01:21,085 --> 00:01:24,035
+ Meanwhile, its complements set is a source component.
+
+26
+00:01:24,035 --> 00:01:27,790
+ So we're taking that source component and setting it to false at the same time.
+
+27
+00:01:27,790 --> 00:01:30,250
+ Now, we remove this sink component and
+
+28
+00:01:30,250 --> 00:01:32,984
+ this source component and we repeat this procedure.
+
+29
+00:01:32,984 --> 00:01:35,380
+ We find our sync component in the resulting graph
+
+30
+00:01:35,380 --> 00:01:38,800
+ and we keep going until we're left with the empty graph,
+
+31
+00:01:38,800 --> 00:01:40,955
+ and then we satisfy the formula.
+
+32
+00:01:40,955 --> 00:01:45,070
+ This completes the algorithm description and it's easy to see that the main step in
+
+33
+00:01:45,070 --> 00:01:49,855
+ the algorithm in the running time is constructing the strongly connecting components,
+
+34
+00:01:49,855 --> 00:01:51,490
+ which takes linear time.
+
+35
+00:01:51,490 --> 00:01:54,675
+ So the whole algorithm takes order n+m time. It's linear.
+
+36
+00:01:54,675 --> 00:01:56,935
+ It remains just to prove this key fact,
+
+37
+00:01:56,935 --> 00:01:56,935
+ and then we're done with our algorithm description.
+

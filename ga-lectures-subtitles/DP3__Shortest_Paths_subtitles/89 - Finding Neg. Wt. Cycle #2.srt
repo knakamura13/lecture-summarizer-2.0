@@ -1,0 +1,260 @@
+1
+00:00:00,000 --> 00:00:03,950
+ Now, what happens in our algorithm if we have negative weight cycles in the graph?
+
+2
+00:00:03,950 --> 00:00:07,190
+ Well, the algorithm as written assumes there's no negative weight cycles.
+
+3
+00:00:07,190 --> 00:00:10,480
+ If there's no negative weight cycles in the graph, then this is correct.
+
+4
+00:00:10,480 --> 00:00:11,760
+ If there are negative weight cycles,
+
+5
+00:00:11,760 --> 00:00:13,290
+ then this is not necessarily correct,
+
+6
+00:00:13,290 --> 00:00:15,780
+ and we want to detect these negative weight cycles.
+
+7
+00:00:15,780 --> 00:00:17,680
+ If there is a negative weight cycle,
+
+8
+00:00:17,680 --> 00:00:19,530
+ how can we detect a negative weight cycle?
+
+9
+00:00:19,530 --> 00:00:23,307
+ How can we find out if the graph has a negative weight cycle and output,
+
+10
+00:00:23,307 --> 00:00:25,010
+ yes, there is a negative weight cycle?
+
+11
+00:00:25,010 --> 00:00:28,855
+ And if there is no negative weight cycles then we can run the algorithm as is.
+
+12
+00:00:28,855 --> 00:00:31,980
+ To get an idea for how to detect negative weight cycles,
+
+13
+00:00:31,980 --> 00:00:33,732
+ let's look at a simple example.
+
+14
+00:00:33,732 --> 00:00:36,585
+ So this is a cycle of length -1,
+
+15
+00:00:36,585 --> 00:00:40,500
+ 5 + -7 + 1, so it's -1 total length.
+
+16
+00:00:40,500 --> 00:00:45,060
+ And let's add in two more vertices to make it a non-trivial example.
+
+17
+00:00:45,060 --> 00:00:50,605
+ Let's add some connections from d to this cycle and from this cycle back to d. And also,
+
+18
+00:00:50,605 --> 00:00:56,065
+ from this cycle to e and from e to this cycle.
+
+19
+00:00:56,065 --> 00:00:58,645
+ And let's add in some weights to these edges.
+
+20
+00:00:58,645 --> 00:01:01,850
+ So, how can we find this negative weight cycle which goes
+
+21
+00:01:01,850 --> 00:01:05,460
+ from a b c a? Cycle of length three.
+
+22
+00:01:05,460 --> 00:01:06,985
+ What's going to happen in our algorithm?
+
+23
+00:01:06,985 --> 00:01:08,755
+ There's a more open-ended question.
+
+24
+00:01:08,755 --> 00:01:11,060
+ Once you think about how can we modify
+
+25
+00:01:11,060 --> 00:01:14,440
+ the algorithm in some simple way to detect a negative weight cycle?
+
+26
+00:01:14,440 --> 00:01:18,360
+ How can we find this cycle of length three in this graph?
+
+27
+00:01:18,360 --> 00:01:20,738
+ What is the final output of our algorithm?
+
+28
+00:01:20,738 --> 00:01:22,400
+ It's D of n, s,
+
+29
+00:01:22,400 --> 00:01:24,160
+ t for all pairs s,
+
+30
+00:01:24,160 --> 00:01:27,485
+ t. So let's look at this output on this example.
+
+31
+00:01:27,485 --> 00:01:30,170
+ Take somebody on this negative weight cycle,
+
+32
+00:01:30,170 --> 00:01:32,040
+ let's say vertex a.
+
+33
+00:01:32,040 --> 00:01:34,068
+ What is D of n,
+
+34
+00:01:34,068 --> 00:01:37,160
+ a, a for this example?
+
+35
+00:01:37,160 --> 00:01:40,880
+ What is the length of the shortest path from a to itself?
+
+36
+00:01:40,880 --> 00:01:44,105
+ It's allowed to use anybody as intermediate vertices.
+
+37
+00:01:44,105 --> 00:01:48,235
+ When this example is going to be of length -1.
+
+38
+00:01:48,235 --> 00:01:49,401
+ And notice also D of n, b,
+
+39
+00:01:49,401 --> 00:01:52,214
+ b is also going to be -1 and D of n,
+
+40
+00:01:52,214 --> 00:01:53,930
+ c, c is going to be -1.
+
+41
+00:01:53,930 --> 00:01:56,990
+ That is going to signify that there's a negative weight cycle.
+
+42
+00:01:56,990 --> 00:01:59,690
+ If we have any diagonal entries,
+
+43
+00:01:59,690 --> 00:02:03,390
+ so these are passed from vertex to itself.
+
+44
+00:02:03,390 --> 00:02:06,920
+ So any diagonal entries in the matrix which
+
+45
+00:02:06,920 --> 00:02:10,970
+ are negative then that means there's a path from a vertex to itself,
+
+46
+00:02:10,970 --> 00:02:15,260
+ which is shorter, which is negative.
+
+47
+00:02:15,260 --> 00:02:18,235
+ That means there's a negative weight cycle which includes that vertex.
+
+48
+00:02:18,235 --> 00:02:23,135
+ So to check for negative weight cycle we check if any diagonal entry,
+
+49
+00:02:23,135 --> 00:02:24,694
+ any entry D of n, y, y,
+
+50
+00:02:24,694 --> 00:02:28,415
+ for any y is less than zero.
+
+51
+00:02:28,415 --> 00:02:33,500
+ And that signifies that there is a negative weight cycle which includes this vertex y.
+
+52
+00:02:33,500 --> 00:02:35,885
+ So if we think of this three-dimensional table,
+
+53
+00:02:35,885 --> 00:02:37,898
+ and we look at this slice for i=n,
+
+54
+00:02:37,898 --> 00:02:40,160
+ then we have a two-dimensional table.
+
+55
+00:02:40,160 --> 00:02:42,885
+ We look at the diagonal entries and we check if there's
+
+56
+00:02:42,885 --> 00:02:46,860
+ any negative entries on that diagonal entry.
+
+57
+00:02:46,860 --> 00:02:51,105
+ Now notice we have two algorithms now for detecting negative weight cycles.
+
+58
+00:02:51,105 --> 00:02:55,135
+ We have the Floyd-Warshall algorithm which is all pair shortest path,
+
+59
+00:02:55,135 --> 00:02:57,830
+ and that's going to find any negative weight cycle
+
+60
+00:02:57,830 --> 00:03:00,730
+ in the graph by checking the diagonal entries.
+
+61
+00:03:00,730 --> 00:03:02,645
+ We also have the Bellman-Ford algorithm,
+
+62
+00:03:02,645 --> 00:03:05,735
+ which is the single source shortest path algorithm,
+
+63
+00:03:05,735 --> 00:03:07,850
+ and that also detects negative weight cycle.
+
+64
+00:03:07,850 --> 00:03:10,040
+ So there's some difference though, an important difference,
+
+65
+00:03:10,040 --> 00:03:10,040
+ that I want to distinguish between the two algorithms.
+

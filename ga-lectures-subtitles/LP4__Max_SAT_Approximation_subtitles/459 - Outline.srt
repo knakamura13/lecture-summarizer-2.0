@@ -1,0 +1,40 @@
+1
+00:00:00,000 --> 00:00:03,255
+ And we're going to start by looking at a very simple randomized algorithm,
+
+2
+00:00:03,255 --> 00:00:05,670
+ and we'll show that this simple algorithm achieves
+
+3
+00:00:05,670 --> 00:00:08,320
+ a one-half approximation algorithm for Max-SAT.
+
+4
+00:00:08,320 --> 00:00:12,090
+ After that, we're going to look at an LP-based algorithm and we're going to prove that
+
+5
+00:00:12,090 --> 00:00:17,000
+ this new LP-based algorithm achieves a 1-1_over_E approximation factor,
+
+6
+00:00:17,000 --> 00:00:20,130
+ so to improve the previous algorithm by a little bit.
+
+7
+00:00:20,130 --> 00:00:21,780
+ Finally, we're going to look at an algorithm which is
+
+8
+00:00:21,780 --> 00:00:23,760
+ a combination of these two algorithms,
+
+9
+00:00:23,760 --> 00:00:27,950
+ and this combined algorithm is going to achieve a three-quarters approximation.
+
+10
+00:00:27,950 --> 00:00:27,950
+ So let's dive into the simple scheme.
+

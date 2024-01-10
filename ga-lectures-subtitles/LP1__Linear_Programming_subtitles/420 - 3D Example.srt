@@ -1,0 +1,76 @@
+1
+00:00:00,000 --> 00:00:02,025
+ Let's take a look at another example before
+
+2
+00:00:02,025 --> 00:00:04,770
+ giving the general formulation of linear programming.
+
+3
+00:00:04,770 --> 00:00:07,760
+ Now this will be a slight twist on the previous example.
+
+4
+00:00:07,760 --> 00:00:09,435
+ Now we have three products A,
+
+5
+00:00:09,435 --> 00:00:12,515
+ B and C. We'll look at the profit obtained from each,
+
+6
+00:00:12,515 --> 00:00:13,830
+ the demand for each,
+
+7
+00:00:13,830 --> 00:00:19,942
+ the supply just as before and we'll add one additional constraint compared to before,
+
+8
+00:00:19,942 --> 00:00:21,880
+ this will be a packaging constraint.
+
+9
+00:00:21,880 --> 00:00:25,065
+ We'll say the profit is one dollar for each unit of A that we sell,
+
+10
+00:00:25,065 --> 00:00:29,005
+ six dollars for each unit of B and ten dollars for C.
+
+11
+00:00:29,005 --> 00:00:33,000
+ The demand is at most 300 units per day for A and at most
+
+12
+00:00:33,000 --> 00:00:36,360
+ 200 units per day for B and unlimited demand for
+
+13
+00:00:36,360 --> 00:00:41,280
+ C. The supply that we can produce is at most 1000 hours per day.
+
+14
+00:00:41,280 --> 00:00:43,350
+ Each unit of A takes one hour,
+
+15
+00:00:43,350 --> 00:00:46,320
+ each unit of B takes three hours to produce and
+
+16
+00:00:46,320 --> 00:00:49,830
+ each unit of C takes two hours to produce, finally the packaging.
+
+17
+00:00:49,830 --> 00:00:53,345
+ Now we can produce at most 500 units in total per day.
+
+18
+00:00:53,345 --> 00:00:56,010
+ We'll say that A doesn't require any packaging,
+
+19
+00:00:56,010 --> 00:00:56,010
+ B uses one unit of packaging per unit and C takes three units of the packaging per unit.
+

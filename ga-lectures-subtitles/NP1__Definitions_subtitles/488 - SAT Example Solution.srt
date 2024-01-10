@@ -1,0 +1,52 @@
+1
+00:00:00,000 --> 00:00:02,685
+ This particular input has a satisfying assignment.
+
+2
+00:00:02,685 --> 00:00:04,140
+ I can set x1 to true,
+
+3
+00:00:04,140 --> 00:00:07,980
+ x2 to false, x3 to false. Let's check it.
+
+4
+00:00:07,980 --> 00:00:09,765
+ So for the first clause,
+
+5
+00:00:09,765 --> 00:00:12,116
+ I have that x2 is false,
+
+6
+00:00:12,116 --> 00:00:14,690
+ so this is our satisfied variable.
+
+7
+00:00:14,690 --> 00:00:17,660
+ For the second clause, I have that x2 is true,
+
+8
+00:00:17,660 --> 00:00:19,415
+ so this is a satisfied literal.
+
+9
+00:00:19,415 --> 00:00:22,260
+ For the third clause, I have that x3 is false,
+
+10
+00:00:22,260 --> 00:00:23,820
+ so this is a satisfied literal.
+
+11
+00:00:23,820 --> 00:00:26,295
+ For the last clause, I have that x3 is false,
+
+12
+00:00:26,295 --> 00:00:28,005
+ so this is a satisfied literal.
+
+13
+00:00:28,005 --> 00:00:28,005
+ So every clause has at least one literal satisfied.
+

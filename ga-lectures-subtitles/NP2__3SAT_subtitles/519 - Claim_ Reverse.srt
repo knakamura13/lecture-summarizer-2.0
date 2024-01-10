@@ -1,0 +1,160 @@
+1
+00:00:00,000 --> 00:00:03,240
+ Now let's look at the reverse implication.
+
+2
+00:00:03,240 --> 00:00:05,239
+ In this case we're going to take a satisfying assignment for C to
+
+3
+00:00:05,239 --> 00:00:06,540
+ the second prime and we're going to
+
+4
+00:00:06,540 --> 00:00:08,970
+ construct a satisfying assignment for C to the second.
+
+5
+00:00:08,970 --> 00:00:12,165
+ What we're going to show is that if we just ignore y,
+
+6
+00:00:12,165 --> 00:00:14,295
+ whatever the assignment was for x to the first,
+
+7
+00:00:14,295 --> 00:00:15,420
+ x to the second, x to the third,
+
+8
+00:00:15,420 --> 00:00:18,210
+ and x to the fourth which satisfied C to the second prime,
+
+9
+00:00:18,210 --> 00:00:20,480
+ that's going to satisfy C to the second.
+
+10
+00:00:20,480 --> 00:00:22,195
+ Now there will be two cases,
+
+11
+00:00:22,195 --> 00:00:24,985
+ either y is true or y is false.
+
+12
+00:00:24,985 --> 00:00:26,725
+ Suppose y is true.
+
+13
+00:00:26,725 --> 00:00:29,304
+ We know that C to the second prime is satisfied,
+
+14
+00:00:29,304 --> 00:00:32,000
+ so each of these two clauses is satisfied.
+
+15
+00:00:32,000 --> 00:00:35,719
+ y is true so that satisfies this clause.
+
+16
+00:00:35,719 --> 00:00:37,775
+ How about the second clause?
+
+17
+00:00:37,775 --> 00:00:41,940
+ Well, either x to the first must be false or x to the fourth must be false.
+
+18
+00:00:41,940 --> 00:00:44,656
+ Well, if x to the first is false or x to the fourth is false,
+
+19
+00:00:44,656 --> 00:00:48,540
+ both of these satisfy C to the second.
+
+20
+00:00:48,540 --> 00:00:49,990
+ So in either of these scenarios,
+
+21
+00:00:49,990 --> 00:00:52,325
+ we have an assignment which satisfies C to the second.
+
+22
+00:00:52,325 --> 00:00:55,285
+ Now suppose y is false.
+
+23
+00:00:55,285 --> 00:00:59,030
+ So this assignment for y satisfies this second clause.
+
+24
+00:00:59,030 --> 00:01:00,970
+ How do we satisfy this first clause?
+
+25
+00:01:00,970 --> 00:01:03,641
+ What we're assuming that this is a satisfying assignment for C to
+
+26
+00:01:03,641 --> 00:01:07,800
+ the second prime so it must satisfy this first clause.
+
+27
+00:01:07,800 --> 00:01:10,530
+ y is false, so that's not helping.
+
+28
+00:01:10,530 --> 00:01:15,415
+ So it must be the case that either x to the second is false or x to the third is true.
+
+29
+00:01:15,415 --> 00:01:18,360
+ So either x to the second is false or x to the third is true.
+
+30
+00:01:18,360 --> 00:01:20,085
+ Now if x to the second is false,
+
+31
+00:01:20,085 --> 00:01:22,482
+ that means that this is an assignment which satisfies C
+
+32
+00:01:22,482 --> 00:01:24,900
+ to the second and if x to the third is true,
+
+33
+00:01:24,900 --> 00:01:28,410
+ then also this is an assignment which satisfies C to the second.
+
+34
+00:01:28,410 --> 00:01:30,150
+ So in any of these four cases,
+
+35
+00:01:30,150 --> 00:01:32,745
+ we have an assignment which satisfies C to the second.
+
+36
+00:01:32,745 --> 00:01:36,680
+ So every satisfying assignment for C to the second prime if we ignore y,
+
+37
+00:01:36,680 --> 00:01:39,235
+ it's also a satisfying assignment for C to the second.
+
+38
+00:01:39,235 --> 00:01:41,550
+ And this establishes the reverse implication.
+
+39
+00:01:41,550 --> 00:01:42,815
+ We've done both directions,
+
+40
+00:01:42,815 --> 00:01:42,815
+ so we've shown the if and only if.
+

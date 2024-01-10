@@ -1,0 +1,184 @@
+1
+00:00:00,000 --> 00:00:02,530
+ Now let's prove the reverse implication.
+
+2
+00:00:02,530 --> 00:00:07,215
+ So let's take an assignment to these original K literals and these auxiliary,
+
+3
+00:00:07,215 --> 00:00:10,715
+ K minus three variables which satisfy C prime.
+
+4
+00:00:10,715 --> 00:00:12,190
+ Let's prove that there is
+
+5
+00:00:12,190 --> 00:00:15,550
+ a satisfying assignment for C. What we'll do is we'll just ignore
+
+6
+00:00:15,550 --> 00:00:18,190
+ these auxiliary variables and we'll prove that
+
+7
+00:00:18,190 --> 00:00:21,250
+ these are settings where these original K literals,
+
+8
+00:00:21,250 --> 00:00:23,510
+ satisfies the original clause.
+
+9
+00:00:23,510 --> 00:00:25,840
+ Now in order to satisfy this clause C,
+
+10
+00:00:25,840 --> 00:00:29,560
+ we just need to show that at least one of these literals is set to true.
+
+11
+00:00:29,560 --> 00:00:31,110
+ Let's suppose that's not the case.
+
+12
+00:00:31,110 --> 00:00:34,245
+ Suppose all of these K literals are set to false.
+
+13
+00:00:34,245 --> 00:00:37,705
+ Under this assumption, is it possible to satisfy C prime?
+
+14
+00:00:37,705 --> 00:00:39,700
+ We'll show it's not possible.
+
+15
+00:00:39,700 --> 00:00:42,730
+ Now we're supposing we have an assignment which satisfy C prime.
+
+16
+00:00:42,730 --> 00:00:45,070
+ So it satisfies all of these clauses.
+
+17
+00:00:45,070 --> 00:00:47,112
+ Let's look at the first clause.
+
+18
+00:00:47,112 --> 00:00:51,085
+ Now we're supposing that a1 and a2 are set to false.
+
+19
+00:00:51,085 --> 00:00:53,665
+ So the first two literals are not satisfied.
+
+20
+00:00:53,665 --> 00:00:56,160
+ So the third literal must be satisfied.
+
+21
+00:00:56,160 --> 00:00:58,855
+ That means Y1 must be set to true.
+
+22
+00:00:58,855 --> 00:01:03,025
+ That's the only way to satisfy this clause, under this assumption.
+
+23
+00:01:03,025 --> 00:01:04,870
+ Similarly, let's look at the second clause.
+
+24
+00:01:04,870 --> 00:01:06,775
+ What we're seeing Y1 is true.
+
+25
+00:01:06,775 --> 00:01:09,155
+ So this literal is not satisfied.
+
+26
+00:01:09,155 --> 00:01:12,090
+ Also a3, we're assuming is set to false.
+
+27
+00:01:12,090 --> 00:01:13,775
+ So this literal is not satisfied.
+
+28
+00:01:13,775 --> 00:01:16,935
+ So, we better satisfied this third literal, Y2.
+
+29
+00:01:16,935 --> 00:01:19,250
+ So, Y2 has to be set to true.
+
+30
+00:01:19,250 --> 00:01:22,710
+ Continuing in on, look at the penultimate clause.
+
+31
+00:01:22,710 --> 00:01:25,826
+ In order to satisfy this penultimate clause,
+
+32
+00:01:25,826 --> 00:01:27,675
+ we have to satisfy this literal.
+
+33
+00:01:27,675 --> 00:01:30,920
+ So, we have to set Yk-3 to be true.
+
+34
+00:01:30,920 --> 00:01:32,740
+ Now look at the last clause,
+
+35
+00:01:32,740 --> 00:01:35,540
+ where Yk-3 is set to true.
+
+36
+00:01:35,540 --> 00:01:38,225
+ So this literal is not satisfied.
+
+37
+00:01:38,225 --> 00:01:43,655
+ Similarly, these last two literals are not satisfied because they're set to false.
+
+38
+00:01:43,655 --> 00:01:46,285
+ So this clause is not satisfied.
+
+39
+00:01:46,285 --> 00:01:49,425
+ That means that C prime is not satisfied.
+
+40
+00:01:49,425 --> 00:01:51,480
+ That's a contradiction. We were assuming that this
+
+41
+00:01:51,480 --> 00:01:54,030
+ was assignment which satisfied C prime.
+
+42
+00:01:54,030 --> 00:01:56,220
+ So that means, that this assumption that all of
+
+43
+00:01:56,220 --> 00:01:59,345
+ these literals are set to false, is not true.
+
+44
+00:01:59,345 --> 00:02:03,870
+ So at least one of them must be set to true and therefore that literal satisfies
+
+45
+00:02:03,870 --> 00:02:08,670
+ this clause C. So if we just ignore the assignment to these auxiliary variables,
+
+46
+00:02:08,670 --> 00:02:08,670
+ then the setting for the original literals satisfies this original clause.
+

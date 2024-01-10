@@ -1,0 +1,204 @@
+1
+00:00:00,000 --> 00:00:02,565
+ Let's take a look at a simple algorithm approach,
+
+2
+00:00:02,565 --> 00:00:05,985
+ and let's use the toy example from before as our running example.
+
+3
+00:00:05,985 --> 00:00:09,660
+ Let's start off by initializing the flow to zero everywhere.
+
+4
+00:00:09,660 --> 00:00:12,500
+ So, we'll illustrate the current flow in this example.
+
+5
+00:00:12,500 --> 00:00:16,035
+ Then let's take a look at the available capacities along every edge.
+
+6
+00:00:16,035 --> 00:00:18,258
+ Since the flow is zero everywhere,
+
+7
+00:00:18,258 --> 00:00:23,575
+ the available capacities will be the same as the capacities in the input flow network.
+
+8
+00:00:23,575 --> 00:00:26,010
+ So we'll use this middle copy of the graph to
+
+9
+00:00:26,010 --> 00:00:28,620
+ illustrate the available capacities along the edges.
+
+10
+00:00:28,620 --> 00:00:31,440
+ Now in order to augment the flow in a valid manner,
+
+11
+00:00:31,440 --> 00:00:34,034
+ what we're going to do is we're going to try to find a path from s to
+
+12
+00:00:34,034 --> 00:00:37,850
+ t in this available capacity graph.
+
+13
+00:00:37,850 --> 00:00:39,195
+ So in this graph,
+
+14
+00:00:39,195 --> 00:00:40,800
+ we're going to find an s-t path.
+
+15
+00:00:40,800 --> 00:00:44,850
+ A path from s to t. Let's denote this path by P,
+
+16
+00:00:44,850 --> 00:00:47,295
+ cal P. How do we find such a path?
+
+17
+00:00:47,295 --> 00:00:51,150
+ Well, we can run BFS or DFS in this graph, it doesn't matter which one.
+
+18
+00:00:51,150 --> 00:00:53,805
+ We're not saying anything about which particular path we're looking for.
+
+19
+00:00:53,805 --> 00:00:57,570
+ We're just trying to finding find any path from s to t,
+
+20
+00:00:57,570 --> 00:01:00,945
+ where every edge has some available capacity.
+
+21
+00:01:00,945 --> 00:01:04,230
+ Let's consider this path from s to t in this graph.
+
+22
+00:01:04,230 --> 00:01:06,750
+ Now this path happens to be optimal in some sense.
+
+23
+00:01:06,750 --> 00:01:10,345
+ It has the one with the maximum available capacity,
+
+24
+00:01:10,345 --> 00:01:12,595
+ but that's not important for this example.
+
+25
+00:01:12,595 --> 00:01:15,360
+ We're going to look at all edges in this path and
+
+26
+00:01:15,360 --> 00:01:18,585
+ we're going to look at the available capacity of that edge.
+
+27
+00:01:18,585 --> 00:01:21,150
+ So we're going to look at the capacity along this edge,
+
+28
+00:01:21,150 --> 00:01:23,684
+ minus the current flow along this edge,
+
+29
+00:01:23,684 --> 00:01:26,275
+ it's the available capacity along this edge.
+
+30
+00:01:26,275 --> 00:01:27,615
+ We're going to minimize this.
+
+31
+00:01:27,615 --> 00:01:31,725
+ So this is going to be the maximum amount that we can send along this path.
+
+32
+00:01:31,725 --> 00:01:35,535
+ So finally we're going to augment this flow, the current flow,
+
+33
+00:01:35,535 --> 00:01:40,320
+ by sending c(P) units of flow along this path P. Hence,
+
+34
+00:01:40,320 --> 00:01:45,150
+ this flow changes so that and then we now have 10 units of flow along this path,
+
+35
+00:01:45,150 --> 00:01:48,375
+ s to a, a to b and b to t.
+
+36
+00:01:48,375 --> 00:01:52,110
+ So this is the new flow we're currently at and now we simply repeat.
+
+37
+00:01:52,110 --> 00:01:55,215
+ We redefine this graph of available capacities,
+
+38
+00:01:55,215 --> 00:01:57,795
+ we look for a path, s to t,
+
+39
+00:01:57,795 --> 00:02:00,315
+ we augment along that path,
+
+40
+00:02:00,315 --> 00:02:01,985
+ we update the flow,
+
+41
+00:02:01,985 --> 00:02:05,140
+ we re-update this graph, and repeat.
+
+42
+00:02:05,140 --> 00:02:09,895
+ And we keep going until there's no s-t path in this graph.
+
+43
+00:02:09,895 --> 00:02:13,385
+ So, let's update this graph for this current flow.
+
+44
+00:02:13,385 --> 00:02:17,115
+ Notice, that the available capacity for these three edges is now zero.
+
+45
+00:02:17,115 --> 00:02:21,795
+ So, in this graph there is no path from s to t anymore.
+
+46
+00:02:21,795 --> 00:02:23,740
+ So our algorithm is going to stop.
+
+47
+00:02:23,740 --> 00:02:25,290
+ There's no way to augment.
+
+48
+00:02:25,290 --> 00:02:26,830
+ So we're going to end with this flow,
+
+49
+00:02:26,830 --> 00:02:28,640
+ which is clearly sub-optimal.
+
+50
+00:02:28,640 --> 00:02:30,635
+ This is a flow of size 10,
+
+51
+00:02:30,635 --> 00:02:30,635
+ and we saw before there's a flow of size 17 in this graph.
+

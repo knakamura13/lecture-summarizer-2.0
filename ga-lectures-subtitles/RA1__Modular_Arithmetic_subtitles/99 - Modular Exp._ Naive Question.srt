@@ -1,0 +1,308 @@
+1
+00:00:00,000 --> 00:00:02,905
+ We've seen the definition of the modulo operation,
+
+2
+00:00:02,905 --> 00:00:06,180
+ the basic modular arithmetic operation that
+
+3
+00:00:06,180 --> 00:00:09,595
+ we're going to do repeatedly is modular exponentiation.
+
+4
+00:00:09,595 --> 00:00:13,530
+ So, the setting is that we have n-bit numbers X,
+
+5
+00:00:13,530 --> 00:00:14,975
+ Y, and capital N,
+
+6
+00:00:14,975 --> 00:00:21,035
+ and our goal is to compute X raised to the power Y modular N. Now recall,
+
+7
+00:00:21,035 --> 00:00:24,480
+ little n, the number of bits, is going to be huge.
+
+8
+00:00:24,480 --> 00:00:26,730
+ For example, we might have little n, the number of bits,
+
+9
+00:00:26,730 --> 00:00:31,410
+ be about a thousand or 2000 in which case these numbers, X, Y,
+
+10
+00:00:31,410 --> 00:00:36,880
+ and capital N, are on the order of about two to the thousand or two to the 2000.
+
+11
+00:00:36,880 --> 00:00:40,470
+ S, o we want an efficient algorithm to compute X raised to the power Y
+
+12
+00:00:40,470 --> 00:00:44,340
+ mod N. By efficient we want polynomial in little n,
+
+13
+00:00:44,340 --> 00:00:47,130
+ because little n is the size of the input,
+
+14
+00:00:47,130 --> 00:00:50,295
+ to represent these numbers it takes little n bits.
+
+15
+00:00:50,295 --> 00:00:52,455
+ So, we want polynomial in the input size,
+
+16
+00:00:52,455 --> 00:00:56,910
+ which is polynomial in little n. We don't want polynomial in the numbers
+
+17
+00:00:56,910 --> 00:00:59,190
+ themselves because the magnitude of
+
+18
+00:00:59,190 --> 00:01:02,430
+ these numbers is exponential in little n. These are huge,
+
+19
+00:01:02,430 --> 00:01:04,800
+ if we had running time which was polynomial in
+
+20
+00:01:04,800 --> 00:01:07,320
+ two to the thousand that would be enormous.
+
+21
+00:01:07,320 --> 00:01:09,435
+ There was no way we could run such an algorithm.
+
+22
+00:01:09,435 --> 00:01:14,520
+ So, let's look at the time it takes to compute X raised of the power Y mod N. So,
+
+23
+00:01:14,520 --> 00:01:16,860
+ let's start off with a simple algorithm for computing X to
+
+24
+00:01:16,860 --> 00:01:20,445
+ the Y mod N. We start off by computing X mod N,
+
+25
+00:01:20,445 --> 00:01:22,530
+ let's call that a1.
+
+26
+00:01:22,530 --> 00:01:25,920
+ Then what do we do? We compute X squared mod N. Now x squared,
+
+27
+00:01:25,920 --> 00:01:27,645
+ that's going to be a1,
+
+28
+00:01:27,645 --> 00:01:29,100
+ which is x mod N,
+
+29
+00:01:29,100 --> 00:01:31,070
+ and then multiply that by x.
+
+30
+00:01:31,070 --> 00:01:33,975
+ So, we take the previous solution, a1,
+
+31
+00:01:33,975 --> 00:01:38,775
+ multiply it by x and then take that mod N. Then for x cubed mod N,
+
+32
+00:01:38,775 --> 00:01:40,515
+ we take the previous solution,
+
+33
+00:01:40,515 --> 00:01:45,820
+ let's call that a2, and we take the a2 and we multiply by x and we take
+
+34
+00:01:45,820 --> 00:01:48,660
+ it mod N. And we keep repeating finally for X to
+
+35
+00:01:48,660 --> 00:01:51,915
+ the Y in the last round we take the previous solution,
+
+36
+00:01:51,915 --> 00:01:53,640
+ which is aY minus 1,
+
+37
+00:01:53,640 --> 00:01:56,775
+ and we multiply by x and we take in mod N. Now,
+
+38
+00:01:56,775 --> 00:01:58,350
+ how long does this algorithm,
+
+39
+00:01:58,350 --> 00:02:00,020
+ this simple algorithm take?
+
+40
+00:02:00,020 --> 00:02:02,095
+ Let's look at one round. What are we doing?
+
+41
+00:02:02,095 --> 00:02:04,590
+ Let's look at x cubed here.
+
+42
+00:02:04,590 --> 00:02:06,315
+ So, we're taking this number a2,
+
+43
+00:02:06,315 --> 00:02:10,885
+ which is an n bit number because it's at most capital N minus one.
+
+44
+00:02:10,885 --> 00:02:13,320
+ Okay? So, this is n bit number,
+
+45
+00:02:13,320 --> 00:02:15,550
+ x is an n bit number.
+
+46
+00:02:15,550 --> 00:02:18,495
+ How long does it take to multiply two n bit numbers?
+
+47
+00:02:18,495 --> 00:02:20,650
+ That's just normal real arithmetic.
+
+48
+00:02:20,650 --> 00:02:23,325
+ That has nothing to do with modular arithmetic, okay?
+
+49
+00:02:23,325 --> 00:02:26,790
+ So, we're multiplying two n-bit numbers that takes order n squared time,
+
+50
+00:02:26,790 --> 00:02:30,560
+ and then we're taking it mod capital N. How do we do that?
+
+51
+00:02:30,560 --> 00:02:33,570
+ We take this order n-bit number and
+
+52
+00:02:33,570 --> 00:02:37,010
+ we divide it by this order n-bit number and we take the remainder.
+
+53
+00:02:37,010 --> 00:02:39,925
+ How long does it take to divide two n-bit numbers?
+
+54
+00:02:39,925 --> 00:02:42,155
+ That's order n squared time.
+
+55
+00:02:42,155 --> 00:02:47,220
+ So, this takes order n squared time for this one operation.
+
+56
+00:02:47,220 --> 00:02:49,855
+ How many rounds, how many operations do we have?
+
+57
+00:02:49,855 --> 00:02:51,660
+ How many ai's do we have?
+
+58
+00:02:51,660 --> 00:02:53,715
+ We got y ai's.
+
+59
+00:02:53,715 --> 00:02:58,825
+ How large is y? y is n-bits, little n-bits.
+
+60
+00:02:58,825 --> 00:03:02,340
+ So, y is at most two to the n. So then,
+
+61
+00:03:02,340 --> 00:03:06,870
+ the total runtime of our algorithm is order n squared time per round,
+
+62
+00:03:06,870 --> 00:03:10,530
+ and then the number of rounds is on the order of y,
+
+63
+00:03:10,530 --> 00:03:12,570
+ which is at most two to the n. So,
+
+64
+00:03:12,570 --> 00:03:15,525
+ that means the total runtime of our algorithm that we just described is n
+
+65
+00:03:15,525 --> 00:03:19,395
+ squared times 2 to the n. It's an exponential time algorithm,
+
+66
+00:03:19,395 --> 00:03:21,465
+ exponential in the input size,
+
+67
+00:03:21,465 --> 00:03:23,895
+ little n. So, this is a terrible algorithm.
+
+68
+00:03:23,895 --> 00:03:26,460
+ If we have little n even, let's say,
+
+69
+00:03:26,460 --> 00:03:29,280
+ about 30 there's no way we could run such an algorithm.
+
+70
+00:03:29,280 --> 00:03:33,470
+ And we're going to be looking at a little n which is on the order of about 1000 or 2000.
+
+71
+00:03:33,470 --> 00:03:36,320
+ So, this is enormous. So, what do we do better?
+
+72
+00:03:36,320 --> 00:03:38,565
+ We used the basic idea of repeated squaring,
+
+73
+00:03:38,565 --> 00:03:40,990
+ which you've probably seen many times.
+
+74
+00:03:40,990 --> 00:03:44,760
+ So, instead of taking the previous answer and then multiplying by X,
+
+75
+00:03:44,760 --> 00:03:46,200
+ we're going to take the previous answer
+
+76
+00:03:46,200 --> 00:03:49,000
+ squared and that's going to give us the powers of two.
+
+77
+00:03:49,000 --> 00:03:49,000
+ Let's go ahead and in detail
+

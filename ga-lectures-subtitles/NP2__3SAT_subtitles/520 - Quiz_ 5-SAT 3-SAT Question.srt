@@ -1,0 +1,160 @@
+1
+00:00:00,000 --> 00:00:06,080
+ Now, we just saw how to transform a clause of size 4 into a pair of clauses of size 3.
+
+2
+00:00:06,080 --> 00:00:07,935
+ Now, let's try to generalize this idea.
+
+3
+00:00:07,935 --> 00:00:09,750
+ Let's do it one step at a time.
+
+4
+00:00:09,750 --> 00:00:11,860
+ So let's take a clause of size 5 now,
+
+5
+00:00:11,860 --> 00:00:17,840
+ and let's try to transform this into a triple of clauses of size 3.
+
+6
+00:00:17,840 --> 00:00:22,620
+ Now, previously, to transform the clauses size 4 into a pair of clauses of size 3,
+
+7
+00:00:22,620 --> 00:00:25,090
+ we added one new variable y.
+
+8
+00:00:25,090 --> 00:00:30,195
+ Now, to transform a clause of size 5 into triple clauses of size 3,
+
+9
+00:00:30,195 --> 00:00:33,780
+ we're going to create two new variables, y and z.
+
+10
+00:00:33,780 --> 00:00:36,100
+ Now, we're going to make a formula, C prime,
+
+11
+00:00:36,100 --> 00:00:38,010
+ which is three clauses,
+
+12
+00:00:38,010 --> 00:00:41,310
+ and each of these clauses is going to be of size and most 3.
+
+13
+00:00:41,310 --> 00:00:43,960
+ Actually, they're going to be a size equal to 3.
+
+14
+00:00:43,960 --> 00:00:47,175
+ And we want to do this in such a way that C is satisfiable.
+
+15
+00:00:47,175 --> 00:00:49,840
+ The original clause C is satisfiable,
+
+16
+00:00:49,840 --> 00:00:52,470
+ if and only if this triple of clauses,
+
+17
+00:00:52,470 --> 00:00:54,430
+ C prime, is satisfiable.
+
+18
+00:00:54,430 --> 00:00:56,920
+ And, therefore, in our original input F,
+
+19
+00:00:56,920 --> 00:00:58,850
+ if we have a clause such as this,
+
+20
+00:00:58,850 --> 00:01:01,658
+ we can replace it by this triple of clauses,
+
+21
+00:01:01,658 --> 00:01:04,170
+ and we'll get an equivalent formula.
+
+22
+00:01:04,170 --> 00:01:06,895
+ Now, the quiz is to define C prime.
+
+23
+00:01:06,895 --> 00:01:08,480
+ Define this triple of clauses,
+
+24
+00:01:08,480 --> 00:01:11,125
+ each is of size exactly three literals,
+
+25
+00:01:11,125 --> 00:01:14,875
+ and use this pair of new variables, y and z.
+
+26
+00:01:14,875 --> 00:01:17,550
+ For simplicity, for entering your solution,
+
+27
+00:01:17,550 --> 00:01:19,755
+ let me enter the or symbols for you.
+
+28
+00:01:19,755 --> 00:01:22,175
+ And also to simplify your input,
+
+29
+00:01:22,175 --> 00:01:24,398
+ let's relabel these literals.
+
+30
+00:01:24,398 --> 00:01:28,200
+ So let's relabel these five literals as a, b, c, d,
+
+31
+00:01:28,200 --> 00:01:31,410
+ e. So a is equal to X2 bar,
+
+32
+00:01:31,410 --> 00:01:33,420
+ b is equal to X3,
+
+33
+00:01:33,420 --> 00:01:34,745
+ c is equal to X1 bar,
+
+34
+00:01:34,745 --> 00:01:36,773
+ d is equal to X4 bar,
+
+35
+00:01:36,773 --> 00:01:38,860
+ e is equal to X5.
+
+36
+00:01:38,860 --> 00:01:41,380
+ So use a, b, c,
+
+37
+00:01:41,380 --> 00:01:43,750
+ d, e, and y and z,
+
+38
+00:01:43,750 --> 00:01:47,572
+ and create a formula, C prime,
+
+39
+00:01:47,572 --> 00:01:49,825
+ such that C Prim is satisfiable,
+
+40
+00:01:49,825 --> 00:01:49,825
+ if and only if C is satisfiable.
+

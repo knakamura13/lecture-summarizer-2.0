@@ -1,0 +1,116 @@
+1
+00:00:00,000 --> 00:00:03,750
+ Now just to summarize we let capital L be the sum of
+
+2
+00:00:03,750 --> 00:00:07,600
+ the foreground and background likelihoods for all pixels.
+
+3
+00:00:07,600 --> 00:00:08,820
+ Now for a partition F,
+
+4
+00:00:08,820 --> 00:00:10,440
+ B we define its weight to be
+
+5
+00:00:10,440 --> 00:00:14,790
+ the following quantity: it's a sum over the vertices assigned to the foreground of
+
+6
+00:00:14,790 --> 00:00:18,960
+ their foreground likelihood plus the pixels assigned to the background of
+
+7
+00:00:18,960 --> 00:00:23,760
+ their background likelihood minus the separation penalty for separated edges.
+
+8
+00:00:23,760 --> 00:00:26,355
+ Now let's define a new weight W prime.
+
+9
+00:00:26,355 --> 00:00:31,060
+ This is the sum over vertices assigned to the foreground of their background likelihood
+
+10
+00:00:31,060 --> 00:00:36,825
+ plus the sum over vertices assigned to the background of their foreground likelihood.
+
+11
+00:00:36,825 --> 00:00:39,675
+ And now we'll add instead of subtract
+
+12
+00:00:39,675 --> 00:00:42,240
+ the separation penalty and the key point
+
+13
+00:00:42,240 --> 00:00:45,130
+ is that these two quantities are related in the following manner,
+
+14
+00:00:45,130 --> 00:00:50,561
+ W_F,B equals L minus W'_F, B.
+
+15
+00:00:50,561 --> 00:00:54,690
+ The separation penalty's cancel from both sides and then when you add up
+
+16
+00:00:54,690 --> 00:01:00,163
+ these remaining terms you get L. Now the point is if we find the partition F,
+
+17
+00:01:00,163 --> 00:01:03,750
+ B which maximizes the weight W of F,
+
+18
+00:01:03,750 --> 00:01:06,957
+ B this is equivalent to finding the partition F,
+
+19
+00:01:06,957 --> 00:01:10,015
+ B which minimizes W'.
+
+20
+00:01:10,015 --> 00:01:12,360
+ Since we're subtracting off W'
+
+21
+00:01:12,360 --> 00:01:16,450
+ minimizing this term is the same as maximizing the whole quantity.
+
+22
+00:01:16,450 --> 00:01:18,690
+ So we've changed our maximization problem into
+
+23
+00:01:18,690 --> 00:01:23,635
+ a minimization problem and all the terms and W prime are positive.
+
+24
+00:01:23,635 --> 00:01:28,115
+ So now this is in potential form that we can convert it to a mean SD cut problem.
+
+25
+00:01:28,115 --> 00:01:30,072
+ And how do we solve the mean SD card problem?
+
+26
+00:01:30,072 --> 00:01:32,510
+ We solve it by doing the max flow problem.
+
+27
+00:01:32,510 --> 00:01:34,155
+ So we're going to find a flow networks,
+
+28
+00:01:34,155 --> 00:01:36,555
+ solve the max flow on that flow network
+
+29
+00:01:36,555 --> 00:01:36,555
+ and then that will give us the mean SD cut solution.
+

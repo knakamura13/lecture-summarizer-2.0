@@ -1,0 +1,112 @@
+1
+00:00:00,000 --> 00:00:04,130
+ Now we can detail the pseudocode for the FFT algorithm.
+
+2
+00:00:04,130 --> 00:00:06,285
+ Now, the first input is vector A,
+
+3
+00:00:06,285 --> 00:00:09,870
+ which are the coefficients for this polynomial A(x),
+
+4
+00:00:09,870 --> 00:00:12,530
+ and we're assuming that n is a power of two.
+
+5
+00:00:12,530 --> 00:00:14,745
+ What is this second input? This Omega?
+
+6
+00:00:14,745 --> 00:00:17,075
+ Omega is an nth root of unity.
+
+7
+00:00:17,075 --> 00:00:19,680
+ For now, just think of Omega as Omega_sub_n.
+
+8
+00:00:19,680 --> 00:00:22,290
+ In polar coordinates, this is 1,
+
+9
+00:00:22,290 --> 00:00:25,640
+ 2 pi over n. And using Euler's formula,
+
+10
+00:00:25,640 --> 00:00:29,370
+ this is e to the two pi i over n. For now,
+
+11
+00:00:29,370 --> 00:00:31,480
+ you can view Omega as Omega_sub_n.
+
+12
+00:00:31,480 --> 00:00:34,610
+ But later, we're going to use this exact same algorithm.
+
+13
+00:00:34,610 --> 00:00:37,950
+ This is identical pseudocode with a different Omega.
+
+14
+00:00:37,950 --> 00:00:42,470
+ We're going to use Omega as Omega_sub_n to the n - first power.
+
+15
+00:00:42,470 --> 00:00:46,005
+ And that's going to allow us to do inverse FFT.
+
+16
+00:00:46,005 --> 00:00:48,870
+ In inverse FFT, we're going from the value of
+
+17
+00:00:48,870 --> 00:00:53,070
+ the polynomial at n points to the coefficients.
+
+18
+00:00:53,070 --> 00:00:55,710
+ Now, what's the output of the FFT algorithm?
+
+19
+00:00:55,710 --> 00:00:59,655
+ Well it's the value of the polynomial at the nth roots of unity.
+
+20
+00:00:59,655 --> 00:01:01,806
+ If Omega is Omega_sub_n,
+
+21
+00:01:01,806 --> 00:01:03,900
+ what are the nth roots of unity?
+
+22
+00:01:03,900 --> 00:01:05,865
+ Well it's just the powers of this.
+
+23
+00:01:05,865 --> 00:01:09,710
+ So, the output is a evaluated at Omega to the zero,
+
+24
+00:01:09,710 --> 00:01:11,915
+ a evaluated at Omega,
+
+25
+00:01:11,915 --> 00:01:13,609
+ a of Omega squared,
+
+26
+00:01:13,609 --> 00:01:18,025
+ and so on, up to a at Omega to the n - first power.
+
+27
+00:01:18,025 --> 00:01:20,330
+ When Omega equals Omega_sub_n,
+
+28
+00:01:20,330 --> 00:01:20,330
+ this gives a evaluated at the nth roots of unity.
+

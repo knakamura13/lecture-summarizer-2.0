@@ -1,0 +1,112 @@
+1
+00:00:00,000 --> 00:00:05,755
+ A key concept that we're going to need for the RSA algorithm are multiplicative inverses.
+
+2
+00:00:05,755 --> 00:00:08,970
+ Now the concept is a bit subtle for a modular arithmetic.
+
+3
+00:00:08,970 --> 00:00:11,010
+ Let's go back and look at the normal,
+
+4
+00:00:11,010 --> 00:00:14,130
+ real numbers and see what multiplicative inverses mean there.
+
+5
+00:00:14,130 --> 00:00:15,740
+ If we take a number three,
+
+6
+00:00:15,740 --> 00:00:18,480
+ what's its multiplicative inverse, it's one third.
+
+7
+00:00:18,480 --> 00:00:21,620
+ And so if we look at three times one third what do we get? We got one.
+
+8
+00:00:21,620 --> 00:00:23,235
+ And in general for a number a,
+
+9
+00:00:23,235 --> 00:00:25,890
+ it's multiplicative inverse is one_over_a.
+
+10
+00:00:25,890 --> 00:00:28,680
+ And, when we multiply those two together what do we get?
+
+11
+00:00:28,680 --> 00:00:32,640
+ One. Now we're going to have a number z and we want to look at its inverse
+
+12
+00:00:32,640 --> 00:00:37,640
+ mod N. So we want to know what one_over_z_mod_N is.
+
+13
+00:00:37,640 --> 00:00:39,750
+ So we're going to define it as the number,
+
+14
+00:00:39,750 --> 00:00:45,440
+ so that when we do z_times_one_over_z we get back one.
+
+15
+00:00:45,440 --> 00:00:49,060
+ So our definition of the inverse of z_mod_N,
+
+16
+00:00:49,060 --> 00:00:50,670
+ this is number x,
+
+17
+00:00:50,670 --> 00:00:54,165
+ so that if we do x_times_z, we get one_mod_N.
+
+18
+00:00:54,165 --> 00:00:58,640
+ In this case x is the inverse, it's one_over_z_mod_N.
+
+19
+00:00:58,640 --> 00:01:03,630
+ And the notation is that x is z_to_the_negative_one,
+
+20
+00:01:03,630 --> 00:01:05,585
+ same as one over Z.
+
+21
+00:01:05,585 --> 00:01:09,516
+ So x is z_to_the_negative_one_mod_N.
+
+22
+00:01:09,516 --> 00:01:12,495
+ So x is the multiplicative inverse of z_mod_N.
+
+23
+00:01:12,495 --> 00:01:17,265
+ Notice also, that if x is the inverse of z_mod_N,
+
+24
+00:01:17,265 --> 00:01:19,877
+ then z is the inverse of x_mod_N,
+
+25
+00:01:19,877 --> 00:01:22,705
+ because x_times_Z is one_mod_N.
+
+26
+00:01:22,705 --> 00:01:27,415
+ So, x is the inverse of z and z is the inverse of x_mod_N.
+
+27
+00:01:27,415 --> 00:01:30,540
+ Now let's go ahead and look at a specific example to make sure this notion of
+
+28
+00:01:30,540 --> 00:01:30,540
+ multiplicative inverse modulo N makes sense.
+

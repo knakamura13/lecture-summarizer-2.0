@@ -1,0 +1,80 @@
+1
+00:00:00,000 --> 00:00:02,460
+ Once again the plus minus property says that
+
+2
+00:00:02,460 --> 00:00:05,500
+ the first n points are opposite of the next n points.
+
+3
+00:00:05,500 --> 00:00:08,370
+ And let's see how this plus minus property is useful for
+
+4
+00:00:08,370 --> 00:00:11,945
+ recursively computing a of x at two n points.
+
+5
+00:00:11,945 --> 00:00:18,735
+ Let's look at a evaluated at the point xi and a evaluated at the point xn plus i.
+
+6
+00:00:18,735 --> 00:00:21,075
+ Since we're assuming the plus minus property,
+
+7
+00:00:21,075 --> 00:00:23,700
+ these two points are opposites of each other.
+
+8
+00:00:23,700 --> 00:00:27,935
+ Now let's break up this polynomial A(x) into the even terms and the odd terms.
+
+9
+00:00:27,935 --> 00:00:30,148
+ Even terms are of the form a,
+
+10
+00:00:30,148 --> 00:00:35,565
+ two k times x raised to the power two k. Since the powers even,
+
+11
+00:00:35,565 --> 00:00:39,525
+ this is the same for xi and negative xi.
+
+12
+00:00:39,525 --> 00:00:45,445
+ So these even terms are the same for the point xi and the point xn plus i.
+
+13
+00:00:45,445 --> 00:00:47,340
+ Now what about for the odd terms.
+
+14
+00:00:47,340 --> 00:00:52,335
+ Well since it's an odd power it's going to be opposite for xi and xn plus i.
+
+15
+00:00:52,335 --> 00:00:55,650
+ Now given this observation about the even terms and the odd terms,
+
+16
+00:00:55,650 --> 00:01:00,565
+ it makes sense to split up A(x) into the even terms and the odd terms.
+
+17
+00:01:00,565 --> 00:01:03,315
+ So let's partition the coefficients for the polynomial
+
+18
+00:01:03,315 --> 00:01:07,230
+ A(x) into those coefficients for the even terms.
+
+19
+00:01:07,230 --> 00:01:11,515
+ Let's call this vector a even and into the coefficients for the odd terms.
+
+20
+00:01:11,515 --> 00:01:11,515
+ Let's call this factor ai.
+

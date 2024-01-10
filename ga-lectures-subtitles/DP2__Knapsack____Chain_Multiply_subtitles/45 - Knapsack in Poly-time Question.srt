@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:04,615
+ The running time with the algorithm we just described as order n time capital b.
+
+2
+00:00:04,615 --> 00:00:06,205
+ The question I'd like to ask is that is
+
+3
+00:00:06,205 --> 00:00:08,490
+ an efficient algorithm or not? What do we mean by efficient?
+
+4
+00:00:08,490 --> 00:00:12,900
+ By efficient, we typically mean polynomial time.
+
+5
+00:00:12,900 --> 00:00:14,040
+ What do we mean by polynomial?
+
+6
+00:00:14,040 --> 00:00:16,550
+ We mean polynomial in the input size.
+
+7
+00:00:16,550 --> 00:00:19,230
+ So, is this running time of this algorithm that we just
+
+8
+00:00:19,230 --> 00:00:22,195
+ described is a polynomial in the input size?
+
+9
+00:00:22,195 --> 00:00:23,805
+ So I'll let you answer, yes or no?
+
+10
+00:00:23,805 --> 00:00:26,305
+ Is it polynomial in the input size,
+
+11
+00:00:26,305 --> 00:00:28,435
+ the running time of our argument we just described?
+
+12
+00:00:28,435 --> 00:00:33,870
+ And if it's no, I want you to detail exactly why is it not polynomial in the input size,
+
+13
+00:00:33,870 --> 00:00:37,750
+ and detail what exactly would it mean to be polynomial in the input size?
+
+14
+00:00:37,750 --> 00:00:40,260
+ What would be the requirement on
+
+15
+00:00:40,260 --> 00:00:40,260
+ the running time for it to be polynomial in the input size?
+

@@ -1,0 +1,112 @@
+1
+00:00:00,000 --> 00:00:02,190
+ Let's recap what we've seen so far.
+
+2
+00:00:02,190 --> 00:00:04,965
+ We've seen the Modular Arithmetic definition, X mod Y.
+
+3
+00:00:04,965 --> 00:00:08,460
+ The first non-trivial algorithm that we saw was
+
+4
+00:00:08,460 --> 00:00:12,975
+ computing modular exponentiation using the repeated squaring idea.
+
+5
+00:00:12,975 --> 00:00:15,930
+ This gave us an algorithm which was polynomial in the number of bits,
+
+6
+00:00:15,930 --> 00:00:19,260
+ little n. This modular exponentiation algorithm
+
+7
+00:00:19,260 --> 00:00:22,450
+ is gonna be a key component in the RSA algorithm.
+
+8
+00:00:22,450 --> 00:00:24,380
+ We're gonna have numbers X,
+
+9
+00:00:24,380 --> 00:00:27,360
+ Y and capital N and we're gonna have to compute X
+
+10
+00:00:27,360 --> 00:00:30,735
+ raised to the Y mod N. And these numbers X,
+
+11
+00:00:30,735 --> 00:00:34,350
+ Y and capital N are all gonna be huge number of bits.
+
+12
+00:00:34,350 --> 00:00:37,440
+ So we're gonna have to compute this modular exponentiation,
+
+13
+00:00:37,440 --> 00:00:39,720
+ in time polynomial, in the number of bits,
+
+14
+00:00:39,720 --> 00:00:41,975
+ not in the size of the numbers.
+
+15
+00:00:41,975 --> 00:00:45,615
+ So it will be key that we use this Fast algorithm that we devised.
+
+16
+00:00:45,615 --> 00:00:49,095
+ The other key concept that we looked at were multiplicative inverses.
+
+17
+00:00:49,095 --> 00:00:54,855
+ For example, X inverse mod N. What we saw is that this inverse exists,
+
+18
+00:00:54,855 --> 00:00:58,020
+ if and only if, these two numbers are relatively prime.
+
+19
+00:00:58,020 --> 00:01:00,915
+ In other words, that their GCD is one.
+
+20
+00:01:00,915 --> 00:01:02,670
+ How do we check that they're relatively prime?
+
+21
+00:01:02,670 --> 00:01:04,545
+ How do we check their GCD?
+
+22
+00:01:04,545 --> 00:01:08,070
+ Well, we can compute their GCD using Euclid's algorithm.
+
+23
+00:01:08,070 --> 00:01:09,690
+ Now if they are relatively prime,
+
+24
+00:01:09,690 --> 00:01:11,970
+ how do we compute their inverse?
+
+25
+00:01:11,970 --> 00:01:15,950
+ Well we saw how to compute their inverse using the extended Euclid algorithm.
+
+26
+00:01:15,950 --> 00:01:19,800
+ So those are the key algorithms that we're gonna use in our RSA cryptosystem.
+
+27
+00:01:19,800 --> 00:01:26,340
+ Euclid's algorithm, extended Euclid algorithm and this Fast modular exponentiation.
+
+28
+00:01:26,340 --> 00:01:26,340
+ Now, we can dive into their RSA cryptosystem.
+

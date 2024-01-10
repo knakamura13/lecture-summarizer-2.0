@@ -1,0 +1,76 @@
+1
+00:00:00,000 --> 00:00:03,240
+ How do we prove that a problem is computationally difficult?
+
+2
+00:00:03,240 --> 00:00:08,055
+ Meaning that it is hard to devise an efficient algorithm to solve it for all inputs.
+
+3
+00:00:08,055 --> 00:00:10,920
+ To do this, we'll prove that the problem will then be complete.
+
+4
+00:00:10,920 --> 00:00:13,020
+ In this section, we'll look at the definition of
+
+5
+00:00:13,020 --> 00:00:17,775
+ the class NP and what exactly it means for a problem to be NP-complete.
+
+6
+00:00:17,775 --> 00:00:20,770
+ We'll first detail the notion of a reduction.
+
+7
+00:00:20,770 --> 00:00:24,450
+ We've actually seen several examples of reductions in this class before.
+
+8
+00:00:24,450 --> 00:00:29,220
+ For example, we reduced the two-set problem to the strongly connected components problem.
+
+9
+00:00:29,220 --> 00:00:32,485
+ We'll formalize this concept of reduction.
+
+10
+00:00:32,485 --> 00:00:34,695
+ Then we'll see what it means that a problem is
+
+11
+00:00:34,695 --> 00:00:37,420
+ NP-complete and how to prove that it is NP-complete.
+
+12
+00:00:37,420 --> 00:00:41,905
+ We'll look at a bunch of examples of NP-completeness proofs: 3SAT;
+
+13
+00:00:41,905 --> 00:00:44,670
+ Graph Problems for example Independent sets,
+
+14
+00:00:44,670 --> 00:00:46,435
+ Clique, and Vertex cover;
+
+15
+00:00:46,435 --> 00:00:48,920
+ and the classic Knapsack problem.
+
+16
+00:00:48,920 --> 00:00:51,000
+ Finally, we'll see Alan Turing's proof that
+
+17
+00:00:51,000 --> 00:00:54,740
+ the halting problem is not just computationally difficult but,
+
+18
+00:00:54,740 --> 00:00:56,985
+ in fact, it's not solvable in general.
+
+19
+00:00:56,985 --> 00:00:56,985
+ Formally, it's undecidable
+

@@ -1,0 +1,52 @@
+1
+00:00:00,000 --> 00:00:02,220
+ The input to the minimum spanning tree problem,
+
+2
+00:00:02,220 --> 00:00:04,350
+ also known as the MST problem,
+
+3
+00:00:04,350 --> 00:00:06,375
+ is an undirected graph, G,
+
+4
+00:00:06,375 --> 00:00:10,375
+ and each edge, E, has a weight w(e).
+
+5
+00:00:10,375 --> 00:00:14,985
+ Our goal is to find the subgraph of minimal size which is still connected.
+
+6
+00:00:14,985 --> 00:00:18,410
+ Now the connected subgraph of minimal size is of course a tree.
+
+7
+00:00:18,410 --> 00:00:21,810
+ We call it a spanning tree to stress the fact that it's connected,
+
+8
+00:00:21,810 --> 00:00:23,940
+ that it's a tree and not a forest.
+
+9
+00:00:23,940 --> 00:00:27,160
+ And we want to find such a subgraph of minimum weight.
+
+10
+00:00:27,160 --> 00:00:30,090
+ In summary, our goal is to find the minimum weight spanning tree of
+
+11
+00:00:30,090 --> 00:00:33,545
+ G. And just to remind you what do we mean by minimum weight,
+
+12
+00:00:33,545 --> 00:00:35,475
+ well, for a particular tree, T,
+
+13
+00:00:35,475 --> 00:00:35,475
+ its weight is the sum of the weights of the edges in that tree.
+

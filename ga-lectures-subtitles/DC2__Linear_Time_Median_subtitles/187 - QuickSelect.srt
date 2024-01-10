@@ -1,0 +1,160 @@
+1
+00:00:00,000 --> 00:00:03,460
+ So we're given this unsorted list A and we've given
+
+2
+00:00:03,460 --> 00:00:07,005
+ an parameter K and we're trying to find the K smallest in A.
+
+3
+00:00:07,005 --> 00:00:09,510
+ Our first step, as in the quick sort algorithm,
+
+4
+00:00:09,510 --> 00:00:12,370
+ is to choose a pivot P. How exactly do we do that?
+
+5
+00:00:12,370 --> 00:00:15,060
+ Well that's exactly our going to be our main task. We'll get back to that later.
+
+6
+00:00:15,060 --> 00:00:16,665
+ After we choose a pivot P,
+
+7
+00:00:16,665 --> 00:00:20,640
+ we partition A into three sub-arrays based on this pivot,
+
+8
+00:00:20,640 --> 00:00:24,000
+ the smaller elements, equal elements and bigger elements.
+
+9
+00:00:24,000 --> 00:00:25,800
+ Now we're going to recursively search in one of
+
+10
+00:00:25,800 --> 00:00:30,500
+ these three list based on K and the size of this list.
+
+11
+00:00:30,500 --> 00:00:33,105
+ Now, if this small list is to say of size four,
+
+12
+00:00:33,105 --> 00:00:35,030
+ and K is at most four,
+
+13
+00:00:35,030 --> 00:00:38,100
+ then we know that the K smallest is in the small list.
+
+14
+00:00:38,100 --> 00:00:41,490
+ And in general, if K is at most the size of this list,
+
+15
+00:00:41,490 --> 00:00:46,140
+ then we can recursively search for the K smallest in the small list.
+
+16
+00:00:46,140 --> 00:00:49,320
+ So we run this algorithm recursively on
+
+17
+00:00:49,320 --> 00:00:53,305
+ this small list and search for the K smallest and that's the output of our algorithm.
+
+18
+00:00:53,305 --> 00:00:54,935
+ In the middle case,
+
+19
+00:00:54,935 --> 00:00:56,880
+ K is bigger than the size of
+
+20
+00:00:56,880 --> 00:01:00,870
+ the small list but it's not big enough that it resides in the big list.
+
+21
+00:01:00,870 --> 00:01:05,010
+ So therefore, we know that the K smallest is in the middle list and
+
+22
+00:01:05,010 --> 00:01:09,280
+ therefore the K smallest is exactly P. So we can just output P,
+
+23
+00:01:09,280 --> 00:01:11,675
+ no recursion needed in this case.
+
+24
+00:01:11,675 --> 00:01:15,825
+ Now in the final case, we know that the K smallest resides in the big list.
+
+25
+00:01:15,825 --> 00:01:17,460
+ So we're going to recursively search in
+
+26
+00:01:17,460 --> 00:01:20,885
+ the big list but we're not going to search for the K smallest,
+
+27
+00:01:20,885 --> 00:01:22,290
+ we're going to have to shift it,
+
+28
+00:01:22,290 --> 00:01:24,900
+ so we know that we're discarding these many elements,
+
+29
+00:01:24,900 --> 00:01:27,083
+ the size of these two lists.
+
+30
+00:01:27,083 --> 00:01:30,780
+ So we're going to look for the K minus the size of this list,
+
+31
+00:01:30,780 --> 00:01:32,720
+ minus the size of this list.
+
+32
+00:01:32,720 --> 00:01:35,670
+ So, instead of searching for the K smallest in this large list,
+
+33
+00:01:35,670 --> 00:01:39,795
+ we're going to look for the K minus the size of the small list,
+
+34
+00:01:39,795 --> 00:01:42,095
+ minus the size of the equal list.
+
+35
+00:01:42,095 --> 00:01:44,940
+ These are the elements that we're discarding.
+
+36
+00:01:44,940 --> 00:01:46,635
+ Now, this is the basic algorithm.
+
+37
+00:01:46,635 --> 00:01:48,120
+ But the key part is,
+
+38
+00:01:48,120 --> 00:01:51,415
+ how do we choose a pivot and what constitutes a good pivot?
+
+39
+00:01:51,415 --> 00:01:55,275
+ What does it mean to be good? Let's first look at what a good pivot means.
+
+40
+00:01:55,275 --> 00:01:55,275
+ What's a pivot which would lead to an order and time algorithm?
+

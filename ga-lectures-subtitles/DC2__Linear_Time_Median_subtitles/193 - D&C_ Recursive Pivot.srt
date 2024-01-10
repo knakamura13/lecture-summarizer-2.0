@@ -1,0 +1,180 @@
+1
+00:00:00,000 --> 00:00:03,030
+ Now our aim is to try to find a good pivot in
+
+2
+00:00:03,030 --> 00:00:06,995
+ order n time and we're going to do this in worst case, order n time.
+
+3
+00:00:06,995 --> 00:00:12,010
+ What we just saw is an algorithm which finds it in order n expected time.
+
+4
+00:00:12,010 --> 00:00:15,370
+ Now if we can successfully find a good pivot in order n time,
+
+5
+00:00:15,370 --> 00:00:19,355
+ then, the running time of our algorithm will satisfy the following relation.
+
+6
+00:00:19,355 --> 00:00:23,975
+ T(n) is in most T of three-fourths n because it is a good pivot.
+
+7
+00:00:23,975 --> 00:00:28,365
+ So, the sub-problem will be of size at most three-fourths the original size.
+
+8
+00:00:28,365 --> 00:00:34,350
+ Plus order n to find the good pivot and order n to partition a into the three sets.
+
+9
+00:00:34,350 --> 00:00:36,865
+ Now, this recurrence solves to order n. So,
+
+10
+00:00:36,865 --> 00:00:39,940
+ the overall running time of our algorithm will be order n. Now,
+
+11
+00:00:39,940 --> 00:00:42,325
+ we have a bit of slack in this recurrence.
+
+12
+00:00:42,325 --> 00:00:47,300
+ In particular, recall that instead of having 0.75 n over here,
+
+13
+00:00:47,300 --> 00:00:51,795
+ we could have had 0.99 n. We just need some constant less than one.
+
+14
+00:00:51,795 --> 00:00:53,840
+ What we're going to do is we are going to use
+
+15
+00:00:53,840 --> 00:00:57,890
+ this extra slack as extra time to help us find a good pivot.
+
+16
+00:00:57,890 --> 00:00:59,300
+ So, now, we are going to spend, instead of,
+
+17
+00:00:59,300 --> 00:01:01,070
+ just order n time to find a good pivot,
+
+18
+00:01:01,070 --> 00:01:06,140
+ we're going to spend order n time plus T of 0.2 n. So,
+
+19
+00:01:06,140 --> 00:01:08,780
+ we are going to design an algorithm with the following running time.
+
+20
+00:01:08,780 --> 00:01:13,340
+ T(n) is in most T of three-fourths n. This is for the sub-problem.
+
+21
+00:01:13,340 --> 00:01:14,900
+ Once we find a good pivot,
+
+22
+00:01:14,900 --> 00:01:16,670
+ plus T of n over five,
+
+23
+00:01:16,670 --> 00:01:19,610
+ plus order n. This T of n over five plus
+
+24
+00:01:19,610 --> 00:01:23,750
+ order n is going to be the time it's going to take us to find a good pivot.
+
+25
+00:01:23,750 --> 00:01:26,105
+ Now the key fact is that three-quarters,
+
+26
+00:01:26,105 --> 00:01:29,240
+ plus one-fifth equals 0.95.
+
+27
+00:01:29,240 --> 00:01:30,840
+ It's strictly less than one.
+
+28
+00:01:30,840 --> 00:01:32,300
+ So, this recurrence solves to
+
+29
+00:01:32,300 --> 00:01:36,200
+ order n. So if we can find a good pivot in this amount of time,
+
+30
+00:01:36,200 --> 00:01:38,260
+ T of n over 5 plus order n,
+
+31
+00:01:38,260 --> 00:01:42,275
+ then we successfully have an order n time algorithm to find the median.
+
+32
+00:01:42,275 --> 00:01:44,383
+ Now what exactly are we going to utilize this T of n over
+
+33
+00:01:44,383 --> 00:01:46,790
+ 5 in order to find a good pivot?
+
+34
+00:01:46,790 --> 00:01:48,200
+ How are we going to utilize it?
+
+35
+00:01:48,200 --> 00:01:53,320
+ Well, we're going to choose a subset of A which is of size n over 5 and then we're going
+
+36
+00:01:53,320 --> 00:01:58,650
+ to recursively run our median algorithm on this subset S. And we're going to set P,
+
+37
+00:01:58,650 --> 00:02:03,250
+ the pivot to be the median of this subset S. The time it's going to take us to find
+
+38
+00:02:03,250 --> 00:02:05,937
+ the median of this subset S is going to be T of n over 5
+
+39
+00:02:05,937 --> 00:02:09,140
+ since the subset S of size n over 5.
+
+40
+00:02:09,140 --> 00:02:11,575
+ The question is how do we choose this subset S?
+
+41
+00:02:11,575 --> 00:02:14,170
+ We need to choose this subset S so that is
+
+42
+00:02:14,170 --> 00:02:18,310
+ a good representative sample of this entire array A.
+
+43
+00:02:18,310 --> 00:02:22,960
+ Let's take a look first at a naive choice of the set S and then we'll see how that
+
+44
+00:02:22,960 --> 00:02:25,360
+ fails and it will give us some intuition
+
+45
+00:02:25,360 --> 00:02:25,360
+ about choosing a better choice for this subset S.
+

@@ -1,0 +1,92 @@
+1
+00:00:00,000 --> 00:00:02,565
+ Let's recap our LP once again.
+
+2
+00:00:02,565 --> 00:00:07,290
+ Our objective function is to maximize x1 plus 6x2 plus 10x3.
+
+3
+00:00:07,290 --> 00:00:09,915
+ Subject to the following seven constraints.
+
+4
+00:00:09,915 --> 00:00:11,965
+ We have the two demand constraints.
+
+5
+00:00:11,965 --> 00:00:13,585
+ We have the supply constraint,
+
+6
+00:00:13,585 --> 00:00:17,730
+ the packaging constraint and finally the non-negativity constraint.
+
+7
+00:00:17,730 --> 00:00:19,850
+ Now, let's take a look at this geometrically.
+
+8
+00:00:19,850 --> 00:00:20,990
+ Now, we have three variables,
+
+9
+00:00:20,990 --> 00:00:23,300
+ so we're going to line three dimensional space.
+
+10
+00:00:23,300 --> 00:00:25,460
+ Now, if we had equality for one of these constraints,
+
+11
+00:00:25,460 --> 00:00:26,750
+ there would be a hyperplane,
+
+12
+00:00:26,750 --> 00:00:28,600
+ a three dimensional hyperplane.
+
+13
+00:00:28,600 --> 00:00:32,295
+ Now, within inequality we're taking one side of that hyperplane.
+
+14
+00:00:32,295 --> 00:00:34,295
+ So that's a half space.
+
+15
+00:00:34,295 --> 00:00:37,890
+ So we're looking at the intersection of these seven half spaces.
+
+16
+00:00:37,890 --> 00:00:40,355
+ This is a geometric view of the feasible region.
+
+17
+00:00:40,355 --> 00:00:44,880
+ The points in this ten polyhedron are the feasible axes.
+
+18
+00:00:44,880 --> 00:00:48,560
+ These are the points which satisfy all seven constraints.
+
+19
+00:00:48,560 --> 00:00:50,660
+ Now, notice this is a convex set,
+
+20
+00:00:50,660 --> 00:00:52,820
+ so it can't go down and then back up.
+
+21
+00:00:52,820 --> 00:00:57,710
+ Convexity is an important property for the algorithms to solve linear programs.
+
+22
+00:00:57,710 --> 00:01:00,890
+ Now, let's take a look at the general formulation of linear programs and then
+
+23
+00:01:00,890 --> 00:01:00,890
+ we'll come back to this example and we'll figure out the optimum for this example.
+

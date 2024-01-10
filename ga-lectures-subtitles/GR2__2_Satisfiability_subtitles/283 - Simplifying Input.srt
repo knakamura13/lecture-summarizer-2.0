@@ -1,0 +1,304 @@
+1
+00:00:00,260 --> 00:00:03,730
+ Consider input F for 2-SAT problem.
+
+2
+00:00:03,730 --> 00:00:06,440
+ Here's an example input for 2-SAT.
+
+3
+00:00:06,440 --> 00:00:09,165
+ This consists of 4 variables x1, x2,
+
+4
+00:00:09,165 --> 00:00:12,165
+ x3, x4 and it has five clauses.
+
+5
+00:00:12,165 --> 00:00:15,385
+ Now I want to simplify the input to our 2-SAT problem.
+
+6
+00:00:15,385 --> 00:00:19,550
+ In particular I want to remove unit clauses. What's a unit clause?
+
+7
+00:00:19,550 --> 00:00:21,540
+ This is an example of a unit clause right here.
+
+8
+00:00:21,540 --> 00:00:24,890
+ This is the clause with exactly one literal in it.
+
+9
+00:00:24,890 --> 00:00:26,110
+ Now how can I remove it?
+
+10
+00:00:26,110 --> 00:00:28,065
+ Well, in order to satisfy this formula,
+
+11
+00:00:28,065 --> 00:00:30,495
+ I know that I have to satisfy this clause.
+
+12
+00:00:30,495 --> 00:00:32,820
+ In order to satisfy this clause, there's only one way.
+
+13
+00:00:32,820 --> 00:00:34,900
+ I have to set x1 to be false.
+
+14
+00:00:34,900 --> 00:00:38,130
+ So, I might as well go ahead and set x1 to be false and
+
+15
+00:00:38,130 --> 00:00:40,080
+ the resulting formula will be true
+
+16
+00:00:40,080 --> 00:00:43,890
+ satisfiable if and only if the original formula was satisfiable.
+
+17
+00:00:43,890 --> 00:00:47,205
+ So, here's the basic procedure for eliminating unit clauses.
+
+18
+00:00:47,205 --> 00:00:48,675
+ Take any unit clause,
+
+19
+00:00:48,675 --> 00:00:51,105
+ in this case x1 bar,
+
+20
+00:00:51,105 --> 00:00:53,720
+ and let's call that literal AI.
+
+21
+00:00:53,720 --> 00:00:56,575
+ So in this case AI is x1 bar.
+
+22
+00:00:56,575 --> 00:00:58,470
+ Then I'm going to satisfy that literal.
+
+23
+00:00:58,470 --> 00:01:00,975
+ So I'm going to set AI to be true.
+
+24
+00:01:00,975 --> 00:01:04,840
+ In this case, I'm going to set x1 bar to be true.
+
+25
+00:01:04,840 --> 00:01:06,780
+ What does it mean to set x1 bar to be true?
+
+26
+00:01:06,780 --> 00:01:09,565
+ That means to set x1 to be false.
+
+27
+00:01:09,565 --> 00:01:11,985
+ If I set the variable x1 to be false,
+
+28
+00:01:11,985 --> 00:01:14,130
+ then I satisfy this literal.
+
+29
+00:01:14,130 --> 00:01:16,340
+ Now if I set x1 to be false,
+
+30
+00:01:16,340 --> 00:01:18,240
+ now any clause which contains
+
+31
+00:01:18,240 --> 00:01:22,085
+ x1 bar I can eliminate it because those clauses are satisfied.
+
+32
+00:01:22,085 --> 00:01:24,590
+ So I can eliminate this clause.
+
+33
+00:01:24,590 --> 00:01:26,950
+ There are no other clauses containing x1 bar,
+
+34
+00:01:26,950 --> 00:01:30,060
+ so I can't eliminate any other clauses in this example.
+
+35
+00:01:30,060 --> 00:01:33,355
+ Now what else can I do? What about this x1?
+
+36
+00:01:33,355 --> 00:01:36,350
+ Why no x1 is set to false?
+
+37
+00:01:36,350 --> 00:01:39,050
+ So this literal will not be satisfied.
+
+38
+00:01:39,050 --> 00:01:40,790
+ So I might as well remove it.
+
+39
+00:01:40,790 --> 00:01:44,455
+ So this clause now becomes just x4 by itself.
+
+40
+00:01:44,455 --> 00:01:47,310
+ So I drop all occurrences of AI bar,
+
+41
+00:01:47,310 --> 00:01:51,790
+ then this formula then reduces to x3 or x2 bar,
+
+42
+00:01:51,790 --> 00:01:53,897
+ that's from the first clause and x4,
+
+43
+00:01:53,897 --> 00:01:55,710
+ that's from the third clause,
+
+44
+00:01:55,710 --> 00:02:00,347
+ and x4 bar or x2 from the third fourth clause,
+
+45
+00:02:00,347 --> 00:02:03,475
+ and X3 bar or X4 from the last clause.
+
+46
+00:02:03,475 --> 00:02:07,280
+ The third clause got reduced and the second clause got eliminated.
+
+47
+00:02:07,280 --> 00:02:09,540
+ That's called the resulting formula F prime.
+
+48
+00:02:09,540 --> 00:02:11,970
+ So this simplified formula is F prime.
+
+49
+00:02:11,970 --> 00:02:14,480
+ The original formula is F. What is the claim?
+
+50
+00:02:14,480 --> 00:02:15,726
+ The claim is that F,
+
+51
+00:02:15,726 --> 00:02:18,390
+ the original formula is satisfiable if and only if
+
+52
+00:02:18,390 --> 00:02:22,106
+ this reduced formula F prime is satisfiable. Then what can I do?
+
+53
+00:02:22,106 --> 00:02:25,148
+ Well now I can take this simplified formula F prime,
+
+54
+00:02:25,148 --> 00:02:30,365
+ and again there's another unit clause which got formed and now I can set x4 to be true,
+
+55
+00:02:30,365 --> 00:02:33,535
+ and then I can simplify the formula and I can keep going.
+
+56
+00:02:33,535 --> 00:02:37,455
+ Eventually I either end up with the empty formula, which is satisfied,
+
+57
+00:02:37,455 --> 00:02:42,890
+ or I end up with a formula where all clauses are of size exactly two.
+
+58
+00:02:42,890 --> 00:02:46,930
+ And that's how I'm going to simplify my input for 2-SAT problem.
+
+59
+00:02:46,930 --> 00:02:51,495
+ So I can take an arbitrary input for the 2-SAT problem and I can simplify it so that
+
+60
+00:02:51,495 --> 00:02:56,935
+ all of the clauses are of size exactly two by repeating this procedure over and over.
+
+61
+00:02:56,935 --> 00:03:01,410
+ Now the key observation that we just mentioned is that the original formula F is
+
+62
+00:03:01,410 --> 00:03:06,625
+ satisfiable if and only if this reduced formula F prime is satisfiable.
+
+63
+00:03:06,625 --> 00:03:09,270
+ Now this is clearly true since the only way to satisfy F
+
+64
+00:03:09,270 --> 00:03:11,940
+ the original formula is to take this unit clause.
+
+65
+00:03:11,940 --> 00:03:15,465
+ I have to satisfy it and therefore I must satisfy this literal.
+
+66
+00:03:15,465 --> 00:03:17,910
+ And then steps two and three are forced.
+
+67
+00:03:17,910 --> 00:03:20,205
+ Now the implication of this procedure
+
+68
+00:03:20,205 --> 00:03:23,160
+ is that I can keep applying it over and over as long as I have
+
+69
+00:03:23,160 --> 00:03:26,310
+ unit clauses and eventually the formula is either
+
+70
+00:03:26,310 --> 00:03:30,210
+ satisfied or all clauses are of size exactly two.
+
+71
+00:03:30,210 --> 00:03:32,190
+ So now in order to design an algorithm,
+
+72
+00:03:32,190 --> 00:03:35,353
+ I can assume that the input to my 2-SAT problem
+
+73
+00:03:35,353 --> 00:03:39,565
+ all of the clauses in that input are of size exactly two.
+
+74
+00:03:39,565 --> 00:03:43,395
+ This is going to make the input to the problem slightly easier for us.
+
+75
+00:03:43,395 --> 00:03:45,420
+ Now let's go ahead and see how this 2-SAT problem
+
+76
+00:03:45,420 --> 00:03:45,420
+ relates to the strongly connected components algorithm.
+

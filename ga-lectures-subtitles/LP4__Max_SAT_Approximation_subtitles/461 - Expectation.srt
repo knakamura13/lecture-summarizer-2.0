@@ -1,0 +1,128 @@
+1
+00:00:00,000 --> 00:00:05,010
+ Once again capital W denotes a number of satisfied clauses for a random assignment.
+
+2
+00:00:05,010 --> 00:00:08,875
+ Each variable is assigned true or false with probability one half.
+
+3
+00:00:08,875 --> 00:00:10,740
+ Now, we want to look at a simpler quantity.
+
+4
+00:00:10,740 --> 00:00:13,830
+ In particular, we want to look at one clause in isolation.
+
+5
+00:00:13,830 --> 00:00:15,545
+ So, consider the J's clause.
+
+6
+00:00:15,545 --> 00:00:19,930
+ C sub J, and let's make a new random variable W sub J.
+
+7
+00:00:19,930 --> 00:00:21,653
+ Now, we're just talking about one clause,
+
+8
+00:00:21,653 --> 00:00:23,730
+ so either that clause is satisfied or not.
+
+9
+00:00:23,730 --> 00:00:27,695
+ Therefore, this new random variable is going to take either value 1 or 0.
+
+10
+00:00:27,695 --> 00:00:30,270
+ It takes value 1 if the clause CJ is
+
+11
+00:00:30,270 --> 00:00:34,070
+ satisfied and it takes value 0 if it's not satisfied.
+
+12
+00:00:34,070 --> 00:00:37,250
+ Now, what happens if we sum this quantity over all clauses?
+
+13
+00:00:37,250 --> 00:00:41,590
+ So, we look at the sum for J going from 1 to M of W sub J,
+
+14
+00:00:41,590 --> 00:00:46,650
+ where we get a 1 for every clause which is satisfied and 0 if it's not satisfied.
+
+15
+00:00:46,650 --> 00:00:50,210
+ So, this gives us a total count of the number of satisfied clauses.
+
+16
+00:00:50,210 --> 00:00:53,128
+ Therefore, it's equal to capital W. Now recall,
+
+17
+00:00:53,128 --> 00:00:57,030
+ our original goal was to analyze the expected of performance of the algorithm.
+
+18
+00:00:57,030 --> 00:01:00,070
+ So we want to look at the expectation of capital W,
+
+19
+00:01:00,070 --> 00:01:03,210
+ expected number of satisfied clauses.
+
+20
+00:01:03,210 --> 00:01:04,890
+ Now, we can plug in this identity,
+
+21
+00:01:04,890 --> 00:01:07,995
+ so we can replace capital W by this sum.
+
+22
+00:01:07,995 --> 00:01:11,160
+ We have the expectation of the sum over J of
+
+23
+00:01:11,160 --> 00:01:15,535
+ W sub J and now recall the new rarety or expectation.
+
+24
+00:01:15,535 --> 00:01:17,468
+ So, we can take the sum outside.
+
+25
+00:01:17,468 --> 00:01:20,058
+ The expectation of two random variables X and Y.
+
+26
+00:01:20,058 --> 00:01:26,245
+ Expectation of X plus Y is the same as expectation of X plus the expectation of Y.
+
+27
+00:01:26,245 --> 00:01:33,390
+ So, now we have that the expectation of W equals the sum over J of the expectation of WJ.
+
+28
+00:01:33,390 --> 00:01:36,630
+ Now, we can analyze this quantity expectation of WJ.
+
+29
+00:01:36,630 --> 00:01:39,480
+ Notice, this just depends on the clause CJ.
+
+30
+00:01:39,480 --> 00:01:41,830
+ It doesn't have anything to do with the other clauses.
+
+31
+00:01:41,830 --> 00:01:44,815
+ So, now we can focus on this clause in isolation.
+
+32
+00:01:44,815 --> 00:01:44,815
+ We don't have to look at any of the other clauses.
+

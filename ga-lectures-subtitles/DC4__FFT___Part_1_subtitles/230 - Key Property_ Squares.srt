@@ -1,0 +1,120 @@
+1
+00:00:00,000 --> 00:00:03,675
+ The second key property holds when n is a power of two.
+
+2
+00:00:03,675 --> 00:00:06,605
+ If we look at the nth roots squared,
+
+3
+00:00:06,605 --> 00:00:08,740
+ we get the n over second roots.
+
+4
+00:00:08,740 --> 00:00:11,011
+ So we take the jth of the nth roots,
+
+5
+00:00:11,011 --> 00:00:13,230
+ so omega sub n to the jth power,
+
+6
+00:00:13,230 --> 00:00:14,780
+ and we square it.
+
+7
+00:00:14,780 --> 00:00:20,775
+ So in polar, we're taking the point one comma two pi over n times J squared.
+
+8
+00:00:20,775 --> 00:00:23,705
+ So we simply double the angle.
+
+9
+00:00:23,705 --> 00:00:28,815
+ So we get the point one comma two pi over n over two times J,
+
+10
+00:00:28,815 --> 00:00:33,240
+ which is omega sub n over two to the Jth power.
+
+11
+00:00:33,240 --> 00:00:39,055
+ So the Jth of the nth roots squared is the Jth of the n over second roots.
+
+12
+00:00:39,055 --> 00:00:45,467
+ And similarly, if we take the n over second plus Jth of the nth roots and we square it,
+
+13
+00:00:45,467 --> 00:00:47,950
+ well, this is just the opposite of this.
+
+14
+00:00:47,950 --> 00:00:51,848
+ So when we square the negative of it we get the same thing.
+
+15
+00:00:51,848 --> 00:00:55,950
+ So why do we need this property that the nth root squared or the n over second roots?
+
+16
+00:00:55,950 --> 00:00:58,320
+ Well, we're going to take this polynomial A of x,
+
+17
+00:00:58,320 --> 00:01:00,720
+ and we want to evaluate at the nth roots.
+
+18
+00:01:00,720 --> 00:01:03,440
+ Now these nth roots satisfy the plus minus properties,
+
+19
+00:01:03,440 --> 00:01:05,630
+ so we can do a divide and conquer approach.
+
+20
+00:01:05,630 --> 00:01:07,050
+ But then, what do we need?
+
+21
+00:01:07,050 --> 00:01:12,240
+ We need to evaluate A even and A odd at the square of these nth roots,
+
+22
+00:01:12,240 --> 00:01:15,165
+ which will be the n over second roots.
+
+23
+00:01:15,165 --> 00:01:19,225
+ So this subproblem is of the exact same form as the original problem.
+
+24
+00:01:19,225 --> 00:01:22,275
+ In order to evaluate A of x at the nth roots,
+
+25
+00:01:22,275 --> 00:01:25,110
+ we need to evaluate these two subproblems,
+
+26
+00:01:25,110 --> 00:01:28,380
+ A even and A odd at the n over second roots.
+
+27
+00:01:28,380 --> 00:01:31,920
+ And then we can recursively continue this algorithm.
+
+28
+00:01:31,920 --> 00:01:34,425
+ Now we're all set to do our FFT algorithm,
+
+29
+00:01:34,425 --> 00:01:36,870
+ and the end points where we choose to evaluate
+
+30
+00:01:36,870 --> 00:01:36,870
+ the polynomial A of x are the nth roots of unity.
+

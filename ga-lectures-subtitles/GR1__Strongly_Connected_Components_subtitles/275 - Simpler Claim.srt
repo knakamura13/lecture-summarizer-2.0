@@ -1,0 +1,340 @@
+1
+00:00:00,000 --> 00:00:02,570
+ Here's a simpler claim once again.
+
+2
+00:00:02,570 --> 00:00:03,820
+ We have two components,
+
+3
+00:00:03,820 --> 00:00:07,750
+ two strongly connected components, S and S-prime.
+
+4
+00:00:07,750 --> 00:00:09,301
+ And there's some vertex in S,
+
+5
+00:00:09,301 --> 00:00:13,052
+ let's call it V. And there's a vertex in S-prime,
+
+6
+00:00:13,052 --> 00:00:19,450
+ let's call it W. And there's an edge from V to W. And the claim is that if we look at
+
+7
+00:00:19,450 --> 00:00:22,990
+ the maximum post-order number of all vertices lying in S
+
+8
+00:00:22,990 --> 00:00:27,040
+ compared to the maximum post-order number of all vertices lying in S-prime,
+
+9
+00:00:27,040 --> 00:00:29,560
+ then these maximum post-order number in S is
+
+10
+00:00:29,560 --> 00:00:32,910
+ bigger than the max post-order number in S-prime.
+
+11
+00:00:32,910 --> 00:00:34,930
+ So let's go ahead and prove that fact.
+
+12
+00:00:34,930 --> 00:00:38,700
+ Let's make one simple observation about this graph before we proceed.
+
+13
+00:00:38,700 --> 00:00:41,205
+ Notice we have an edge from this strongly connected component
+
+14
+00:00:41,205 --> 00:00:44,740
+ S to the strongly connected component S-prime.
+
+15
+00:00:44,740 --> 00:00:50,029
+ We know there's no cycles in this graph on strongly connected components,
+
+16
+00:00:50,029 --> 00:00:53,890
+ so there can't be a path from S-prime to S. Otherwise,
+
+17
+00:00:53,890 --> 00:00:56,170
+ these two strongly connected components
+
+18
+00:00:56,170 --> 00:00:58,300
+ would be a strongly connected component by itself.
+
+19
+00:00:58,300 --> 00:01:01,630
+ S union S-prime would be a strongly connected component and that
+
+20
+00:01:01,630 --> 00:01:05,420
+ would contradict the maximality of these SCCs.
+
+21
+00:01:05,420 --> 00:01:10,070
+ We know that there is no path from S-prime back to S because there's
+
+22
+00:01:10,070 --> 00:01:15,130
+ this edge that we assumed from V in S to W in S-prime.
+
+23
+00:01:15,130 --> 00:01:17,920
+ We're going to use this simple fact that there is no path
+
+24
+00:01:17,920 --> 00:01:21,760
+ from S-prime to S in the proof of this simpler claim.
+
+25
+00:01:21,760 --> 00:01:27,020
+ Run DFS on this graph and we're looking at the post-order numbers from this DFS run.
+
+26
+00:01:27,020 --> 00:01:29,555
+ Initially, all the vertices are unvisited.
+
+27
+00:01:29,555 --> 00:01:34,660
+ At some point some vertex in S Union S-prime must be visited.
+
+28
+00:01:34,660 --> 00:01:39,310
+ Let's take the vertex in S Union S-prime which is visited first and let's give it a name.
+
+29
+00:01:39,310 --> 00:01:41,900
+ Let's call it Z. We're going to have two cases.
+
+30
+00:01:41,900 --> 00:01:48,180
+ Either Z lies in S-prime or Z lies in S. Let's look at the first case.
+
+31
+00:01:48,180 --> 00:01:51,430
+ Let's say that Z lies in S-prime.
+
+32
+00:01:51,430 --> 00:01:56,860
+ Now, Z visits first so we're going to run Explore on Z. And who are we going to see?
+
+33
+00:01:56,860 --> 00:02:00,855
+ What vertices are we going to visit when we do Explore on Z?
+
+34
+00:02:00,855 --> 00:02:03,390
+ Well, which vertices are reachable from Z?
+
+35
+00:02:03,390 --> 00:02:11,290
+ Z lies in S-prime so from Z we can see all of S-prime but we can't see any of
+
+36
+00:02:11,290 --> 00:02:15,000
+ S. We see all of S-prime and we see none of
+
+37
+00:02:15,000 --> 00:02:19,815
+ S. All of S-prime is going to be visited and finished exploring,
+
+38
+00:02:19,815 --> 00:02:25,585
+ and none of S is going to be visited at all before we finish exploring from Z.
+
+39
+00:02:25,585 --> 00:02:31,330
+ Z and all of S-prime is going to be assigned post-order numbers before we even give
+
+40
+00:02:31,330 --> 00:02:34,310
+ a pre-order number for any vertex in S.
+
+41
+00:02:34,310 --> 00:02:38,590
+ The punchline is that all of the post-order numbers in S-prime.
+
+42
+00:02:38,590 --> 00:02:40,400
+ For every vertex in S-prime,
+
+43
+00:02:40,400 --> 00:02:43,570
+ its post-order number is strictly smaller than
+
+44
+00:02:43,570 --> 00:02:46,930
+ the post-order number of every vertex in S. Because
+
+45
+00:02:46,930 --> 00:02:50,290
+ we visit and finished exploring all the vertices in
+
+46
+00:02:50,290 --> 00:02:54,100
+ S-prime including Z before we even visit,
+
+47
+00:02:54,100 --> 00:02:58,840
+ before we even given a pre-order number to any vertex in S. And therefore,
+
+48
+00:02:58,840 --> 00:03:02,500
+ the maximum post-order number in an S-prime is strictly smaller than
+
+49
+00:03:02,500 --> 00:03:07,350
+ the minimum or the maximum post-order number in S which proves that claim.
+
+50
+00:03:07,350 --> 00:03:12,820
+ This completes the proof of the claim in this case where Z lies in S-prime.
+
+51
+00:03:12,820 --> 00:03:15,865
+ Now let's look at this case with a vertex Z lies in this component
+
+52
+00:03:15,865 --> 00:03:20,225
+ S. All these vertices in S and S-prime are unvisited.
+
+53
+00:03:20,225 --> 00:03:23,365
+ And now we visit Z and we start exploring from Z.
+
+54
+00:03:23,365 --> 00:03:24,730
+ Who do we reach?
+
+55
+00:03:24,730 --> 00:03:26,710
+ What vertices can we reach from Z?
+
+56
+00:03:26,710 --> 00:03:30,955
+ We can reach all of S because this is a strongly connected component,
+
+57
+00:03:30,955 --> 00:03:36,025
+ and we can reach all of S-prime because we can go from V over to S-prime,
+
+58
+00:03:36,025 --> 00:03:38,635
+ and then we can reach around S-prime.
+
+59
+00:03:38,635 --> 00:03:40,480
+ If we looked at the DFS tree,
+
+60
+00:03:40,480 --> 00:03:42,460
+ we're going to have this vertex Z.
+
+61
+00:03:42,460 --> 00:03:44,268
+ And what lies in that sub-tree?
+
+62
+00:03:44,268 --> 00:03:47,650
+ The rest of S Union S-prime lies in its sub-tree,
+
+63
+00:03:47,650 --> 00:03:49,120
+ in the DFS tree.
+
+64
+00:03:49,120 --> 00:03:51,060
+ Therefore, what do we know about Z?
+
+65
+00:03:51,060 --> 00:03:54,175
+ We know that Z is going to be the last vertex that we finish
+
+66
+00:03:54,175 --> 00:03:58,060
+ in S Union S-prime because it's the root of this sub-tree.
+
+67
+00:03:58,060 --> 00:04:02,140
+ We know that Z has the maximum post-order number of any vertex
+
+68
+00:04:02,140 --> 00:04:06,595
+ in S Union S-prime because it's the root of this sub-tree in the DFS tree.
+
+69
+00:04:06,595 --> 00:04:10,280
+ All the descendants have to be finished before we finished Z.
+
+70
+00:04:10,280 --> 00:04:15,355
+ And, therefore, since Z lies in S then we know that the vertex in S Union
+
+71
+00:04:15,355 --> 00:04:21,295
+ S-prime with maximum post-order number is Z which lies in S. So that proves the claim.
+
+72
+00:04:21,295 --> 00:04:23,395
+ The max post-order number in S,
+
+73
+00:04:23,395 --> 00:04:25,045
+ which corresponds to Z,
+
+74
+00:04:25,045 --> 00:04:27,845
+ is larger than anybody in S-prime.
+
+75
+00:04:27,845 --> 00:04:32,020
+ This completes the proof of this claim in this case where Z lies in S,
+
+76
+00:04:32,020 --> 00:04:34,413
+ and we also did the case where Z lies in S-prime.
+
+77
+00:04:34,413 --> 00:04:38,440
+ And that completes the proof of the simpler claim which also completes the proof of
+
+78
+00:04:38,440 --> 00:04:43,855
+ the key fact that the vertex with the highest post-order number lies in a source SCC.
+
+79
+00:04:43,855 --> 00:04:47,140
+ That completes the proof of correctness of our SCC algorithm and
+
+80
+00:04:47,140 --> 00:04:50,850
+ that's the end of our SCC algorithm description.
+
+81
+00:04:50,850 --> 00:04:52,030
+ It's quite an amazing fact.
+
+82
+00:04:52,030 --> 00:04:54,820
+ We can take any directed graph and we can compute
+
+83
+00:04:54,820 --> 00:04:56,710
+ its strongly connected components and we can
+
+84
+00:04:56,710 --> 00:04:59,395
+ topologically sort the strongly connected components.
+
+85
+00:04:59,395 --> 00:04:59,395
+ And we do it with just two runs of the vanilla DFS.
+

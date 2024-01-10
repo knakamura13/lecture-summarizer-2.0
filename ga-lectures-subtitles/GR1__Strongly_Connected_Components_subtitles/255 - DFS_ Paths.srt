@@ -1,0 +1,104 @@
+1
+00:00:00,000 --> 00:00:02,040
+ We saw in the last slide how to use
+
+2
+00:00:02,040 --> 00:00:07,015
+ the DFS algorithm to find the connected components of an undirected graph.
+
+3
+00:00:07,015 --> 00:00:09,300
+ Before we move on to directed graph,
+
+4
+00:00:09,300 --> 00:00:13,290
+ let's gleam a little bit more information from the DFS algorithm.
+
+5
+00:00:13,290 --> 00:00:16,245
+ In particular, suppose I have a pair of vertices,
+
+6
+00:00:16,245 --> 00:00:19,550
+ v and w which are in the same connected component.
+
+7
+00:00:19,550 --> 00:00:22,595
+ I want to find a path between this pair of vertices.
+
+8
+00:00:22,595 --> 00:00:25,170
+ To do that, we simply have to keep track of
+
+9
+00:00:25,170 --> 00:00:28,365
+ the predecessor Vertex when we first visit a vertex.
+
+10
+00:00:28,365 --> 00:00:30,390
+ Here's the DFS algorithm once again for
+
+11
+00:00:30,390 --> 00:00:33,165
+ finding connected components of an undirected graph.
+
+12
+00:00:33,165 --> 00:00:36,340
+ We're going to use this previous array as is used in
+
+13
+00:00:36,340 --> 00:00:39,585
+ Dijkstra's algorithm to keep track of the predecessor Vertex.
+
+14
+00:00:39,585 --> 00:00:44,040
+ We initialize this previous array to null for every vertex.
+
+15
+00:00:44,040 --> 00:00:46,530
+ And when we first visit a vertex.
+
+16
+00:00:46,530 --> 00:00:48,120
+ So at this point in the algorithm,
+
+17
+00:00:48,120 --> 00:00:52,500
+ we should set its previous array to its predecessor Vertex,
+
+18
+00:00:52,500 --> 00:00:54,005
+ which is Vertex Z.
+
+19
+00:00:54,005 --> 00:00:57,065
+ So, we set previous W to Vertex Z.
+
+20
+00:00:57,065 --> 00:00:59,560
+ Now, after running DFS algorithm,
+
+21
+00:00:59,560 --> 00:01:01,230
+ given this previous array,
+
+22
+00:01:01,230 --> 00:01:03,810
+ we can use this previous array to backtrack.
+
+23
+00:01:03,810 --> 00:01:07,125
+ So, for a pair of vertices which are in the same connected component,
+
+24
+00:01:07,125 --> 00:01:12,555
+ we can use the previous array to find a path between this pair of connected vertices.
+
+25
+00:01:12,555 --> 00:01:16,725
+ That completes our discussion of DFS algorithms for undirected graphs.
+
+26
+00:01:16,725 --> 00:01:16,725
+ Let's move on now to directed graphs.
+

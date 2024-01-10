@@ -1,0 +1,64 @@
+1
+00:00:00,000 --> 00:00:04,170
+ We just showed that if we delete an edge v to w from
+
+2
+00:00:04,170 --> 00:00:09,430
+ the residual network and later we add this edge back into the residual network,
+
+3
+00:00:09,430 --> 00:00:13,075
+ then the level of this vertex v increase by at least two.
+
+4
+00:00:13,075 --> 00:00:19,373
+ If we look at the level of vertex v before this deletion compared to after the insertion,
+
+5
+00:00:19,373 --> 00:00:21,940
+ the level of the vertex increase by at least two.
+
+6
+00:00:21,940 --> 00:00:23,940
+ Now, what do we know about the level of vertices?
+
+7
+00:00:23,940 --> 00:00:25,815
+ The minimum level is zero,
+
+8
+00:00:25,815 --> 00:00:28,110
+ that's for vertex S itself.
+
+9
+00:00:28,110 --> 00:00:30,660
+ The maximum level is n. Therefore,
+
+10
+00:00:30,660 --> 00:00:33,150
+ what's the maximum number of times that we can delete and
+
+11
+00:00:33,150 --> 00:00:35,910
+ then add this edge back into the residual network?
+
+12
+00:00:35,910 --> 00:00:40,642
+ We can delete it and then reinsert it back in at most n over two times.
+
+13
+00:00:40,642 --> 00:00:42,600
+ Since there m edges in the graph,
+
+14
+00:00:42,600 --> 00:00:44,520
+ this proves our main result that there is at
+
+15
+00:00:44,520 --> 00:00:47,415
+ most nm rounds in the Edmonds-Karp algorithm.
+
+16
+00:00:47,415 --> 00:00:47,415
+ And that completes the analysis of the Edmonds-Karp algorithm.
+

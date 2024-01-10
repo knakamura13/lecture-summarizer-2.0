@@ -1,0 +1,36 @@
+1
+00:00:00,000 --> 00:00:02,905
+ Now here's an example of a graph on five vertices.
+
+2
+00:00:02,905 --> 00:00:06,115
+ Why don't you go ahead and give a topological ordering for this graph.
+
+3
+00:00:06,115 --> 00:00:08,880
+ There are five vertices, so let's write down the vertices in
+
+4
+00:00:08,880 --> 00:00:12,330
+ order so that all edges go from left to right.
+
+5
+00:00:12,330 --> 00:00:15,450
+ Now this graph happens to have multiple topological orderings.
+
+6
+00:00:15,450 --> 00:00:18,015
+ How many topological orderings does it in fact have?
+
+7
+00:00:18,015 --> 00:00:20,085
+ To make sure you understand topological orderings,
+
+8
+00:00:20,085 --> 00:00:21,870
+ why don't you go ahead and specify the number of
+
+9
+00:00:21,870 --> 00:00:21,870
+ topological orderings which are valid for this graph.
+

@@ -1,0 +1,56 @@
+1
+00:00:00,000 --> 00:00:03,010
+ Now, let's formulate this problem as a linear program.
+
+2
+00:00:03,010 --> 00:00:06,315
+ Now, we're going to have three variables X1, X2, X3,
+
+3
+00:00:06,315 --> 00:00:08,940
+ corresponding to how much we produce of A,
+
+4
+00:00:08,940 --> 00:00:12,370
+ and B, and C, respectively, per day.
+
+5
+00:00:12,370 --> 00:00:14,250
+ Now, our goal is to maximize the profit.
+
+6
+00:00:14,250 --> 00:00:17,835
+ So, our objective function is going to mean maximize X1
+
+7
+00:00:17,835 --> 00:00:22,405
+ plus 6 X2 plus 10X3 based on our profit assumption.
+
+8
+00:00:22,405 --> 00:00:24,300
+ Now, we have two demand constraints.
+
+9
+00:00:24,300 --> 00:00:28,235
+ X1 is at most 300 and X2 is at most 200.
+
+10
+00:00:28,235 --> 00:00:30,235
+ Now, we have one supply constraint,
+
+11
+00:00:30,235 --> 00:00:37,280
+ X1 plus 3X2 plus 2X3 is at most 1000.
+
+12
+00:00:37,280 --> 00:00:43,910
+ And finally, the packaging constraint says that X2 plus 3X3 is at most 500.
+
+13
+00:00:43,910 --> 00:00:46,685
+ And let's not forget the non-negativity constraints.
+
+14
+00:00:46,685 --> 00:00:46,685
+ X1, X2, X3 all have to be non-negative.
+

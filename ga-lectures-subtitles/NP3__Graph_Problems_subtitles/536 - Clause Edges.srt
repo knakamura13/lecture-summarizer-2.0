@@ -1,0 +1,240 @@
+1
+00:00:00,000 --> 00:00:02,220
+ There's going to be two types of edges.
+
+2
+00:00:02,220 --> 00:00:06,565
+ The first type were called clause edges because these are defined by the clauses.
+
+3
+00:00:06,565 --> 00:00:09,270
+ The second type are variable edges.
+
+4
+00:00:09,270 --> 00:00:11,305
+ Let's begin with the clause edges.
+
+5
+00:00:11,305 --> 00:00:13,705
+ Let's consider a clause of size three.
+
+6
+00:00:13,705 --> 00:00:18,240
+ So here the clause which is x_1 or x_3 bar or x_2.
+
+7
+00:00:18,240 --> 00:00:21,990
+ In our graph, we're going to have three vertices corresponding to the three literals.
+
+8
+00:00:21,990 --> 00:00:24,450
+ So this first vertex corresponds to x_1.
+
+9
+00:00:24,450 --> 00:00:27,530
+ This second vertex corresponds x_3 bar.
+
+10
+00:00:27,530 --> 00:00:30,080
+ And the third vertex corresponds to x_2.
+
+11
+00:00:30,080 --> 00:00:32,735
+ Now, some of these literals might appear in other clauses.
+
+12
+00:00:32,735 --> 00:00:35,440
+ For example if there is another clause containing x_2,
+
+13
+00:00:35,440 --> 00:00:38,595
+ we'll have another vertex corresponding to x_2.
+
+14
+00:00:38,595 --> 00:00:42,060
+ So there are multiple vertices corresponding to the same literal.
+
+15
+00:00:42,060 --> 00:00:44,370
+ Now, how do we encode this clause?
+
+16
+00:00:44,370 --> 00:00:46,165
+ Well, we simply add a triangle.
+
+17
+00:00:46,165 --> 00:00:49,675
+ We add edges between all pairs of these three vertices.
+
+18
+00:00:49,675 --> 00:00:52,975
+ In other words, we add the complete graph on these three vertices.
+
+19
+00:00:52,975 --> 00:00:54,660
+ What if we had a clause of size 2?
+
+20
+00:00:54,660 --> 00:00:57,150
+ For example, x_4 bar or x_5,
+
+21
+00:00:57,150 --> 00:01:00,735
+ then we add two vertices corresponding to these two literals,
+
+22
+00:01:00,735 --> 00:01:02,310
+ and we add an edge between them.
+
+23
+00:01:02,310 --> 00:01:04,110
+ Finally, if we have a clause of size one,
+
+24
+00:01:04,110 --> 00:01:05,760
+ for example x_1 bar,
+
+25
+00:01:05,760 --> 00:01:08,940
+ then we adjust at a singleton vertex by itself.
+
+26
+00:01:08,940 --> 00:01:11,490
+ This construction to keep property is in
+
+27
+00:01:11,490 --> 00:01:16,515
+ an independent set S in this graph is going to have at most one vertex per clause.
+
+28
+00:01:16,515 --> 00:01:17,850
+ If you look at these three vertices,
+
+29
+00:01:17,850 --> 00:01:21,660
+ we can only include one of them because there's edges between all pairs.
+
+30
+00:01:21,660 --> 00:01:24,895
+ Now recolor goal was to find an independent set of size
+
+31
+00:01:24,895 --> 00:01:29,910
+ at least m. Since every independent set has at most one vertex per clause.
+
+32
+00:01:29,910 --> 00:01:33,850
+ In order to achieve our goal of an independent set of size at least m,
+
+33
+00:01:33,850 --> 00:01:38,850
+ this solution has to have exactly one vertex per clause.
+
+34
+00:01:38,850 --> 00:01:44,640
+ Now, this one vertex per clause will correspond to this satisfied literal in that clause.
+
+35
+00:01:44,640 --> 00:01:47,385
+ Now there may be other satisfied literals in the clause
+
+36
+00:01:47,385 --> 00:01:51,090
+ due to other copies of that literal in other clauses,
+
+37
+00:01:51,090 --> 00:01:54,930
+ but this property that we have exactly one vertex per clause
+
+38
+00:01:54,930 --> 00:01:59,555
+ will ensure that we have at least one satisfied literal in every clause.
+
+39
+00:01:59,555 --> 00:02:00,960
+ And therefore, this solution,
+
+40
+00:02:00,960 --> 00:02:03,765
+ this independent set will be able to relate it to
+
+41
+00:02:03,765 --> 00:02:07,080
+ a satisfying assignment for this original formula.
+
+42
+00:02:07,080 --> 00:02:09,195
+ Now, what happens if I take an independent set containing
+
+43
+00:02:09,195 --> 00:02:11,865
+ this vertex corresponding to x_1,
+
+44
+00:02:11,865 --> 00:02:14,585
+ and this vertex corresponding to x_1 bar?
+
+45
+00:02:14,585 --> 00:02:16,035
+ Well, if this is the graph,
+
+46
+00:02:16,035 --> 00:02:18,465
+ this is in fact an independent set in this graph.
+
+47
+00:02:18,465 --> 00:02:20,580
+ And it can take one of these two vertices,
+
+48
+00:02:20,580 --> 00:02:24,105
+ and then I have an independent set of my goal size of three.
+
+49
+00:02:24,105 --> 00:02:27,900
+ Now, a natural way of converting this independent set into an assignment for
+
+50
+00:02:27,900 --> 00:02:32,400
+ the original formula is to satisfy each of the corresponding literals.
+
+51
+00:02:32,400 --> 00:02:33,975
+ So to satisfy this literal,
+
+52
+00:02:33,975 --> 00:02:35,710
+ I set x_1 to be true.
+
+53
+00:02:35,710 --> 00:02:38,190
+ For this literal, I set x_5 to be true.
+
+54
+00:02:38,190 --> 00:02:42,180
+ For this literal, I want to set x_1 bar to be satisfied,
+
+55
+00:02:42,180 --> 00:02:44,820
+ which means I set x_1 to be false.
+
+56
+00:02:44,820 --> 00:02:45,860
+ Now I have a contradiction,
+
+57
+00:02:45,860 --> 00:02:48,565
+ this is not a valid assignment because I'm setting x_1 to be true,
+
+58
+00:02:48,565 --> 00:02:50,615
+ and I'm setting x_1 to be false.
+
+59
+00:02:50,615 --> 00:02:54,780
+ So I want to ensure that my independent sets correspond to valid assignments.
+
+60
+00:02:54,780 --> 00:02:54,780
+ I never try to set a variable to true and to false.
+

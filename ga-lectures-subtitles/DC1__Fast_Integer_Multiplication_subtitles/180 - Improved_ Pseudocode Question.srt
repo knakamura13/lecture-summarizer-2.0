@@ -1,0 +1,128 @@
+1
+00:00:00,000 --> 00:00:04,320
+ Let's go ahead and detail the pseudocode for this faster multiplication algorithm.
+
+2
+00:00:04,320 --> 00:00:05,780
+ Now this is the algorithm from before.
+
+3
+00:00:05,780 --> 00:00:07,940
+ This is the order n square time algorithm,
+
+4
+00:00:07,940 --> 00:00:10,785
+ which utilized four recursive subproblems.
+
+5
+00:00:10,785 --> 00:00:12,825
+ This new algorithm is fairly similar.
+
+6
+00:00:12,825 --> 00:00:14,760
+ It's just that it differs at the end.
+
+7
+00:00:14,760 --> 00:00:16,910
+ Just this last bit is different.
+
+8
+00:00:16,910 --> 00:00:18,995
+ So let's get rid of the last bit of the algorithm.
+
+9
+00:00:18,995 --> 00:00:22,730
+ Let's change the name of this algorithm from Easy Multiply to Fast Multiply.
+
+10
+00:00:22,730 --> 00:00:25,440
+ Basic set up of the algorithm stays the same.
+
+11
+00:00:25,440 --> 00:00:28,965
+ The input is two n-bit integers x and y,
+
+12
+00:00:28,965 --> 00:00:30,650
+ and the output is the product.
+
+13
+00:00:30,650 --> 00:00:33,990
+ We partition the input x into the first n over
+
+14
+00:00:33,990 --> 00:00:37,920
+ two bits and the last n over Two bits that's XL and XR.
+
+15
+00:00:37,920 --> 00:00:40,075
+ And we also do similarly for y.
+
+16
+00:00:40,075 --> 00:00:43,710
+ We partition it into YL and YR. Now we're going to recursively
+
+17
+00:00:43,710 --> 00:00:48,000
+ compute the product of three pairs of n over two bit numbers.
+
+18
+00:00:48,000 --> 00:00:49,620
+ The first pair, as before,
+
+19
+00:00:49,620 --> 00:00:51,345
+ is XL times YL.
+
+20
+00:00:51,345 --> 00:00:53,010
+ The second pair, as before,
+
+21
+00:00:53,010 --> 00:00:57,600
+ is XR times YR. We are going to store those in A and B, as before.
+
+22
+00:00:57,600 --> 00:01:02,475
+ Now the new term is we're going to compute XL plus XR and we're going to
+
+23
+00:01:02,475 --> 00:01:05,370
+ multiply that by YL plus YR and we're going to store
+
+24
+00:01:05,370 --> 00:01:08,930
+ that in C. This is where we're utilizing Gauss's idea.
+
+25
+00:01:08,930 --> 00:01:11,310
+ Now we utilize the expression from the last slide.
+
+26
+00:01:11,310 --> 00:01:17,400
+ Z, the product of x times y is equal to two to the n times A which is
+
+27
+00:01:17,400 --> 00:01:25,100
+ XL times YL plus two to the n over two times the quantity C minus A minus B.
+
+28
+00:01:25,100 --> 00:01:28,700
+ This is where we are utilizing Gauss's idea. Finally, we add in B.
+
+29
+00:01:28,700 --> 00:01:30,120
+ Then we return Z,
+
+30
+00:01:30,120 --> 00:01:32,940
+ which is equal to the product of x and y.
+
+31
+00:01:32,940 --> 00:01:34,200
+ This completes our algorithm,
+
+32
+00:01:34,200 --> 00:01:34,200
+ and the key fact is that now we have three subproblems that we're recursively computing.
+

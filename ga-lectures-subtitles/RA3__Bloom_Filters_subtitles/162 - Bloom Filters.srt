@@ -1,0 +1,308 @@
+1
+00:00:00,000 --> 00:00:03,660
+ Finally we can describe our Bloom filter data structure.
+
+2
+00:00:03,660 --> 00:00:07,530
+ The basic data structure is simply a binary array a 0-1
+
+3
+00:00:07,530 --> 00:00:11,495
+ array of size little n. So we have this binary array.
+
+4
+00:00:11,495 --> 00:00:14,020
+ We don't have any linked lists hanging off it at all.
+
+5
+00:00:14,020 --> 00:00:15,870
+ It's just a binary array of size n,
+
+6
+00:00:15,870 --> 00:00:17,570
+ that's the whole data structure.
+
+7
+00:00:17,570 --> 00:00:20,775
+ We're going to start off by setting h to all zeros.
+
+8
+00:00:20,775 --> 00:00:23,235
+ So all of the n bits are set to zero.
+
+9
+00:00:23,235 --> 00:00:26,820
+ As before, we're going to use a random hash function which maps elements of
+
+10
+00:00:26,820 --> 00:00:31,305
+ the universe of possible passwords into our hash table of size
+
+11
+00:00:31,305 --> 00:00:34,240
+ little n. How do we insert an element x of
+
+12
+00:00:34,240 --> 00:00:39,877
+ possible password into our dictionary x of unacceptable passwords?
+
+13
+00:00:39,877 --> 00:00:41,550
+ First off we compute is hash value,
+
+14
+00:00:41,550 --> 00:00:47,100
+ then we set the bit in this array to one at that hash value.
+
+15
+00:00:47,100 --> 00:00:49,980
+ So we compute H_of_x and we set H,
+
+16
+00:00:49,980 --> 00:00:53,515
+ capital H at H_of_x to be one.
+
+17
+00:00:53,515 --> 00:00:54,855
+ Now it might already be one,
+
+18
+00:00:54,855 --> 00:00:56,775
+ in which case we're not doing anything.
+
+19
+00:00:56,775 --> 00:00:59,730
+ So the bits only change from zeros to ones.
+
+20
+00:00:59,730 --> 00:01:02,635
+ We never change them back from ones to zeros.
+
+21
+00:01:02,635 --> 00:01:05,305
+ That's one of the limitations on this data structure.
+
+22
+00:01:05,305 --> 00:01:08,250
+ There is no easy way to implement deletions,
+
+23
+00:01:08,250 --> 00:01:10,980
+ because we never change bits from ones to zeros,
+
+24
+00:01:10,980 --> 00:01:14,275
+ we only change them from zero to ones. Now how do we do a query?
+
+25
+00:01:14,275 --> 00:01:18,480
+ How do we check whether an element x is in our dictionary s?
+
+26
+00:01:18,480 --> 00:01:21,800
+ Where we compute x hash value, and we check the array.
+
+27
+00:01:21,800 --> 00:01:25,580
+ The bit had that hash value and we see whether it's one or zero.
+
+28
+00:01:25,580 --> 00:01:29,400
+ If the bit at this hash value is one, then we output yes.
+
+29
+00:01:29,400 --> 00:01:33,465
+ We believe it is in the dictionary s. If it's zero,
+
+30
+00:01:33,465 --> 00:01:36,285
+ then we're guaranteed that it no it's not in the dictionary.
+
+31
+00:01:36,285 --> 00:01:39,765
+ Because if it's zero that means we definitely did not insert it.
+
+32
+00:01:39,765 --> 00:01:42,030
+ If it's one, then we think,
+
+33
+00:01:42,030 --> 00:01:44,790
+ we might have inserted it but we're not sure.
+
+34
+00:01:44,790 --> 00:01:47,475
+ Somebody else might have been inserted at that hash value,
+
+35
+00:01:47,475 --> 00:01:50,730
+ and we have no way of checking whether it's x was inserted
+
+36
+00:01:50,730 --> 00:01:53,970
+ at the hash values or somebody else was inserted at the hash value.
+
+37
+00:01:53,970 --> 00:01:56,980
+ Because we're not maintaining a linked list at this point.
+
+38
+00:01:56,980 --> 00:02:00,570
+ Let me repeat this point about how false positives can arise.
+
+39
+00:02:00,570 --> 00:02:03,645
+ We have some element x which we do a query on.
+
+40
+00:02:03,645 --> 00:02:06,510
+ It's not in our dictionary of unacceptable passwords,
+
+41
+00:02:06,510 --> 00:02:11,460
+ but there is some other element y which is in our dictionary of unacceptable passwords.
+
+42
+00:02:11,460 --> 00:02:13,770
+ And these two elements, x and y,
+
+43
+00:02:13,770 --> 00:02:15,315
+ have the same hash value.
+
+44
+00:02:15,315 --> 00:02:17,695
+ h_of_x equals h_of_y.
+
+45
+00:02:17,695 --> 00:02:20,565
+ So when we inserted y into our dictionary,
+
+46
+00:02:20,565 --> 00:02:24,750
+ then we set this bit at this point to one.
+
+47
+00:02:24,750 --> 00:02:27,005
+ So then when we do the query on x,
+
+48
+00:02:27,005 --> 00:02:29,350
+ this bit looks is 1.
+
+49
+00:02:29,350 --> 00:02:31,665
+ So we think or as far as we know,
+
+50
+00:02:31,665 --> 00:02:33,990
+ x might be in our dictionary.
+
+51
+00:02:33,990 --> 00:02:36,855
+ So we have to output yes because it might be there.
+
+52
+00:02:36,855 --> 00:02:39,750
+ But in fact it is no because it was not
+
+53
+00:02:39,750 --> 00:02:42,885
+ inserted but somebody else was inserted with the same hash value.
+
+54
+00:02:42,885 --> 00:02:45,150
+ That's how false positives arise.
+
+55
+00:02:45,150 --> 00:02:47,625
+ Now this scheme is not going to perform very well.
+
+56
+00:02:47,625 --> 00:02:48,940
+ How can we improve it?
+
+57
+00:02:48,940 --> 00:02:51,930
+ Well we can try to use our power of two choices idea that we used
+
+58
+00:02:51,930 --> 00:02:55,565
+ before in our traditional hashing scheme. So what are we going to do?
+
+59
+00:02:55,565 --> 00:02:57,210
+ Well instead of using one hash function,
+
+60
+00:02:57,210 --> 00:02:59,655
+ we're going to use two hash functions.
+
+61
+00:02:59,655 --> 00:03:02,010
+ Now in the traditional balls and bins example,
+
+62
+00:03:02,010 --> 00:03:05,925
+ there was a big gain from going from one hash function to two hash functions,
+
+63
+00:03:05,925 --> 00:03:08,920
+ but then going from two to three or three to four,
+
+64
+00:03:08,920 --> 00:03:10,775
+ was not much of a gain.
+
+65
+00:03:10,775 --> 00:03:15,555
+ But here, this is a slightly different setting and there'll be a big gain
+
+66
+00:03:15,555 --> 00:03:20,460
+ possibly going from one to two but even for two to three there might be a gain.
+
+67
+00:03:20,460 --> 00:03:23,280
+ And it's not clear how many hash functions to use and we're going to
+
+68
+00:03:23,280 --> 00:03:26,355
+ try to optimize that choice of number hash functions.
+
+69
+00:03:26,355 --> 00:03:27,555
+ So we're going to allow,
+
+70
+00:03:27,555 --> 00:03:29,190
+ instead of two hash functions,
+
+71
+00:03:29,190 --> 00:03:31,170
+ we're going to allow k hash functions.
+
+72
+00:03:31,170 --> 00:03:33,915
+ So we want to generalize this scheme to allow
+
+73
+00:03:33,915 --> 00:03:36,120
+ k hash functions and then we're going to go
+
+74
+00:03:36,120 --> 00:03:38,815
+ back and figure out what is the optimal choice of k,
+
+75
+00:03:38,815 --> 00:03:40,700
+ the number of hash functions.
+
+76
+00:03:40,700 --> 00:03:45,150
+ So let's look at the more robust setting where we allow k hash functions,
+
+77
+00:03:45,150 --> 00:03:45,150
+ and how do we modify this data structure to accommodate k hash functions.
+

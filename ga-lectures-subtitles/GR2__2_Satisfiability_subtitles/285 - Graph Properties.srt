@@ -1,0 +1,248 @@
+1
+00:00:00,000 --> 00:00:03,210
+ Now, here's our specific two-SAT example from earlier,
+
+2
+00:00:03,210 --> 00:00:07,135
+ and here's the graph corresponding to this Boolean formula.
+
+3
+00:00:07,135 --> 00:00:10,445
+ Let's take a look at this graph and explore some properties of it.
+
+4
+00:00:10,445 --> 00:00:13,065
+ Here's a particular path which is quite interesting.
+
+5
+00:00:13,065 --> 00:00:16,850
+ We go from X_1, we follow this edge to X_2-bar,
+
+6
+00:00:16,850 --> 00:00:20,900
+ to X_3, and then we can follow it to X_1-bar.
+
+7
+00:00:20,900 --> 00:00:26,100
+ So, we have this path which goes from X_1 and ends up at X_1-bar.
+
+8
+00:00:26,100 --> 00:00:27,745
+ Now this is a path of implications.
+
+9
+00:00:27,745 --> 00:00:29,820
+ Each edge is an implication.
+
+10
+00:00:29,820 --> 00:00:31,895
+ So, if we follow those implications out,
+
+11
+00:00:31,895 --> 00:00:33,690
+ so if we set X_1 to be true,
+
+12
+00:00:33,690 --> 00:00:35,400
+ we satisfy this literal,
+
+13
+00:00:35,400 --> 00:00:37,800
+ then we're going to have to satisfy this literal.
+
+14
+00:00:37,800 --> 00:00:39,465
+ How do we satisfy this literal?
+
+15
+00:00:39,465 --> 00:00:41,685
+ By setting X_1 to be false.
+
+16
+00:00:41,685 --> 00:00:43,560
+ So, if we set X_1 to be true,
+
+17
+00:00:43,560 --> 00:00:45,450
+ then in order to satisfy the formula,
+
+18
+00:00:45,450 --> 00:00:47,425
+ we have to set X_1 to be false.
+
+19
+00:00:47,425 --> 00:00:49,515
+ That's clearly a contradiction.
+
+20
+00:00:49,515 --> 00:00:53,400
+ So, there's no way we can satisfy the formula by setting X_1 to be true.
+
+21
+00:00:53,400 --> 00:00:56,070
+ Now, what happens if we set X_1 to be false?
+
+22
+00:00:56,070 --> 00:00:58,925
+ Well, there are no edges out of X_1-bar.
+
+23
+00:00:58,925 --> 00:01:02,370
+ So, there are no implications from setting X_1 to be false.
+
+24
+00:01:02,370 --> 00:01:04,010
+ So, it might be okay. We don't know.
+
+25
+00:01:04,010 --> 00:01:06,510
+ We have to proceed with the other variables.
+
+26
+00:01:06,510 --> 00:01:07,770
+ All we know is that,
+
+27
+00:01:07,770 --> 00:01:13,605
+ because there is a path from X_1 to X_1-bar and clearly we cannot set X_1 to be true.
+
+28
+00:01:13,605 --> 00:01:19,180
+ Now, what if there was a path from X_1 to X_1-bar and from X_1-bar to X_1?
+
+29
+00:01:19,180 --> 00:01:21,905
+ Then we know that we can't set X_1 to be true,
+
+30
+00:01:21,905 --> 00:01:23,800
+ because that would lead to a contradiction,
+
+31
+00:01:23,800 --> 00:01:25,660
+ and we can't set X_1 to be false,
+
+32
+00:01:25,660 --> 00:01:27,355
+ because that would lead to a contradiction.
+
+33
+00:01:27,355 --> 00:01:29,170
+ So, there's no valid setting of X_1.
+
+34
+00:01:29,170 --> 00:01:30,460
+ There's no setting of X_1,
+
+35
+00:01:30,460 --> 00:01:32,515
+ which leads to a satisfying assignment.
+
+36
+00:01:32,515 --> 00:01:36,010
+ Therefore, we can conclude that F is not satisfiable.
+
+37
+00:01:36,010 --> 00:01:39,265
+ Now, we saw that if there is a path from X_1 to X_1-bar,
+
+38
+00:01:39,265 --> 00:01:41,880
+ then we can't set X_1 to be true.
+
+39
+00:01:41,880 --> 00:01:45,635
+ We cannot satisfy the formula by setting X_1 to be true.
+
+40
+00:01:45,635 --> 00:01:49,515
+ Similarly, suppose there's a path from X_1-bar to X_1,
+
+41
+00:01:49,515 --> 00:01:52,430
+ then we know that we can't set X_1 to be false.
+
+42
+00:01:52,430 --> 00:01:55,685
+ So now, suppose that there is a path from X_1 to X_1-bar
+
+43
+00:01:55,685 --> 00:02:00,505
+ and also there's a path from X_1-bar to X_1,
+
+44
+00:02:00,505 --> 00:02:01,975
+ then what do we know about F?
+
+45
+00:02:01,975 --> 00:02:07,405
+ Well, we know we can't set X_1 to be true and we know that we can't set X_1 to be false.
+
+46
+00:02:07,405 --> 00:02:09,700
+ So in fact, there is no way to satisfy
+
+47
+00:02:09,700 --> 00:02:12,535
+ the formula F. What does this mean about the graph?
+
+48
+00:02:12,535 --> 00:02:16,725
+ If there is a path from X_1 to X_1-bar and from X_1-bar to X_1,
+
+49
+00:02:16,725 --> 00:02:21,170
+ that means that these two vertices are in the same strongly connected component.
+
+50
+00:02:21,170 --> 00:02:22,720
+ They're strongly connected with each other,
+
+51
+00:02:22,720 --> 00:02:24,370
+ so they're in the same SCC.
+
+52
+00:02:24,370 --> 00:02:28,930
+ So, if this literal and its negation are in the same SCC,
+
+53
+00:02:28,930 --> 00:02:31,330
+ then this formula is not satisfiable.
+
+54
+00:02:31,330 --> 00:02:33,415
+ And if this is true for any variable,
+
+55
+00:02:33,415 --> 00:02:38,620
+ the positive literal X_i and X_i-bar are in the same SCC,
+
+56
+00:02:38,620 --> 00:02:40,705
+ then the formula is not satisfiable.
+
+57
+00:02:40,705 --> 00:02:44,085
+ What we're going to see is that if this is not true.
+
+58
+00:02:44,085 --> 00:02:46,015
+ So, for every variable,
+
+59
+00:02:46,015 --> 00:02:49,270
+ the literal and its negation are in different SCCs.
+
+60
+00:02:49,270 --> 00:02:51,855
+ So, they never lie in the same SCC.
+
+61
+00:02:51,855 --> 00:02:54,695
+ Then, in fact, we're going to find a satisfying assignment.
+
+62
+00:02:54,695 --> 00:02:54,695
+ So, we're going to prove it satisfiable by finding a satisfying assignment.
+

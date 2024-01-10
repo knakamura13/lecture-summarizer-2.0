@@ -1,0 +1,176 @@
+1
+00:00:00,000 --> 00:00:02,020
+ Now, we'll show the following inequality.
+
+2
+00:00:02,020 --> 00:00:04,625
+ We'll show that max over the flows, F,
+
+3
+00:00:04,625 --> 00:00:08,430
+ the size of F. So the max flow size is at least,
+
+4
+00:00:08,430 --> 00:00:11,120
+ the capacity of the min ST-cut.
+
+5
+00:00:11,120 --> 00:00:13,715
+ We just proved that the max-flow size is at most,
+
+6
+00:00:13,715 --> 00:00:16,145
+ the min ST-cut capacity.
+
+7
+00:00:16,145 --> 00:00:17,880
+ Now if we prove this inequality,
+
+8
+00:00:17,880 --> 00:00:19,635
+ then we shown that it's the quality,
+
+9
+00:00:19,635 --> 00:00:22,050
+ that the left hand side equals the right hand side.
+
+10
+00:00:22,050 --> 00:00:24,360
+ To prove this inequality, what we're going to do,
+
+11
+00:00:24,360 --> 00:00:26,111
+ is we're going to take the flow F*,
+
+12
+00:00:26,111 --> 00:00:28,560
+ produced by the Ford-Fulkerson algorithm.
+
+13
+00:00:28,560 --> 00:00:30,325
+ What do we know about this flow?
+
+14
+00:00:30,325 --> 00:00:32,415
+ The Ford-Fulkerson algorithm stops,
+
+15
+00:00:32,415 --> 00:00:35,570
+ when there's no augmenting path in the residual network.
+
+16
+00:00:35,570 --> 00:00:37,665
+ So we know that this flow, F*,
+
+17
+00:00:37,665 --> 00:00:43,105
+ has no path from S to T in this residual network for this flow.
+
+18
+00:00:43,105 --> 00:00:46,505
+ What we're going to prove, is that for any flow, F*,
+
+19
+00:00:46,505 --> 00:00:49,665
+ which has no augmenting path in the residual network,
+
+20
+00:00:49,665 --> 00:00:51,675
+ we're going to construct an ST-cut,
+
+21
+00:00:51,675 --> 00:00:54,225
+ L, R which has the following property.
+
+22
+00:00:54,225 --> 00:00:56,670
+ The size of this flow, F*,
+
+23
+00:00:56,670 --> 00:01:00,410
+ equals the capacity of this cut that we construct.
+
+24
+00:01:00,410 --> 00:01:01,590
+ Now once we prove this,
+
+25
+00:01:01,590 --> 00:01:02,990
+ we claim that it's done.
+
+26
+00:01:02,990 --> 00:01:06,510
+ Why does this statement imply this inequality?
+
+27
+00:01:06,510 --> 00:01:08,865
+ Well this is one particular flow, F*.
+
+28
+00:01:08,865 --> 00:01:12,305
+ How does this compare to the max-flow size?
+
+29
+00:01:12,305 --> 00:01:14,910
+ Certainly, if we maximize over the flows F,
+
+30
+00:01:14,910 --> 00:01:16,635
+ the size of this flow,
+
+31
+00:01:16,635 --> 00:01:19,005
+ is at least the size F*.
+
+32
+00:01:19,005 --> 00:01:22,640
+ It maybe quality if F* is a max-flow,
+
+33
+00:01:22,640 --> 00:01:26,410
+ but certainly, the max flow is at least the size of F*.
+
+34
+00:01:26,410 --> 00:01:29,088
+ And how does the capacity of this particular cut L, R,
+
+35
+00:01:29,088 --> 00:01:32,895
+ compare to the capacity of the min ST-cut?
+
+36
+00:01:32,895 --> 00:01:35,770
+ Well certainly, the capacity of this particular cut,
+
+37
+00:01:35,770 --> 00:01:38,750
+ is at least the minimum capacity of any kind.
+
+38
+00:01:38,750 --> 00:01:41,115
+ So if we prove this middle equality,
+
+39
+00:01:41,115 --> 00:01:45,330
+ that the size of F* equals the capacity of this cut L,
+
+40
+00:01:45,330 --> 00:01:46,875
+ R that we construct,
+
+41
+00:01:46,875 --> 00:01:50,340
+ then that implies that the max flow size is at least,
+
+42
+00:01:50,340 --> 00:01:52,500
+ the min ST-cut capacity,
+
+43
+00:01:52,500 --> 00:01:54,175
+ which is what we want to prove.
+
+44
+00:01:54,175 --> 00:01:54,175
+ So it just remains to prove this equality
+

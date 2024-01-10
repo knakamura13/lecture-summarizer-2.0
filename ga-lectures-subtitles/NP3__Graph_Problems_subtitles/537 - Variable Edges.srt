@@ -1,0 +1,52 @@
+1
+00:00:00,000 --> 00:00:02,920
+ This motivates the notion of variable edges.
+
+2
+00:00:02,920 --> 00:00:05,350
+ If I had an edge from this vertex corresponding to
+
+3
+00:00:05,350 --> 00:00:08,455
+ X_1 to this vertex corresponding to X_1-bar,
+
+4
+00:00:08,455 --> 00:00:14,395
+ then I ensure that any independent set contains this vertex or this vertex or neither,
+
+5
+00:00:14,395 --> 00:00:17,002
+ but it cannot contain both vertices.
+
+6
+00:00:17,002 --> 00:00:21,850
+ And therefore, I'll never try to set X_1 to be true and X_1 to be false.
+
+7
+00:00:21,850 --> 00:00:24,275
+ In general, for each of the variables X_i,
+
+8
+00:00:24,275 --> 00:00:27,280
+ I'm going to add edges between all copies
+
+9
+00:00:27,280 --> 00:00:31,885
+ corresponding to X_i and all copies corresponding to X_i-bar.
+
+10
+00:00:31,885 --> 00:00:36,820
+ This will ensure that our independent set corresponds to a valid assignment and then
+
+11
+00:00:36,820 --> 00:00:39,325
+ the clause edges will ensure that our independent set
+
+12
+00:00:39,325 --> 00:00:43,420
+ corresponds to an assignment which satisfies all of the clauses.
+
+13
+00:00:43,420 --> 00:00:43,420
+ Let's take a look at a specific example to illustrate this construction.
+

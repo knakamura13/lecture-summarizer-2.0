@@ -1,0 +1,92 @@
+1
+00:00:00,000 --> 00:00:02,205
+ Let's recap and summarize our recurrence.
+
+2
+00:00:02,205 --> 00:00:05,720
+ We're looking the length of the shortest path from S to Z
+
+3
+00:00:05,720 --> 00:00:10,440
+ using at most I edges and we're considering the case where I is at least one.
+
+4
+00:00:10,440 --> 00:00:12,490
+ When I equals zero we have our base case.
+
+5
+00:00:12,490 --> 00:00:15,910
+ Now either the shortest path from S to Z uses
+
+6
+00:00:15,910 --> 00:00:19,605
+ the most I minus one edges or it uses exactly I edges.
+
+7
+00:00:19,605 --> 00:00:21,965
+ And we're going to take the best of those two scenarios.
+
+8
+00:00:21,965 --> 00:00:24,507
+ If it uses the most I minus one edges,
+
+9
+00:00:24,507 --> 00:00:28,140
+ then the solution is in D of I minus one Z.
+
+10
+00:00:28,140 --> 00:00:30,375
+ If it uses exactly I edges,
+
+11
+00:00:30,375 --> 00:00:32,940
+ then we're going to try all choices for
+
+12
+00:00:32,940 --> 00:00:36,510
+ the penultimate vertex Y and then we're going to take the length of
+
+13
+00:00:36,510 --> 00:00:39,300
+ the shortest path from S to Y using the most
+
+14
+00:00:39,300 --> 00:00:42,965
+ I minus one edges plus the length of the last edge.
+
+15
+00:00:42,965 --> 00:00:46,645
+ So we have a double min. We take the min of the I minus
+
+16
+00:00:46,645 --> 00:00:51,605
+ one case and the min over Y, choices for Y.
+
+17
+00:00:51,605 --> 00:00:53,995
+ And this defines a recurrence for D of I Z.
+
+18
+00:00:53,995 --> 00:00:57,420
+ Notice, in order to get this D for I Z,
+
+19
+00:00:57,420 --> 00:01:01,020
+ we're using entries which involve I minus one.
+
+20
+00:01:01,020 --> 00:01:04,200
+ So if we build up the table from I going from zero,
+
+21
+00:01:04,200 --> 00:01:06,775
+ which is the base case, to N minus one,
+
+22
+00:01:06,775 --> 00:01:09,865
+ we'll have a valid dynamic programming algorithm.
+
+23
+00:01:09,865 --> 00:01:09,865
+ So let's go ahead and detail-
+

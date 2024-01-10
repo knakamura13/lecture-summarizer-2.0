@@ -1,0 +1,40 @@
+1
+00:00:00,000 --> 00:00:02,385
+ Lets look at the context of the RSA algorithm.
+
+2
+00:00:02,385 --> 00:00:05,970
+ In cryptography, we're going to work with N-bit numbers X,
+
+3
+00:00:05,970 --> 00:00:07,770
+ Y and N. For example,
+
+4
+00:00:07,770 --> 00:00:11,640
+ the number of bits in these numbers is going to be huge.
+
+5
+00:00:11,640 --> 00:00:16,000
+ Think of the number of bits as 1024 or 2048.
+
+6
+00:00:16,000 --> 00:00:17,625
+ It's a huge number of bits.
+
+7
+00:00:17,625 --> 00:00:23,235
+ So normally, we thought of our arithmetic operations as built into hardware,
+
+8
+00:00:23,235 --> 00:00:27,755
+ but that usually restricts the attention to 64 bits or so.
+
+9
+00:00:27,755 --> 00:00:30,600
+ But here we're talking about 1000 or 2000 bits.
+
+10
+00:00:30,600 --> 00:00:30,600
+ So we have to go back and review how long does it take for basic arithmetic operations.
+

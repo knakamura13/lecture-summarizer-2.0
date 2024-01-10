@@ -1,0 +1,196 @@
+1
+00:00:00,000 --> 00:00:02,723
+ Once again, we take this LP,
+
+2
+00:00:02,723 --> 00:00:04,733
+ and we find the optimal point,
+
+3
+00:00:04,733 --> 00:00:10,155
+ and we denote the optimal point by this vector Y ^* and Z ^*.
+
+4
+00:00:10,155 --> 00:00:12,470
+ Hats correspond to LP's,
+
+5
+00:00:12,470 --> 00:00:14,205
+ so they might be fractional values.
+
+6
+00:00:14,205 --> 00:00:19,470
+ Without the hats, it corresponds to integer so our goal is to find an integer point,
+
+7
+00:00:19,470 --> 00:00:21,625
+ we'll denote it by YI and ZJ.
+
+8
+00:00:21,625 --> 00:00:24,788
+ We drop the stars because it might not be optimal any longer,
+
+9
+00:00:24,788 --> 00:00:28,530
+ but we want this integer point that we find by rounding this point.
+
+10
+00:00:28,530 --> 00:00:33,415
+ We want this integer point that we find to be close to the optimal integer point.
+
+11
+00:00:33,415 --> 00:00:35,430
+ How do we prove that this point that we find,
+
+12
+00:00:35,430 --> 00:00:37,410
+ this integer point that we find is close to
+
+13
+00:00:37,410 --> 00:00:40,725
+ the optimal integer point because we don't know at this point?
+
+14
+00:00:40,725 --> 00:00:43,230
+ Well, we show that this rounding procedure
+
+15
+00:00:43,230 --> 00:00:46,035
+ doesn't change the objective function too much.
+
+16
+00:00:46,035 --> 00:00:51,670
+ So this integer point that we find is close to this optimal fractional point,
+
+17
+00:00:51,670 --> 00:00:53,940
+ this optimal LP solution,
+
+18
+00:00:53,940 --> 00:00:56,660
+ and this is at least as good as this.
+
+19
+00:00:56,660 --> 00:00:58,845
+ Therefore, if this is close to this one,
+
+20
+00:00:58,845 --> 00:01:01,210
+ then it's also close to this point.
+
+21
+00:01:01,210 --> 00:01:04,915
+ How do we round from this fractional point to this integer point?
+
+22
+00:01:04,915 --> 00:01:08,010
+ We'll call our LP and our integer linear program had
+
+23
+00:01:08,010 --> 00:01:11,845
+ the constraint that these variables are constrained between 0 and 1.
+
+24
+00:01:11,845 --> 00:01:14,730
+ Therefore, this optimal solution also satisfies
+
+25
+00:01:14,730 --> 00:01:19,255
+ these constraints so YI*^ is between 0 and 1.
+
+26
+00:01:19,255 --> 00:01:23,895
+ Therefore, we can think of it as like a probability so we're going to round this,
+
+27
+00:01:23,895 --> 00:01:29,430
+ so we're going to set YI to be 1 or 0 with probability proportional to this.
+
+28
+00:01:29,430 --> 00:01:35,965
+ With probability YI^* is between 0 and 1, and it's a real number.
+
+29
+00:01:35,965 --> 00:01:39,255
+ With that probability, we set YI to be one.
+
+30
+00:01:39,255 --> 00:01:41,700
+ So if this is 3/4, then with probability 3/4,
+
+31
+00:01:41,700 --> 00:01:43,625
+ we set YI to be 1.
+
+32
+00:01:43,625 --> 00:01:44,790
+ And with probability 1/4,
+
+33
+00:01:44,790 --> 00:01:46,615
+ we set it to be zero.
+
+34
+00:01:46,615 --> 00:01:48,930
+ This is known as randomized rounding.
+
+35
+00:01:48,930 --> 00:01:50,735
+ Now this actually completes our algorithm.
+
+36
+00:01:50,735 --> 00:01:52,170
+ We have assignment now.
+
+37
+00:01:52,170 --> 00:01:56,190
+ We have a true false assignment for the variables in the original formula.
+
+38
+00:01:56,190 --> 00:01:58,405
+ So we've taken this fractional point,
+
+39
+00:01:58,405 --> 00:02:01,080
+ and we round it to an integer point.
+
+40
+00:02:01,080 --> 00:02:02,730
+ Notice we don't have around these Z's,
+
+41
+00:02:02,730 --> 00:02:04,665
+ we just have to round these Y's.
+
+42
+00:02:04,665 --> 00:02:06,650
+ Now, if YI = 1,
+
+43
+00:02:06,650 --> 00:02:08,955
+ then we that the variable XI to be true.
+
+44
+00:02:08,955 --> 00:02:10,490
+ If YI = 0,
+
+45
+00:02:10,490 --> 00:02:12,890
+ we set the variable to be false.
+
+46
+00:02:12,890 --> 00:02:15,390
+ So we have a true-false assignment for the X's,
+
+47
+00:02:15,390 --> 00:02:18,525
+ and it's a randomized algorithm for setting these X's.
+
+48
+00:02:18,525 --> 00:02:20,150
+ So, as we did before,
+
+49
+00:02:20,150 --> 00:02:20,150
+ we wanted to look at the expected performance of this randomized algorithm.
+

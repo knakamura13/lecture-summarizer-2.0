@@ -1,0 +1,128 @@
+1
+00:00:00,000 --> 00:00:02,435
+ So let's dive into the reduction.
+
+2
+00:00:02,435 --> 00:00:06,150
+ So let's take a particular input for the feasible flow problem.
+
+3
+00:00:06,150 --> 00:00:08,490
+ This is specified by a directed graph G,
+
+4
+00:00:08,490 --> 00:00:11,970
+ capacities along the edges and demands along the edges.
+
+5
+00:00:11,970 --> 00:00:14,930
+ Now we need this to construct an input for the max flow problem.
+
+6
+00:00:14,930 --> 00:00:17,280
+ This is specified by a directed graph which we'll call
+
+7
+00:00:17,280 --> 00:00:22,410
+ G prime and capacities along the edges which was specified by C prime.
+
+8
+00:00:22,410 --> 00:00:25,560
+ Now these capacities don't have to be the same as the original capacities.
+
+9
+00:00:25,560 --> 00:00:27,435
+ In fact, we need these capacities to
+
+10
+00:00:27,435 --> 00:00:30,225
+ encode not just the capacities in the original graph,
+
+11
+00:00:30,225 --> 00:00:32,850
+ but also the demands in the original graph.
+
+12
+00:00:32,850 --> 00:00:36,376
+ Let's take a look at a particular example, very simple example,
+
+13
+00:00:36,376 --> 00:00:39,120
+ here's a small example of four vertices,
+
+14
+00:00:39,120 --> 00:00:41,070
+ this is our directed graph G,
+
+15
+00:00:41,070 --> 00:00:43,645
+ which is our input to the feasible flow problem.
+
+16
+00:00:43,645 --> 00:00:47,555
+ That specified some example capacities and demands.
+
+17
+00:00:47,555 --> 00:00:49,835
+ We've written a pair of numbers for each edge.
+
+18
+00:00:49,835 --> 00:00:52,020
+ The first number, for example three,
+
+19
+00:00:52,020 --> 00:00:56,430
+ specifies the demand, and the second number specifies the capacity.
+
+20
+00:00:56,430 --> 00:00:58,695
+ Now let's try to create a graph G prime.
+
+21
+00:00:58,695 --> 00:01:00,858
+ Well we want to keep all this information,
+
+22
+00:01:00,858 --> 00:01:05,170
+ so we're going to keep the same graph G and we're going to add additional vertices to it.
+
+23
+00:01:05,170 --> 00:01:06,810
+ So this is going to be our directed graph
+
+24
+00:01:06,810 --> 00:01:10,264
+ G prime which is going to be the input to the max flow problem.
+
+25
+00:01:10,264 --> 00:01:13,105
+ So we're going to start with the same graph G that
+
+26
+00:01:13,105 --> 00:01:16,110
+ was the input to the feasible flow problem and we're going to add
+
+27
+00:01:16,110 --> 00:01:18,767
+ a new start vertex which will denote is as
+
+28
+00:01:18,767 --> 00:01:22,690
+ prime and a new n vertex which will denote as t prime.
+
+29
+00:01:22,690 --> 00:01:26,725
+ So the original s and t will now serve as internal vertices.
+
+30
+00:01:26,725 --> 00:01:29,855
+ Now these are the vertices of this new graph G prime.
+
+31
+00:01:29,855 --> 00:01:32,610
+ Let's now look at the edges that are in this graph and
+
+32
+00:01:32,610 --> 00:01:32,610
+ also the capacities and along the edges in this new graph.
+

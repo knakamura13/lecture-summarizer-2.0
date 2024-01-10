@@ -1,0 +1,120 @@
+1
+00:00:00,000 --> 00:00:03,795
+ Our next dynamic programming problem is chain matrix multiply.
+
+2
+00:00:03,795 --> 00:00:06,750
+ This one will be a little different style from some of our early example.
+
+3
+00:00:06,750 --> 00:00:08,340
+ Actually, the solution will be a bit more
+
+4
+00:00:08,340 --> 00:00:11,210
+ complicated than the earlier examples that we looked at.
+
+5
+00:00:11,210 --> 00:00:13,920
+ So, let's look at a specific example so we can motivate
+
+6
+00:00:13,920 --> 00:00:17,392
+ this problem and then we'll go back and define the general problem.
+
+7
+00:00:17,392 --> 00:00:19,890
+ Our example will have four matrices A, B, C,
+
+8
+00:00:19,890 --> 00:00:24,175
+ D. Think of these matrices as having integer values for the entries.
+
+9
+00:00:24,175 --> 00:00:26,355
+ Our goal is to compute the product of these matrices
+
+10
+00:00:26,355 --> 00:00:29,315
+ A times B times C times D.
+
+11
+00:00:29,315 --> 00:00:32,760
+ And we'd like to do this in the most efficient manner possible.
+
+12
+00:00:32,760 --> 00:00:35,020
+ What exactly do we mean by most efficient?
+
+13
+00:00:35,020 --> 00:00:37,095
+ Let's look at a specific example.
+
+14
+00:00:37,095 --> 00:00:40,175
+ Let's say, A has of size 50 by 20,
+
+15
+00:00:40,175 --> 00:00:42,300
+ so it has 50 rows and 20 columns,
+
+16
+00:00:42,300 --> 00:00:43,970
+ B is of size 20 by one,
+
+17
+00:00:43,970 --> 00:00:46,140
+ C is of size 1 by 10,
+
+18
+00:00:46,140 --> 00:00:48,360
+ D is of size 10 by 100.
+
+19
+00:00:48,360 --> 00:00:52,410
+ Notice one thing, the number of columns of A has to match the number of rows of B.
+
+20
+00:00:52,410 --> 00:00:57,545
+ Also columns B has to match rows of C. Columns of C has to match rows of D. Why is that?
+
+21
+00:00:57,545 --> 00:00:59,850
+ When we multiply A x B,
+
+22
+00:00:59,850 --> 00:01:03,840
+ what we do is we take a row of A,
+
+23
+00:01:03,840 --> 00:01:11,360
+ this is A, and we take a column of B and we take the inner product.
+
+24
+00:01:11,360 --> 00:01:17,210
+ So we multiply entering and then we add it to the product of these,
+
+25
+00:01:17,210 --> 00:01:18,968
+ racks of these and so on.
+
+26
+00:01:18,968 --> 00:01:23,740
+ So the number of entries in this row has to equal the number entries in this column.
+
+27
+00:01:23,740 --> 00:01:27,545
+ And then we move onto the next row with the next column,
+
+28
+00:01:27,545 --> 00:01:29,630
+ next row with the next column.
+
+29
+00:01:29,630 --> 00:01:32,835
+ So this row has to have the same number of entries as this column.
+
+30
+00:01:32,835 --> 00:01:32,835
+ That's why columns here has to equal the number of rows here.
+

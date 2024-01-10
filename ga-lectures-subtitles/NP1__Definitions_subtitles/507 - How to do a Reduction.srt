@@ -1,0 +1,180 @@
+1
+00:00:00,000 --> 00:00:04,545
+ Now, let's suppose I want to show a reduction from colorings to SAT. How do I do it.
+
+2
+00:00:04,545 --> 00:00:06,440
+ Well if we reduce coloring to SAT,
+
+3
+00:00:06,440 --> 00:00:07,575
+ what we're showing is that,
+
+4
+00:00:07,575 --> 00:00:10,245
+ if there is a polynomial time algorithm for SAT,
+
+5
+00:00:10,245 --> 00:00:14,070
+ then we can use it to get a polynomial time algorithm for colorings.
+
+6
+00:00:14,070 --> 00:00:18,540
+ So what do we do. We suppose that there is a polynomial time algorithm for SAT.
+
+7
+00:00:18,540 --> 00:00:21,440
+ And we're going to treat this algorithm like a black box.
+
+8
+00:00:21,440 --> 00:00:24,480
+ What does it mean to treat this algorithm as a black box.
+
+9
+00:00:24,480 --> 00:00:26,220
+ Well we don't know how the algorithm works,
+
+10
+00:00:26,220 --> 00:00:28,105
+ but we can use this as a basic subroutine.
+
+11
+00:00:28,105 --> 00:00:31,020
+ We can put in some input for SAT and we can get out
+
+12
+00:00:31,020 --> 00:00:34,965
+ some output and it takes polynomial time for that algorithm to run.
+
+13
+00:00:34,965 --> 00:00:37,650
+ And we're going to use this black box algorithm,
+
+14
+00:00:37,650 --> 00:00:42,140
+ as a subroutine to get a polynomial time algorithm for colorings problem.
+
+15
+00:00:42,140 --> 00:00:44,220
+ So let's look at it pictorially.
+
+16
+00:00:44,220 --> 00:00:46,800
+ So here's our black box algorithm for SAT.
+
+17
+00:00:46,800 --> 00:00:50,255
+ We can give it some input and it produces some output.
+
+18
+00:00:50,255 --> 00:00:51,915
+ Either it gives us a solution,
+
+19
+00:00:51,915 --> 00:00:53,115
+ or it outputs no,
+
+20
+00:00:53,115 --> 00:00:55,890
+ if there's no solution for that particular input.
+
+21
+00:00:55,890 --> 00:00:59,640
+ Now, we want to use this black box algorithm or subroutine for
+
+22
+00:00:59,640 --> 00:01:02,370
+ satisfiability problem and we want to use it to
+
+23
+00:01:02,370 --> 00:01:05,485
+ construct an algorithm for the colorings problem.
+
+24
+00:01:05,485 --> 00:01:09,145
+ So this red box denotes our subroutine for the colorings problem.
+
+25
+00:01:09,145 --> 00:01:11,325
+ So the input to our colorings problem,
+
+26
+00:01:11,325 --> 00:01:13,465
+ is a particular I,
+
+27
+00:01:13,465 --> 00:01:17,890
+ which in this case is a graph and a number of colors K. Now,
+
+28
+00:01:17,890 --> 00:01:21,990
+ what we need to do, is define a transformation f. We have to show how to
+
+29
+00:01:21,990 --> 00:01:23,280
+ transform this input to
+
+30
+00:01:23,280 --> 00:01:27,390
+ the colorings problem and produce an input to the satisfiability problem.
+
+31
+00:01:27,390 --> 00:01:32,730
+ So we have to change this graph and there's number of colors into a boolean formula.
+
+32
+00:01:32,730 --> 00:01:34,920
+ Then we plug that boolean formula into
+
+33
+00:01:34,920 --> 00:01:39,575
+ our set solver and our set solver either gives us a solution,
+
+34
+00:01:39,575 --> 00:01:41,370
+ in this case it's an assignment,
+
+35
+00:01:41,370 --> 00:01:45,030
+ which satisfies this formula or it outputs no,
+
+36
+00:01:45,030 --> 00:01:47,220
+ there's no solution for this input.
+
+37
+00:01:47,220 --> 00:01:52,590
+ Now, we have to transform this solution into a solution to the original colorings input.
+
+38
+00:01:52,590 --> 00:01:58,025
+ So we have defined another transformation which we denote is H.This H takes as input,
+
+39
+00:01:58,025 --> 00:02:00,990
+ a solution to our SAT input and it
+
+40
+00:02:00,990 --> 00:02:05,090
+ transforms it to get a solution to our original colorings instance.
+
+41
+00:02:05,090 --> 00:02:07,980
+ So if S is a solution to f(I),
+
+42
+00:02:07,980 --> 00:02:11,460
+ then h(s) is the solution to I.
+
+43
+00:02:11,460 --> 00:02:14,235
+ And if our SAT input had no solution,
+
+44
+00:02:14,235 --> 00:02:17,560
+ then we'll say that our colorings input had no solution.
+
+45
+00:02:17,560 --> 00:02:17,560
+ So if we get out no we output no.
+

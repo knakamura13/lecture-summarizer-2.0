@@ -1,0 +1,76 @@
+1
+00:00:00,000 --> 00:00:05,365
+ Our goal is to partition the vertices of pixels into two sets F and B. F
+
+2
+00:00:05,365 --> 00:00:07,950
+ will correspond to the foreground pixels and
+
+3
+00:00:07,950 --> 00:00:11,010
+ capital B will be the pixels that we assign to the background.
+
+4
+00:00:11,010 --> 00:00:13,035
+ Now, for a particular partition B,
+
+5
+00:00:13,035 --> 00:00:17,430
+ we need some score or weight to measure the likelihood of this partition.
+
+6
+00:00:17,430 --> 00:00:19,710
+ Thus, we defined the weight of this partition as the
+
+7
+00:00:19,710 --> 00:00:23,060
+ following for each pixel assigned to the foreground we get
+
+8
+00:00:23,060 --> 00:00:26,305
+ FB for each pixel assigned to the background we get
+
+9
+00:00:26,305 --> 00:00:31,260
+ BJ have used different indices for these two sets to avoid some confusion.
+
+10
+00:00:31,260 --> 00:00:35,130
+ Finally, we pay a separation penalty for separated edges.
+
+11
+00:00:35,130 --> 00:00:37,525
+ This is a penalty so we're going to subtract it.
+
+12
+00:00:37,525 --> 00:00:40,950
+ And, we're going to look at all edges where the first endpoint is
+
+13
+00:00:40,950 --> 00:00:44,510
+ an F and the other end point is in B or vice versa.
+
+14
+00:00:44,510 --> 00:00:46,875
+ And, the penalty is of course CIJ.
+
+15
+00:00:46,875 --> 00:00:50,240
+ This defines the weight for a particular partition FB.
+
+16
+00:00:50,240 --> 00:00:52,440
+ So, for a particular assignment of the pixels to
+
+17
+00:00:52,440 --> 00:00:55,650
+ foreground and background we have a weight associated with it.
+
+18
+00:00:55,650 --> 00:00:58,500
+ Our goal is to find the partition or assignment of
+
+19
+00:00:58,500 --> 00:00:58,500
+ pixels to foreground and background with maximum weight.
+

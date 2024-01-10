@@ -1,0 +1,76 @@
+1
+00:00:00,000 --> 00:00:04,620
+ Now let's give a quick overview of the type of algorithms for solving linear programs.
+
+2
+00:00:04,620 --> 00:00:07,349
+ Now there are two types of methods which are guaranteed to solve
+
+3
+00:00:07,349 --> 00:00:10,394
+ linear programs in polynomial time in the worst case.
+
+4
+00:00:10,394 --> 00:00:13,679
+ These are the ellipsoid algorithm which was the first example of
+
+5
+00:00:13,679 --> 00:00:18,120
+ a polynomial time algorithm for linear programming and interior point methods.
+
+6
+00:00:18,120 --> 00:00:21,519
+ Now ellipsoids algorithms are more of theoretical interest,
+
+7
+00:00:21,519 --> 00:00:25,019
+ but interior point methods are used quite extensively right now.
+
+8
+00:00:25,019 --> 00:00:27,855
+ Now an important algorithm is the simplex algorithm.
+
+9
+00:00:27,855 --> 00:00:30,390
+ As a disclaimer for the simplex algorithm is
+
+10
+00:00:30,390 --> 00:00:33,125
+ that in the worst case it takes exponential time.
+
+11
+00:00:33,125 --> 00:00:34,875
+ Despite that worst case bound,
+
+12
+00:00:34,875 --> 00:00:37,890
+ simplex algorithm is widely used because the output of
+
+13
+00:00:37,890 --> 00:00:41,740
+ the simplex algorithm first off is guaranteed to be an optimal.
+
+14
+00:00:41,740 --> 00:00:43,829
+ So when the simplex algorithm completes,
+
+15
+00:00:43,829 --> 00:00:46,140
+ it's guaranteed to give an optimal solution to
+
+16
+00:00:46,140 --> 00:00:49,034
+ the linear program and it works quite efficiently,
+
+17
+00:00:49,034 --> 00:00:51,744
+ very fast on a humongous LPs.
+
+18
+00:00:51,744 --> 00:00:55,270
+ There are very fast LP solvers using the simplex algorithm.
+
+19
+00:00:55,270 --> 00:00:55,270
+ We're going to take a look at the high level idea of the simplex algorithm.
+

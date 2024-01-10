@@ -1,0 +1,324 @@
+1
+00:00:00,000 --> 00:00:03,010
+ So recall what is a stationary distribution?
+
+2
+00:00:03,010 --> 00:00:05,260
+ A stationary distribution is any vector,
+
+3
+00:00:05,260 --> 00:00:08,890
+ any distribution pi which satisfies the following identity,
+
+4
+00:00:08,890 --> 00:00:12,985
+ pi times p, the transition matrix, equals pi.
+
+5
+00:00:12,985 --> 00:00:19,440
+ So pi is an eigenvector of P with eigenvalue 1 or in other words,
+
+6
+00:00:19,440 --> 00:00:25,625
+ if I'm in distribution pi and I do one step of the random walk to find by P,
+
+7
+00:00:25,625 --> 00:00:28,230
+ then I'm still in distribution pi.
+
+8
+00:00:28,230 --> 00:00:30,660
+ So pi is an invariant distribution.
+
+9
+00:00:30,660 --> 00:00:32,935
+ Once I reach it I stay in it.
+
+10
+00:00:32,935 --> 00:00:36,325
+ Let's expand this out to see what this means a little bit more precisely.
+
+11
+00:00:36,325 --> 00:00:38,130
+ I have pi here.
+
+12
+00:00:38,130 --> 00:00:42,985
+ If there are a million web pages then pi is a row vector of size a million.
+
+13
+00:00:42,985 --> 00:00:44,290
+ Now I have P here.
+
+14
+00:00:44,290 --> 00:00:49,560
+ Now if there are a million web pages then P is of size a million by a million.
+
+15
+00:00:49,560 --> 00:00:51,205
+ Now let me just flip this.
+
+16
+00:00:51,205 --> 00:00:54,750
+ So let us look at pi equals pi times
+
+17
+00:00:54,750 --> 00:00:58,845
+ p. So I just flip the left and right hand side and here's the right hand side,
+
+18
+00:00:58,845 --> 00:01:03,835
+ pi equals pi times P. Let's look at an entry X here.
+
+19
+00:01:03,835 --> 00:01:07,560
+ So pi of X, this X entry here.If there are
+
+20
+00:01:07,560 --> 00:01:11,930
+ a million web pages and let's say X is maybe the 900th entry.
+
+21
+00:01:11,930 --> 00:01:13,795
+ How do I get this entry?
+
+22
+00:01:13,795 --> 00:01:17,670
+ Well, this X is going to define the column I looked at over here.
+
+23
+00:01:17,670 --> 00:01:22,870
+ So this is the 900th entry here and it's going to be the 900th column here.
+
+24
+00:01:22,870 --> 00:01:27,030
+ And then what I do, I take this column and then multiply by this row.
+
+25
+00:01:27,030 --> 00:01:29,400
+ So Y is going to vary over this row and
+
+26
+00:01:29,400 --> 00:01:32,300
+ then Y is going to vary over the rows of this matrix.
+
+27
+00:01:32,300 --> 00:01:34,540
+ I'm going to multiply the first entries together
+
+28
+00:01:34,540 --> 00:01:38,280
+ plus the second entries multiplied together and so on.
+
+29
+00:01:38,280 --> 00:01:39,705
+ So I'm going to sum over Y,
+
+30
+00:01:39,705 --> 00:01:42,720
+ the number of Ys is the number of web pages.
+
+31
+00:01:42,720 --> 00:01:45,503
+ So Y is varying over all vertices in the graph,
+
+32
+00:01:45,503 --> 00:01:49,980
+ all web pages in the graph and I take the Ys entry over here which is pi of
+
+33
+00:01:49,980 --> 00:01:55,895
+ Y and I multiply by the Ys entry in this column which is the P, Y over X.
+
+34
+00:01:55,895 --> 00:01:58,320
+ So I do the dot product of this row vector with
+
+35
+00:01:58,320 --> 00:02:02,610
+ this column vector and that gives me the X entry in pi.
+
+36
+00:02:02,610 --> 00:02:04,275
+ Now let's look at this term.
+
+37
+00:02:04,275 --> 00:02:05,575
+ What do we know about this term?
+
+38
+00:02:05,575 --> 00:02:10,270
+ What do we say that the transition matrix was for this random walk and the last line?
+
+39
+00:02:10,270 --> 00:02:15,375
+ Well if there's an edge from Y to X and it's one over the number of outgoing edges
+
+40
+00:02:15,375 --> 00:02:20,605
+ out of Y and there's no edge from Y to X then this transition matrix is zero.
+
+41
+00:02:20,605 --> 00:02:24,600
+ There's no probability of this random walk going from Y to X in one step.
+
+42
+00:02:24,600 --> 00:02:28,785
+ So, for any Y which does not have an edge to X,
+
+43
+00:02:28,785 --> 00:02:30,585
+ then this term is zero.
+
+44
+00:02:30,585 --> 00:02:35,290
+ So we can drop it. So we only have to look at Ys which have an edge to X.
+
+45
+00:02:35,290 --> 00:02:40,155
+ In other words we only have to look at Ys which are in the in neighbor set of X.
+
+46
+00:02:40,155 --> 00:02:46,655
+ So we can simplify this sum over all Ys to only Ys which are in the in neighbors.
+
+47
+00:02:46,655 --> 00:02:50,400
+ So now we only consider those Ys which have an edge from Y to
+
+48
+00:02:50,400 --> 00:02:55,600
+ X and we get pi of Y again and now we can replace this term P,
+
+49
+00:02:55,600 --> 00:02:58,145
+ Y of X by this quantity.
+
+50
+00:02:58,145 --> 00:03:01,825
+ So we're going to divide pi of Y by the number of our neighbors of Y
+
+51
+00:03:01,825 --> 00:03:06,220
+ because we know that if there's an edge from Y to X then P,
+
+52
+00:03:06,220 --> 00:03:08,865
+ Y, X is exactly this.
+
+53
+00:03:08,865 --> 00:03:11,485
+ So we can replace P, Y, X by this.
+
+54
+00:03:11,485 --> 00:03:15,350
+ So we have that pi of X equals this quantity. So what have we shown?
+
+55
+00:03:15,350 --> 00:03:19,385
+ We've shown that the stationary distribution of this random walk on the web graph.
+
+56
+00:03:19,385 --> 00:03:22,400
+ If we do this simple random walk on the web graph,
+
+57
+00:03:22,400 --> 00:03:26,490
+ it's stationary distribution satisfies the following identity.
+
+58
+00:03:26,490 --> 00:03:29,900
+ This is what we just saw because pi equals pi times
+
+59
+00:03:29,900 --> 00:03:35,195
+ P and we expanded our pi times P and we got this slightly simpler expression.
+
+60
+00:03:35,195 --> 00:03:37,140
+ Now, where have we seen this before?
+
+61
+00:03:37,140 --> 00:03:40,580
+ Well, what we saw before when we ignored Markov chains and we
+
+62
+00:03:40,580 --> 00:03:45,045
+ defined the rank of a web page in terms of citation count intuition.
+
+63
+00:03:45,045 --> 00:03:47,090
+ We got this definition.
+
+64
+00:03:47,090 --> 00:03:48,770
+ And look, they're identical.
+
+65
+00:03:48,770 --> 00:03:52,520
+ This definition and this definition are identical.
+
+66
+00:03:52,520 --> 00:03:54,890
+ So these two views are identical.
+
+67
+00:03:54,890 --> 00:03:59,450
+ This intuition from citation counts and this intuition from random walks,
+
+68
+00:03:59,450 --> 00:04:01,690
+ we get equivalent definitions.
+
+69
+00:04:01,690 --> 00:04:04,695
+ Now this random walk interpretation is very appealing. Think about it.
+
+70
+00:04:04,695 --> 00:04:06,410
+ So you started any web page,
+
+71
+00:04:06,410 --> 00:04:08,215
+ you run the random walk.
+
+72
+00:04:08,215 --> 00:04:10,215
+ So you just do random surfing.
+
+73
+00:04:10,215 --> 00:04:12,545
+ Now what's the chance you edit a page X.
+
+74
+00:04:12,545 --> 00:04:16,430
+ Well, an important web page like CNN or Google,
+
+75
+00:04:16,430 --> 00:04:18,320
+ I mean, there's probably a pretty good chance we're going to end
+
+76
+00:04:18,320 --> 00:04:20,765
+ up at that web page when we do a random surfing.
+
+77
+00:04:20,765 --> 00:04:23,420
+ Whereas somebody is like my web page well there's
+
+78
+00:04:23,420 --> 00:04:26,300
+ probably a very small chance that we're going to end up there.
+
+79
+00:04:26,300 --> 00:04:29,750
+ So the stationary distribution of this random walk is
+
+80
+00:04:29,750 --> 00:04:34,705
+ a very natural nice appealing measure of the importance of a web page.
+
+81
+00:04:34,705 --> 00:04:34,705
+ So, this is what we wanted to find the page rank of the web page to be.
+

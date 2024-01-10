@@ -1,0 +1,100 @@
+1
+00:00:00,000 --> 00:00:02,960
+ Given this observation, it's now straightforward to show
+
+2
+00:00:02,960 --> 00:00:06,285
+ a reduction from the independent set problem to the clique problem.
+
+3
+00:00:06,285 --> 00:00:09,028
+ Now we're doing a reduction from independent set to clique,
+
+4
+00:00:09,028 --> 00:00:10,470
+ so we have to take an input for
+
+5
+00:00:10,470 --> 00:00:14,765
+ the independent set problem and transform it to an input for the clique problem.
+
+6
+00:00:14,765 --> 00:00:17,315
+ So consider an input for the independent set problem.
+
+7
+00:00:17,315 --> 00:00:22,765
+ This is defined by a graph G and a goal little g. We take the opposite of the G,
+
+8
+00:00:22,765 --> 00:00:28,980
+ that's G bar and we use G bar and the same little g as our input to the clique problem.
+
+9
+00:00:28,980 --> 00:00:30,230
+ Now we use our observation.
+
+10
+00:00:30,230 --> 00:00:34,410
+ If we get a set S which is a clique in the opposite graph G bar,
+
+11
+00:00:34,410 --> 00:00:38,100
+ then we know that S is an independent set in the original graph
+
+12
+00:00:38,100 --> 00:00:42,000
+ G. Now if we get a solution s for the clique problem,
+
+13
+00:00:42,000 --> 00:00:47,845
+ that means that S is a clique of size at least little g in G bar.
+
+14
+00:00:47,845 --> 00:00:51,185
+ Then we return S as a solution to the independent set problem,
+
+15
+00:00:51,185 --> 00:00:55,730
+ because we know S is an independent set of size at least little g in
+
+16
+00:00:55,730 --> 00:01:00,690
+ the original graph capital G. Now if our clique problem returns no.
+
+17
+00:01:00,690 --> 00:01:04,756
+ So there's no clique of size at least little g in G bar,
+
+18
+00:01:04,756 --> 00:01:07,145
+ then we return no for the independent set problem,
+
+19
+00:01:07,145 --> 00:01:09,740
+ because we know that there's no independent set of
+
+20
+00:01:09,740 --> 00:01:13,468
+ size at least a little g in the original graph G,
+
+21
+00:01:13,468 --> 00:01:17,985
+ because if there was an independent set of sufficient size in capital G,
+
+22
+00:01:17,985 --> 00:01:23,230
+ then we know there would be a clique of sufficient size in the opposite graph G bar.
+
+23
+00:01:23,230 --> 00:01:25,820
+ This completes the definition of the reduction and
+
+24
+00:01:25,820 --> 00:01:29,060
+ the proof of correctness follows from this observation.
+
+25
+00:01:29,060 --> 00:01:29,060
+ Therefore, we've shown that the clique problem is NP complete.
+

@@ -1,0 +1,252 @@
+1
+00:00:00,000 --> 00:00:02,710
+ Now if we look at the running time of our new algorithm,
+
+2
+00:00:02,710 --> 00:00:05,900
+ we have three sub-problems that were recursively computing.
+
+3
+00:00:05,900 --> 00:00:09,330
+ Each is a product of pair of n/2 or two bit numbers.
+
+4
+00:00:09,330 --> 00:00:12,810
+ And then to combine these solutions from these three sub-problems it takes us order
+
+5
+00:00:12,810 --> 00:00:16,865
+ and time to get the product of X*Y. What does this solve to?
+
+6
+00:00:16,865 --> 00:00:18,830
+ Well, let's go ahead and dive into it to give you
+
+7
+00:00:18,830 --> 00:00:21,650
+ a bit of a refresher on solving recurrences.
+
+8
+00:00:21,650 --> 00:00:23,985
+ The first step is upper bounding this O(n),
+
+9
+00:00:23,985 --> 00:00:27,510
+ by Cn for sum constant C.
+
+10
+00:00:27,510 --> 00:00:31,585
+ Now we can substitute in this expression back and forth, T(n/2).
+
+11
+00:00:31,585 --> 00:00:34,070
+ So we get Cn + 3T.
+
+12
+00:00:34,070 --> 00:00:36,510
+ Now we substitute n for T(n/2),
+
+13
+00:00:36,510 --> 00:00:43,140
+ which is Cn/2 + 3 (T(n/2)².
+
+14
+00:00:43,140 --> 00:00:50,000
+ Collecting terms, we have, Cn, plusanother Cn*3/2.
+
+15
+00:00:50,000 --> 00:00:54,135
+ Then we have a 3² x T(n/2)².
+
+16
+00:00:54,135 --> 00:01:02,948
+ Plugging that back in, we get Cn/2² from that term, + 3*T(n/2)³.
+
+17
+00:01:02,948 --> 00:01:11,438
+ Collecting terms we have Cn,*1, +3/2, +3/2².
+
+18
+00:01:11,438 --> 00:01:14,710
+ The next term is going to be 3/2³, and so on.
+
+19
+00:01:14,710 --> 00:01:16,680
+ We're going to get this geometric series.
+
+20
+00:01:16,680 --> 00:01:18,540
+ How many terms in this geometric series,
+
+21
+00:01:18,540 --> 00:01:20,430
+ what's the last exponent?
+
+22
+00:01:20,430 --> 00:01:24,540
+ We're going to keep going until this term is a constant.
+
+23
+00:01:24,540 --> 00:01:27,930
+ There are going to be log2n terms.
+
+24
+00:01:27,930 --> 00:01:29,280
+ Now we have this geometric series.
+
+25
+00:01:29,280 --> 00:01:33,025
+ We got to look at the series see whether the terms are equal, they're not.
+
+26
+00:01:33,025 --> 00:01:34,710
+ Is it decreasing geometric series,
+
+27
+00:01:34,710 --> 00:01:37,280
+ in which case the first term dominates? It's not.
+
+28
+00:01:37,280 --> 00:01:39,461
+ It's an increasing geometric series,
+
+29
+00:01:39,461 --> 00:01:43,170
+ because three houses bigger than one so the last term dominates.
+
+30
+00:01:43,170 --> 00:01:46,250
+ This whole thing is on the order of the last term.
+
+31
+00:01:46,250 --> 00:01:52,425
+ We get a O(n) for this term,*3/2 to log2n for this last term.
+
+32
+00:01:52,425 --> 00:01:56,790
+ Now this 2^logn is the same as n, so those cancel.
+
+33
+00:01:56,790 --> 00:02:00,325
+ We're left with 3^log2n.
+
+34
+00:02:00,325 --> 00:02:02,400
+ Let's convert that into a polynomial.
+
+35
+00:02:02,400 --> 00:02:05,460
+ You should remind yourself how to convert this into a polynomial.
+
+36
+00:02:05,460 --> 00:02:07,085
+ Let me give you a quick reminder.
+
+37
+00:02:07,085 --> 00:02:11,780
+ 3 is the same as 2^log(3).
+
+38
+00:02:11,780 --> 00:02:13,390
+ That's the definition of log.
+
+39
+00:02:13,390 --> 00:02:17,558
+ So I have this expression, 3^log2n.
+
+40
+00:02:17,558 --> 00:02:19,860
+ And I can replace 3 by this expression.
+
+41
+00:02:19,860 --> 00:02:23,790
+ And then I raise that whole quantity ^log2n.
+
+42
+00:02:23,790 --> 00:02:26,785
+ Now these two exponents multiply together,
+
+43
+00:02:26,785 --> 00:02:28,595
+ so I can swap them.
+
+44
+00:02:28,595 --> 00:02:36,450
+ This quantity is the same as, 2^log2^log2^3.
+
+45
+00:02:36,450 --> 00:02:38,190
+ Now these two things are the same.
+
+46
+00:02:38,190 --> 00:02:39,855
+ Now, this is much simpler.
+
+47
+00:02:39,855 --> 00:02:41,570
+ Because what is 2^log2n?
+
+48
+00:02:41,570 --> 00:02:44,850
+ This is simply n. Now,
+
+49
+00:02:44,850 --> 00:02:47,130
+ I have n raised to a power,
+
+50
+00:02:47,130 --> 00:02:49,533
+ which is a constant, log2^3.
+
+51
+00:02:49,533 --> 00:02:55,500
+ this recurring solves to, O(n)^ log2^3.
+
+52
+00:02:55,500 --> 00:02:57,985
+ What does this number log2^3?
+
+53
+00:02:57,985 --> 00:02:59,580
+ Well, if you plug it into a calculator,
+
+54
+00:02:59,580 --> 00:03:03,485
+ you see that log2^3 is roughly 1.59.
+
+55
+00:03:03,485 --> 00:03:06,075
+ So we went from an O(n)² algorithm,
+
+56
+00:03:06,075 --> 00:03:09,825
+ to an O(n)^1.5 9 algorithm.
+
+57
+00:03:09,825 --> 00:03:12,030
+ And in fact, we can improve this exponent.
+
+58
+00:03:12,030 --> 00:03:13,920
+ We can get arbitrarily close to 1,
+
+59
+00:03:13,920 --> 00:03:15,955
+ but there's an expense for that.
+
+60
+00:03:15,955 --> 00:03:21,735
+ This constant hidden in the Big O notation is going to grow as this exponent decreases.
+
+61
+00:03:21,735 --> 00:03:25,215
+ And instead of breaking the input up into two halves,
+
+62
+00:03:25,215 --> 00:03:27,015
+ we're going to break it up into more parts,
+
+63
+00:03:27,015 --> 00:03:27,015
+ and then we're going to have to work harder in order to combine the solutions together.
+

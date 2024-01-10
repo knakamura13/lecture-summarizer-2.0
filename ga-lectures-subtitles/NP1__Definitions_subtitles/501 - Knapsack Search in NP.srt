@@ -1,0 +1,128 @@
+1
+00:00:00,000 --> 00:00:02,235
+ Now this new version of the Knapsack problem
+
+2
+00:00:02,235 --> 00:00:05,150
+ does lie in the class NP, we can prove that now.
+
+3
+00:00:05,150 --> 00:00:09,360
+ So consider a particular input to the Knapsack-search version,
+
+4
+00:00:09,360 --> 00:00:12,030
+ we have the integer weights, integer values,
+
+5
+00:00:12,030 --> 00:00:14,085
+ total capacity, and our goal,
+
+6
+00:00:14,085 --> 00:00:16,620
+ and consider a particular solution.
+
+7
+00:00:16,620 --> 00:00:20,300
+ In order to check that this is in fact a solution, what do we need to do?
+
+8
+00:00:20,300 --> 00:00:23,625
+ We need to check that the total weight is in most capital B.
+
+9
+00:00:23,625 --> 00:00:25,560
+ So how to do that before. That's easy.
+
+10
+00:00:25,560 --> 00:00:28,190
+ We're just summing up at most order numbers.
+
+11
+00:00:28,190 --> 00:00:31,320
+ And now instead of checking that it has maximum total value,
+
+12
+00:00:31,320 --> 00:00:34,380
+ we just have to check that the total value is at least a little
+
+13
+00:00:34,380 --> 00:00:38,115
+ g. This again involves just adding up order n numbers.
+
+14
+00:00:38,115 --> 00:00:41,440
+ So we can check these two in O(n) time.
+
+15
+00:00:41,440 --> 00:00:45,120
+ We can check a proposed solution in polynomial time.
+
+16
+00:00:45,120 --> 00:00:46,770
+ Therefore, this version of Knapsack,
+
+17
+00:00:46,770 --> 00:00:51,395
+ the Knapsack-search version does in fact lie in the class NP.
+
+18
+00:00:51,395 --> 00:00:53,160
+ Now, let me just be a little bit more precise about
+
+19
+00:00:53,160 --> 00:00:55,605
+ one aspect which may be confusing some people.
+
+20
+00:00:55,605 --> 00:00:59,830
+ You may ask, "Does this really take O(n) time to some of these numbers?"
+
+21
+00:00:59,830 --> 00:01:03,255
+ Well, if you really look at it in terms of the magnitude of these numbers,
+
+22
+00:01:03,255 --> 00:01:06,780
+ we had capital V as the sum of all values.
+
+23
+00:01:06,780 --> 00:01:09,950
+ That's led capital W to note the sum of all weights.
+
+24
+00:01:09,950 --> 00:01:11,640
+ Certainly to add up to these numbers,
+
+25
+00:01:11,640 --> 00:01:14,655
+ the time required is at most the number of bits.
+
+26
+00:01:14,655 --> 00:01:18,180
+ The number of bits in each of these numbers is at most log of
+
+27
+00:01:18,180 --> 00:01:22,140
+ capital W. So the time required to compute this sum is
+
+28
+00:01:22,140 --> 00:01:29,870
+ the most order n times log of capital W. To compute this sum is the most O(nlogW).
+
+29
+00:01:29,870 --> 00:01:34,560
+ Since the input side is log of capital W and log of capital V,
+
+30
+00:01:34,560 --> 00:01:37,145
+ this is still polynomial in the input size.
+
+31
+00:01:37,145 --> 00:01:41,110
+ So it is correct that Knapsack-search version does lie in the class NP.
+
+32
+00:01:41,110 --> 00:01:41,110
+ We just verify-
+

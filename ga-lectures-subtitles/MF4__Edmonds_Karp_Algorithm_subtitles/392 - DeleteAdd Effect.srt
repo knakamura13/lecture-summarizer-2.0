@@ -1,0 +1,144 @@
+1
+00:00:00,000 --> 00:00:02,370
+ Now our main lemma bounds the number of
+
+2
+00:00:02,370 --> 00:00:05,335
+ times that we can delete an edge and then add it back in.
+
+3
+00:00:05,335 --> 00:00:07,770
+ Let's look at the effect of deleting an edge and
+
+4
+00:00:07,770 --> 00:00:10,770
+ adding it back in on the level of the vertices.
+
+5
+00:00:10,770 --> 00:00:15,395
+ Let's take a particular vertex v and let's say the current level of this vertex v is i.
+
+6
+00:00:15,395 --> 00:00:18,660
+ Now suppose at some later round we delete this edge
+
+7
+00:00:18,660 --> 00:00:22,335
+ from v to this vertex w from the residual network.
+
+8
+00:00:22,335 --> 00:00:27,445
+ What can we conclude about the level vertex w when we delete this edge from v to w?
+
+9
+00:00:27,445 --> 00:00:30,945
+ Now if we were deleting this edge from v to w from the residual network,
+
+10
+00:00:30,945 --> 00:00:33,085
+ what do we know about the augmenting path?
+
+11
+00:00:33,085 --> 00:00:36,855
+ We know this edge itself from v to w is on the augmenting path.
+
+12
+00:00:36,855 --> 00:00:41,250
+ That means the level(w) is the level(v)+1.
+
+13
+00:00:41,250 --> 00:00:43,560
+ Now at the time that we deleted this edge,
+
+14
+00:00:43,560 --> 00:00:46,840
+ the level(v) might have changed from the earlier time,
+
+15
+00:00:46,840 --> 00:00:49,145
+ so might not be level i anymore.
+
+16
+00:00:49,145 --> 00:00:51,145
+ But what do we know about the level vertex v?
+
+17
+00:00:51,145 --> 00:00:54,895
+ We just prove that the level(v) never decreases.
+
+18
+00:00:54,895 --> 00:00:59,350
+ So this level(v) at this current time must be at least i.
+
+19
+00:00:59,350 --> 00:01:01,555
+ So this is at least i+1.
+
+20
+00:01:01,555 --> 00:01:05,760
+ So the level(w) at this time is at least i+1.
+
+21
+00:01:05,760 --> 00:01:10,740
+ Now suppose later we add this edge from v to w back into the residual network.
+
+22
+00:01:10,740 --> 00:01:13,265
+ Now if we're adding this edge from v to w into the residual network,
+
+23
+00:01:13,265 --> 00:01:16,135
+ then we know that the reverse direction edge,
+
+24
+00:01:16,135 --> 00:01:19,740
+ the edge from w to v must be on the augmenting path.
+
+25
+00:01:19,740 --> 00:01:21,480
+ Therefore, at this current time,
+
+26
+00:01:21,480 --> 00:01:26,475
+ the level(v) must be equal to the level(w)+1.
+
+27
+00:01:26,475 --> 00:01:30,240
+ By our claim, we know that the level(w) did not decrease from
+
+28
+00:01:30,240 --> 00:01:36,570
+ earlier times and we earlier showed that the level(w) was at level at least i+1.
+
+29
+00:01:36,570 --> 00:01:39,090
+ So this is that level at least i+2.
+
+30
+00:01:39,090 --> 00:01:40,450
+ Notice what we just proved.
+
+31
+00:01:40,450 --> 00:01:43,240
+ Suppose the level(v) is i,
+
+32
+00:01:43,240 --> 00:01:46,380
+ now we take an edge going out from vertex v,
+
+33
+00:01:46,380 --> 00:01:50,130
+ and we delete that edge and later we added it back in.
+
+34
+00:01:50,130 --> 00:01:52,590
+ After we added this edge back in,
+
+35
+00:01:52,590 --> 00:01:59,070
+ we know that the level of the vertex is at least two greater than what it previously was.
+
+36
+00:01:59,070 --> 00:01:59,070
+ So the level of this vertex increased by at least two.
+

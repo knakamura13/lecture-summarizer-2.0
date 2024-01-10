@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:02,065
+ In this section, we'll look at the graph problem,
+
+2
+00:00:02,065 --> 00:00:04,090
+ known as the Max-flow problem.
+
+3
+00:00:04,090 --> 00:00:05,700
+ It's a quite useful problem.
+
+4
+00:00:05,700 --> 00:00:07,950
+ We'll first look at basic algorithm for the problem,
+
+5
+00:00:07,950 --> 00:00:09,375
+ known as a Ford Fulkerson Algorithm,
+
+6
+00:00:09,375 --> 00:00:13,062
+ and then we'll prove correctness of the Ford Fulkerson Algorithm.
+
+7
+00:00:13,062 --> 00:00:14,250
+ And along the way,
+
+8
+00:00:14,250 --> 00:00:16,912
+ we'll get the classic result known as the Max-flow- min-cut theorem.
+
+9
+00:00:16,912 --> 00:00:20,850
+ Next, we'll look at the nice application of
+
+10
+00:00:20,850 --> 00:00:26,085
+ the Max-flow problem to computer vision known as the Image Segmentation problem.
+
+11
+00:00:26,085 --> 00:00:28,820
+ We'll also look at a more general version of the problem,
+
+12
+00:00:28,820 --> 00:00:31,420
+ Max-flow with additional demand constraints,
+
+13
+00:00:31,420 --> 00:00:36,425
+ and we'll see how to reduce this more general problem to the original Max-flow problem.
+
+14
+00:00:36,425 --> 00:00:39,230
+ Finally, we'll see a faster Algorithm for the Max-flow problem,
+
+15
+00:00:39,230 --> 00:00:39,230
+ known as the Edmonds-Karp Algorithm.
+

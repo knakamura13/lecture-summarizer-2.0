@@ -1,0 +1,140 @@
+1
+00:00:00,000 --> 00:00:05,300
+ Now, we're going to derive a Primality Testing Algorithm using Fermat's Little Theorem.
+
+2
+00:00:05,300 --> 00:00:07,540
+ Let's first recall Fermat's Little Theorem.
+
+3
+00:00:07,540 --> 00:00:09,610
+ If r is a prime number,
+
+4
+00:00:09,610 --> 00:00:11,775
+ then for all z in this set,
+
+5
+00:00:11,775 --> 00:00:14,440
+ all z between one and r minus one.
+
+6
+00:00:14,440 --> 00:00:19,260
+ If we look at z raised to the power r minus 1 modulo r,
+
+7
+00:00:19,260 --> 00:00:21,185
+ then it's congruent to one.
+
+8
+00:00:21,185 --> 00:00:23,640
+ Now, we're going to use this as the basis for figuring out
+
+9
+00:00:23,640 --> 00:00:26,415
+ whether a given number r is prime or not.
+
+10
+00:00:26,415 --> 00:00:28,425
+ So, if it's prime it satisfies this.
+
+11
+00:00:28,425 --> 00:00:29,965
+ What if it's composite?
+
+12
+00:00:29,965 --> 00:00:33,490
+ We'll, what if we find a z between one and r minus one,
+
+13
+00:00:33,490 --> 00:00:39,105
+ where z raised to the power r minus one modulo r is not controlling to one.
+
+14
+00:00:39,105 --> 00:00:41,985
+ We'll, by Fermat's Little Theorem if this is the case,
+
+15
+00:00:41,985 --> 00:00:43,845
+ then what do we know about r?
+
+16
+00:00:43,845 --> 00:00:47,100
+ We'll, r must be composite if there's such a z.
+
+17
+00:00:47,100 --> 00:00:53,150
+ So, this z where z raised to r minus one is not congruent to one mod r is a witness.
+
+18
+00:00:53,150 --> 00:00:55,725
+ It proves that r is composite.
+
+19
+00:00:55,725 --> 00:00:58,740
+ And hence, we call this z a Fermat witness because
+
+20
+00:00:58,740 --> 00:01:02,135
+ it's a witness with respect to Fermat's Little Theorem.
+
+21
+00:01:02,135 --> 00:01:07,205
+ The first question we want to ask is whether every composite number has a Fermat witness.
+
+22
+00:01:07,205 --> 00:01:10,210
+ The answer to this first question is, yes it does.
+
+23
+00:01:10,210 --> 00:01:11,700
+ Every composite number has
+
+24
+00:01:11,700 --> 00:01:15,025
+ at least one Fermat witness and we'll demonstrate this in a moment.
+
+25
+00:01:15,025 --> 00:01:16,654
+ After we demonstrate this,
+
+26
+00:01:16,654 --> 00:01:19,695
+ then we have to look at how we find a Fermat witness.
+
+27
+00:01:19,695 --> 00:01:23,494
+ After we show that every composite number has at least one Fermat witness,
+
+28
+00:01:23,494 --> 00:01:25,990
+ then we'll look at how to find Fermat witnesses.
+
+29
+00:01:25,990 --> 00:01:30,500
+ What will show is that every composite number has many Fermat witness.
+
+30
+00:01:30,500 --> 00:01:34,320
+ We'll, there are some exceptions called Pseudo Primes but if we ignore Pseudo Primes,
+
+31
+00:01:34,320 --> 00:01:37,925
+ then every other composite number has many Fermat witness.
+
+32
+00:01:37,925 --> 00:01:41,675
+ So, in fact it will be easy to find Fermat witnesses for composite numbers.
+
+33
+00:01:41,675 --> 00:01:44,415
+ And that will give us our Primality Testing Algorithm.
+
+34
+00:01:44,415 --> 00:01:47,335
+ And then, we'll see how to deal with these Pseudo Primes.
+
+35
+00:01:47,335 --> 00:01:47,335
+ Let's first prove this fact that every composite number has at least one Fermat witness.
+

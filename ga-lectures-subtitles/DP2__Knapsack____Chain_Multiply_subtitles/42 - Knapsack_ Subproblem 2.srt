@@ -1,0 +1,136 @@
+1
+00:00:00,000 --> 00:00:02,450
+ Now, let's revise our subproblem definition
+
+2
+00:00:02,450 --> 00:00:04,950
+ trying to utilize some of the insight we just gained.
+
+3
+00:00:04,950 --> 00:00:09,352
+ Now, our initial attempt at a subproblem definition was k of
+
+4
+00:00:09,352 --> 00:00:14,550
+ i is the max value we can obtain using a subset of the first i objects.
+
+5
+00:00:14,550 --> 00:00:16,796
+ Now, the problem was when we tried to express K of i
+
+6
+00:00:16,796 --> 00:00:21,585
+ in terms of the earlier subproblems K1 through KI minus 1,
+
+7
+00:00:21,585 --> 00:00:26,660
+ it wasn't suffice to have the solution to Ki minus 1.
+
+8
+00:00:26,660 --> 00:00:31,290
+ But in fact what we needed was the solutions to the i minus first subproblem;
+
+9
+00:00:31,290 --> 00:00:34,080
+ we need the solution to the i minus first subproblem with
+
+10
+00:00:34,080 --> 00:00:38,315
+ the additional restriction that the total weight is no longer,
+
+11
+00:00:38,315 --> 00:00:41,870
+ at most, capital b, but its,
+
+12
+00:00:41,870 --> 00:00:46,175
+ at most, capital b minus the weight of the ith object.
+
+13
+00:00:46,175 --> 00:00:50,080
+ Because we're going to try to include the ith object and therefore,
+
+14
+00:00:50,080 --> 00:00:53,975
+ a weight available for the i minus first subproblem goes down.
+
+15
+00:00:53,975 --> 00:00:58,700
+ So this might be a sub optimal solution when the weight is capital b,
+
+16
+00:00:58,700 --> 00:01:02,640
+ but we need the optimal solution for this restricted weight.
+
+17
+00:01:02,640 --> 00:01:05,818
+ Therefore, what we're going to do is we're going to have two parameters;
+
+18
+00:01:05,818 --> 00:01:11,920
+ i and b. i is going to specify the prefix of the objects that we're going to consider.
+
+19
+00:01:11,920 --> 00:01:17,140
+ And little b is going to specify the total weight available.
+
+20
+00:01:17,140 --> 00:01:19,170
+ So then we're going to have a two dimensional table.
+
+21
+00:01:19,170 --> 00:01:21,685
+ Ok? Let's go ahead and formalize this.
+
+22
+00:01:21,685 --> 00:01:24,550
+ We're going to have two parameters,I and b as we just said.
+
+23
+00:01:24,550 --> 00:01:28,505
+ And i is going to be restricted between 0 and n, just as before.
+
+24
+00:01:28,505 --> 00:01:32,150
+ And little P is going to be restricted between 0 and capital b.
+
+25
+00:01:32,150 --> 00:01:35,460
+ And we're going to define the entry KIB.
+
+26
+00:01:35,460 --> 00:01:39,820
+ This is the entry in our two dimensional table to be the max value which we can
+
+27
+00:01:39,820 --> 00:01:42,545
+ obtain using a subset of objects 1
+
+28
+00:01:42,545 --> 00:01:45,835
+ through i that's a prefix of the objects just as before.
+
+29
+00:01:45,835 --> 00:01:50,800
+ And the additional restriction is that the total weight is at most little b.
+
+30
+00:01:50,800 --> 00:01:56,050
+ Our goal in this problem is to compute the entry K, n, capital_B.
+
+31
+00:01:56,050 --> 00:01:59,490
+ This is the bottom right corner of this table.
+
+32
+00:01:59,490 --> 00:02:05,800
+ This corresponds to the max value which we can obtain using a subset of all n objects,
+
+33
+00:02:05,800 --> 00:02:08,670
+ n with total weight at most capital b.
+
+34
+00:02:08,670 --> 00:02:08,670
+ This is the original problem that we're trying to solve.
+

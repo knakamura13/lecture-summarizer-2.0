@@ -1,0 +1,52 @@
+1
+00:00:00,000 --> 00:00:02,730
+ Now, the running time of this algorithm is fairly straightforward to
+
+2
+00:00:02,730 --> 00:00:05,945
+ analyze because there's just nested for loops.
+
+3
+00:00:05,945 --> 00:00:07,230
+ And then, within the for loops,
+
+4
+00:00:07,230 --> 00:00:10,095
+ it's just order one time. Order one time.
+
+5
+00:00:10,095 --> 00:00:11,900
+ For the base cases,
+
+6
+00:00:11,900 --> 00:00:14,185
+ we have two nested for loops,
+
+7
+00:00:14,185 --> 00:00:16,240
+ each of size order n. So,
+
+8
+00:00:16,240 --> 00:00:19,750
+ the total time to fill in the base cases is order n-squared time.
+
+9
+00:00:19,750 --> 00:00:21,150
+ For the general case,
+
+10
+00:00:21,150 --> 00:00:22,945
+ we have three nested for loops,
+
+11
+00:00:22,945 --> 00:00:24,475
+ each of size order n,
+
+12
+00:00:24,475 --> 00:00:26,505
+ so the total time is order n-cubed.
+
+13
+00:00:26,505 --> 00:00:26,505
+ Order n-cubed dominates, so total run time is order n-cubed.
+

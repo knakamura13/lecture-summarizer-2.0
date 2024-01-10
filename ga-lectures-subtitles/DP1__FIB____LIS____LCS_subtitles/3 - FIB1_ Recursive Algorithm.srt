@@ -1,0 +1,228 @@
+1
+00:00:00,000 --> 00:00:04,980
+ Look at the natural recursive algorithm for computing the Nth Fibonacci number.
+
+2
+00:00:04,980 --> 00:00:06,540
+ Recall from the previous slide,
+
+3
+00:00:06,540 --> 00:00:07,710
+ the recursive formula for
+
+4
+00:00:07,710 --> 00:00:12,494
+ the Nth Fibonacci number is the sum of the previous two Fibonacci numbers.
+
+5
+00:00:12,494 --> 00:00:16,035
+ Let's detail the recursive algorithm for computing the Nth Fibonacci number.
+
+6
+00:00:16,035 --> 00:00:17,475
+ We'll call the algorithm Fib1,
+
+7
+00:00:17,475 --> 00:00:19,510
+ a little bit foreshadowing.
+
+8
+00:00:19,510 --> 00:00:21,480
+ This will be our first attempt then we'll have
+
+9
+00:00:21,480 --> 00:00:26,024
+ a second successful attempt for efficiently computing the Fibonacci numbers.
+
+10
+00:00:26,024 --> 00:00:29,054
+ Recall the input to our algorithm is a non-negative integer n,
+
+11
+00:00:29,054 --> 00:00:32,759
+ and the output is the Nth Fibonacci number or more
+
+12
+00:00:32,759 --> 00:00:34,090
+ precisely actually the n plus
+
+13
+00:00:34,090 --> 00:00:37,460
+ first Fibonacci number if you're keeping track of the indices.
+
+14
+00:00:37,460 --> 00:00:39,530
+ First, we'll deal with the base cases.
+
+15
+00:00:39,530 --> 00:00:42,195
+ The first two Fibonacci numbers are zero and one.
+
+16
+00:00:42,195 --> 00:00:47,094
+ In general, we'll utilize the recursive definition of the Fibonacci numbers.
+
+17
+00:00:47,094 --> 00:00:49,950
+ We will recursively compute the n minus first,
+
+18
+00:00:49,950 --> 00:00:52,140
+ and n minus second Fibonacci number.
+
+19
+00:00:52,140 --> 00:00:53,969
+ And we'll return the sum of those two.
+
+20
+00:00:53,969 --> 00:00:56,920
+ This completes the definition of our algorithm.
+
+21
+00:00:56,920 --> 00:00:59,204
+ Now, let's take a look at the running time of our algorithm.
+
+22
+00:00:59,204 --> 00:01:01,049
+ To analyze the running time of our algorithm,
+
+23
+00:01:01,049 --> 00:01:05,340
+ let's create a function T of n which denotes the number of steps of
+
+24
+00:01:05,340 --> 00:01:10,230
+ our algorithm and an input of size n. We have two basic cases first.
+
+25
+00:01:10,230 --> 00:01:12,165
+ Those each take order one time.
+
+26
+00:01:12,165 --> 00:01:14,459
+ And then, we have a two recursive calls,
+
+27
+00:01:14,459 --> 00:01:16,170
+ one of size n minus one,
+
+28
+00:01:16,170 --> 00:01:18,170
+ and one of size n minus two.
+
+29
+00:01:18,170 --> 00:01:22,000
+ Those take time, T of n minus one plus T of n minus two.
+
+30
+00:01:22,000 --> 00:01:25,015
+ Putting it all together, we have the following formula.
+
+31
+00:01:25,015 --> 00:01:30,469
+ Our running time on the input of size n is order one for the two base cases and then,
+
+32
+00:01:30,469 --> 00:01:34,859
+ T of n minus one in order to compute the n minus first Fibonacci number,
+
+33
+00:01:34,859 --> 00:01:39,420
+ and T of n minus two to compute the n minus second Fibonacci number.
+
+34
+00:01:39,420 --> 00:01:41,724
+ Now, this formula may look a little bit familiar.
+
+35
+00:01:41,724 --> 00:01:44,579
+ Notice, it reminds us of the Fibonacci numbers.
+
+36
+00:01:44,579 --> 00:01:49,230
+ Fibonacci numbers, the n minus Nth Fibonacci number is the sum of the previous two.
+
+37
+00:01:49,230 --> 00:01:54,609
+ This is the sum of the previous two plus an extra term.
+
+38
+00:01:54,609 --> 00:01:58,140
+ So, it's at least as large as the Nth Fibonacci number.
+
+39
+00:01:58,140 --> 00:02:02,670
+ Therefore, our running time on input of size n is at least the Nth Fibonacci number.
+
+40
+00:02:02,670 --> 00:02:07,409
+ Now, unfortunately Fibonacci numbers grow exponentially and then more precisely.
+
+41
+00:02:07,409 --> 00:02:11,414
+ They grow exponentially in this constant phi. What is phi?
+
+42
+00:02:11,414 --> 00:02:14,219
+ Well, phi is this constant defined as one plus square-root
+
+43
+00:02:14,219 --> 00:02:17,625
+ five over two which is roughly 1.618.
+
+44
+00:02:17,625 --> 00:02:19,664
+ But phi is a magical constant.
+
+45
+00:02:19,664 --> 00:02:21,550
+ It's known as the golden ratio.
+
+46
+00:02:21,550 --> 00:02:23,879
+ The golden ratio has many applications.
+
+47
+00:02:23,879 --> 00:02:26,460
+ For example, if you're designing a building such as
+
+48
+00:02:26,460 --> 00:02:30,305
+ the Parthenon or if you want just a cool fact to show your kids,
+
+49
+00:02:30,305 --> 00:02:32,680
+ then look up the golden rectangle.
+
+50
+00:02:32,680 --> 00:02:35,699
+ But for us, the punchline is that the Fibonacci numbers
+
+51
+00:02:35,699 --> 00:02:39,000
+ grow exponentially in n. And the running time to
+
+52
+00:02:39,000 --> 00:02:41,639
+ compute the Nth Fibonacci number using
+
+53
+00:02:41,639 --> 00:02:45,919
+ a recursive algorithm is at least the Nth Fibonacci number.
+
+54
+00:02:45,919 --> 00:02:48,719
+ So, our running time is exponential in n. So this is
+
+55
+00:02:48,719 --> 00:02:52,055
+ a terrible algorithm for computing the Nth Fibonacci number.
+
+56
+00:02:52,055 --> 00:02:56,759
+ Let's take a look at exactly why our running time is so terrible and then,
+
+57
+00:02:56,759 --> 00:02:56,759
+ we'll get an idea for a more efficient algorithm.
+

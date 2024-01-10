@@ -1,0 +1,192 @@
+1
+00:00:00,000 --> 00:00:02,865
+ Let's go ahead and detail the extended Euclid algorithm.
+
+2
+00:00:02,865 --> 00:00:05,910
+ Recall, it takes two parameters as input X and Y where
+
+3
+00:00:05,910 --> 00:00:09,105
+ X is at least Y and we're going to output three parameters.
+
+4
+00:00:09,105 --> 00:00:10,940
+ D alpha and beta.
+
+5
+00:00:10,940 --> 00:00:12,670
+ D is the GCD.
+
+6
+00:00:12,670 --> 00:00:14,250
+ So, if we just look at the first parameter,
+
+7
+00:00:14,250 --> 00:00:16,415
+ it's going to behave like Euclid's algorithm
+
+8
+00:00:16,415 --> 00:00:19,005
+ and we're also going to output this alpha and this beta,
+
+9
+00:00:19,005 --> 00:00:20,525
+ which satisfy this relation.
+
+10
+00:00:20,525 --> 00:00:22,575
+ Let's start again with the base case.
+
+11
+00:00:22,575 --> 00:00:24,760
+ So, when Y equals zero, where do we return.?
+
+12
+00:00:24,760 --> 00:00:27,520
+ Well, the first parameter D is the GCD.
+
+13
+00:00:27,520 --> 00:00:29,990
+ So, that should be equal to X.
+
+14
+00:00:29,990 --> 00:00:33,000
+ Now, we want to find alpha and beta which satisfy the relation,
+
+15
+00:00:33,000 --> 00:00:36,025
+ where D in this case is equal to X.
+
+16
+00:00:36,025 --> 00:00:39,860
+ So, we want X equals X times alpha plus Y times beta.
+
+17
+00:00:39,860 --> 00:00:41,250
+ Well, that's easier to satisfy.
+
+18
+00:00:41,250 --> 00:00:43,005
+ We can just say alpha equal to one,
+
+19
+00:00:43,005 --> 00:00:44,785
+ and beta equal to zero.
+
+20
+00:00:44,785 --> 00:00:46,820
+ That takes care of the base case.
+
+21
+00:00:46,820 --> 00:00:47,880
+ Now, for the general case,
+
+22
+00:00:47,880 --> 00:00:49,500
+ we're going to use Euclid's rule,
+
+23
+00:00:49,500 --> 00:00:55,305
+ which says that the GCD of X and Y is equal to the GCD of Y and X mod Y.
+
+24
+00:00:55,305 --> 00:00:59,730
+ So, we recursively call this algorithm on Y and X mod Y.
+
+25
+00:00:59,730 --> 00:01:02,610
+ That's going to return three numbers, D, alpha, beta.
+
+26
+00:01:02,610 --> 00:01:05,580
+ Let's call it D alpha prime, beta prime.
+
+27
+00:01:05,580 --> 00:01:08,700
+ Now, we're going to have to do a little bit of manipulation of these three parameters,
+
+28
+00:01:08,700 --> 00:01:11,900
+ in order to get our output for X and Y.
+
+29
+00:01:11,900 --> 00:01:13,830
+ Now, we know the first parameter stays the same.
+
+30
+00:01:13,830 --> 00:01:19,890
+ The GCD of these two parameters is the same as the GCD of X and Y.
+
+31
+00:01:19,890 --> 00:01:22,415
+ Now, what do we know about alpha prime and beta prime?
+
+32
+00:01:22,415 --> 00:01:31,810
+ Well, we know that D equals Y times alpha prime plus X mod Y times beta prime.
+
+33
+00:01:31,810 --> 00:01:35,755
+ Now, in order to find an alpha and beta which satisfy this relation for X and Y,
+
+34
+00:01:35,755 --> 00:01:39,970
+ we have to do some algebra to manipulate this alpha prime and beta prime.
+
+35
+00:01:39,970 --> 00:01:43,990
+ It turns out that it's sufficient to set alpha equal to beta prime,
+
+36
+00:01:43,990 --> 00:01:49,150
+ and we set beta equal to alpha prime minus X divided by Y,
+
+37
+00:01:49,150 --> 00:01:51,970
+ rounded down times beta prime.
+
+38
+00:01:51,970 --> 00:01:53,920
+ In order to see where this quantity comes from,
+
+39
+00:01:53,920 --> 00:01:56,590
+ you got to look at the proof of correctness which is not too bad,
+
+40
+00:01:56,590 --> 00:01:58,715
+ but it's just a bit of algebra.
+
+41
+00:01:58,715 --> 00:02:02,500
+ I'll refer you to the textbook for the details on that proof of correctness.
+
+42
+00:02:02,500 --> 00:02:06,130
+ That completes its pseudo code for the extended Euclid algorithm.
+
+43
+00:02:06,130 --> 00:02:08,110
+ Finally, what's the running time with this algorithm?
+
+44
+00:02:08,110 --> 00:02:10,395
+ Well notice, each step,
+
+45
+00:02:10,395 --> 00:02:16,450
+ the non-trivial operations are X mod Y and there's little bit of algebra, right here.
+
+46
+00:02:16,450 --> 00:02:18,910
+ So, it takes order N squared time per round,
+
+47
+00:02:18,910 --> 00:02:22,225
+ and the number of rounds is order N just like Euclid's algorithm.
+
+48
+00:02:22,225 --> 00:02:22,225
+ So the total run time is order N cube time.
+

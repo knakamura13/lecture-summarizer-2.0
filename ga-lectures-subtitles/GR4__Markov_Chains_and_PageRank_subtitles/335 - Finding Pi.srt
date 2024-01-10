@@ -1,0 +1,188 @@
+1
+00:00:00,000 --> 00:00:02,430
+ Now, how do I find this vector pi?
+
+2
+00:00:02,430 --> 00:00:05,990
+ How do I find the stationary distribution of this Markov chain?
+
+3
+00:00:05,990 --> 00:00:09,660
+ If I want to use pi as the measure of the importance of a web page,
+
+4
+00:00:09,660 --> 00:00:14,405
+ I have to find pi, or find something which is a close approximation to it.
+
+5
+00:00:14,405 --> 00:00:16,215
+ Now to find pi, what do I do?
+
+6
+00:00:16,215 --> 00:00:19,020
+ Well, I start at some initial distribution.
+
+7
+00:00:19,020 --> 00:00:20,670
+ I can take any initial distribution.
+
+8
+00:00:20,670 --> 00:00:23,580
+ Let's define that initial distribution by
+
+9
+00:00:23,580 --> 00:00:27,910
+ a row vector Mo and then I'm going to run the Markov chain,
+
+10
+00:00:27,910 --> 00:00:31,960
+ the random walk for T-stat for Big T. Computationally,
+
+11
+00:00:31,960 --> 00:00:34,965
+ that means I take Mo multiply it by P
+
+12
+00:00:34,965 --> 00:00:39,220
+ raised to the power t. Now how big of a t do we need to use?
+
+13
+00:00:39,220 --> 00:00:43,248
+ It turns out for the random walk that we're considering,
+
+14
+00:00:43,248 --> 00:00:47,085
+ just a very small t suffices. Why is that the case?
+
+15
+00:00:47,085 --> 00:00:51,189
+ Well for this particular Markov chain we have with probability one minus Alpha,
+
+16
+00:00:51,189 --> 00:00:52,865
+ we choose a random web page.
+
+17
+00:00:52,865 --> 00:00:57,975
+ Those links corresponding to the random button allow the Markov chain to mix rapidly.
+
+18
+00:00:57,975 --> 00:01:01,690
+ In practice, to check whether you did a big enough t what do you do?
+
+19
+00:01:01,690 --> 00:01:05,480
+ Well you empirically check whether this thing seemed to converge or not.
+
+20
+00:01:05,480 --> 00:01:07,655
+ Now what do you use for this initial vector?
+
+21
+00:01:07,655 --> 00:01:09,977
+ Well, if you're running this on all the web pages,
+
+22
+00:01:09,977 --> 00:01:11,890
+ well that's a humongous quantity.
+
+23
+00:01:11,890 --> 00:01:16,920
+ So you want to use a reasonable approximation to the real pi as your starting state.
+
+24
+00:01:16,920 --> 00:01:20,464
+ Well, if you're updating the webgraph every week let's say,
+
+25
+00:01:20,464 --> 00:01:23,550
+ then I would use last week's pi as
+
+26
+00:01:23,550 --> 00:01:28,230
+ my initial distribution and then I would run the random walk for a small number of
+
+27
+00:01:28,230 --> 00:01:32,135
+ steps hopefully and then that would give me my approximation for the new
+
+28
+00:01:32,135 --> 00:01:37,140
+ pi so I use my last week's pi as my initial distribution.
+
+29
+00:01:37,140 --> 00:01:39,015
+ Now one important thing to consider,
+
+30
+00:01:39,015 --> 00:01:41,145
+ this matrix is huge.
+
+31
+00:01:41,145 --> 00:01:44,610
+ Capital N, the number of web pages, is humongous.
+
+32
+00:01:44,610 --> 00:01:47,420
+ So order N square is too big.
+
+33
+00:01:47,420 --> 00:01:51,555
+ So how long does it take me to compute this vector times this matrix?
+
+34
+00:01:51,555 --> 00:01:55,975
+ Well the naive way it's going to take me order N square time that's too long.
+
+35
+00:01:55,975 --> 00:01:57,450
+ For the Ns we're considering,
+
+36
+00:01:57,450 --> 00:01:59,481
+ there's no way you can run for order N square time,
+
+37
+00:01:59,481 --> 00:02:01,420
+ you won't even have order N square space.
+
+38
+00:02:01,420 --> 00:02:03,650
+ You need to do it in order m time,
+
+39
+00:02:03,650 --> 00:02:07,160
+ m is the number of edges in the original web graph.
+
+40
+00:02:07,160 --> 00:02:11,190
+ Now of course some web pages might have many hyperlinks out of it but
+
+41
+00:02:11,190 --> 00:02:16,160
+ typically there's going to be a constant number of hyperlinks out of each web page.
+
+42
+00:02:16,160 --> 00:02:19,455
+ So m is probably going to be on the order of N and
+
+43
+00:02:19,455 --> 00:02:23,140
+ if you think about the transition matrix that we use for PageRank,
+
+44
+00:02:23,140 --> 00:02:26,860
+ then one can implement this in order m time with just a little bit of
+
+45
+00:02:26,860 --> 00:02:32,090
+ thought and this will typically be order n as opposed to order N square.
+
+46
+00:02:32,090 --> 00:02:35,445
+ So linear time is more reasonable that's something we can implement for large N.
+
+47
+00:02:35,445 --> 00:02:35,445
+ Well that completes the description of the PageRank algorithm.
+

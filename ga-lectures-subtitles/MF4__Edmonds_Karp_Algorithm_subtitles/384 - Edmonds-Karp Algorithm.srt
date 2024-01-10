@@ -1,0 +1,96 @@
+1
+00:00:00,000 --> 00:00:03,150
+ In the Edmonds-Karp algorithm there's only one distinction.
+
+2
+00:00:03,150 --> 00:00:06,390
+ When we check for an st-path in the residual network,
+
+3
+00:00:06,390 --> 00:00:08,130
+ we have to use BFS.
+
+4
+00:00:08,130 --> 00:00:09,790
+ We cannot use DFS.
+
+5
+00:00:09,790 --> 00:00:13,580
+ The running time analysis assumes that we're using BFS to find this path.
+
+6
+00:00:13,580 --> 00:00:17,058
+ That's the only difference between Edmonds-Karp and Ford-Fulkerson algorithm.
+
+7
+00:00:17,058 --> 00:00:21,041
+ Now, a running time analysis will not assume that the capacities are integer values,
+
+8
+00:00:21,041 --> 00:00:22,885
+ so we can remove this assumption.
+
+9
+00:00:22,885 --> 00:00:25,779
+ All that's required is that the capacities are positive.
+
+10
+00:00:25,779 --> 00:00:27,830
+ Before we dive into the running time analysis,
+
+11
+00:00:27,830 --> 00:00:29,580
+ let's look at one basic property of
+
+12
+00:00:29,580 --> 00:00:32,130
+ the Edmonds-Karp algorithm and also the Ford-Fulkerson algorithm.
+
+13
+00:00:32,130 --> 00:00:36,980
+ Notice that the residual network has to change by at least one edge in every round.
+
+14
+00:00:36,980 --> 00:00:40,730
+ In particular, at least one edge reaches full capacity.
+
+15
+00:00:40,730 --> 00:00:46,080
+ We augment along P until we reach the full capacity of at least one edge on that path.
+
+16
+00:00:46,080 --> 00:00:50,430
+ Now, that edge, which reaches its full capacity in the residual graph,
+
+17
+00:00:50,430 --> 00:00:53,545
+ will be removed from the residual graph in the next stage.
+
+18
+00:00:53,545 --> 00:00:55,995
+ Now, that edge might be a forward edge or a backward edge,
+
+19
+00:00:55,995 --> 00:00:59,850
+ but regardless it will be removed from the residual graph in the next stage.
+
+20
+00:00:59,850 --> 00:01:02,610
+ Now, there may be additional edges which are removed and there
+
+21
+00:01:02,610 --> 00:01:05,565
+ might be other edges which are added back into the residual network,
+
+22
+00:01:05,565 --> 00:01:07,980
+ and we're going to need some understanding of which edges are
+
+23
+00:01:07,980 --> 00:01:10,805
+ added in or removed from the residual network.
+
+24
+00:01:10,805 --> 00:01:10,805
+ But one key property is that at least one edge is removed in every stage.
+

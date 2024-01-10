@@ -1,0 +1,288 @@
+1
+00:00:00,000 --> 00:00:01,450
+ Let's look at the basic idea for
+
+2
+00:00:01,450 --> 00:00:03,985
+ that dynamic programming algorithm we're going to construct.
+
+3
+00:00:03,985 --> 00:00:07,335
+ First, let's go back and look at the Bellman-Ford algorithm.
+
+4
+00:00:07,335 --> 00:00:09,280
+ The basic idea of this algorithm.
+
+5
+00:00:09,280 --> 00:00:11,835
+ This was the algorithm where we had a single start vertex
+
+6
+00:00:11,835 --> 00:00:14,400
+ and we're looking at the shortest path from that single start vertex,
+
+7
+00:00:14,400 --> 00:00:16,310
+ s, to all other vertices.
+
+8
+00:00:16,310 --> 00:00:18,570
+ Now, in that dynamic programming algorithm,
+
+9
+00:00:18,570 --> 00:00:23,045
+ what we did is we conditioned on the number of edges in length of the path.
+
+10
+00:00:23,045 --> 00:00:25,290
+ Obviously, we're going to try to do something different here.
+
+11
+00:00:25,290 --> 00:00:27,910
+ What else can we condition on instead of the number of edges?
+
+12
+00:00:27,910 --> 00:00:32,070
+ Actually, if you think of our basic dynamic programming approach that we always try,
+
+13
+00:00:32,070 --> 00:00:33,950
+ we try prefix of the input.
+
+14
+00:00:33,950 --> 00:00:35,340
+ Okay? What is the input here?
+
+15
+00:00:35,340 --> 00:00:37,680
+ The input here is the graph, or,
+
+16
+00:00:37,680 --> 00:00:41,125
+ one important aspect is the vertices of the graph.
+
+17
+00:00:41,125 --> 00:00:44,735
+ So, can we try a prefix of the vertices of the graph?
+
+18
+00:00:44,735 --> 00:00:46,305
+ Let's try to formalize that.
+
+19
+00:00:46,305 --> 00:00:48,810
+ First off, let's order the vertices,
+
+20
+00:00:48,810 --> 00:00:50,510
+ one through n. So,
+
+21
+00:00:50,510 --> 00:00:53,250
+ it just assigning numbers to the vertices one,
+
+22
+00:00:53,250 --> 00:00:56,460
+ two, up to n. How we do that doesn't matter.
+
+23
+00:00:56,460 --> 00:00:58,110
+ Okay? Just the point is,
+
+24
+00:00:58,110 --> 00:01:00,060
+ that now we can index the vertices by
+
+25
+00:01:00,060 --> 00:01:03,055
+ numbers one through n and we're often doing this anyways,
+
+26
+00:01:03,055 --> 00:01:05,820
+ implicitly because we have a table where we have
+
+27
+00:01:05,820 --> 00:01:12,345
+ a single one dimensional array for the vertices and we're indexing them by their numbers.
+
+28
+00:01:12,345 --> 00:01:17,520
+ Okay? The important thing now is that now we can look at a prefix of the vertices.
+
+29
+00:01:17,520 --> 00:01:20,775
+ So, we want to solve the same all pairs shortest path problem,
+
+30
+00:01:20,775 --> 00:01:26,455
+ where we only allow a prefix of the vertices to be used.
+
+31
+00:01:26,455 --> 00:01:29,190
+ So, we're going to condition on the intermediate vertices that are allowed to
+
+32
+00:01:29,190 --> 00:01:32,360
+ be used in the past that we consider.
+
+33
+00:01:32,360 --> 00:01:35,400
+ And we're going to go back and use prefixes as we've done them in
+
+34
+00:01:35,400 --> 00:01:40,190
+ many problems and we're going to use prefixes of the vertex then, okay?
+
+35
+00:01:40,190 --> 00:01:42,600
+ So, let's formalize this more precisely.
+
+36
+00:01:42,600 --> 00:01:44,580
+ So, we're going to have three parameters.
+
+37
+00:01:44,580 --> 00:01:49,245
+ First parameter is going to be the prefix of the vertex set that we consider.
+
+38
+00:01:49,245 --> 00:01:53,295
+ So, we're going to use the variable i for the prefix of the vertex set that we consider.
+
+39
+00:01:53,295 --> 00:01:57,090
+ This prefix is going to vary from zero, for the empty set,
+
+40
+00:01:57,090 --> 00:01:59,670
+ up to n. And for given i,
+
+41
+00:01:59,670 --> 00:02:04,320
+ we're going to consider the set of intermediate vertices one through i.
+
+42
+00:02:04,320 --> 00:02:07,830
+ That's going to be the set of allowable vertices to be used
+
+43
+00:02:07,830 --> 00:02:11,490
+ as intermediate vertices on the paths that we consider.
+
+44
+00:02:11,490 --> 00:02:17,170
+ Now, the other two parameters that we need are the start vertex and the end vertex.
+
+45
+00:02:17,170 --> 00:02:19,390
+ And we want to do all pairs, shortest path.
+
+46
+00:02:19,390 --> 00:02:24,520
+ So we want to find- try all possible start vertices and all possible end vertices.
+
+47
+00:02:24,520 --> 00:02:29,180
+ So let's use s for the start vertex and let's use t for the end vertex.
+
+48
+00:02:29,180 --> 00:02:33,360
+ And now, we want to vary s and t over all possible choices.
+
+49
+00:02:33,360 --> 00:02:37,680
+ So, we want to try each one through n. So s and t both vary
+
+50
+00:02:37,680 --> 00:02:42,510
+ between one and n and we want to try all n square choices for s and t. Finally,
+
+51
+00:02:42,510 --> 00:02:45,790
+ let's define our dynamic programming subproblem in words.
+
+52
+00:02:45,790 --> 00:02:47,860
+ It's going to be a three dimensional table, now.
+
+53
+00:02:47,860 --> 00:02:49,740
+ D of i, s, t,
+
+54
+00:02:49,740 --> 00:02:53,490
+ it's going to be the length of the shortest path from s to t. And now,
+
+55
+00:02:53,490 --> 00:02:54,825
+ how does i work in?
+
+56
+00:02:54,825 --> 00:02:56,460
+ Well, we're going to condition on the set of
+
+57
+00:02:56,460 --> 00:02:58,745
+ intermediate vertices that are allowed to be used.
+
+58
+00:02:58,745 --> 00:03:00,090
+ Now, the perimeter, i,
+
+59
+00:03:00,090 --> 00:03:02,280
+ tells us the prefix of
+
+60
+00:03:02,280 --> 00:03:06,705
+ the vertex set which are allowed to be used as intermediate vertices.
+
+61
+00:03:06,705 --> 00:03:09,455
+ So that we only consider paths from s to t,
+
+62
+00:03:09,455 --> 00:03:14,825
+ where a subset possibly empty set or possibly the whole thing,
+
+63
+00:03:14,825 --> 00:03:18,090
+ and we're not saying anything about the ordering of these intermediate vertices,
+
+64
+00:03:18,090 --> 00:03:20,850
+ but the only intermediate vertices that can be used on the path
+
+65
+00:03:20,850 --> 00:03:24,295
+ from s to t are one through i.
+
+66
+00:03:24,295 --> 00:03:29,010
+ And we're going to vary i from zero to n. When i equals n,
+
+67
+00:03:29,010 --> 00:03:32,975
+ that means we allow all vertices to be intermediate vertices on the path,
+
+68
+00:03:32,975 --> 00:03:35,085
+ so we're considering all paths.
+
+69
+00:03:35,085 --> 00:03:37,530
+ So then d of n, s, t,
+
+70
+00:03:37,530 --> 00:03:41,080
+ tells us the length of the shortest path from s to t. So, now,
+
+71
+00:03:41,080 --> 00:03:43,140
+ let's go ahead and try to find a recurrence for
+
+72
+00:03:43,140 --> 00:03:43,140
+ this subproblem definition that we just defined.
+

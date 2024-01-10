@@ -1,0 +1,176 @@
+1
+00:00:00,000 --> 00:00:02,670
+ Let's give a quick recap of what we've seen so far.
+
+2
+00:00:02,670 --> 00:00:05,250
+ We took for granted that SAT is NP-complete.
+
+3
+00:00:05,250 --> 00:00:09,300
+ This means that all the problems in the class NP can be reduced to SAT.
+
+4
+00:00:09,300 --> 00:00:11,365
+ So, if we can solve SAT in polynomial time,
+
+5
+00:00:11,365 --> 00:00:14,665
+ then we can solve any problem in NP in polynomial time.
+
+6
+00:00:14,665 --> 00:00:16,820
+ And we saw that 3SAT is NP-complete.
+
+7
+00:00:16,820 --> 00:00:19,715
+ This involved a reduction from SAT to 3SAT,
+
+8
+00:00:19,715 --> 00:00:22,770
+ then we prove that the Independent Set problem is NP-complete.
+
+9
+00:00:22,770 --> 00:00:26,240
+ This involved a reduction from 3SAT to the Independent Set problem.
+
+10
+00:00:26,240 --> 00:00:28,170
+ This was a quite interesting reduction because it
+
+11
+00:00:28,170 --> 00:00:30,850
+ involved a transformation from a logic problem,
+
+12
+00:00:30,850 --> 00:00:34,270
+ 3SAT to a Graph problem, Independent Set problem.
+
+13
+00:00:34,270 --> 00:00:38,360
+ Then we proved that the Clique problem and Vertex cover problems were NP-complete.
+
+14
+00:00:38,360 --> 00:00:41,890
+ These involve more trivial reductions from the Independent Set problem.
+
+15
+00:00:41,890 --> 00:00:43,590
+ What we are going to do now is we're going to prove
+
+16
+00:00:43,590 --> 00:00:45,780
+ that the Knapsack problem is NP-complete.
+
+17
+00:00:45,780 --> 00:00:47,035
+ As an intermediate step,
+
+18
+00:00:47,035 --> 00:00:49,145
+ we're going to look at the Subset-sum problem.
+
+19
+00:00:49,145 --> 00:00:52,106
+ We're going to prove that a Subset-sum problem is NP-complete.
+
+20
+00:00:52,106 --> 00:00:56,310
+ This is going to involved a reduction from the 3SAT problem to Subset-sum problem.
+
+21
+00:00:56,310 --> 00:00:59,580
+ This again is a quite non-trivial reduction because it involves transforming
+
+22
+00:00:59,580 --> 00:01:04,015
+ a logic problem 3SAT into this optimization problem Subset-sum.
+
+23
+00:01:04,015 --> 00:01:06,168
+ Once we prove that Subset-sum is NP-complete,
+
+24
+00:01:06,168 --> 00:01:08,490
+ it will be quite easy to prove that the Knapsack problem is NP-complete.
+
+25
+00:01:08,490 --> 00:01:12,030
+ We'll leave this last step as a homework problem proving
+
+26
+00:01:12,030 --> 00:01:16,365
+ that Knapsack is NP-complete once we know that Subset-sum is NP-complete.
+
+27
+00:01:16,365 --> 00:01:18,180
+ If you recall from the beginning, in the course,
+
+28
+00:01:18,180 --> 00:01:21,325
+ we study Dynamic Programming Algorithm for the Knapsack problem.
+
+29
+00:01:21,325 --> 00:01:26,065
+ And there, we saw an order N times B time Algorithm for the Knapsack problem,
+
+30
+00:01:26,065 --> 00:01:29,040
+ and we pointed out why this is not polynomial time.
+
+31
+00:01:29,040 --> 00:01:32,235
+ Why this running time is not polynomial in the input size?
+
+32
+00:01:32,235 --> 00:01:34,340
+ In order to be polynomial in the input size,
+
+33
+00:01:34,340 --> 00:01:36,942
+ it has to be polynomial in N and log of B.
+
+34
+00:01:36,942 --> 00:01:40,935
+ Why this is not polynomial is somewhat of a subtle point.
+
+35
+00:01:40,935 --> 00:01:45,330
+ I think it becomes much clearer when you see this reduction from 3SAT to Subset-sum,
+
+36
+00:01:45,330 --> 00:01:46,925
+ or 3SAT and Knapsack.
+
+37
+00:01:46,925 --> 00:01:48,495
+ What you see in this reduction,
+
+38
+00:01:48,495 --> 00:01:50,790
+ is that capital B will be exponential in
+
+39
+00:01:50,790 --> 00:01:53,965
+ the size of the input formula for the 3SAT problem.
+
+40
+00:01:53,965 --> 00:01:55,920
+ So, if we use this Algorithm to solve 3SAT,
+
+41
+00:01:55,920 --> 00:01:59,790
+ this would give us an exponential time Algorithm of 3SAT.
+
+42
+00:01:59,790 --> 00:02:02,225
+ It's a quite clever reduction so let's dive into it.
+
+43
+00:02:02,225 --> 00:02:05,230
+ Let's prove that the Subset-sum problem is NP-complete.
+
+44
+00:02:05,230 --> 00:02:05,230
+ Let's start with the definition of a Subset-sum.
+

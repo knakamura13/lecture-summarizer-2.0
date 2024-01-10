@@ -1,0 +1,128 @@
+1
+00:00:00,000 --> 00:00:03,900
+ Now we can formalize our reduction from SAT to 3SAT.
+
+2
+00:00:03,900 --> 00:00:08,389
+ So let's consider our input formula for the satisfiability problem.
+
+3
+00:00:08,389 --> 00:00:11,775
+ And let's create an input formula for the 3SAT problem,
+
+4
+00:00:11,775 --> 00:00:13,525
+ by the following procedure.
+
+5
+00:00:13,525 --> 00:00:16,160
+ Let's consider the clauses of f one by one.
+
+6
+00:00:16,160 --> 00:00:18,225
+ So, for clause C in f,
+
+7
+00:00:18,225 --> 00:00:22,290
+ we'll have two cases depending on whether the clauses of size are most three,
+
+8
+00:00:22,290 --> 00:00:24,180
+ or strictly bigger than three.
+
+9
+00:00:24,180 --> 00:00:26,460
+ If C contains at most three literals,
+
+10
+00:00:26,460 --> 00:00:30,420
+ then we can add this clause as is to this new formula.
+
+11
+00:00:30,420 --> 00:00:32,890
+ Now what if C contains more than three literals?
+
+12
+00:00:32,890 --> 00:00:35,550
+ Then we have to use our previous construction.
+
+13
+00:00:35,550 --> 00:00:39,885
+ In this case, we create k-3 new variables as we said before,
+
+14
+00:00:39,885 --> 00:00:44,345
+ and we replace C by this new formula C prime,
+
+15
+00:00:44,345 --> 00:00:46,830
+ this sequence of k-2 clauses,
+
+16
+00:00:46,830 --> 00:00:48,570
+ as we defined before.
+
+17
+00:00:48,570 --> 00:00:50,800
+ So, small clauses stay the same,
+
+18
+00:00:50,800 --> 00:00:54,195
+ big clauses are replaced by k-2 new clauses,
+
+19
+00:00:54,195 --> 00:00:56,025
+ as we defined before.
+
+20
+00:00:56,025 --> 00:00:58,440
+ Now that we've defined the input to the 3SAT problem,
+
+21
+00:00:58,440 --> 00:01:03,105
+ now we have to prove that this original input to the SAT problem is satisfiable,
+
+22
+00:01:03,105 --> 00:01:09,910
+ f is satisfiable if and only if its input to the 3SAT formula f prime, is satisfiable.
+
+23
+00:01:09,910 --> 00:01:11,145
+ So f is satisfiable,
+
+24
+00:01:11,145 --> 00:01:13,510
+ if and only if f prime is satisfiable.
+
+25
+00:01:13,510 --> 00:01:15,510
+ Now this statement is quite straightforward to prove,
+
+26
+00:01:15,510 --> 00:01:18,195
+ given that we've already proven that C is satisfiable,
+
+27
+00:01:18,195 --> 00:01:20,670
+ if and only if C prime is satisfiable.
+
+28
+00:01:20,670 --> 00:01:22,920
+ Then afterwards, the remaining task is to
+
+29
+00:01:22,920 --> 00:01:26,080
+ show that given a satisfying assignment to f prime,
+
+30
+00:01:26,080 --> 00:01:30,045
+ we can construct a satisfying assignment to f. That again will be straightforward,
+
+31
+00:01:30,045 --> 00:01:33,510
+ because we just ignore these auxiliary variables and the setting for
+
+32
+00:01:33,510 --> 00:01:33,510
+ the original variables will give us a satisfying assignment to the original form-
+

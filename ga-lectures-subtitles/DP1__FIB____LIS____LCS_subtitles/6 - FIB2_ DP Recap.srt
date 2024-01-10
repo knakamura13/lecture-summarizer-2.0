@@ -1,0 +1,156 @@
+1
+00:00:00,000 --> 00:00:02,970
+ Before moving on to a more sophisticated example,
+
+2
+00:00:02,970 --> 00:00:05,040
+ let's recap a few key issues.
+
+3
+00:00:05,040 --> 00:00:09,125
+ I want to stress one important point about Dynamic Programming algorithms.
+
+4
+00:00:09,125 --> 00:00:12,620
+ Our algorithm had no recursion inside of it.
+
+5
+00:00:12,620 --> 00:00:18,005
+ We used the recursive nature of the problem to design our Dynamic Programming Algorithm,
+
+6
+00:00:18,005 --> 00:00:21,510
+ but the algorithm itself has no recursion inside of it.
+
+7
+00:00:21,510 --> 00:00:24,225
+ Now, there is an alternative approach to Dynamic Programming.
+
+8
+00:00:24,225 --> 00:00:27,420
+ In this approach, you use a hash table or
+
+9
+00:00:27,420 --> 00:00:29,520
+ some other similar structure to keep track
+
+10
+00:00:29,520 --> 00:00:31,890
+ of which sub-problems that have already been solved,
+
+11
+00:00:31,890 --> 00:00:34,525
+ so that you don't recompute those problems.
+
+12
+00:00:34,525 --> 00:00:37,710
+ Now, we're not going to use this at all in our course.
+
+13
+00:00:37,710 --> 00:00:41,095
+ This approach is called memoization.
+
+14
+00:00:41,095 --> 00:00:42,850
+ Try to say that five times,
+
+15
+00:00:42,850 --> 00:00:47,470
+ I can't and therefore we're not going to use it in this class.
+
+16
+00:00:47,470 --> 00:00:49,620
+ But actually, the real reason why we're not using it,
+
+17
+00:00:49,620 --> 00:00:53,430
+ is because the goal of this unit is to learn dynamic programming.
+
+18
+00:00:53,430 --> 00:00:58,855
+ Therefore, to avoid any confusion we're going to say no recursion in our algorithms.
+
+19
+00:00:58,855 --> 00:01:03,305
+ Dynamic programming has several advantages over memoization or similar techniques.
+
+20
+00:01:03,305 --> 00:01:05,995
+ Some might say the algorithms themselves are more beautiful.
+
+21
+00:01:05,995 --> 00:01:11,585
+ Certainly, they're faster because they have less overhead from avoiding recursion.
+
+22
+00:01:11,585 --> 00:01:13,660
+ And finally, it's much simpler to
+
+23
+00:01:13,660 --> 00:01:16,540
+ analyze the running time of Dynamic Programming Algorithms,
+
+24
+00:01:16,540 --> 00:01:18,745
+ dynamic programming is widely used.
+
+25
+00:01:18,745 --> 00:01:21,610
+ At first, students often find it challenging,
+
+26
+00:01:21,610 --> 00:01:24,365
+ but what we find is that with enough practice
+
+27
+00:01:24,365 --> 00:01:28,960
+ the dynamic programming algorithms start to seem similar to each other.
+
+28
+00:01:28,960 --> 00:01:31,085
+ At that point it will click and hopefully it'll
+
+29
+00:01:31,085 --> 00:01:33,535
+ seem easy to design a dynamic programming after that.
+
+30
+00:01:33,535 --> 00:01:36,160
+ To get to that point, what do you need to do?
+
+31
+00:01:36,160 --> 00:01:38,110
+ Practice, practice, practice.
+
+32
+00:01:38,110 --> 00:01:40,720
+ Do a lot of practice problems and then it will
+
+33
+00:01:40,720 --> 00:01:43,580
+ click and you'll find dynamic programming easy.
+
+34
+00:01:43,580 --> 00:01:45,355
+ We're going to do some in class,
+
+35
+00:01:45,355 --> 00:01:49,170
+ you're going to do something during the homework and then do a lot on your own.
+
+36
+00:01:49,170 --> 00:01:51,970
+ There's a lot of practice dynamic programming problems out there in
+
+37
+00:01:51,970 --> 00:01:56,095
+ the textbook and other online resources that you can find.
+
+38
+00:01:56,095 --> 00:01:57,230
+ You do enough practice,
+
+39
+00:01:57,230 --> 00:01:57,230
+ you ace the topic.
+

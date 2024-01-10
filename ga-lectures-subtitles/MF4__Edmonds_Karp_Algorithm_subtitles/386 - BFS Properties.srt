@@ -1,0 +1,88 @@
+1
+00:00:00,000 --> 00:00:03,390
+ Now we want to prove the key lemma from the previous slide which
+
+2
+00:00:03,390 --> 00:00:07,470
+ states that for every edge of the graph in the residual graph,
+
+3
+00:00:07,470 --> 00:00:13,140
+ this edge is deleted and then reinserted later at most n_over_two times.
+
+4
+00:00:13,140 --> 00:00:17,235
+ So this deletion, insertion process can occur at most n ove_ two_times.
+
+5
+00:00:17,235 --> 00:00:18,780
+ Now of course to prove this lemma,
+
+6
+00:00:18,780 --> 00:00:21,180
+ we're going to have to use properties of the BFS.
+
+7
+00:00:21,180 --> 00:00:24,460
+ Let's recall the setting for BFS, breadth-first search.
+
+8
+00:00:24,460 --> 00:00:26,730
+ The input is a directed or undirected graph
+
+9
+00:00:26,730 --> 00:00:29,310
+ G. We're going to be working with directed graphs.
+
+10
+00:00:29,310 --> 00:00:32,965
+ Our directed graph, the residual network, we'll have edge weights.
+
+11
+00:00:32,965 --> 00:00:36,225
+ But in fact, BFS doesn't pay attention to edge weights.
+
+12
+00:00:36,225 --> 00:00:38,890
+ Now BFS also specifies as a start vertex
+
+13
+00:00:38,890 --> 00:00:41,905
+ s. Now what is the output of the breadth-first search algorithm?
+
+14
+00:00:41,905 --> 00:00:43,835
+ Well, for every vertex of the graph,
+
+15
+00:00:43,835 --> 00:00:45,384
+ so it outputs an array of size n,
+
+16
+00:00:45,384 --> 00:00:50,930
+ and dist(v) is defined as the minimum number of edges to go from s to v. Notice,
+
+17
+00:00:50,930 --> 00:00:52,500
+ this just counts the number of edges,
+
+18
+00:00:52,500 --> 00:00:54,870
+ it pays no attention to the edge weights.
+
+19
+00:00:54,870 --> 00:00:56,940
+ If we want to pay attention to the edge weights then we have
+
+20
+00:00:56,940 --> 00:00:59,340
+ to use an algorithm such as Dijkstra's algorithm.
+
+21
+00:00:59,340 --> 00:01:02,400
+ Now in addition to computing this distance for every vertex,
+
+22
+00:01:02,400 --> 00:01:02,400
+ it also finds such a path from s to v which uses the minimum number of edges.
+

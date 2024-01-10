@@ -1,0 +1,76 @@
+1
+00:00:00,000 --> 00:00:03,810
+ Now the variables are specified by this column vector x.
+
+2
+00:00:03,810 --> 00:00:07,125
+ The objective function is specified by these coefficients,
+
+3
+00:00:07,125 --> 00:00:09,509
+ this column vector c, and hence
+
+4
+00:00:09,509 --> 00:00:13,814
+ our objective function is to maximize c_transpose times x.
+
+5
+00:00:13,814 --> 00:00:16,079
+ Then we have our constraint matrix.
+
+6
+00:00:16,079 --> 00:00:19,030
+ This is an m by n matrix A.
+
+7
+00:00:19,030 --> 00:00:21,765
+ Finally we have the constraints for the right hand side.
+
+8
+00:00:21,765 --> 00:00:25,964
+ This is specified by this column vector, b1 through bm.
+
+9
+00:00:25,964 --> 00:00:31,394
+ There're m constraints, so this vector has size m. Going back to our Lp formulation,
+
+10
+00:00:31,394 --> 00:00:33,744
+ we have our objective function.
+
+11
+00:00:33,744 --> 00:00:36,329
+ This is subject to the following constraints.
+
+12
+00:00:36,329 --> 00:00:40,274
+ We want those x where A times x is at most b,
+
+13
+00:00:40,274 --> 00:00:44,909
+ and we have the non-negativity constraint, x is non-negative.
+
+14
+00:00:44,909 --> 00:00:48,314
+ Now the last constraint is important, the non-activity constraint,
+
+15
+00:00:48,314 --> 00:00:51,380
+ because if the feasible region is non-empty,
+
+16
+00:00:51,380 --> 00:00:53,354
+ so there are some feasible x,
+
+17
+00:00:53,354 --> 00:00:57,094
+ then we know that the zero vector is a feasible point.
+
+18
+00:00:57,094 --> 00:01:02,505
+ So we can trivially find a feasible point or determine that the feasible region is empty,
+
+19
+00:01:02,505 --> 00:01:02,505
+ and therefore this Lp is infeasible.
+

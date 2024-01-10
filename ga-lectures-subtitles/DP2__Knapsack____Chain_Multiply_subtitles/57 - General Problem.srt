@@ -1,0 +1,80 @@
+1
+00:00:00,000 --> 00:00:03,165
+ In the general problem, we have N matrices A1,
+
+2
+00:00:03,165 --> 00:00:04,795
+ A2, up to An.
+
+3
+00:00:04,795 --> 00:00:10,455
+ Our goal is to determine the minimum cost for computing the product of these N matrices.
+
+4
+00:00:10,455 --> 00:00:13,875
+ Now, the key parameter is the sizes of these matrices.
+
+5
+00:00:13,875 --> 00:00:15,645
+ So, we'll denote the size of the Aith matrix,
+
+6
+00:00:15,645 --> 00:00:20,745
+ Ai, as Mi-1 rows and Mi columns.
+
+7
+00:00:20,745 --> 00:00:24,945
+ So A1 will be of size M0 by M1.
+
+8
+00:00:24,945 --> 00:00:27,640
+ It has N0 rows and M1 columns.
+
+9
+00:00:27,640 --> 00:00:31,150
+ A2 will have M1 rows and M2 columns.
+
+10
+00:00:31,150 --> 00:00:35,690
+ So, the number of columns of A1 matches the number of rows of A2.
+
+11
+00:00:35,690 --> 00:00:40,415
+ Finally, the last Matrix has MN-1 rows and MN columns.
+
+12
+00:00:40,415 --> 00:00:43,915
+ All we need for this problem is the sizes of these matrices.
+
+13
+00:00:43,915 --> 00:00:47,075
+ We don't need to know the entries of the matrices given our cost.
+
+14
+00:00:47,075 --> 00:00:50,975
+ Our cost just depends on the sizes of matrices.
+
+15
+00:00:50,975 --> 00:00:54,625
+ Therefore, the input to the problem are these sizes.
+
+16
+00:00:54,625 --> 00:00:59,150
+ These N+1 parameters defining the sizes of these N matrices.
+
+17
+00:00:59,150 --> 00:01:03,840
+ And our goal is to find the minimum cost for computing the product of these N matrices.
+
+18
+00:01:03,840 --> 00:01:06,450
+ And we're just putting the minimum cost, if we can do that,
+
+19
+00:01:06,450 --> 00:01:09,495
+ then we can go back and figure out the parentheseszation,
+
+20
+00:01:09,495 --> 00:01:09,495
+ which realizes that minimum cost.
+

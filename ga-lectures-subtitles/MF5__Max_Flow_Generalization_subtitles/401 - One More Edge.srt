@@ -1,0 +1,88 @@
+1
+00:00:00,000 --> 00:00:02,460
+ Now, there's one additional edge that I almost forgot to
+
+2
+00:00:02,460 --> 00:00:04,995
+ mention in this graph G prime that we're constructing.
+
+3
+00:00:04,995 --> 00:00:10,020
+ Now, notice in the original graph S is the start vertex and T is the end vertex.
+
+4
+00:00:10,020 --> 00:00:11,315
+ In this new graph,
+
+5
+00:00:11,315 --> 00:00:13,650
+ S and T are internal vertices.
+
+6
+00:00:13,650 --> 00:00:17,500
+ So, the flow in has to equal the flow-out for both these vertices.
+
+7
+00:00:17,500 --> 00:00:20,130
+ Whereas over here, we don't have that constraint.
+
+8
+00:00:20,130 --> 00:00:21,690
+ Notice there's no flow-in.
+
+9
+00:00:21,690 --> 00:00:23,565
+ There's no capacity into this vertex,
+
+10
+00:00:23,565 --> 00:00:26,635
+ S and T has no capacity.
+
+11
+00:00:26,635 --> 00:00:31,320
+ So, in the current set up we don't have any flow into S and any flow out of
+
+12
+00:00:31,320 --> 00:00:33,870
+ T. How do we get around that so that we can have the
+
+13
+00:00:33,870 --> 00:00:37,785
+ flow-in S equal to the flow-out and similarly for T?
+
+14
+00:00:37,785 --> 00:00:42,070
+ Well, we know the flow-out of S equals the flow into T,
+
+15
+00:00:42,070 --> 00:00:47,040
+ so we simply have to offset the flow-out of T and the flow-in to S. So,
+
+16
+00:00:47,040 --> 00:00:49,030
+ we compare these up with each other.
+
+17
+00:00:49,030 --> 00:00:51,440
+ So, we're going to add this edge from T to
+
+18
+00:00:51,440 --> 00:00:55,845
+ S. And we don't have any constraints on the flow along this edge,
+
+19
+00:00:55,845 --> 00:01:01,050
+ our flow goes into T. We want to send that back to S. So,
+
+20
+00:01:01,050 --> 00:01:03,495
+ we give this edge capacity infinity.
+
+21
+00:01:03,495 --> 00:01:09,060
+ So, to summarize, we're adding this edge from T to S and the capacity is infinite.
+
+22
+00:01:09,060 --> 00:01:09,060
+ Now, we really have completed our construction of this graph G prime.
+

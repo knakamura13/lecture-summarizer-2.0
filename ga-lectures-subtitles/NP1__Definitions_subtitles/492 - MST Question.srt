@@ -1,0 +1,36 @@
+1
+00:00:00,000 --> 00:00:02,265
+ So recall the MST problem.
+
+2
+00:00:02,265 --> 00:00:06,987
+ The input to the problem is an undirected graph G with positive edge lengths,
+
+3
+00:00:06,987 --> 00:00:10,665
+ and the output is a tree T with minimum weight.
+
+4
+00:00:10,665 --> 00:00:13,420
+ Now let's test your knowledge of P and NP.
+
+5
+00:00:13,420 --> 00:00:15,150
+ So the first question is,
+
+6
+00:00:15,150 --> 00:00:18,295
+ is the MST problem in NP?
+
+7
+00:00:18,295 --> 00:00:21,595
+ Mark whether this statement is true or false.
+
+8
+00:00:21,595 --> 00:00:24,390
+ The second question is whether the MST problem is in the
+
+9
+00:00:24,390 --> 00:00:24,390
+ class P. Is that statement true or false?
+

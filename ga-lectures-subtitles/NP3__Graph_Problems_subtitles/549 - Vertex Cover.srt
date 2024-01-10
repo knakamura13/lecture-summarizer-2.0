@@ -1,0 +1,88 @@
+1
+00:00:00,000 --> 00:00:02,529
+ What exactly is a vertex cover?
+
+2
+00:00:02,529 --> 00:00:04,250
+ Let's formally define it.
+
+3
+00:00:04,250 --> 00:00:08,610
+ Once again, we're going to consider undirected graph G. Here's an example graph.
+
+4
+00:00:08,610 --> 00:00:11,330
+ A subset of vertices is a vertex cover,
+
+5
+00:00:11,330 --> 00:00:13,515
+ if, it covers every edge.
+
+6
+00:00:13,515 --> 00:00:15,338
+ The red vertices in this graph,
+
+7
+00:00:15,338 --> 00:00:18,150
+ our vertex cover for the graph G. What
+
+8
+00:00:18,150 --> 00:00:21,455
+ exactly does it mean that the set S covers every edge?
+
+9
+00:00:21,455 --> 00:00:23,118
+ Well, if you look at this example,
+
+10
+00:00:23,118 --> 00:00:25,338
+ for every edge, such as this edge,
+
+11
+00:00:25,338 --> 00:00:28,045
+ at least one of the two endpoints is in the red set,
+
+12
+00:00:28,045 --> 00:00:29,500
+ is in the vertex cover.
+
+13
+00:00:29,500 --> 00:00:32,370
+ For this edge, one endpoint is in.
+
+14
+00:00:32,370 --> 00:00:35,660
+ For this edge, both endpoints are in the red set.
+
+15
+00:00:35,660 --> 00:00:37,815
+ Formally, to cover every edge,
+
+16
+00:00:37,815 --> 00:00:39,865
+ we mean that for every edge of the graph.
+
+17
+00:00:39,865 --> 00:00:46,990
+ Say x, y, either endpoint x is in the set S and/or y is in the set S. So,
+
+18
+00:00:46,990 --> 00:00:48,901
+ both end points can be in there,
+
+19
+00:00:48,901 --> 00:00:51,030
+ or at least one of the endpoints is in there.
+
+20
+00:00:51,030 --> 00:00:53,650
+ Now it's easy to find a large vertex cover.
+
+21
+00:00:53,650 --> 00:00:57,115
+ For instance, I can include all the vertices in the vertex cover.
+
+22
+00:00:57,115 --> 00:00:57,115
+ And, this is a large vertex cover for this graph.
+

@@ -1,0 +1,176 @@
+1
+00:00:00,000 --> 00:00:03,160
+ Let's look now at another nice example of divide and conquer.
+
+2
+00:00:03,160 --> 00:00:05,410
+ This is the problem of finding the median.
+
+3
+00:00:05,410 --> 00:00:07,905
+ The input to the problem are n numbers,
+
+4
+00:00:07,905 --> 00:00:09,600
+ and these are an arbitrary order.
+
+5
+00:00:09,600 --> 00:00:12,360
+ So we assume the list is unsorted and input is
+
+6
+00:00:12,360 --> 00:00:15,935
+ given to us as this one dimensional array, capital A.
+
+7
+00:00:15,935 --> 00:00:19,415
+ Our goal is to find the median of A, this is the middle element.
+
+8
+00:00:19,415 --> 00:00:22,230
+ When n is even, it's not exactly clear what we mean by the median.
+
+9
+00:00:22,230 --> 00:00:26,100
+ So for concreteness, let's define the median as the N over second,
+
+10
+00:00:26,100 --> 00:00:28,960
+ ceiling, smallest element of A.
+
+11
+00:00:28,960 --> 00:00:30,620
+ So when n is odd.
+
+12
+00:00:30,620 --> 00:00:35,820
+ So N equals two times L plus one for some integer L. Then in this case,
+
+13
+00:00:35,820 --> 00:00:40,470
+ the median is the L plus first smallest and there are exactly L which are,
+
+14
+00:00:40,470 --> 00:00:42,795
+ at most, this median element,
+
+15
+00:00:42,795 --> 00:00:46,335
+ and there is at least L which are at least this median element.
+
+16
+00:00:46,335 --> 00:00:48,945
+ It will be useful for us to solve a more general problem.
+
+17
+00:00:48,945 --> 00:00:50,435
+ Instead of finding the median element,
+
+18
+00:00:50,435 --> 00:00:52,075
+ we want to find the K smallest,
+
+19
+00:00:52,075 --> 00:00:54,120
+ where K is an input given to us.
+
+20
+00:00:54,120 --> 00:00:56,600
+ More specifically, we're going to look at the following problem.
+
+21
+00:00:56,600 --> 00:00:59,985
+ We're given an unsorted list A, just as before,
+
+22
+00:00:59,985 --> 00:01:02,130
+ and we're also given an integer K,
+
+23
+00:01:02,130 --> 00:01:06,750
+ where K is between one and n. Our goal is to find the K smallest of A.
+
+24
+00:01:06,750 --> 00:01:11,670
+ So if we said K equal to n over two, then that'll be the median.
+
+25
+00:01:11,670 --> 00:01:13,525
+ Now if A happens to be sorted,
+
+26
+00:01:13,525 --> 00:01:15,360
+ then it's easy to find the K smallest.
+
+27
+00:01:15,360 --> 00:01:17,955
+ We just output the Kth element of the sorted list.
+
+28
+00:01:17,955 --> 00:01:21,540
+ So that gives us a very trivial algorithm for solving this problem.
+
+29
+00:01:21,540 --> 00:01:23,870
+ Given an arbitrary A, we simply sort
+
+30
+00:01:23,870 --> 00:01:27,950
+ A and then we output the Kth element of this sorted list.
+
+31
+00:01:27,950 --> 00:01:29,635
+ How long does this algorithm take?
+
+32
+00:01:29,635 --> 00:01:35,170
+ Well, merge sort or several other algorithms take order n log n time to sort A.
+
+33
+00:01:35,170 --> 00:01:38,820
+ So the total runtime of this algorithm will be order n log n.
+
+34
+00:01:38,820 --> 00:01:42,975
+ Now is it possible to find the Kth smallest without first sorting A?
+
+35
+00:01:42,975 --> 00:01:44,440
+ That's what we're going to do now.
+
+36
+00:01:44,440 --> 00:01:46,740
+ And, in fact, we'll find the Kth smallest
+
+37
+00:01:46,740 --> 00:01:49,740
+ in order and time instead of order n log n time.
+
+38
+00:01:49,740 --> 00:01:52,440
+ What we're going to do now is this very clever divide and conquer
+
+39
+00:01:52,440 --> 00:01:56,820
+ algorithm for finding the Kth smallest in order n time.
+
+40
+00:01:56,820 --> 00:01:59,505
+ This algorithm is due to Blum, Floyd,
+
+41
+00:01:59,505 --> 00:02:03,295
+ Pratt, Rivest and Tarjan from 1973.
+
+42
+00:02:03,295 --> 00:02:05,700
+ The story is that they figured it out over lunch.
+
+43
+00:02:05,700 --> 00:02:08,305
+ Once you see the algorithm and it's quite clever,
+
+44
+00:02:08,305 --> 00:02:08,305
+ it will be quite impressive that they just figured this out just over one lunchtime.
+

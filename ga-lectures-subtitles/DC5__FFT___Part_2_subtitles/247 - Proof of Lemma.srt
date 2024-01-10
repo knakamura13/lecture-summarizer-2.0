@@ -1,0 +1,100 @@
+1
+00:00:00,000 --> 00:00:02,345
+ Now let's go back to proving the lemma.
+
+2
+00:00:02,345 --> 00:00:06,630
+ We're trying to show that the inverse of this matrix M is one over
+
+3
+00:00:06,630 --> 00:00:13,795
+ n times this matrix M parameterized by omega sub n to the negative one.
+
+4
+00:00:13,795 --> 00:00:16,275
+ So the inverse of this nth root of unity,
+
+5
+00:00:16,275 --> 00:00:19,920
+ which we saw before is omega sub n to the n minus one,
+
+6
+00:00:19,920 --> 00:00:25,225
+ but it will be more convenient to treat it as omega sub n to the negative one.
+
+7
+00:00:25,225 --> 00:00:29,610
+ Now rewriting this, so multiply both sides by the matrix capital
+
+8
+00:00:29,610 --> 00:00:34,785
+ M. This side becomes the identity matrix, capital I,
+
+9
+00:00:34,785 --> 00:00:40,140
+ and the right hand side becomes one over n times M parameterized by
+
+10
+00:00:40,140 --> 00:00:46,615
+ omega sub n to the negative one times M parameterized by omega sub n. Now,
+
+11
+00:00:46,615 --> 00:00:48,700
+ what is the identity matrix?
+
+12
+00:00:48,700 --> 00:00:53,930
+ Well, this has ones on the diagonal and zeros off the diagonal.
+
+13
+00:00:53,930 --> 00:00:55,350
+ So let's look at the product of
+
+14
+00:00:55,350 --> 00:00:58,770
+ these two matrices and we're going to look at the diagonal entries of
+
+15
+00:00:58,770 --> 00:01:01,225
+ this product and show that those are
+
+16
+00:01:01,225 --> 00:01:05,245
+ n and the off diagonals we're going to show are zeros.
+
+17
+00:01:05,245 --> 00:01:07,800
+ So to recap, we have to show that
+
+18
+00:01:07,800 --> 00:01:11,535
+ the product of these two matrices, the diagonal entries,
+
+19
+00:01:11,535 --> 00:01:16,255
+ are n because one over n times these products should be ones,
+
+20
+00:01:16,255 --> 00:01:18,537
+ and the off diagonal entries,
+
+21
+00:01:18,537 --> 00:01:20,220
+ so for k not equal to j,
+
+22
+00:01:20,220 --> 00:01:21,687
+ the entry k, j,
+
+23
+00:01:21,687 --> 00:01:23,780
+ these should be zeros.
+
+24
+00:01:23,780 --> 00:01:25,070
+ So we'll have two cases,
+
+25
+00:01:25,070 --> 00:01:25,070
+ the diagonal entries and the off diagonal entries.
+

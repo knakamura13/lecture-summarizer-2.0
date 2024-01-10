@@ -1,0 +1,208 @@
+1
+00:00:00,000 --> 00:00:03,110
+ Now let's take a look at the running time of Kruskal's algorithm and
+
+2
+00:00:03,110 --> 00:00:06,185
+ then we'll look at the proof correctness of Kruskal's algorithm.
+
+3
+00:00:06,185 --> 00:00:08,845
+ How long does it take to sort the edges by increasing weight?
+
+4
+00:00:08,845 --> 00:00:11,136
+ This takes o(m log n) time.
+
+5
+00:00:11,136 --> 00:00:14,295
+ M is the number of edges and N is number of vertices.
+
+6
+00:00:14,295 --> 00:00:17,820
+ Note of course (m log n) is the same as (m log m).
+
+7
+00:00:17,820 --> 00:00:19,550
+ Now how long does it take to do this step?
+
+8
+00:00:19,550 --> 00:00:25,570
+ How long does it take to check whether adding edge E into X creates a cycle or not?
+
+9
+00:00:25,570 --> 00:00:29,240
+ What exactly do we want to check to see whether it creates a cycle or not?
+
+10
+00:00:29,240 --> 00:00:32,900
+ Look at the sub graph on this set of edges X.
+
+11
+00:00:32,900 --> 00:00:33,995
+ Now in this sub graph,
+
+12
+00:00:33,995 --> 00:00:36,665
+ let C of V be the component containing V,
+
+13
+00:00:36,665 --> 00:00:40,310
+ and C of W is a component containing W. Now to see
+
+14
+00:00:40,310 --> 00:00:44,570
+ whether the edge E creates a cycle when we add it into this subgraph,
+
+15
+00:00:44,570 --> 00:00:47,300
+ we want to check whether there's already a path between V and
+
+16
+00:00:47,300 --> 00:00:50,400
+ W. If there already is a path between V and W,
+
+17
+00:00:50,400 --> 00:00:53,750
+ then the components containing V and W are the same,
+
+18
+00:00:53,750 --> 00:00:56,465
+ V and W are in the same component.
+
+19
+00:00:56,465 --> 00:00:58,285
+ So what this step does is,
+
+20
+00:00:58,285 --> 00:01:00,160
+ it checks whether the component containing
+
+21
+00:01:00,160 --> 00:01:02,945
+ V and the component containing W are different.
+
+22
+00:01:02,945 --> 00:01:05,190
+ So if V and W are in different components,
+
+23
+00:01:05,190 --> 00:01:07,390
+ then we add the edge E into X.
+
+24
+00:01:07,390 --> 00:01:10,585
+ Now how do we check the component containing V and the component containing W?
+
+25
+00:01:10,585 --> 00:01:12,490
+ Well, we use this data structure,
+
+26
+00:01:12,490 --> 00:01:15,505
+ the simple data structure known as union-find data structure,
+
+27
+00:01:15,505 --> 00:01:19,425
+ using this data structure it takes O(log N) time per operation.
+
+28
+00:01:19,425 --> 00:01:23,230
+ So it takes O(log N) time to check the component containing V and the component
+
+29
+00:01:23,230 --> 00:01:27,515
+ containing W and then we can see whether they're the same or different components.
+
+30
+00:01:27,515 --> 00:01:32,260
+ And then, once we add this edge E into X then we can update the component
+
+31
+00:01:32,260 --> 00:01:34,630
+ containing V and the component containing W. We can
+
+32
+00:01:34,630 --> 00:01:37,575
+ merge those two components in O(log N) time.
+
+33
+00:01:37,575 --> 00:01:41,745
+ So the union-find data structure takes O(log N) time for each check operation,
+
+34
+00:01:41,745 --> 00:01:44,583
+ in order to check whether the component containing V and
+
+35
+00:01:44,583 --> 00:01:47,970
+ the components C and W are the same or not.
+
+36
+00:01:47,970 --> 00:01:51,025
+ And it takes the O(log N) time to do a merge operation,
+
+37
+00:01:51,025 --> 00:01:52,966
+ where we merged the component contained V and
+
+38
+00:01:52,966 --> 00:01:57,604
+ the component containing W because we added edge E into X.
+
+39
+00:01:57,604 --> 00:02:00,564
+ Now I'm going to skip the details of the union-find data structure,
+
+40
+00:02:00,564 --> 00:02:05,035
+ since many of you may have seen in the data structures class before and if you want,
+
+41
+00:02:05,035 --> 00:02:08,310
+ if you haven't seen it before then you can review it in the textbook.
+
+42
+00:02:08,310 --> 00:02:12,404
+ But it's a very simple data structure using this notion of rooted directed trees,
+
+43
+00:02:12,404 --> 00:02:16,418
+ and once we have this data structure which has O(log N) per operation,
+
+44
+00:02:16,418 --> 00:02:18,980
+ then the key fact is that we're doing at
+
+45
+00:02:18,980 --> 00:02:22,000
+ most M operations and then since
+
+46
+00:02:22,000 --> 00:02:25,270
+ there are order M operations each one taking O(log N) time,
+
+47
+00:02:25,270 --> 00:02:30,460
+ then the total run time for the step three is o(m log n) again.
+
+48
+00:02:30,460 --> 00:02:34,280
+ So step 1 and step 3 both take o(m log n) time,
+
+49
+00:02:34,280 --> 00:02:39,475
+ so the total run time is o(m log n) for the whole algorithm.
+
+50
+00:02:39,475 --> 00:02:41,460
+ Now what I want to focus on in this lecture is not
+
+51
+00:02:41,460 --> 00:02:45,600
+ the data structure but the proof of correctness of this algorithm.
+
+52
+00:02:45,600 --> 00:02:45,600
+ Why does the greedy approach work for this problem?
+

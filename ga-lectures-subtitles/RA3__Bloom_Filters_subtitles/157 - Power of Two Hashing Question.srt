@@ -1,0 +1,120 @@
+1
+00:00:00,000 --> 00:00:01,620
+ what we're gonna do now is instead of
+
+2
+00:00:01,620 --> 00:00:03,570
+ using a single hash function we're going
+
+3
+00:00:03,570 --> 00:00:05,850
+ to choose a pair of hash functions H 1
+
+4
+00:00:05,850 --> 00:00:08,639
+ and H 2 each of these hash tables Maps
+
+5
+00:00:08,639 --> 00:00:11,309
+ elements of U of our possible passwords
+
+6
+00:00:11,309 --> 00:00:15,179
+ into our hash table of size n now we're
+
+7
+00:00:15,179 --> 00:00:16,440
+ assume that these hash functions are
+
+8
+00:00:16,440 --> 00:00:19,020
+ random so each element acts in the
+
+9
+00:00:19,020 --> 00:00:22,320
+ universe of possible passwords maps to a
+
+10
+00:00:22,320 --> 00:00:25,050
+ random element of the hash table H 1 of
+
+11
+00:00:25,050 --> 00:00:27,449
+ X is random in each two of X are random
+
+12
+00:00:27,449 --> 00:00:29,099
+ and these are independent of each other
+
+13
+00:00:29,099 --> 00:00:31,109
+ and independent of the other hash values
+
+14
+00:00:31,109 --> 00:00:33,660
+ the first question is how do we insert
+
+15
+00:00:33,660 --> 00:00:36,480
+ an element a possible password into our
+
+16
+00:00:36,480 --> 00:00:39,090
+ dictionary of unacceptable passwords in
+
+17
+00:00:39,090 --> 00:00:41,070
+ the traditional scheme this is quite
+
+18
+00:00:41,070 --> 00:00:42,840
+ straightforward what we do is we look at
+
+19
+00:00:42,840 --> 00:00:45,510
+ our hash function and we look at H of X
+
+20
+00:00:45,510 --> 00:00:48,480
+ that tells us the hash value and now we
+
+21
+00:00:48,480 --> 00:00:50,430
+ looked at the linked list at H of X and
+
+22
+00:00:50,430 --> 00:00:52,530
+ we add element acts onto that linked
+
+23
+00:00:52,530 --> 00:00:54,809
+ list but now we have two hash functions
+
+24
+00:00:54,809 --> 00:00:57,300
+ H 1 and H 2 so how do we do this
+
+25
+00:00:57,300 --> 00:00:59,820
+ insertion into our dictionary in this
+
+26
+00:00:59,820 --> 00:01:01,800
+ scenario when we have two hash functions
+
+27
+00:01:01,800 --> 00:01:03,750
+ this is a bit of an open-ended question
+
+28
+00:01:03,750 --> 00:01:05,100
+ but why don't you think about how you
+
+29
+00:01:05,100 --> 00:01:07,200
+ would insert an element into our
+
+30
+00:01:07,200 --> 00:01:07,200
+ dictionary using two hash functions
+

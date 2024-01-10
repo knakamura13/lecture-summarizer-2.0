@@ -1,0 +1,20 @@
+1
+00:00:00,000 --> 00:00:02,940
+ Let's pause for a moment and you go ahead and think about what
+
+2
+00:00:02,940 --> 00:00:05,790
+ is the solution to the recurrence in this case,
+
+3
+00:00:05,790 --> 00:00:09,990
+ where vertex i is not on the shortest path from s to t. And so,
+
+4
+00:00:09,990 --> 00:00:11,434
+ can we express D(i, s,
+
+5
+00:00:11,434 --> 00:00:11,434
+ t) in terms of smaller subproblem?
+

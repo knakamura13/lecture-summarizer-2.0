@@ -1,0 +1,36 @@
+1
+00:00:00,000 --> 00:00:02,300
+ Now looking into running time of this algorithm,
+
+2
+00:00:02,300 --> 00:00:04,670
+ notice this step partitioning the vector a
+
+3
+00:00:04,670 --> 00:00:07,770
+ into a even and a odd that takes order and time.
+
+4
+00:00:07,770 --> 00:00:10,890
+ This is a recursive call which is of size n over 2.
+
+5
+00:00:10,890 --> 00:00:14,595
+ Similarly for a odd it's a recursive call of size n over 2.
+
+6
+00:00:14,595 --> 00:00:18,215
+ This computation of the Rs takes order one time for each pair.
+
+7
+00:00:18,215 --> 00:00:20,115
+ So takes order n total time.
+
+8
+00:00:20,115 --> 00:00:24,720
+ Therefore this running time satisfies the recurrence T event is 2T event
+
+9
+00:00:24,720 --> 00:00:24,720
+ over 2 plus order n. And of course this solves the order n log n that completes the FFTL.
+

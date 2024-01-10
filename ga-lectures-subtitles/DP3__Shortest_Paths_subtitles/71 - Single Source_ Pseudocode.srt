@@ -1,0 +1,292 @@
+1
+00:00:00,000 --> 00:00:02,430
+ Now, let's just go ahead and detail the Pseudo-code for
+
+2
+00:00:02,430 --> 00:00:06,236
+ our dynamic programming algorithm for the shortest path,
+
+3
+00:00:06,236 --> 00:00:08,435
+ single source shortest path problem.
+
+4
+00:00:08,435 --> 00:00:10,870
+ This algorithm is called the Bellman-Ford algorithm.
+
+5
+00:00:10,870 --> 00:00:13,825
+ The input to the algorithm is a directed graph G,
+
+6
+00:00:13,825 --> 00:00:14,993
+ a star vertex S,
+
+7
+00:00:14,993 --> 00:00:16,920
+ and weights on the edges.
+
+8
+00:00:16,920 --> 00:00:18,590
+ This algorithm goes back to the 50s.
+
+9
+00:00:18,590 --> 00:00:22,255
+ It was devised by Richard Bellman and Lester Ford.
+
+10
+00:00:22,255 --> 00:00:23,535
+ Now one interesting note is,
+
+11
+00:00:23,535 --> 00:00:26,355
+ Richard Bellman who devised this algorithm,
+
+12
+00:00:26,355 --> 00:00:31,530
+ he's actually the one who developed dynamic programming approach in the 1940s,
+
+13
+00:00:31,530 --> 00:00:36,415
+ long before there was any programming on personal computers or anything like that.
+
+14
+00:00:36,415 --> 00:00:40,045
+ So let's start with the base case which is the case i=0.
+
+15
+00:00:40,045 --> 00:00:43,860
+ And we're going to initial D(o,s) so going from S to
+
+16
+00:00:43,860 --> 00:00:48,385
+ itself using in most zero edges that's going to be of length zero.
+
+17
+00:00:48,385 --> 00:00:52,835
+ Now, we're going to work up from i=1 up to i = n -1.
+
+18
+00:00:52,835 --> 00:00:55,595
+ We're going to go over the vertices of the graph Z.
+
+19
+00:00:55,595 --> 00:00:57,132
+ We're going to initialize D(i,
+
+20
+00:00:57,132 --> 00:00:59,250
+ z) to be D(i-1,z).
+
+21
+00:00:59,250 --> 00:01:03,675
+ This is saying, that if we look at the minimum length path using the most i edges,
+
+22
+00:01:03,675 --> 00:01:06,960
+ we're going to first consider using the most i-1 edges
+
+23
+00:01:06,960 --> 00:01:10,715
+ and then we'll look at the scenario using i edges.
+
+24
+00:01:10,715 --> 00:01:14,210
+ To consider the scenario where we use the i edges,
+
+25
+00:01:14,210 --> 00:01:17,855
+ we look at all choices for the penultimate vertex with this Y.
+
+26
+00:01:17,855 --> 00:01:21,780
+ And we're considering those Ys which have an edge from y to z.
+
+27
+00:01:21,780 --> 00:01:25,285
+ Now we look at the path using Y and whether
+
+28
+00:01:25,285 --> 00:01:29,235
+ that path using Y is better than the current best solution.
+
+29
+00:01:29,235 --> 00:01:34,185
+ The current best solution is stored in D(i,z) and the path through Y has length
+
+30
+00:01:34,185 --> 00:01:39,986
+ D(i,-1,y) plus the length of this last edge W(y,z).
+
+31
+00:01:39,986 --> 00:01:43,800
+ If the length of this solution through Y D(i,-1,y)
+
+32
+00:01:43,800 --> 00:01:47,783
+ + W(y,z) is better than the current best solution,
+
+33
+00:01:47,783 --> 00:01:50,935
+ then we're going to update the current solution.
+
+34
+00:01:50,935 --> 00:01:52,200
+ Finally, what do we return?
+
+35
+00:01:52,200 --> 00:01:55,875
+ We return the case where i = n -1.
+
+36
+00:01:55,875 --> 00:01:58,830
+ And we're going to return it for all values of z. I just put
+
+37
+00:01:58,830 --> 00:02:02,965
+ a dot to denote this array of size n. So
+
+38
+00:02:02,965 --> 00:02:07,380
+ D(n-1)is an array of size n or if you think of
+
+39
+00:02:07,380 --> 00:02:12,345
+ it as two-dimensional table we're returning the last row of the table.
+
+40
+00:02:12,345 --> 00:02:15,915
+ Let's take a look at the algorithm a little bit more in detail.
+
+41
+00:02:15,915 --> 00:02:17,950
+ There's one slightly non-trivial step.
+
+42
+00:02:17,950 --> 00:02:20,535
+ Here, we're looking at the edges into z.
+
+43
+00:02:20,535 --> 00:02:23,960
+ Normally, when we have adjacency list we look at the edges out of Z.
+
+44
+00:02:23,960 --> 00:02:26,660
+ So how do we get the edges into a vertex?
+
+45
+00:02:26,660 --> 00:02:30,339
+ What we do is we look at the adjacency list for the reverse graph,
+
+46
+00:02:30,339 --> 00:02:31,905
+ so we flip all the edges.
+
+47
+00:02:31,905 --> 00:02:35,800
+ To construct this graph takes linear time O(n+m) time.
+
+48
+00:02:35,800 --> 00:02:39,810
+ And then we take the adjacency list for this reverse graph and that's going to give us
+
+49
+00:02:39,810 --> 00:02:45,195
+ the edges into z because in the reverse graph these are the edges out of Z.
+
+50
+00:02:45,195 --> 00:02:47,135
+ The edges in the reverse graph which are out of
+
+51
+00:02:47,135 --> 00:02:51,120
+ z are the edges into z in the original graph.
+
+52
+00:02:51,120 --> 00:02:53,040
+ Now, let's look at the running time with this algorithm.
+
+53
+00:02:53,040 --> 00:02:57,090
+ We have a for loop over i from one to n -1.
+
+54
+00:02:57,090 --> 00:03:00,314
+ This for loop is over order n choices.
+
+55
+00:03:00,314 --> 00:03:02,430
+ Then within this for loop, we're going over the vertices a
+
+56
+00:03:02,430 --> 00:03:05,545
+ graph and then we go over the edges into that vertex.
+
+57
+00:03:05,545 --> 00:03:08,830
+ So, really the key step is right here, this for loop.
+
+58
+00:03:08,830 --> 00:03:11,660
+ How many choices are we going over here?
+
+59
+00:03:11,660 --> 00:03:14,580
+ We're going over all edges of the graph once.
+
+60
+00:03:14,580 --> 00:03:19,365
+ So this is order m choices here and within for each edge of the graph,
+
+61
+00:03:19,365 --> 00:03:23,340
+ we do a simple if then statement which is order one time.
+
+62
+00:03:23,340 --> 00:03:28,748
+ So the total time for this for loop for this nested pair of for loops,
+
+63
+00:03:28,748 --> 00:03:32,880
+ we go over the vertices of the graph and then we go over the edges into that vertex.
+
+64
+00:03:32,880 --> 00:03:39,640
+ So the nested for loops combined go over all edges of the graph exactly once.
+
+65
+00:03:39,640 --> 00:03:44,860
+ So these inner four loops take order m time and the outer for loop takes order n time.
+
+66
+00:03:44,860 --> 00:03:48,440
+ So the total time is order n times m. So this algorithm is
+
+67
+00:03:48,440 --> 00:03:52,575
+ actually slower than Dijkstra's algorithm but it allows negative weight edges.
+
+68
+00:03:52,575 --> 00:03:56,390
+ Also, in addition, it's going to allow us to find negative weight cycles.
+
+69
+00:03:56,390 --> 00:03:59,390
+ So far, we've been assuming that there's no negative weight cycles in
+
+70
+00:03:59,390 --> 00:04:04,160
+ the graph so that the shortest path from S to every other vertex is well defined.
+
+71
+00:04:04,160 --> 00:04:06,860
+ Now let's go back and see if we can figure out whether there
+
+72
+00:04:06,860 --> 00:04:10,290
+ is a negative weight cycle in the graph or not and detect it.
+
+73
+00:04:10,290 --> 00:04:10,290
+ And if there is one output it.
+

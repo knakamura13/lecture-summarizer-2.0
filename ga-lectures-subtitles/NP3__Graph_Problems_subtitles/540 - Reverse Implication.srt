@@ -1,0 +1,108 @@
+1
+00:00:00,000 --> 00:00:02,585
+ Now let's look at the reverse implication.
+
+2
+00:00:02,585 --> 00:00:07,680
+ Now since this independent set has size at least G and G is set to M,
+
+3
+00:00:07,680 --> 00:00:13,000
+ then we know that this independent set has exactly one vertex in each of the clauses,
+
+4
+00:00:13,000 --> 00:00:16,590
+ actually in each of the triangles corresponding to the clauses.
+
+5
+00:00:16,590 --> 00:00:20,350
+ Now this vertex corresponds to a literal in the original formula.
+
+6
+00:00:20,350 --> 00:00:22,800
+ So we set that corresponding literal to true.
+
+7
+00:00:22,800 --> 00:00:24,210
+ So we satisfy that literal,
+
+8
+00:00:24,210 --> 00:00:27,030
+ since every clause has a satisfied literal then we know
+
+9
+00:00:27,030 --> 00:00:30,225
+ every clause is satisfied and therefore the formula is satisfied.
+
+10
+00:00:30,225 --> 00:00:33,750
+ But does this correspond to an assignment, a valid assignment?
+
+11
+00:00:33,750 --> 00:00:37,135
+ But notice we have no contradictory literals in this set.
+
+12
+00:00:37,135 --> 00:00:41,370
+ Why? Because we added edges between Xi and Xi bar so we can never
+
+13
+00:00:41,370 --> 00:00:46,190
+ including vertex Xi and a vertex Xi bar in an independent set.
+
+14
+00:00:46,190 --> 00:00:51,120
+ Therefore, we never attempt to set Xi to true and Xi to false.
+
+15
+00:00:51,120 --> 00:00:54,360
+ So this assignment we constructed corresponds to a valid assignment.
+
+16
+00:00:54,360 --> 00:00:57,450
+ This is a valid assignment and it says every clause.
+
+17
+00:00:57,450 --> 00:00:59,450
+ Therefore, it satisfies the formula F,
+
+18
+00:00:59,450 --> 00:01:01,890
+ so we've taken an independent set of size at
+
+19
+00:01:01,890 --> 00:01:04,680
+ least G and we construct a satisfying assignment.
+
+20
+00:01:04,680 --> 00:01:07,220
+ This completes the proof of the reverse implication.
+
+21
+00:01:07,220 --> 00:01:09,110
+ So we've shown this equivalence.
+
+22
+00:01:09,110 --> 00:01:12,750
+ This proves that a reduction from 3SAT to independent set is
+
+23
+00:01:12,750 --> 00:01:15,000
+ correct and it shows how to take
+
+24
+00:01:15,000 --> 00:01:18,925
+ an independent set and construct a satisfying assignment.
+
+25
+00:01:18,925 --> 00:01:21,060
+ And if there is no independent set of size at least
+
+26
+00:01:21,060 --> 00:01:23,670
+ G then there is no satisfying assignment.
+
+27
+00:01:23,670 --> 00:01:23,670
+ So this completes the proof that the Independent set problem is NP-complete.
+

@@ -1,0 +1,224 @@
+1
+00:00:00,000 --> 00:00:02,790
+ So let's design a dynamic programming algorithm for
+
+2
+00:00:02,790 --> 00:00:05,363
+ the single source shortest path problem.
+
+3
+00:00:05,363 --> 00:00:08,820
+ We're given as input a graph and it's a directed graph.
+
+4
+00:00:08,820 --> 00:00:11,220
+ And the edges of the graph are waited,
+
+5
+00:00:11,220 --> 00:00:13,885
+ and they are waited arbitrarily so they can be positive,
+
+6
+00:00:13,885 --> 00:00:16,622
+ some can be negative, so we can no longer apply Dijkstra's algorithm.
+
+7
+00:00:16,622 --> 00:00:20,675
+ And we have some specified start for text S,
+
+8
+00:00:20,675 --> 00:00:24,630
+ and our goal is to find the shortest path from S to every other vertex.
+
+9
+00:00:24,630 --> 00:00:26,403
+ Now what about negative weight cycles?
+
+10
+00:00:26,403 --> 00:00:30,990
+ Let's assume for now that there are no negative weight cycles in the graph and therefore,
+
+11
+00:00:30,990 --> 00:00:34,905
+ the shortest path length from S to every other vertex is well-defined.
+
+12
+00:00:34,905 --> 00:00:37,280
+ We're going to visit every vertex at most once.
+
+13
+00:00:37,280 --> 00:00:40,665
+ We'll see how to solve this problem and then we'll see
+
+14
+00:00:40,665 --> 00:00:42,975
+ a slight tweak of the algorithm will
+
+15
+00:00:42,975 --> 00:00:45,940
+ detect whether there exists a negative weight cycle or not.
+
+16
+00:00:45,940 --> 00:00:49,105
+ But for now, let's assume there's no negative weight cycles in the graph.
+
+17
+00:00:49,105 --> 00:00:50,807
+ Problem is well-define.
+
+18
+00:00:50,807 --> 00:00:54,150
+ Since there are no negative weight cycles in the graph, as we just noticed,
+
+19
+00:00:54,150 --> 00:00:57,120
+ the shortest path from the start vertex S to
+
+20
+00:00:57,120 --> 00:01:01,305
+ any other particular vertex Z visits every vertex at most once.
+
+21
+00:01:01,305 --> 00:01:06,075
+ There's no reason to repeat a vertex because the cycles all have positive length.
+
+22
+00:01:06,075 --> 00:01:09,315
+ So let cal P denote the path,
+
+23
+00:01:09,315 --> 00:01:13,070
+ the particular path which is of shortest length from S to Z.
+
+24
+00:01:13,070 --> 00:01:17,183
+ If there's multiple ones let P be any particular one of shortest length.
+
+25
+00:01:17,183 --> 00:01:19,380
+ Since we visit every vertex at most once,
+
+26
+00:01:19,380 --> 00:01:21,150
+ what do we know about the length of P?
+
+27
+00:01:21,150 --> 00:01:25,970
+ P contains at most N minus one edges because we visit every vertex at most once.
+
+28
+00:01:25,970 --> 00:01:27,390
+ Now let's try to design
+
+29
+00:01:27,390 --> 00:01:32,065
+ a dynamic programming algorithm for this single source shortest path problem.
+
+30
+00:01:32,065 --> 00:01:36,630
+ Normally we try to use a prefix of the input in our dynamic programming algorithm.
+
+31
+00:01:36,630 --> 00:01:39,775
+ Here it's going to be a little different type of solution.
+
+32
+00:01:39,775 --> 00:01:42,980
+ Notice that the path length is at most N minus one edges.
+
+33
+00:01:42,980 --> 00:01:45,570
+ Let's try to use a prefix of the path.
+
+34
+00:01:45,570 --> 00:01:46,900
+ What do we mean by that?
+
+35
+00:01:46,900 --> 00:01:50,640
+ Let's try to condition on the number of edges in the path.
+
+36
+00:01:50,640 --> 00:01:52,750
+ What we're going to do is to introduce a variable
+
+37
+00:01:52,750 --> 00:01:56,140
+ I which is going to vary from zero to N minus one.
+
+38
+00:01:56,140 --> 00:02:00,830
+ And this is going to be the number of edges that we allow on the pass that we consider.
+
+39
+00:02:00,830 --> 00:02:03,555
+ When I equals N minus one,
+
+40
+00:02:03,555 --> 00:02:05,500
+ then we're going to allow the pass to be of length
+
+41
+00:02:05,500 --> 00:02:09,425
+ at most N minus one edges and that's going to solve the shortest path problem.
+
+42
+00:02:09,425 --> 00:02:11,140
+ It's going to be the final solution.
+
+43
+00:02:11,140 --> 00:02:13,960
+ At the beginning, the base case I equals zero,
+
+44
+00:02:13,960 --> 00:02:15,520
+ we don't allow any edges.
+
+45
+00:02:15,520 --> 00:02:20,000
+ That's more formally defined the subproblem for a dynamic programming algorithm.
+
+46
+00:02:20,000 --> 00:02:21,805
+ We're going to have two parameters,
+
+47
+00:02:21,805 --> 00:02:27,955
+ I and Z. I is going to vary between zero and N minus one and Z is a vertex of the graph.
+
+48
+00:02:27,955 --> 00:02:32,330
+ And we're going to find the function capital D of I, Z.
+
+49
+00:02:32,330 --> 00:02:36,250
+ This is going to denote the length of the shortest path from S to Z,
+
+50
+00:02:36,250 --> 00:02:40,275
+ but we only consider pass which use at most I edges.
+
+51
+00:02:40,275 --> 00:02:45,190
+ So when I is N minus one then this is the final solution that we're looking for and we're
+
+52
+00:02:45,190 --> 00:02:47,635
+ going to build up our solutions starting from I equal
+
+53
+00:02:47,635 --> 00:02:51,040
+ zero and building it up to N minus one.
+
+54
+00:02:51,040 --> 00:02:54,065
+ So now let's try to write a recurrence for D of I, Z.
+
+55
+00:02:54,065 --> 00:02:56,160
+ Our goal is to express D of I,
+
+56
+00:02:56,160 --> 00:02:56,160
+ Z in term of D of I minus-
+

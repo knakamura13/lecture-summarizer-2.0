@@ -1,0 +1,228 @@
+1
+00:00:00,000 --> 00:00:03,045
+ Now, we want to choose a pair of primes P and Q.
+
+2
+00:00:03,045 --> 00:00:06,930
+ One way to do that, is to have a table of prime numbers,
+
+3
+00:00:06,930 --> 00:00:10,020
+ and then just go through that table of prime numbers.
+
+4
+00:00:10,020 --> 00:00:11,665
+ What's the problem with that?
+
+5
+00:00:11,665 --> 00:00:14,400
+ Well, if somebody has access to our table,
+
+6
+00:00:14,400 --> 00:00:17,765
+ then it'll be easy to crack our cryptographic scheme.
+
+7
+00:00:17,765 --> 00:00:19,720
+ So, we want something more secure.
+
+8
+00:00:19,720 --> 00:00:21,210
+ So what's the better approach?
+
+9
+00:00:21,210 --> 00:00:24,310
+ A better approach is to choose random primes P and Q,
+
+10
+00:00:24,310 --> 00:00:27,930
+ and we want these primes P and Q to be chosen,
+
+11
+00:00:27,930 --> 00:00:30,350
+ so that every time we run the algorithm they are
+
+12
+00:00:30,350 --> 00:00:34,105
+ being chosen independently from previous runs.
+
+13
+00:00:34,105 --> 00:00:36,780
+ So, how do we choose these primes at random?
+
+14
+00:00:36,780 --> 00:00:39,120
+ Well, first off how do we choose random numbers?
+
+15
+00:00:39,120 --> 00:00:40,725
+ That's, what we're going to do first.
+
+16
+00:00:40,725 --> 00:00:43,860
+ Let R be a random N-bit number.
+
+17
+00:00:43,860 --> 00:00:45,900
+ How do we choose R? Let's say,
+
+18
+00:00:45,900 --> 00:00:47,105
+ little N is six,
+
+19
+00:00:47,105 --> 00:00:48,480
+ actually in practice though,
+
+20
+00:00:48,480 --> 00:00:52,110
+ little N is going to be a huge number like a 1000 or 2000.
+
+21
+00:00:52,110 --> 00:00:54,080
+ How do we generate this random 6 bit number?
+
+22
+00:00:54,080 --> 00:00:58,745
+ We have a one dimensional array of size 6 and we generate each of the bits,
+
+23
+00:00:58,745 --> 00:01:02,135
+ for each bit we choose a random number 0 or 1.
+
+24
+00:01:02,135 --> 00:01:06,620
+ And, we make sure that every bit is generated independently of every other bit.
+
+25
+00:01:06,620 --> 00:01:08,600
+ And, then every time we run the algorithm,
+
+26
+00:01:08,600 --> 00:01:12,555
+ the bits are generated independent of previous runs of the algorithm.
+
+27
+00:01:12,555 --> 00:01:15,500
+ So, this is quite easy to generate random N-bit number,
+
+28
+00:01:15,500 --> 00:01:19,615
+ but we want a random N-bit prime number. So what do we do?
+
+29
+00:01:19,615 --> 00:01:23,910
+ We choose a random N-bit number regardless of whether it's prime or not.
+
+30
+00:01:23,910 --> 00:01:28,430
+ And then we check whether this random number is prime or not. How do we do that?
+
+31
+00:01:28,430 --> 00:01:30,260
+ We'll see how to do that in a moment.
+
+32
+00:01:30,260 --> 00:01:33,024
+ But, suppose we have a test for primality,
+
+33
+00:01:33,024 --> 00:01:36,410
+ so we given a number we can check whether it's prime or not.
+
+34
+00:01:36,410 --> 00:01:39,860
+ Then, if this random number happens to be prime then, what do we know?
+
+35
+00:01:39,860 --> 00:01:42,545
+ Then, we know it's a random prime number.
+
+36
+00:01:42,545 --> 00:01:46,070
+ So in that case, if R is prime we can output it,
+
+37
+00:01:46,070 --> 00:01:48,600
+ because it is a random prime number.
+
+38
+00:01:48,600 --> 00:01:50,840
+ What do we do if it's not a prime number?
+
+39
+00:01:50,840 --> 00:01:52,630
+ Then we repeat this procedure.
+
+40
+00:01:52,630 --> 00:01:54,260
+ We generate a new random number,
+
+41
+00:01:54,260 --> 00:01:56,195
+ check whether it's prime or not.
+
+42
+00:01:56,195 --> 00:01:59,545
+ How long is this algorithm going to take before it finds a prime number?
+
+43
+00:01:59,545 --> 00:02:02,295
+ Well the key thing is that primes are dense.
+
+44
+00:02:02,295 --> 00:02:03,965
+ What do we mean more precisely?
+
+45
+00:02:03,965 --> 00:02:06,965
+ The probability that this random number R,
+
+46
+00:02:06,965 --> 00:02:12,040
+ happens to be a prime number is roughly 1 over little N,
+
+47
+00:02:12,040 --> 00:02:13,640
+ which is the number of bits in it.
+
+48
+00:02:13,640 --> 00:02:17,880
+ So, for generating a 1000 bit number or a 2000 bit number
+
+49
+00:02:17,880 --> 00:02:22,805
+ the probability that it's going to be prime is about 1 over a 1000 or 1 over 2000,
+
+50
+00:02:22,805 --> 00:02:26,210
+ which means how many times are we going to have to repeat this procedure,
+
+51
+00:02:26,210 --> 00:02:28,165
+ before we find a prime number?
+
+52
+00:02:28,165 --> 00:02:31,580
+ In expectation, is going to be about little N,
+
+53
+00:02:31,580 --> 00:02:34,790
+ it's going to be about a 1000 or 2000 times,
+
+54
+00:02:34,790 --> 00:02:36,830
+ which is not a big deal, to repeat this
+
+55
+00:02:36,830 --> 00:02:40,465
+ a 1000 or 2000 trials before we find a prime number.
+
+56
+00:02:40,465 --> 00:02:41,775
+ But the question remains,
+
+57
+00:02:41,775 --> 00:02:41,775
+ how do we check whether a given number R is prime or not?
+

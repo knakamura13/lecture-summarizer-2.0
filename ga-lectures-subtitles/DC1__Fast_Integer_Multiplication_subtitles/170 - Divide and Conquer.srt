@@ -1,0 +1,116 @@
+1
+00:00:00,000 --> 00:00:02,955
+ Divide and Conquer Algorithms or Recursive Algorithms
+
+2
+00:00:02,955 --> 00:00:06,055
+ is one of the first algorithmic tools that many of you may have learn.
+
+3
+00:00:06,055 --> 00:00:08,790
+ For example, binary search or merge sort.
+
+4
+00:00:08,790 --> 00:00:10,950
+ To see the power of divide and conquer,
+
+5
+00:00:10,950 --> 00:00:14,960
+ we'll look at a fundamental problem multiplying two n bit numbers.
+
+6
+00:00:14,960 --> 00:00:17,010
+ Here, we'll assume the numbers are huge.
+
+7
+00:00:17,010 --> 00:00:19,460
+ For example, they may be thousands of bits long.
+
+8
+00:00:19,460 --> 00:00:22,590
+ This will be the case in an application such as RSA.
+
+9
+00:00:22,590 --> 00:00:23,790
+ Since they are so large,
+
+10
+00:00:23,790 --> 00:00:26,830
+ we can no longer utilize the hardware implementation.
+
+11
+00:00:26,830 --> 00:00:29,220
+ We'll see a clever divide and conquer algorithm
+
+12
+00:00:29,220 --> 00:00:32,440
+ which is faster than the standard multiplication approach.
+
+13
+00:00:32,440 --> 00:00:35,760
+ Another fundamental problem we'll look at is given n numbers,
+
+14
+00:00:35,760 --> 00:00:37,825
+ we'd like to find the median element.
+
+15
+00:00:37,825 --> 00:00:39,162
+ The numbers are unsorted,
+
+16
+00:00:39,162 --> 00:00:40,860
+ so they are in arbitrary order.
+
+17
+00:00:40,860 --> 00:00:43,830
+ Can we find the median without first sorting the list?
+
+18
+00:00:43,830 --> 00:00:47,820
+ We'll look at a really ingenious divide and conquer algorithm to do just that.
+
+19
+00:00:47,820 --> 00:00:52,230
+ Finally, we'll dive into the beautiful FFT algorithm, Fast Fourier Transform.
+
+20
+00:00:52,230 --> 00:00:54,805
+ It's impossible to overstate the importance of this algorithm,
+
+21
+00:00:54,805 --> 00:00:56,035
+ it's used in many fields.
+
+22
+00:00:56,035 --> 00:00:58,280
+ For example, signal processing.
+
+23
+00:00:58,280 --> 00:01:02,160
+ In fact, it was called the most important numerical algorithm of our lifetime.
+
+24
+00:01:02,160 --> 00:01:05,340
+ At least that was the case at time of the quote in 1994.
+
+25
+00:01:05,340 --> 00:01:10,060
+ To understand FFT, we're going to have to recall some basics about complex numbers.
+
+26
+00:01:10,060 --> 00:01:12,495
+ Once you understand the basic mathematics behind it,
+
+27
+00:01:12,495 --> 00:01:15,620
+ you'll appreciate the beauty and simplicity of the algorithm.
+
+28
+00:01:15,620 --> 00:01:19,065
+ It will take some time and mental effort to get up to steam for the FFT algorithm,
+
+29
+00:01:19,065 --> 00:01:19,065
+ but it'll be worth it. It's a masterpiece.
+

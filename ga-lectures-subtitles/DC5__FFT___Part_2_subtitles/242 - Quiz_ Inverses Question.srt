@@ -1,0 +1,32 @@
+1
+00:00:00,000 --> 00:00:02,275
+ Before we dive into the proof of the Lemma,
+
+2
+00:00:02,275 --> 00:00:06,030
+ let's take a quick quiz on some basic properties of roots of unity.
+
+3
+00:00:06,030 --> 00:00:10,460
+ We saw just before about Omega_n to the negative one,
+
+4
+00:00:10,460 --> 00:00:12,330
+ the inverse of Omega_n.
+
+5
+00:00:12,330 --> 00:00:16,430
+ To make sure you understand that let's look at Omega_n square.
+
+6
+00:00:16,430 --> 00:00:18,325
+ What's the inverse of this number?
+
+7
+00:00:18,325 --> 00:00:21,290
+ And don't simply write it with negative two in the exponent,
+
+8
+00:00:21,290 --> 00:00:21,290
+ write in some manner so that you have a positive exponent.
+

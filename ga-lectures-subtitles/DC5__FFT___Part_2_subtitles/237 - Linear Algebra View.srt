@@ -1,0 +1,92 @@
+1
+00:00:00,000 --> 00:00:02,320
+ Before we explore inverse FFT,
+
+2
+00:00:02,320 --> 00:00:06,875
+ it will be useful to explore the linear algebraic view of FFT.
+
+3
+00:00:06,875 --> 00:00:11,060
+ In this way, we can look at FFT as multiplication of matrices and vectors.
+
+4
+00:00:11,060 --> 00:00:12,885
+ So consider a point x_j.
+
+5
+00:00:12,885 --> 00:00:17,310
+ The polynomial A of X evaluated at the point x_j equals a_0
+
+6
+00:00:17,310 --> 00:00:22,065
+ plus a_1 x_j plus a_2 x_j squared and so on.
+
+7
+00:00:22,065 --> 00:00:27,170
+ The last term is a_n-1 x_j to the n-1.
+
+8
+00:00:27,170 --> 00:00:31,140
+ Notice that this quantity can be rewritten as the inner product of two vectors.
+
+9
+00:00:31,140 --> 00:00:34,740
+ The first vector are the powers of x_j.
+
+10
+00:00:34,740 --> 00:00:39,030
+ And the second vector are the coefficients for this polynomial A of X.
+
+11
+00:00:39,030 --> 00:00:43,230
+ Now, FFT is evaluating this polynomial A of X and endpoints.
+
+12
+00:00:43,230 --> 00:00:47,190
+ So let's look at this linear algebra view for the endpoints.
+
+13
+00:00:47,190 --> 00:00:50,810
+ Now we're evaluating this polynomial A of X at these endpoints.
+
+14
+00:00:50,810 --> 00:00:53,760
+ So we're computing A of_x_0,
+
+15
+00:00:53,760 --> 00:00:57,225
+ A of x_1 and so on up to A_of_Xn-1.
+
+16
+00:00:57,225 --> 00:01:02,725
+ The rows of this matrix would correspond to the powers of these points x_0 through Xn-1.
+
+17
+00:01:02,725 --> 00:01:04,420
+ We'll fill that in a second.
+
+18
+00:01:04,420 --> 00:01:06,150
+ But first what is this vector?
+
+19
+00:01:06,150 --> 00:01:09,750
+ This vector are the coefficients of the polynomial A of X.
+
+20
+00:01:09,750 --> 00:01:12,110
+ Now, filling in the rows of this matrix.
+
+21
+00:01:12,110 --> 00:01:15,230
+ The first row are the powers of x_0,
+
+22
+00:01:15,230 --> 00:01:17,490
+ and then the powers of X1.
+
+23
+00:01:17,490 --> 00:01:17,490
+ And finally, we have the powers of Xn-1.
+

@@ -1,0 +1,80 @@
+1
+00:00:00,000 --> 00:00:02,175
+ Our first topic is dynamic programming.
+
+2
+00:00:02,175 --> 00:00:05,640
+ This is one of my favorite topics to teach because it is extremely useful.
+
+3
+00:00:05,640 --> 00:00:07,635
+ Students often have some trouble with it initially,
+
+4
+00:00:07,635 --> 00:00:10,334
+ but with enough practice it will sink in and actually,
+
+5
+00:00:10,334 --> 00:00:12,660
+ they will seem quite easy once you get the hang of it.
+
+6
+00:00:12,660 --> 00:00:16,205
+ I'll do my best to show you how I solve dynamic programming problems.
+
+7
+00:00:16,205 --> 00:00:18,060
+ And, from there the key to really mastering
+
+8
+00:00:18,060 --> 00:00:21,930
+ dynamic programming is to do lots and lots of practice problems.
+
+9
+00:00:21,930 --> 00:00:23,480
+ The homework is just a start.
+
+10
+00:00:23,480 --> 00:00:25,673
+ Do additional problems from the textbook,
+
+11
+00:00:25,673 --> 00:00:27,445
+ and from other algorithms textbooks,
+
+12
+00:00:27,445 --> 00:00:29,554
+ and from other courses you can find on the web.
+
+13
+00:00:29,554 --> 00:00:31,035
+ We'll start with the toy example,
+
+14
+00:00:31,035 --> 00:00:35,350
+ computing Fibonacci numbers, to illustrate the basic idea of dynamic programming.
+
+15
+00:00:35,350 --> 00:00:36,840
+ Then, we'll dive into a variety of
+
+16
+00:00:36,840 --> 00:00:39,510
+ example problems to get a feel for the different styles of
+
+17
+00:00:39,510 --> 00:00:43,830
+ DP algorithms;- Longest increasing subs sequence (LIS),
+
+18
+00:00:43,830 --> 00:00:48,480
+ longest common subsequence (LCS) the classic Knapsack Problem,
+
+19
+00:00:48,480 --> 00:00:50,940
+ chain matrix multiplication and finally,
+
+20
+00:00:50,940 --> 00:00:50,940
+ we'll look at a few shortest path algorithms using DP.
+

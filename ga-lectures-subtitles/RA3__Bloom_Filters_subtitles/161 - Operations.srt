@@ -1,0 +1,76 @@
+1
+00:00:00,000 --> 00:00:03,210
+ What are the basic operations that our data structure is going to support?
+
+2
+00:00:03,210 --> 00:00:06,080
+ First operation is insert x.
+
+3
+00:00:06,080 --> 00:00:08,220
+ So given a possible password X,
+
+4
+00:00:08,220 --> 00:00:13,650
+ we want to add this password into our dictionary of unacceptable passwords.
+
+5
+00:00:13,650 --> 00:00:16,200
+ The second operation is a query on X,
+
+6
+00:00:16,200 --> 00:00:21,150
+ is this proposed password in our dictionary of unacceptable passwords?
+
+7
+00:00:21,150 --> 00:00:25,410
+ If this proposed password is in our dictionary of unacceptable passwords,
+
+8
+00:00:25,410 --> 00:00:27,564
+ then we're always going to output YES,
+
+9
+00:00:27,564 --> 00:00:29,885
+ so we're always correct in this case.
+
+10
+00:00:29,885 --> 00:00:34,862
+ The problem is that, when this proposed password is not in our dictionary,
+
+11
+00:00:34,862 --> 00:00:37,535
+ so it is an acceptable password,
+
+12
+00:00:37,535 --> 00:00:42,055
+ we usually output NO and we have to bound what we mean by usually.
+
+13
+00:00:42,055 --> 00:00:44,880
+ But occasionally, we're going to output YES.
+
+14
+00:00:44,880 --> 00:00:47,840
+ So when in this proposed password is acceptable,
+
+15
+00:00:47,840 --> 00:00:50,550
+ occasionally we're going to have a false positive and say
+
+16
+00:00:50,550 --> 00:00:53,962
+ YES it is in the dictionary of unacceptable passwords,
+
+17
+00:00:53,962 --> 00:00:56,010
+ so this password is not allowed.
+
+18
+00:00:56,010 --> 00:00:57,420
+ So we have false positives with
+
+19
+00:00:57,420 --> 00:00:57,420
+ some small rate and we have to bound that rate and see what it looks like.
+

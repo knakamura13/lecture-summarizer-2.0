@@ -1,0 +1,192 @@
+1
+00:00:00,000 --> 00:00:04,655
+ Here's a key idea for relating independent sets and cliques in a graph.
+
+2
+00:00:04,655 --> 00:00:07,115
+ Let's compare a clique and independent set.
+
+3
+00:00:07,115 --> 00:00:09,930
+ A clique is fully connected which means that I have
+
+4
+00:00:09,930 --> 00:00:13,410
+ all edges within the pairs of S. In contrast,
+
+5
+00:00:13,410 --> 00:00:18,630
+ an independent set has no edges within the set S. For an independent set,
+
+6
+00:00:18,630 --> 00:00:20,910
+ for any pair X,Y in S,
+
+7
+00:00:20,910 --> 00:00:23,185
+ they are not connected by an edge.
+
+8
+00:00:23,185 --> 00:00:27,075
+ Whereas for clique, for any pair X,Y within S,
+
+9
+00:00:27,075 --> 00:00:29,066
+ they are connected by an edge.
+
+10
+00:00:29,066 --> 00:00:30,830
+ So they are opposites of each other.
+
+11
+00:00:30,830 --> 00:00:33,500
+ Clique is opposite of independent set and vice versa.
+
+12
+00:00:33,500 --> 00:00:35,760
+ Now we're going to have to take an undirected graph where we want to
+
+13
+00:00:35,760 --> 00:00:38,605
+ solve the independent set problem on this graph.
+
+14
+00:00:38,605 --> 00:00:42,030
+ Now we are assuming that we have an algorithm to solve the clique problem.
+
+15
+00:00:42,030 --> 00:00:43,860
+ So we want to transform this input for
+
+16
+00:00:43,860 --> 00:00:48,060
+ the independent set problem into an equivalent input for the clique problem.
+
+17
+00:00:48,060 --> 00:00:51,135
+ What should we do? Well, we should take the opposite of this graph.
+
+18
+00:00:51,135 --> 00:00:52,910
+ What exactly do we mean by the opposite?
+
+19
+00:00:52,910 --> 00:00:54,635
+ Well, let's formalize it now.
+
+20
+00:00:54,635 --> 00:00:59,060
+ We're going to denote the opposite of G as G bar to complement.
+
+21
+00:00:59,060 --> 00:01:01,530
+ It's going to have the same vertex set and
+
+22
+00:01:01,530 --> 00:01:04,665
+ the edges are going to be the complement of the edges here.
+
+23
+00:01:04,665 --> 00:01:12,075
+ So the edges in E bar are those pairs X,Y which are not an edge in E. So in other words,
+
+24
+00:01:12,075 --> 00:01:16,170
+ a pair X,Y is an edge in G bar, if and only if,
+
+25
+00:01:16,170 --> 00:01:20,620
+ the pair X,Y is not an edge in E. So it's not an edge in E,
+
+26
+00:01:20,620 --> 00:01:22,125
+ then it's an edge in E bar.
+
+27
+00:01:22,125 --> 00:01:23,260
+ If it is an edge in E,
+
+28
+00:01:23,260 --> 00:01:25,965
+ then it's not an edge in E bar.
+
+29
+00:01:25,965 --> 00:01:28,340
+ Now we can formalize this key idea,
+
+30
+00:01:28,340 --> 00:01:31,940
+ that clique and independent sets are opposites of each other.
+
+31
+00:01:31,940 --> 00:01:36,785
+ Now our observation is that S is an independent set in the original graph G,
+
+32
+00:01:36,785 --> 00:01:42,790
+ if and only if that same set S is a clique in the complement graph G bar.
+
+33
+00:01:42,790 --> 00:01:47,105
+ So if I look at a graph G and its complement graph, its opposite graph,
+
+34
+00:01:47,105 --> 00:01:50,375
+ then a set S is an independent set in the original graph,
+
+35
+00:01:50,375 --> 00:01:54,924
+ if and only if the set S is a clique in the opposite graph G bar.
+
+36
+00:01:54,924 --> 00:01:57,380
+ Now I call it an observation because it doesn't really
+
+37
+00:01:57,380 --> 00:02:00,365
+ require a proof after observing this statement.
+
+38
+00:02:00,365 --> 00:02:02,225
+ If S is an independent set,
+
+39
+00:02:02,225 --> 00:02:05,185
+ that means for all pairs of vertices X,Y and S,
+
+40
+00:02:05,185 --> 00:02:07,115
+ they are not connected by an edge.
+
+41
+00:02:07,115 --> 00:02:09,755
+ And therefore, in G bar,
+
+42
+00:02:09,755 --> 00:02:11,330
+ they are connected by an edge.
+
+43
+00:02:11,330 --> 00:02:14,900
+ And therefore, S is fully connected in G bar.
+
+44
+00:02:14,900 --> 00:02:18,755
+ And similarly, if S is a clique in G bar that means
+
+45
+00:02:18,755 --> 00:02:23,025
+ all pairs X,Y are connected by an edge than in the original graph G,
+
+46
+00:02:23,025 --> 00:02:25,085
+ all pairs are not connected by an edge.
+
+47
+00:02:25,085 --> 00:02:27,185
+ And therefore, it's an independent set.
+
+48
+00:02:27,185 --> 00:02:27,185
+ S does not contain any edges in the original graph G.
+

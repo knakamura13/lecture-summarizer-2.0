@@ -1,0 +1,20 @@
+1
+00:00:00,000 --> 00:00:04,295
+ Let's make sure you recall the notation for the SAT problem.
+
+2
+00:00:04,295 --> 00:00:07,785
+ So once you go ahead and write a satisfying assignment for this formula,
+
+3
+00:00:07,785 --> 00:00:09,640
+ so give an assignment for X1,
+
+4
+00:00:09,640 --> 00:00:13,475
+ X2 and X3, so that the formula evaluates to TRUE.
+
+5
+00:00:13,475 --> 00:00:13,475
+ If there's no such satisfying assignment then go ahead and enter no.
+

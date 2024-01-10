@@ -1,0 +1,176 @@
+1
+00:00:00,000 --> 00:00:05,385
+ Let's take a look in detail how the residual graph changes potentially in a round.
+
+2
+00:00:05,385 --> 00:00:08,085
+ Now, consider an edge of the original flow network.
+
+3
+00:00:08,085 --> 00:00:11,160
+ Now, this edge itself might be in the residual network or
+
+4
+00:00:11,160 --> 00:00:14,580
+ its back edge from w to v might be in the residual network.
+
+5
+00:00:14,580 --> 00:00:16,920
+ Let's look at when the forward or backward edge might
+
+6
+00:00:16,920 --> 00:00:19,525
+ be added or removed from the residual network.
+
+7
+00:00:19,525 --> 00:00:22,545
+ When do we add this forward edge to the residual network?
+
+8
+00:00:22,545 --> 00:00:24,680
+ Well, in order to not be there before,
+
+9
+00:00:24,680 --> 00:00:26,530
+ the flow had to be full.
+
+10
+00:00:26,530 --> 00:00:28,033
+ So if the flow was full,
+
+11
+00:00:28,033 --> 00:00:31,200
+ so it means the flow equaled the capacity along that edge,
+
+12
+00:00:31,200 --> 00:00:33,030
+ and then the flow was reduced,
+
+13
+00:00:33,030 --> 00:00:35,660
+ then this edge would have leftover capacity.
+
+14
+00:00:35,660 --> 00:00:38,190
+ So it would be added into the residual network.
+
+15
+00:00:38,190 --> 00:00:40,880
+ Now, how can the flow be reduced along this edge?
+
+16
+00:00:40,880 --> 00:00:43,185
+ That means we send flow along the back edge.
+
+17
+00:00:43,185 --> 00:00:44,935
+ To send flow along the back edge,
+
+18
+00:00:44,935 --> 00:00:48,380
+ that means the back edge was in the augmenting path cal-p.
+
+19
+00:00:48,380 --> 00:00:52,365
+ So if this forward edge was added into the residual network,
+
+20
+00:00:52,365 --> 00:00:55,770
+ then the back edge must have been on the augmenting path.
+
+21
+00:00:55,770 --> 00:00:58,050
+ Now, let's look at the other case where we remove
+
+22
+00:00:58,050 --> 00:01:00,720
+ this forward edge from the residual network.
+
+23
+00:01:00,720 --> 00:01:03,885
+ Now, we will remove it if there was some leftover capacity,
+
+24
+00:01:03,885 --> 00:01:06,005
+ but now there's no leftover capacity.
+
+25
+00:01:06,005 --> 00:01:09,110
+ So the flow equals the capacity along this edge.
+
+26
+00:01:09,110 --> 00:01:10,770
+ That means we augmented the flow,
+
+27
+00:01:10,770 --> 00:01:12,705
+ increased the flow along this edge.
+
+28
+00:01:12,705 --> 00:01:16,365
+ So this forward edge itself is on the augmenting path.
+
+29
+00:01:16,365 --> 00:01:21,450
+ In order to remove this forward edge from v to w from the residual graph,
+
+30
+00:01:21,450 --> 00:01:24,720
+ then this forward edge from v to w must
+
+31
+00:01:24,720 --> 00:01:28,260
+ be on the augmenting path because we increased the flow along this edge.
+
+32
+00:01:28,260 --> 00:01:31,290
+ Now, the other type of edge that we can add into the residual network is
+
+33
+00:01:31,290 --> 00:01:34,845
+ the back edge from w to v. To add the back edge in,
+
+34
+00:01:34,845 --> 00:01:38,430
+ the flow must have been empty and then we increase the flow along
+
+35
+00:01:38,430 --> 00:01:42,170
+ the edge from v to w. To increase the flow from v to w,
+
+36
+00:01:42,170 --> 00:01:45,840
+ that means this edge from v to w must be on the augmenting path.
+
+37
+00:01:45,840 --> 00:01:49,540
+ The final case is when we will remove the back edge from the residual network.
+
+38
+00:01:49,540 --> 00:01:52,560
+ Now, in order to remove this back edge from the residual network,
+
+39
+00:01:52,560 --> 00:01:55,530
+ there must have been some flow along the forward edge,
+
+40
+00:01:55,530 --> 00:01:57,690
+ and then the flow is now empty.
+
+41
+00:01:57,690 --> 00:02:00,450
+ So we must have decreased the flow along this forward edge.
+
+42
+00:02:00,450 --> 00:02:03,180
+ To decrease the flow along the forward edge,
+
+43
+00:02:03,180 --> 00:02:05,845
+ that means we send flow along the back edge.
+
+44
+00:02:05,845 --> 00:02:05,845
+ So the back edge from w to v must be on the augmenting path cal-P.
+

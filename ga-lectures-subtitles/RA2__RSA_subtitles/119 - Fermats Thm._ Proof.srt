@@ -1,0 +1,152 @@
+1
+00:00:00,000 --> 00:00:02,205
+ So, here's Fermet's little theorem again.
+
+2
+00:00:02,205 --> 00:00:07,260
+ For prime number p, for every z between one and p minus one,
+
+3
+00:00:07,260 --> 00:00:13,620
+ if we look at z raised to the power of p minus one and take in mod p we end up with one.
+
+4
+00:00:13,620 --> 00:00:15,776
+ So well let's look at the proof of this theorem.
+
+5
+00:00:15,776 --> 00:00:18,335
+ Let me look at the set of possible z's. What are these?
+
+6
+00:00:18,335 --> 00:00:21,120
+ These are all the numbers between one and p minus one.
+
+7
+00:00:21,120 --> 00:00:23,555
+ One, two, three up to p minus one.
+
+8
+00:00:23,555 --> 00:00:26,700
+ Let's define the set s as the possible z's.
+
+9
+00:00:26,700 --> 00:00:27,930
+ So, these are the numbers one,
+
+10
+00:00:27,930 --> 00:00:29,815
+ two, three up to p minus one.
+
+11
+00:00:29,815 --> 00:00:34,090
+ Which is defined in this set s. Now let's look at another set s prime.
+
+12
+00:00:34,090 --> 00:00:38,205
+ S Prime is going to be defined by taking the elements of s,
+
+13
+00:00:38,205 --> 00:00:40,260
+ each of these p minus one elements,
+
+14
+00:00:40,260 --> 00:00:42,585
+ multiplying each one by z.
+
+15
+00:00:42,585 --> 00:00:45,570
+ So we got z times s and then for each of
+
+16
+00:00:45,570 --> 00:00:51,145
+ those elements we take it mod p. So the first element is going to be one time z
+
+17
+00:00:51,145 --> 00:00:55,660
+ mod p. The second element is going to be two times z mod p.
+
+18
+00:00:55,660 --> 00:00:57,570
+ The last element is going to be p minus
+
+19
+00:00:57,570 --> 00:01:01,225
+ one times z mod p. Let's look at a simple example.
+
+20
+00:01:01,225 --> 00:01:04,465
+ Let's take p as seven and let's take z as four.
+
+21
+00:01:04,465 --> 00:01:06,270
+ First off, what's the set S?
+
+22
+00:01:06,270 --> 00:01:08,430
+ S there are the numbers one, two, three,
+
+23
+00:01:08,430 --> 00:01:09,910
+ four, five, six.
+
+24
+00:01:09,910 --> 00:01:11,340
+ What's S prime?
+
+25
+00:01:11,340 --> 00:01:13,590
+ Well, the first element is one times four which is
+
+26
+00:01:13,590 --> 00:01:16,770
+ four mod seven, which is going to be four.
+
+27
+00:01:16,770 --> 00:01:21,965
+ The second element is going to be two times four which is eight mod seven which is one.
+
+28
+00:01:21,965 --> 00:01:26,070
+ The third element is going to be three times four which is 12 mod seven which is
+
+29
+00:01:26,070 --> 00:01:30,510
+ five and four times four is 16 mod seven is two.
+
+30
+00:01:30,510 --> 00:01:35,030
+ Five times four is 20 mod seven is six.
+
+31
+00:01:35,030 --> 00:01:40,500
+ Finally six times four is 24 mod seven is three. Look at this set.
+
+32
+00:01:40,500 --> 00:01:43,555
+ It's the same as s except in different order.
+
+33
+00:01:43,555 --> 00:01:47,130
+ So the set of elements are the same just it's a permutation of
+
+34
+00:01:47,130 --> 00:01:51,285
+ s. So the key thing is that s and s prime are the same sets,
+
+35
+00:01:51,285 --> 00:01:52,710
+ just in different order.
+
+36
+00:01:52,710 --> 00:01:54,390
+ Let me prove to you this fact,
+
+37
+00:01:54,390 --> 00:01:58,890
+ that in general s and s prime are the same sets and then we're going to use
+
+38
+00:01:58,890 --> 00:01:58,890
+ this fact that s and s prime are the same sets to prove the Fermet's little Theorem.
+

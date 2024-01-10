@@ -1,0 +1,116 @@
+1
+00:00:00,000 --> 00:00:02,400
+ Now, here again is Ford-Fulkerson algorithm,
+
+2
+00:00:02,400 --> 00:00:03,630
+ and now the question is,
+
+3
+00:00:03,630 --> 00:00:07,315
+ what is the time needed for one round of the algorithm?
+
+4
+00:00:07,315 --> 00:00:10,570
+ Now, one round of the algorithm are steps two through five.
+
+5
+00:00:10,570 --> 00:00:13,725
+ In particular, we first build the residual network,
+
+6
+00:00:13,725 --> 00:00:15,360
+ then we check for a path,
+
+7
+00:00:15,360 --> 00:00:17,520
+ and then we augment along that path.
+
+8
+00:00:17,520 --> 00:00:20,955
+ Now, originally, the residual network is just the input network.
+
+9
+00:00:20,955 --> 00:00:23,775
+ Now, given the residual network from the previous round
+
+10
+00:00:23,775 --> 00:00:26,955
+ how long does it take us to update the residual network?
+
+11
+00:00:26,955 --> 00:00:30,715
+ Given this augmentation along this path P
+
+12
+00:00:30,715 --> 00:00:35,025
+ while the residual network is simply going to change along this one path P,
+
+13
+00:00:35,025 --> 00:00:39,360
+ it might change along the forward edges or the backward edges, or both.
+
+14
+00:00:39,360 --> 00:00:43,185
+ Now, this path is of length at most N and minus one edges,
+
+15
+00:00:43,185 --> 00:00:47,375
+ so it's going to take us order N time to update the residual network.
+
+16
+00:00:47,375 --> 00:00:51,030
+ How do we check for st-path in this residual network?
+
+17
+00:00:51,030 --> 00:00:53,585
+ Well, we run either DFS or BFS.
+
+18
+00:00:53,585 --> 00:00:55,890
+ The running time is linear,
+
+19
+00:00:55,890 --> 00:01:00,855
+ order N plus M. N is the number of vertices, M is the number of edges.
+
+20
+00:01:00,855 --> 00:01:03,660
+ Lets assume the number of edges is at least N minus one,
+
+21
+00:01:03,660 --> 00:01:06,840
+ then this is bounded by order M and also
+
+22
+00:01:06,840 --> 00:01:10,795
+ augmenting the flow along this path also takes order N time.
+
+23
+00:01:10,795 --> 00:01:13,830
+ So, one round of the algorithm is dominated by
+
+24
+00:01:13,830 --> 00:01:17,485
+ this checking for an st-path which takes order N time.
+
+25
+00:01:17,485 --> 00:01:20,220
+ Now, going back to our running time analysis what we
+
+26
+00:01:20,220 --> 00:01:25,095
+ concluded was that it takes order N time per round of the algorithm.
+
+27
+00:01:25,095 --> 00:01:29,505
+ As discussed before is most capital C rounds of the algorithm.
+
+28
+00:01:29,505 --> 00:01:33,810
+ Since in every round the flow increases by at least one unit, therefore,
+
+29
+00:01:33,810 --> 00:01:33,810
+ we can conclude that Ford Focus in algorithm requires time order N times capital C.
+

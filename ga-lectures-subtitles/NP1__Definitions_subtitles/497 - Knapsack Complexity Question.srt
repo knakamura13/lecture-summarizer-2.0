@@ -1,0 +1,16 @@
+1
+00:00:00,000 --> 00:00:02,799
+ For the knapsack problem that we just formulated,
+
+2
+00:00:02,799 --> 00:00:05,295
+ let's address the following two questions.
+
+3
+00:00:05,295 --> 00:00:11,806
+ Knapsack is in the class NP and knapsack is in the class P. For each of these statements,
+
+4
+00:00:11,806 --> 00:00:11,806
+ why don't you mark whether it's true or false?
+

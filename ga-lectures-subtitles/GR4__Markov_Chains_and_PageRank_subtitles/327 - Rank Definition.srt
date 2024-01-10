@@ -1,0 +1,136 @@
+1
+00:00:00,000 --> 00:00:02,900
+ So, let's go ahead and formalize this idea.
+
+2
+00:00:02,900 --> 00:00:05,425
+ So, a citation from web page y,
+
+3
+00:00:05,425 --> 00:00:10,910
+ it's value is going to be proportional to the importance the rank of web page y.
+
+4
+00:00:10,910 --> 00:00:14,305
+ So, we're going to scale this quantity by pi of y.
+
+5
+00:00:14,305 --> 00:00:16,560
+ Formally, the rank of the web page x.
+
+6
+00:00:16,560 --> 00:00:20,280
+ We're going to get it by looking at this sum over all web pages y,
+
+7
+00:00:20,280 --> 00:00:21,825
+ which have a link to x.
+
+8
+00:00:21,825 --> 00:00:25,575
+ The total value of the citations from y is pi of y.
+
+9
+00:00:25,575 --> 00:00:29,310
+ And y has this many outgoing links.
+
+10
+00:00:29,310 --> 00:00:31,380
+ This is the number of out neighbors.
+
+11
+00:00:31,380 --> 00:00:38,215
+ So, this link from y to x has value pi of y divided by the number of out neighbors of y.
+
+12
+00:00:38,215 --> 00:00:41,975
+ And this is going to be the definition of the page rank of web page x.
+
+13
+00:00:41,975 --> 00:00:43,212
+ Well, now to be precise,
+
+14
+00:00:43,212 --> 00:00:46,540
+ this is not exactly the definition of the page rank of a web page x.
+
+15
+00:00:46,540 --> 00:00:48,780
+ There's a technical glitch that we'll notice by
+
+16
+00:00:48,780 --> 00:00:51,425
+ looking at this from the perspective of Markov chains.
+
+17
+00:00:51,425 --> 00:00:53,650
+ Before we dive back into Markov chains,
+
+18
+00:00:53,650 --> 00:00:57,235
+ let's look closely at this proposed definition of the rank.
+
+19
+00:00:57,235 --> 00:00:58,700
+ It's a recursive definition.
+
+20
+00:00:58,700 --> 00:01:00,890
+ So, first off, is it well defined?
+
+21
+00:01:00,890 --> 00:01:04,525
+ Is there a pi satisfying it for every vertex x?
+
+22
+00:01:04,525 --> 00:01:07,410
+ This question of whether there exists a pi satisfying it,
+
+23
+00:01:07,410 --> 00:01:09,240
+ corresponds to whether there exists
+
+24
+00:01:09,240 --> 00:01:13,165
+ a stationary distribution for the corresponding Markov chain.
+
+25
+00:01:13,165 --> 00:01:15,320
+ Now, if there does exist such a pi,
+
+26
+00:01:15,320 --> 00:01:16,900
+ is there any unique such pi?
+
+27
+00:01:16,900 --> 00:01:18,830
+ Or are there multiple pis?
+
+28
+00:01:18,830 --> 00:01:20,700
+ This corresponds to the question of whether there is
+
+29
+00:01:20,700 --> 00:01:24,595
+ a unique stationary distribution or multiple stationary distributions.
+
+30
+00:01:24,595 --> 00:01:28,880
+ We'll address both of these questions using our intuition from Markov chains.
+
+31
+00:01:28,880 --> 00:01:31,560
+ First, we'll derive this definition using
+
+32
+00:01:31,560 --> 00:01:33,870
+ Markov chains and then we'll see how to
+
+33
+00:01:33,870 --> 00:01:37,080
+ ensure that there is a unique stationary distribution.
+
+34
+00:01:37,080 --> 00:01:37,080
+ So, let's dive back into Markov chains now.
+

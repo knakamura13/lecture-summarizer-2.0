@@ -1,0 +1,228 @@
+1
+00:00:00,000 --> 00:00:02,905
+ I suppose that P is not equal to NP.
+
+2
+00:00:02,905 --> 00:00:04,893
+ Now looking at our diagram from before,
+
+3
+00:00:04,893 --> 00:00:06,090
+ that means that this donor,
+
+4
+00:00:06,090 --> 00:00:10,485
+ this separation between P and NP is non-empty.
+
+5
+00:00:10,485 --> 00:00:14,965
+ Therefore there are some such problems which can't be solved in polynomial time.
+
+6
+00:00:14,965 --> 00:00:19,965
+ They don't lie in the class P. What are the hard problems that lie in this donor?
+
+7
+00:00:19,965 --> 00:00:24,840
+ These intractable problems, these problems that we can't solve in polynomial time.
+
+8
+00:00:24,840 --> 00:00:27,510
+ The answer is NP complete problems.
+
+9
+00:00:27,510 --> 00:00:29,280
+ Now there may be other problems that lie in
+
+10
+00:00:29,280 --> 00:00:32,400
+ this class NP which do not lie in P. So they lie in
+
+11
+00:00:32,400 --> 00:00:38,580
+ this Donor but NP-complete problems are guaranteed to lie in this donor if it exists.
+
+12
+00:00:38,580 --> 00:00:42,035
+ NP complete problems are the hardest problems in the class NP.
+
+13
+00:00:42,035 --> 00:00:44,995
+ Let me repeat that because it's very key.
+
+14
+00:00:44,995 --> 00:00:49,440
+ NP complete problems are the hardest in the class NP.
+
+15
+00:00:49,440 --> 00:00:52,475
+ Now, what exactly do we mean by the hardest in the class?
+
+16
+00:00:52,475 --> 00:00:56,712
+ We mean that if P is not equal to NP then the following holds.
+
+17
+00:00:56,712 --> 00:01:00,495
+ Then all the NP complete problems are not in the class P. So
+
+18
+00:01:00,495 --> 00:01:06,870
+ all NP complete problems cannot be solved in polynomial time if P is not equal to NP.
+
+19
+00:01:06,870 --> 00:01:08,250
+ So if P is not equal to NP,
+
+20
+00:01:08,250 --> 00:01:09,935
+ this donor is non-empty.
+
+21
+00:01:09,935 --> 00:01:13,230
+ There are some problems in NP which don't lie in P,
+
+22
+00:01:13,230 --> 00:01:15,740
+ so we can't solve them in polynomial time.
+
+23
+00:01:15,740 --> 00:01:17,400
+ And what does NP complete mean?
+
+24
+00:01:17,400 --> 00:01:19,755
+ Well, these are the hardest in the class NP,
+
+25
+00:01:19,755 --> 00:01:23,390
+ so you can think of them as sort of as the outer layer of this donor.
+
+26
+00:01:23,390 --> 00:01:25,870
+ This outer layer are the NP complete problems.
+
+27
+00:01:25,870 --> 00:01:28,290
+ If there is some separation between these sets,
+
+28
+00:01:28,290 --> 00:01:32,850
+ then these NP complete problems are guaranteed to be in the difference.
+
+29
+00:01:32,850 --> 00:01:34,975
+ Now let's look at this statement more carefully.
+
+30
+00:01:34,975 --> 00:01:38,280
+ An equivalent statement is the contra-positive of it.
+
+31
+00:01:38,280 --> 00:01:42,160
+ Now what's the complement of all NP complete problems are not in P,
+
+32
+00:01:42,160 --> 00:01:45,870
+ where the compliment is that there exists in NP complete problem in
+
+33
+00:01:45,870 --> 00:01:51,250
+ P. In other words a NP complete problem can be solved in polynomial time.
+
+34
+00:01:51,250 --> 00:01:55,950
+ So, the complement of this conclusion that all NP complete problems are not in
+
+35
+00:01:55,950 --> 00:01:58,365
+ the class P is that there exists
+
+36
+00:01:58,365 --> 00:02:02,395
+ NP complete problem that can be solved in polynomial time.
+
+37
+00:02:02,395 --> 00:02:06,570
+ If this holds, then the complement of the hypothesis holds.
+
+38
+00:02:06,570 --> 00:02:10,575
+ The complement of the hypothesis is that P equals NP.
+
+39
+00:02:10,575 --> 00:02:12,390
+ If P equals NP,
+
+40
+00:02:12,390 --> 00:02:17,515
+ that means that all problems in the class NP can be solved in polynomial time.
+
+41
+00:02:17,515 --> 00:02:20,935
+ An equivalent statement to this one is that
+
+42
+00:02:20,935 --> 00:02:24,900
+ if there exists an NP complete problem that can be solved in polynomial time,
+
+43
+00:02:24,900 --> 00:02:29,155
+ then all problems in NP can be solved in polynomial time.
+
+44
+00:02:29,155 --> 00:02:31,405
+ Hence to show that a problem such as set
+
+45
+00:02:31,405 --> 00:02:34,770
+ lies in this and the complete portion of the donut.
+
+46
+00:02:34,770 --> 00:02:38,590
+ We have to show that if there is a polynomial time algorithm for set then there
+
+47
+00:02:38,590 --> 00:02:42,705
+ is a polynomial time algorithm for all problems in the class NP.
+
+48
+00:02:42,705 --> 00:02:47,550
+ We have to show that if there is an algorithm for set which works in polynomial time,
+
+49
+00:02:47,550 --> 00:02:52,720
+ we can use it as the black box to solve all problems NP in polynomial time.
+
+50
+00:02:52,720 --> 00:02:57,280
+ To do that, we're going to take every problem in the class NP.
+
+51
+00:02:57,280 --> 00:02:58,750
+ Now, there are many problems in this class.
+
+52
+00:02:58,750 --> 00:03:02,075
+ I've just marked a few of them but we have to take all such problems.
+
+53
+00:03:02,075 --> 00:03:05,755
+ So we take all such problems and we have to show that
+
+54
+00:03:05,755 --> 00:03:09,925
+ each of these such problems have a reduction to set.
+
+55
+00:03:09,925 --> 00:03:11,890
+ If we can solve set in polynomial time,
+
+56
+00:03:11,890 --> 00:03:17,230
+ we can solve every such problem in the class NP in polynomial time.
+
+57
+00:03:17,230 --> 00:03:17,230
+ Let's look at this more precisely on the next two slides.
+

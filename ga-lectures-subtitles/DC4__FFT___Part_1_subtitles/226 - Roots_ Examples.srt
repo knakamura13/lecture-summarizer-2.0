@@ -1,0 +1,148 @@
+1
+00:00:00,000 --> 00:00:02,436
+ That we saw that for the case n equals 2,
+
+2
+00:00:02,436 --> 00:00:06,905
+ the square roots of unity are the points 1 and minus one.
+
+3
+00:00:06,905 --> 00:00:08,730
+ For the case n equals 4,
+
+4
+00:00:08,730 --> 00:00:15,205
+ we also have the points i and minus i so we have the four points 1_i minus 1 minus i.
+
+5
+00:00:15,205 --> 00:00:20,230
+ This corresponds to going around the unit circle in step sizes of space Pi over 2.
+
+6
+00:00:20,230 --> 00:00:23,970
+ And for n equals 8, we further subdivide the unit circle.
+
+7
+00:00:23,970 --> 00:00:29,008
+ Now we go step sizes of Pi over 4 and then how do we get the points for n equal 16?
+
+8
+00:00:29,008 --> 00:00:30,963
+ We further subdivide.
+
+9
+00:00:30,963 --> 00:00:33,650
+ So this corresponds to omega_sub_16.
+
+10
+00:00:33,650 --> 00:00:38,898
+ The next one is omega_sub_16 squared and notice that it's also omega_sub_8.
+
+11
+00:00:38,898 --> 00:00:41,970
+ It's the first one of the eighth roots of unity.
+
+12
+00:00:41,970 --> 00:00:46,130
+ And this point i is omega_sub_16 to the fourth power,
+
+13
+00:00:46,130 --> 00:00:48,110
+ it's also omega_sub_8 squared,
+
+14
+00:00:48,110 --> 00:00:50,115
+ it's the second one of the 8th roots.
+
+15
+00:00:50,115 --> 00:00:53,520
+ And it's the first of the 4th roots.
+
+16
+00:00:53,520 --> 00:00:56,520
+ So take the nth roots and square them.
+
+17
+00:00:56,520 --> 00:01:00,950
+ And let's suppose that n is a power of 2 as in these examples.
+
+18
+00:01:00,950 --> 00:01:03,015
+ So what happens when you take the 16th root square?
+
+19
+00:01:03,015 --> 00:01:05,445
+ Well this guy goes there,
+
+20
+00:01:05,445 --> 00:01:08,550
+ this one goes there, this one goes there,
+
+21
+00:01:08,550 --> 00:01:10,783
+ this one goes there. What do you get?
+
+22
+00:01:10,783 --> 00:01:13,680
+ You get every other one of the 16th roots,
+
+23
+00:01:13,680 --> 00:01:19,370
+ which are the 8th roots so the 16th root squared are the 8th roots.
+
+24
+00:01:19,370 --> 00:01:21,050
+ And when n is a power of 2,
+
+25
+00:01:21,050 --> 00:01:25,040
+ the nth root squared are the n over 2nd second roots.
+
+26
+00:01:25,040 --> 00:01:28,150
+ The other key property is this plus minus property.
+
+27
+00:01:28,150 --> 00:01:29,354
+ Take this point omega_sub_16.
+
+28
+00:01:29,354 --> 00:01:31,725
+ What is the opposite of it?
+
+29
+00:01:31,725 --> 00:01:33,120
+ It's this point right here.
+
+30
+00:01:33,120 --> 00:01:35,570
+ This is negative omega_sub_16.
+
+31
+00:01:35,570 --> 00:01:38,440
+ It's also a 16th root of unity. Which one is it?
+
+32
+00:01:38,440 --> 00:01:40,310
+ Well, this is the 1st first, this is the 8th,
+
+33
+00:01:40,310 --> 00:01:42,445
+ this is the 9th.
+
+34
+00:01:42,445 --> 00:01:45,635
+ This is the point omega_sub_16 to the 9th power.
+
+35
+00:01:45,635 --> 00:01:47,945
+ And in general, for even n,
+
+36
+00:01:47,945 --> 00:01:55,080
+ omega_sub_n to the jth power is opposite omega_sub_n to the j plus n over two.
+
+37
+00:01:55,080 --> 00:01:55,080
+ By going an extra n over 2, I'm going an extra Pi around so I'm getting the reflection
+

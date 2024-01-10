@@ -1,0 +1,152 @@
+1
+00:00:00,000 --> 00:00:03,420
+ The next topic we'll dive into is the divide and conquer technique.
+
+2
+00:00:03,420 --> 00:00:06,330
+ We've seen a few examples of divide and conquer already.
+
+3
+00:00:06,330 --> 00:00:08,790
+ We saw two examples in the RSA algorithm.
+
+4
+00:00:08,790 --> 00:00:11,850
+ The first was the fast modular exponentiation algorithm
+
+5
+00:00:11,850 --> 00:00:14,000
+ which used the repeated squaring idea.
+
+6
+00:00:14,000 --> 00:00:16,710
+ The second was Euclid's GCD algorithm.
+
+7
+00:00:16,710 --> 00:00:20,520
+ These are two fairly simple applications of divide and conquer approach.
+
+8
+00:00:20,520 --> 00:00:23,950
+ We're going to see some more sophisticated examples in the following lecture.
+
+9
+00:00:23,950 --> 00:00:26,920
+ What we're going to look at now is multiplying n-bit integers.
+
+10
+00:00:26,920 --> 00:00:30,465
+ One of the applications of this problem is in the RSA algorithm setting,
+
+11
+00:00:30,465 --> 00:00:32,535
+ there we have huge integers.
+
+12
+00:00:32,535 --> 00:00:35,484
+ The number of bits is like a thousand or 2000,
+
+13
+00:00:35,484 --> 00:00:40,910
+ so the basic arithmetic operations like multiplication are no longer built into hardware.
+
+14
+00:00:40,910 --> 00:00:44,475
+ The problem formulation is we're given two n-bit integers,
+
+15
+00:00:44,475 --> 00:00:47,505
+ x and y, and we want to compute their product,
+
+16
+00:00:47,505 --> 00:00:49,380
+ Z, which is x times y.
+
+17
+00:00:49,380 --> 00:00:52,365
+ And we want to look at the running time as a function of the number of bits,
+
+18
+00:00:52,365 --> 00:00:54,150
+ that's the input size.
+
+19
+00:00:54,150 --> 00:00:56,835
+ What we discussed in the RSA algorithm lecture,
+
+20
+00:00:56,835 --> 00:01:00,900
+ was that the running time using a naive algorithm for computing
+
+21
+00:01:00,900 --> 00:01:06,300
+ the product of x times y would take n square time, order n square time.
+
+22
+00:01:06,300 --> 00:01:10,815
+ What we're going to do now is an algorithm which is faster than this order n square time.
+
+23
+00:01:10,815 --> 00:01:12,960
+ We're going to do a more sophisticated scheme.
+
+24
+00:01:12,960 --> 00:01:14,940
+ After this multiplication example,
+
+25
+00:01:14,940 --> 00:01:19,375
+ we're going to look at some other sophisticated examples, namely median.
+
+26
+00:01:19,375 --> 00:01:22,680
+ We're going to see how to compute the median in linear time and finally
+
+27
+00:01:22,680 --> 00:01:26,050
+ we're also going to look at Fast Fourier Transform, FFT.
+
+28
+00:01:26,050 --> 00:01:28,970
+ These three examples, multiplying n-bit integers,
+
+29
+00:01:28,970 --> 00:01:32,460
+ the new time median and FFT are all
+
+30
+00:01:32,460 --> 00:01:34,710
+ very beautiful algorithms and I hope you'll learn
+
+31
+00:01:34,710 --> 00:01:37,620
+ to appreciate the essence of the algorithm.
+
+32
+00:01:37,620 --> 00:01:41,903
+ Now one important note is I'm assuming that you've seen divide and conquer before.
+
+33
+00:01:41,903 --> 00:01:44,980
+ For example, I'm assuming you've seen things like merge sort,
+
+34
+00:01:44,980 --> 00:01:49,350
+ the order and log n time algorithm for sorting n integers.
+
+35
+00:01:49,350 --> 00:01:52,200
+ And I'm also assuming that you know how to solve recurrences.
+
+36
+00:01:52,200 --> 00:01:55,030
+ If you need a refresher on some of these topics,
+
+37
+00:01:55,030 --> 00:01:57,290
+ I suggest you look through the textbook.
+
+38
+00:01:57,290 --> 00:01:57,290
+ Now let's go ahead and dive into this topic, multiplying n-bit integers..
+

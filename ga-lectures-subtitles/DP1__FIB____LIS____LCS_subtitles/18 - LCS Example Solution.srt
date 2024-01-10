@@ -1,0 +1,40 @@
+1
+00:00:00,000 --> 00:00:09,430
+ The solution is the substring BCBA,
+
+2
+00:00:09,430 --> 00:00:12,070
+ BCB A, which is the length four.
+
+3
+00:00:12,070 --> 00:00:17,020
+ Why do we care about it? Well, I mean first off it's a nice example,
+
+4
+00:00:17,020 --> 00:00:20,860
+ which illustrates a slightly different flavor of the dynamic programming solution.
+
+5
+00:00:20,860 --> 00:00:23,910
+ That's the main motivation here, but also,
+
+6
+00:00:23,910 --> 00:00:27,970
+ actually, this simple problem is used in Unix diff.
+
+7
+00:00:27,970 --> 00:00:30,490
+ If you want to compare two files,
+
+8
+00:00:30,490 --> 00:00:32,740
+ you have this unique script diff,
+
+9
+00:00:32,740 --> 00:00:36,665
+ which compares two files and looks at the differences and it does
+
+10
+00:00:36,665 --> 00:00:36,665
+ utilizes the longest common subsequence dynamic programming algorithm.
+

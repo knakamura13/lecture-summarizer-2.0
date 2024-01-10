@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:02,910
+ We're going to say a particular pivot p is good if
+
+2
+00:00:02,910 --> 00:00:05,910
+ this pivot p is at least the n of the four smallest,
+
+3
+00:00:05,910 --> 00:00:09,360
+ and is at most three n over four smallest. What does that imply?
+
+4
+00:00:09,360 --> 00:00:13,600
+ That implies that the number of elements which are strictly less than this pivot is
+
+5
+00:00:13,600 --> 00:00:16,020
+ at most three n over four and the number of elements
+
+6
+00:00:16,020 --> 00:00:19,235
+ strictly bigger than this pivot is at most three n over four.
+
+7
+00:00:19,235 --> 00:00:20,550
+ So if this is satisfied,
+
+8
+00:00:20,550 --> 00:00:22,740
+ then we say the pivot p is good.
+
+9
+00:00:22,740 --> 00:00:27,255
+ Our main task is to figure out how to find this good pivot p in order n time.
+
+10
+00:00:27,255 --> 00:00:30,425
+ If we can do that, then we're going to get a recurrence such as this.
+
+11
+00:00:30,425 --> 00:00:33,480
+ We're going to have a subproblem of size at most three n over four,
+
+12
+00:00:33,480 --> 00:00:35,175
+ because of this relation.
+
+13
+00:00:35,175 --> 00:00:40,190
+ And it's going to take us order n time to partition the array and to find the good pivot.
+
+14
+00:00:40,190 --> 00:00:45,000
+ And then, we know that this recurrence solves to order n, so we'll be done.
+
+15
+00:00:45,000 --> 00:00:45,000
+ Question is, how can we find a good pivot in order n time?
+

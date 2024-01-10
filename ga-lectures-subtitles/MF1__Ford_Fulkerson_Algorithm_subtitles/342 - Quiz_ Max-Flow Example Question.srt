@@ -1,0 +1,40 @@
+1
+00:00:00,000 --> 00:00:03,450
+ To make sure you understand the formulation of the max-flow problem,
+
+2
+00:00:03,450 --> 00:00:06,240
+ let's take a look back at our earlier example.
+
+3
+00:00:06,240 --> 00:00:10,590
+ So here's a flow network with a specified start and end vertex,
+
+4
+00:00:10,590 --> 00:00:13,915
+ and we specified the capacity for every edge.
+
+5
+00:00:13,915 --> 00:00:15,790
+ Now specify a flow.
+
+6
+00:00:15,790 --> 00:00:19,410
+ So for specify the flow along every edge where
+
+7
+00:00:19,410 --> 00:00:23,820
+ this flow is of maximum size and the flow needs to be valid,
+
+8
+00:00:23,820 --> 00:00:26,235
+ so it needs to satisfy the two constraints,
+
+9
+00:00:26,235 --> 00:00:30,300
+ which are the capacity constraints along every edge and
+
+10
+00:00:30,300 --> 00:00:30,300
+ the conservation of flow along every vertex except for S and T.
+

@@ -1,0 +1,140 @@
+1
+00:00:00,100 --> 00:00:02,675
+ Now let's prove this claim that,
+
+2
+00:00:02,675 --> 00:00:05,145
+ if there is a path from alpha to beta then there's
+
+3
+00:00:05,145 --> 00:00:08,240
+ a path from beta bar to alpha bar, and vice versa.
+
+4
+00:00:08,240 --> 00:00:10,550
+ So let's take a path from alpha to beta and let's
+
+5
+00:00:10,550 --> 00:00:13,830
+ construct a path from beta bar to alpha bar.
+
+6
+00:00:13,830 --> 00:00:17,750
+ Let's give some notation for the vertices along this path from alpha to beta.
+
+7
+00:00:17,750 --> 00:00:20,600
+ So let's say this path from alpha to beta goes along
+
+8
+00:00:20,600 --> 00:00:24,565
+ gamma0 to gamma1 and so on up to gammal.
+
+9
+00:00:24,565 --> 00:00:25,695
+ So it starts at alpha,
+
+10
+00:00:25,695 --> 00:00:29,055
+ so gamma0 is alpha and gammal is beta.
+
+11
+00:00:29,055 --> 00:00:30,705
+ Now let's take one of these edges.
+
+12
+00:00:30,705 --> 00:00:33,390
+ Let's look at the edge from gamma1 to gamma2.
+
+13
+00:00:33,390 --> 00:00:35,610
+ How do we get an edge from gamma1 to gamma2?
+
+14
+00:00:35,610 --> 00:00:39,515
+ Well this edge from gamma1 to gamma2 comes from this clause,
+
+15
+00:00:39,515 --> 00:00:41,995
+ gamma1 bar or gamma 2.
+
+16
+00:00:41,995 --> 00:00:45,165
+ Now every clause has two edges which it implies.
+
+17
+00:00:45,165 --> 00:00:47,405
+ This is one of the edges. What's the other edge?
+
+18
+00:00:47,405 --> 00:00:53,720
+ The other edge we get, the other implication is gamma2 bar implies gamma1 bar.
+
+19
+00:00:53,720 --> 00:00:57,755
+ Similarly, if we look at this edge gamma0 to gamma1,
+
+20
+00:00:57,755 --> 00:01:02,325
+ we're going to see that there's also an edge from gamma1 bar to gamma0 bar.
+
+21
+00:01:02,325 --> 00:01:04,460
+ And if we look along this part of the path,
+
+22
+00:01:04,460 --> 00:01:10,760
+ we're going to see that we get a path from gammal bar all the way over to gamma0 bar.
+
+23
+00:01:10,760 --> 00:01:12,070
+ What is gammal bar?
+
+24
+00:01:12,070 --> 00:01:16,060
+ This is beta bar. And what is gamma0 bar? It's alpha bar.
+
+25
+00:01:16,060 --> 00:01:19,730
+ So what we've shown is that if there is a path from alpha to beta,
+
+26
+00:01:19,730 --> 00:01:23,660
+ then there must be a path from beta bar to alpha bar,
+
+27
+00:01:23,660 --> 00:01:25,070
+ and that's what we wanted to prove.
+
+28
+00:01:25,070 --> 00:01:27,530
+ We wanted to prove that if there is a path from alpha to beta,
+
+29
+00:01:27,530 --> 00:01:30,823
+ then we can show that there is a path from beta bar to alpha bar.
+
+30
+00:01:30,823 --> 00:01:33,035
+ And then we can apply the same argument in reverse,
+
+31
+00:01:33,035 --> 00:01:35,980
+ and we can show that if there is a path from beta bar to alpha bar,
+
+32
+00:01:35,980 --> 00:01:38,050
+ and there's a path from alpha to beta.
+
+33
+00:01:38,050 --> 00:01:39,155
+ That proves the claim,
+
+34
+00:01:39,155 --> 00:01:41,980
+ and that completes the proof of correctness of our algorithm.
+
+35
+00:01:41,980 --> 00:01:41,980
+ So we've completed the argument for the linear time algorithm for two set.
+

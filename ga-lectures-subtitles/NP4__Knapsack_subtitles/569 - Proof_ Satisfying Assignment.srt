@@ -1,0 +1,160 @@
+1
+00:00:00,000 --> 00:00:04,560
+ We just saw, if we take a solution to the subset sum instances that we specified,
+
+2
+00:00:04,560 --> 00:00:07,905
+ then using the first n digits that specifies
+
+3
+00:00:07,905 --> 00:00:12,045
+ a true-false assignment for the n variables X_1 through X_n.
+
+4
+00:00:12,045 --> 00:00:14,400
+ Now, using the remaining n digits,
+
+5
+00:00:14,400 --> 00:00:16,770
+ we're going to show that that assignment that we just
+
+6
+00:00:16,770 --> 00:00:19,630
+ specify corresponds to a satisfying assignment.
+
+7
+00:00:19,630 --> 00:00:24,925
+ It satisfies the input formula f. First n digits correspond to the variables,
+
+8
+00:00:24,925 --> 00:00:28,105
+ the next m digits correspond to clauses.
+
+9
+00:00:28,105 --> 00:00:29,922
+ So let's look at digit n plus j,
+
+10
+00:00:29,922 --> 00:00:32,400
+ where j varies between one and n,
+
+11
+00:00:32,400 --> 00:00:36,410
+ so digit n plus j corresponds to clause C_j.
+
+12
+00:00:36,410 --> 00:00:38,745
+ In our definition of the subsets sum instance,
+
+13
+00:00:38,745 --> 00:00:42,390
+ we put a three in digit n plus j of t. So
+
+14
+00:00:42,390 --> 00:00:46,120
+ we need to achieve a sum of three in digit n plus j.
+
+15
+00:00:46,120 --> 00:00:49,085
+ In order to get a sum of three digit and plus j,
+
+16
+00:00:49,085 --> 00:00:51,870
+ we have to include at least one of the numbers corresponding
+
+17
+00:00:51,870 --> 00:00:55,035
+ to the literal appearing in clause C_j.
+
+18
+00:00:55,035 --> 00:00:58,095
+ If we satisfy exactly one literal in C_j,
+
+19
+00:00:58,095 --> 00:01:04,140
+ then we use both S_j and S_j prime as buffer numbers and then we get a sum of three.
+
+20
+00:01:04,140 --> 00:01:07,390
+ If we satisfy exactly two literals in this clause,
+
+21
+00:01:07,390 --> 00:01:11,955
+ then we either include S_j or S_j prime in our subset S,
+
+22
+00:01:11,955 --> 00:01:13,635
+ and that gives us a sum of three.
+
+23
+00:01:13,635 --> 00:01:16,980
+ If we satisfy exactly three literals in this clause,
+
+24
+00:01:16,980 --> 00:01:19,845
+ then we don't need to use either of these buffer numbers,
+
+25
+00:01:19,845 --> 00:01:21,630
+ S_j or S_j prime.
+
+26
+00:01:21,630 --> 00:01:27,435
+ Just using these three satisfied literals gives us a sum of three in this digit n plus j.
+
+27
+00:01:27,435 --> 00:01:30,535
+ If we satisfy zero of the literals in this clause,
+
+28
+00:01:30,535 --> 00:01:34,130
+ then there is no way to achieve a sum of three in this digit,
+
+29
+00:01:34,130 --> 00:01:37,440
+ and therefore, we don't have a solution to the subset sum problem.
+
+30
+00:01:37,440 --> 00:01:39,720
+ We're assuming we have a solution, therefore,
+
+31
+00:01:39,720 --> 00:01:43,355
+ we must have at least one satisfied literal in this clause.
+
+32
+00:01:43,355 --> 00:01:45,887
+ Thus, C_j is satisfied and thus,
+
+33
+00:01:45,887 --> 00:01:47,320
+ every clause is satisfied.
+
+34
+00:01:47,320 --> 00:01:51,900
+ And therefore, we have a satisfying assignment for f. So we've shown that a solution to
+
+35
+00:01:51,900 --> 00:01:57,305
+ this subset sum instance corresponds to a satisfying assignment for our 3SAT formula.
+
+36
+00:01:57,305 --> 00:01:59,970
+ And we've actually shown how to transform this solution to
+
+37
+00:01:59,970 --> 00:02:04,675
+ the subset sum problem to find the satisfying assignment to the 3SAT's formula.
+
+38
+00:02:04,675 --> 00:02:06,450
+ Now let's prove the reverse implication.
+
+39
+00:02:06,450 --> 00:02:09,510
+ Let's prove that if we have a satisfying assignment for this 3SAT formula,
+
+40
+00:02:09,510 --> 00:02:09,510
+ it corresponds to the solution to the subset sum problem.
+

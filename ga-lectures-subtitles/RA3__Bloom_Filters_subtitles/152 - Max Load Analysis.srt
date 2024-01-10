@@ -1,0 +1,184 @@
+1
+00:00:00,000 --> 00:00:03,451
+ Now we want to bound the probability that the max load is at least log n,
+
+2
+00:00:03,451 --> 00:00:05,260
+ that's the quantity here.
+
+3
+00:00:05,260 --> 00:00:07,845
+ In order for the maximum load to be at least log n,
+
+4
+00:00:07,845 --> 00:00:10,148
+ at least one bin, maybe several,
+
+5
+00:00:10,148 --> 00:00:14,384
+ have to have a load at least log n. In order to upper bound this probability,
+
+6
+00:00:14,384 --> 00:00:16,230
+ we can use our earlier analysis.
+
+7
+00:00:16,230 --> 00:00:19,345
+ We know the probability that a particular bin gets loaded,
+
+8
+00:00:19,345 --> 00:00:21,945
+ at least log n, is at most one over N squared.
+
+9
+00:00:21,945 --> 00:00:25,660
+ So now, in order for at least one bin to get loaded at least log n,
+
+10
+00:00:25,660 --> 00:00:28,320
+ lets look at all the choices for the bins.
+
+11
+00:00:28,320 --> 00:00:30,930
+ So we can sum over each bin,
+
+12
+00:00:30,930 --> 00:00:34,620
+ and then we can look at the probability that the load in bin BI,
+
+13
+00:00:34,620 --> 00:00:36,375
+ is at least log n,
+
+14
+00:00:36,375 --> 00:00:38,256
+ which is what we bounded right here.
+
+15
+00:00:38,256 --> 00:00:40,000
+ That's at most 1 over N squared.
+
+16
+00:00:40,000 --> 00:00:42,120
+ There are N choices for the bin,
+
+17
+00:00:42,120 --> 00:00:45,180
+ and for each particular bin the probability the load
+
+18
+00:00:45,180 --> 00:00:48,148
+ is at least log n is at most 1 over N squared,
+
+19
+00:00:48,148 --> 00:00:50,300
+ and this is, 1 over N,
+
+20
+00:00:50,300 --> 00:00:51,440
+ which proves the result,
+
+21
+00:00:51,440 --> 00:00:53,905
+ that the max load is at least log n,
+
+22
+00:00:53,905 --> 00:00:56,250
+ with probability at most 1 over N.
+
+23
+00:00:56,250 --> 00:00:58,755
+ Now, we want to look at the complementary event,
+
+24
+00:00:58,755 --> 00:01:03,665
+ that the max load is strictly less than log n. What is the probability of this?
+
+25
+00:01:03,665 --> 00:01:05,910
+ Well, this event is unlikely to happen.
+
+26
+00:01:05,910 --> 00:01:07,690
+ This happens with a small probability,
+
+27
+00:01:07,690 --> 00:01:09,780
+ this is going to happen with a large probability.
+
+28
+00:01:09,780 --> 00:01:16,050
+ In particular, it happens with probability at least one minus one over N. And in fact,
+
+29
+00:01:16,050 --> 00:01:17,670
+ one can do a similar analysis,
+
+30
+00:01:17,670 --> 00:01:18,915
+ a little bit more carefully,
+
+31
+00:01:18,915 --> 00:01:21,925
+ and you can show that the max load is theta
+
+32
+00:01:21,925 --> 00:01:25,470
+ of log n over log log n. So we can get an upper bound,
+
+33
+00:01:25,470 --> 00:01:29,350
+ and a lower bound which are within constants of each other.
+
+34
+00:01:29,350 --> 00:01:31,995
+ So, instead of an upper bound of log n, on the max load,
+
+35
+00:01:31,995 --> 00:01:36,240
+ we can get a slightly better bound of log n over log log n. And
+
+36
+00:01:36,240 --> 00:01:39,060
+ this error probability can be boosted from one over
+
+37
+00:01:39,060 --> 00:01:42,255
+ N to 1 over and squared or 1 over N to the tenth,
+
+38
+00:01:42,255 --> 00:01:43,980
+ any polynomial, and then,
+
+39
+00:01:43,980 --> 00:01:46,875
+ we can get here by changing the constant up front.
+
+40
+00:01:46,875 --> 00:01:50,295
+ And when this error probability is 1 over a polynomial and N,
+
+41
+00:01:50,295 --> 00:01:53,535
+ we say that this event happens with high probability.
+
+42
+00:01:53,535 --> 00:01:56,595
+ In particular, if it happens with high probability,
+
+43
+00:01:56,595 --> 00:01:59,100
+ then that means it happens with probability at least one
+
+44
+00:01:59,100 --> 00:02:01,920
+ minus one over some polynomial and N,
+
+45
+00:02:01,920 --> 00:02:04,315
+ and we can make this polynomial small as we want,
+
+46
+00:02:04,315 --> 00:02:04,315
+ by increasing this constant up front.
+

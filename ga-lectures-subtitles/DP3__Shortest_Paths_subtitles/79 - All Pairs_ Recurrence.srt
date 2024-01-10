@@ -1,0 +1,124 @@
+1
+00:00:00,000 --> 00:00:01,800
+ So we're going to have two situations,
+
+2
+00:00:01,800 --> 00:00:05,250
+ either s and t are connected by an edge and therefore,
+
+3
+00:00:05,250 --> 00:00:06,960
+ we don't need to use any intermediate vertices,
+
+4
+00:00:06,960 --> 00:00:09,030
+ or they're not connected by an edge and then there's
+
+5
+00:00:09,030 --> 00:00:11,160
+ no path from S to T. In the first case,
+
+6
+00:00:11,160 --> 00:00:13,230
+ if there's a directed edge from S to T,
+
+7
+00:00:13,230 --> 00:00:15,057
+ then D of 0, S,
+
+8
+00:00:15,057 --> 00:00:18,540
+ T is exactly the length of that edge from S to
+
+9
+00:00:18,540 --> 00:00:22,355
+ T which is W of S T. In the other scenario,
+
+10
+00:00:22,355 --> 00:00:25,449
+ there's no edge from S to T. In this case,
+
+11
+00:00:25,449 --> 00:00:27,435
+ then what is the length of
+
+12
+00:00:27,435 --> 00:00:31,975
+ the shortest path from S to T which doesn't allow any intermediate vertices.
+
+13
+00:00:31,975 --> 00:00:35,570
+ It's infinite. Let's look at the shortest path from S to T
+
+14
+00:00:35,570 --> 00:00:40,400
+ where we only allow vertices one through I as intermediate vertices.
+
+15
+00:00:40,400 --> 00:00:41,920
+ So this is the solution.
+
+16
+00:00:41,920 --> 00:00:45,750
+ This path P is the solution to this problem.
+
+17
+00:00:45,750 --> 00:00:47,100
+ And if there's multiple paths,
+
+18
+00:00:47,100 --> 00:00:49,790
+ just choose any path arbitrarily.
+
+19
+00:00:49,790 --> 00:00:51,651
+ So our goal is to figure out D of I, S,
+
+20
+00:00:51,651 --> 00:00:56,311
+ T. And we want to write recurrence for this so we want to do this for D of I,
+
+21
+00:00:56,311 --> 00:00:59,440
+ S, T in terms of smaller Is.
+
+22
+00:00:59,440 --> 00:01:01,680
+ Okay? So we're going to have two cases.
+
+23
+00:01:01,680 --> 00:01:04,990
+ We're considering this vertex as last vertex I.
+
+24
+00:01:04,990 --> 00:01:07,395
+ So what are the two cases for this path?
+
+25
+00:01:07,395 --> 00:01:11,820
+ Either this path uses vertex I or it doesn't use vertex I.
+
+26
+00:01:11,820 --> 00:01:14,265
+ Let's try the two cases separately.
+
+27
+00:01:14,265 --> 00:01:15,580
+ So what's the easy case?
+
+28
+00:01:15,580 --> 00:01:19,015
+ The easy case is when the path doesn't include vertex
+
+29
+00:01:19,015 --> 00:01:23,940
+ I and then the slightly harder cases when the path includes vertex I.
+
+30
+00:01:23,940 --> 00:01:27,270
+ Let's start with the case where vertex I is not on
+
+31
+00:01:27,270 --> 00:01:27,270
+ the path and in this case what is D of I-
+

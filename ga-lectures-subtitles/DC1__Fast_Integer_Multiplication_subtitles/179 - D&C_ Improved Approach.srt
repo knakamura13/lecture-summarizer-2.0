@@ -1,0 +1,192 @@
+1
+00:00:00,000 --> 00:00:02,280
+ This is the key expression from before.
+
+2
+00:00:02,280 --> 00:00:07,710
+ X times Y is equal to 2 to the n times x_l times y_l plus 2 to the n
+
+3
+00:00:07,710 --> 00:00:14,065
+ over 2 times the quantity x_l times y_ r plus x_r times y_l.
+
+4
+00:00:14,065 --> 00:00:16,847
+ Finally, we add in x_r times y_r.
+
+5
+00:00:16,847 --> 00:00:19,315
+ Now, a straightforward divide and conquer approach,
+
+6
+00:00:19,315 --> 00:00:22,062
+ computes four subproblems recursively.
+
+7
+00:00:22,062 --> 00:00:23,400
+ It multiplies x_l and y_l,
+
+8
+00:00:23,400 --> 00:00:29,013
+ x_l and y_r, x_r and y_l and finally, x_r and y_r.
+
+9
+00:00:29,013 --> 00:00:31,230
+ We have four subproblems and then it takes us order n
+
+10
+00:00:31,230 --> 00:00:33,505
+ time to combine those solutions together,
+
+11
+00:00:33,505 --> 00:00:36,175
+ this leads to an order n square time algorithm.
+
+12
+00:00:36,175 --> 00:00:38,370
+ What we're trying to achieve now is we're trying to
+
+13
+00:00:38,370 --> 00:00:41,550
+ reduce the number of subproblems from four to three.
+
+14
+00:00:41,550 --> 00:00:43,770
+ Thinking back on the idea from Gauss that we talked
+
+15
+00:00:43,770 --> 00:00:46,315
+ about earlier for multiplying complex numbers,
+
+16
+00:00:46,315 --> 00:00:47,895
+ what do we want to do here?
+
+17
+00:00:47,895 --> 00:00:50,995
+ We want to compute this sum, x_l,
+
+18
+00:00:50,995 --> 00:00:56,540
+ y_r plus x_r, y_l without computing these individual terms. Well, how do we do that?
+
+19
+00:00:56,540 --> 00:00:58,805
+ Well, we think of these as cross terms again.
+
+20
+00:00:58,805 --> 00:01:02,535
+ And on one side we're going to have x_l and x_r, that's one quantity.
+
+21
+00:01:02,535 --> 00:01:05,100
+ The other quantity is going to be y_l and y_r.
+
+22
+00:01:05,100 --> 00:01:06,180
+ When we expand this out,
+
+23
+00:01:06,180 --> 00:01:08,430
+ we get the following: x_l, y_l, x_r,
+
+24
+00:01:08,430 --> 00:01:16,335
+ y_r and finally, we get x_l times y_r and x_r times y_l.
+
+25
+00:01:16,335 --> 00:01:19,265
+ Now, our goal is to compute the sum, so let's solve for that.
+
+26
+00:01:19,265 --> 00:01:22,074
+ This quantity x_l, y_r plus x_r,
+
+27
+00:01:22,074 --> 00:01:25,880
+ y_l, that's equal to this left hand side,
+
+28
+00:01:25,880 --> 00:01:33,260
+ x_l plus x_r times y_l plus y_r and then we subtract off these two terms,
+
+29
+00:01:33,260 --> 00:01:35,465
+ x_l, y_l minus x_r, y_r.
+
+30
+00:01:35,465 --> 00:01:38,650
+ Now in the algorithm, we just had this term x_l, y_l,
+
+31
+00:01:38,650 --> 00:01:43,160
+ this was the quantity A which we recursively computed.
+
+32
+00:01:43,160 --> 00:01:47,410
+ x_r, y_r was B which we recursively computed.
+
+33
+00:01:47,410 --> 00:01:48,758
+ So we have this term x_l,
+
+34
+00:01:48,758 --> 00:01:51,524
+ y_l and we have this term x_r, y_r.
+
+35
+00:01:51,524 --> 00:01:55,560
+ What's the final term that we want to compute? It's this quantity.
+
+36
+00:01:55,560 --> 00:02:01,170
+ So we're going to take x_l plus x_r and we're going to multiply that by y_l plus y_r.
+
+37
+00:02:01,170 --> 00:02:05,705
+ And we're going to store that answer in C. We're going to recursively compute A,
+
+38
+00:02:05,705 --> 00:02:11,060
+ B, and C and then we can combine them together using this expression to get X times Y.
+
+39
+00:02:11,060 --> 00:02:16,445
+ In particular, X times Y is equal to 2 to the n times A as before,
+
+40
+00:02:16,445 --> 00:02:20,010
+ plus 2 to the n over 2 times this quantity.
+
+41
+00:02:20,010 --> 00:02:21,345
+ How do we get this quantity?
+
+42
+00:02:21,345 --> 00:02:23,555
+ It's simply C minus A minus B.
+
+43
+00:02:23,555 --> 00:02:26,126
+ C minus A minus B.
+
+44
+00:02:26,126 --> 00:02:29,455
+ And then finally, we add in B, this last term.
+
+45
+00:02:29,455 --> 00:02:32,690
+ And this is going to give us a better divide and conquer algorithm because
+
+46
+00:02:32,690 --> 00:02:36,170
+ now we only have three subproblems that we have to recursively compute.
+
+47
+00:02:36,170 --> 00:02:37,970
+ And then we can combine them together using
+
+48
+00:02:37,970 --> 00:02:37,970
+ this expression in order to get the product of X times Y.
+

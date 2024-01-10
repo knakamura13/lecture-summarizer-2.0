@@ -1,0 +1,256 @@
+1
+00:00:00,000 --> 00:00:04,026
+ Now, the previous idea we just discussed takes a sink SCC,
+
+2
+00:00:04,026 --> 00:00:06,795
+ and it satisfies that sink component.
+
+3
+00:00:06,795 --> 00:00:11,565
+ And then the issues come in by worrying about the complement of that set.
+
+4
+00:00:11,565 --> 00:00:13,025
+ Let's look at the reverse idea.
+
+5
+00:00:13,025 --> 00:00:15,940
+ Instead of taking a sink strongly connected component,
+
+6
+00:00:15,940 --> 00:00:18,040
+ let's take a source SCC.
+
+7
+00:00:18,040 --> 00:00:19,580
+ Let's call it S prime.
+
+8
+00:00:19,580 --> 00:00:23,960
+ So we have the source component containing X4 and X2bar.
+
+9
+00:00:23,960 --> 00:00:26,870
+ Now, it's a source so it has no edges coming in,
+
+10
+00:00:26,870 --> 00:00:28,625
+ it only has edges coming out.
+
+11
+00:00:28,625 --> 00:00:31,490
+ Now, for sink component we wanted to set it to true.
+
+12
+00:00:31,490 --> 00:00:33,665
+ What do we want to do for the source component?
+
+13
+00:00:33,665 --> 00:00:35,350
+ We want to set it to false.
+
+14
+00:00:35,350 --> 00:00:37,690
+ So by setting S prime to false,
+
+15
+00:00:37,690 --> 00:00:40,190
+ we're going to not specify each of these literals.
+
+16
+00:00:40,190 --> 00:00:44,765
+ That means X4 is not going to be satisfied so X4 is set to false.
+
+17
+00:00:44,765 --> 00:00:47,180
+ X2bar is not satisfied.
+
+18
+00:00:47,180 --> 00:00:49,305
+ That means that X2 is set to true.
+
+19
+00:00:49,305 --> 00:00:53,210
+ Now, these literals are not satisfied but there are no incoming edges
+
+20
+00:00:53,210 --> 00:00:57,370
+ so there are no later implications which are going to cause problems.
+
+21
+00:00:57,370 --> 00:01:00,980
+ Moreover, because these literals are not satisfied
+
+22
+00:01:00,980 --> 00:01:04,760
+ we don't have to worry about the implications coming out of these literals,
+
+23
+00:01:04,760 --> 00:01:07,760
+ so we don't have to worry about these edges coming out.
+
+24
+00:01:07,760 --> 00:01:13,590
+ We can safely remove this component and work on the remainder of the graph.
+
+25
+00:01:13,590 --> 00:01:16,460
+ But once again, what happens to the complement of this set?
+
+26
+00:01:16,460 --> 00:01:19,075
+ In this case, X4bar and X2?
+
+27
+00:01:19,075 --> 00:01:23,030
+ Well, it turns out that these are going to be in a strongly connected component,
+
+28
+00:01:23,030 --> 00:01:25,390
+ and this is going to be a sink SCC.
+
+29
+00:01:25,390 --> 00:01:28,790
+ So there might be edges coming in but there are no edges coming out.
+
+30
+00:01:28,790 --> 00:01:31,125
+ Now, if we set as prime to be false,
+
+31
+00:01:31,125 --> 00:01:33,785
+ that means we set its compliment to be true.
+
+32
+00:01:33,785 --> 00:01:35,900
+ So we satisfied all of these literals.
+
+33
+00:01:35,900 --> 00:01:37,640
+ Now, if we satisfied these literals that means
+
+34
+00:01:37,640 --> 00:01:39,950
+ later implications are going to be satisfied,
+
+35
+00:01:39,950 --> 00:01:44,920
+ and there are no edges coming out so we don't have to follow any implications out.
+
+36
+00:01:44,920 --> 00:01:47,960
+ Now, it turns out that these two approaches are the same.
+
+37
+00:01:47,960 --> 00:01:52,845
+ That's why it works. We can take a sink SCC and set it to true.
+
+38
+00:01:52,845 --> 00:01:54,230
+ And at the same time,
+
+39
+00:01:54,230 --> 00:01:58,470
+ we can take a source SCC and set it to false.
+
+40
+00:01:58,470 --> 00:02:00,435
+ These are compliments of each other.
+
+41
+00:02:00,435 --> 00:02:07,170
+ If the component S is sink SCC then its complement set is a source SCC.
+
+42
+00:02:07,170 --> 00:02:08,940
+ This is what we're going to do,
+
+43
+00:02:08,940 --> 00:02:11,390
+ we're going to find a source SCC S prime,
+
+44
+00:02:11,390 --> 00:02:15,480
+ or we're going to find a sink SCC S prime bar.
+
+45
+00:02:15,480 --> 00:02:17,035
+ These are compliments of each other.
+
+46
+00:02:17,035 --> 00:02:20,255
+ If this is a source then this is a sink and vice versa.
+
+47
+00:02:20,255 --> 00:02:21,905
+ And we're going to set this source,
+
+48
+00:02:21,905 --> 00:02:24,485
+ vertices, to be false.
+
+49
+00:02:24,485 --> 00:02:25,880
+ So these literals are going to be
+
+50
+00:02:25,880 --> 00:02:29,780
+ unsatisfied and in the sink we're going to set them all to be true.
+
+51
+00:02:29,780 --> 00:02:31,825
+ We're going to satisfy all the literals.
+
+52
+00:02:31,825 --> 00:02:34,115
+ If we do one, then we do the other.
+
+53
+00:02:34,115 --> 00:02:35,400
+ And once we do this,
+
+54
+00:02:35,400 --> 00:02:40,435
+ then we can remove all these literals which appear in S prime and S prime bar.
+
+55
+00:02:40,435 --> 00:02:43,665
+ Now, for each variable which appears in one of these,
+
+56
+00:02:43,665 --> 00:02:47,175
+ this is going to remove the positive and negative literal.
+
+57
+00:02:47,175 --> 00:02:49,305
+ If the positive literal appears here,
+
+58
+00:02:49,305 --> 00:02:50,545
+ then the negative appears here.
+
+59
+00:02:50,545 --> 00:02:51,990
+ And if the negative appears here,
+
+60
+00:02:51,990 --> 00:02:53,370
+ then the positive appears here.
+
+61
+00:02:53,370 --> 00:02:56,235
+ We remove both the positive and negative literal,
+
+62
+00:02:56,235 --> 00:02:58,125
+ so that variable goes away.
+
+63
+00:02:58,125 --> 00:02:59,850
+ We can simplify the formula,
+
+64
+00:02:59,850 --> 00:02:59,850
+ simplify the graph, and we can repeat.
+

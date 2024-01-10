@@ -1,0 +1,164 @@
+1
+00:00:00,000 --> 00:00:01,740
+ Let's take a moment now to recap
+
+2
+00:00:01,740 --> 00:00:06,090
+ the RSA algorithm and also the mathematics behind the algorithm.
+
+3
+00:00:06,090 --> 00:00:07,876
+ We start with Fermat's little theorem,
+
+4
+00:00:07,876 --> 00:00:10,050
+ that was the basis of the whole algorithm.
+
+5
+00:00:10,050 --> 00:00:12,210
+ Let's recap that. So the setting is,
+
+6
+00:00:12,210 --> 00:00:15,765
+ we have a prime number p and we have another number z,
+
+7
+00:00:15,765 --> 00:00:18,900
+ where z and p are relatively prime to each other,
+
+8
+00:00:18,900 --> 00:00:23,065
+ which means that the GCD of z and p is one.
+
+9
+00:00:23,065 --> 00:00:26,610
+ This means that they're relatively prime if their GCD is one.
+
+10
+00:00:26,610 --> 00:00:27,690
+ Now, the theorem says,
+
+11
+00:00:27,690 --> 00:00:32,690
+ if we take z and raise it to the power p_minus_one and we look at it mod_p,
+
+12
+00:00:32,690 --> 00:00:34,800
+ then what are get? We get one.
+
+13
+00:00:34,800 --> 00:00:36,160
+ And that's true for any z,
+
+14
+00:00:36,160 --> 00:00:38,610
+ so take any z which is not a multiple of
+
+15
+00:00:38,610 --> 00:00:42,810
+ p and we raise it to power p_minus_one we get one_mod_p.
+
+16
+00:00:42,810 --> 00:00:44,665
+ Actually, we didn't use Fermat's little theorem,
+
+17
+00:00:44,665 --> 00:00:47,925
+ we used the generalization known as Euler's theorem.
+
+18
+00:00:47,925 --> 00:00:52,028
+ Now Euler's theorem is a general theorem that holds for any capital N,
+
+19
+00:00:52,028 --> 00:00:54,870
+ but we used it for the particular case
+
+20
+00:00:54,870 --> 00:00:58,490
+ where capital N was the product of two primes, p and q.
+
+21
+00:00:58,490 --> 00:01:02,155
+ So let's recap it for this particular case that we're interested in.
+
+22
+00:01:02,155 --> 00:01:04,215
+ So, for primes p and q,
+
+23
+00:01:04,215 --> 00:01:07,900
+ look at their product, capital N, and take a z,
+
+24
+00:01:07,900 --> 00:01:11,509
+ which is relatively prime to capital N. Now in this case,
+
+25
+00:01:11,509 --> 00:01:14,190
+ if we raise z to the power p_minus_one_q_minus_one,
+
+26
+00:01:14,190 --> 00:01:17,070
+ then we get the analog of Fermat's little theorem.
+
+27
+00:01:17,070 --> 00:01:18,315
+ This is going to be one,
+
+28
+00:01:18,315 --> 00:01:19,628
+ when we look at it,
+
+29
+00:01:19,628 --> 00:01:23,475
+ mod_N, where N is p_times_q.
+
+30
+00:01:23,475 --> 00:01:26,670
+ Now, where did this exponent p_minus_one_times_q_minus_one come from?
+
+31
+00:01:26,670 --> 00:01:28,470
+ Well, that came from,
+
+32
+00:01:28,470 --> 00:01:33,170
+ we looked at how many numbers between one and capital N?
+
+33
+00:01:33,170 --> 00:01:34,620
+ This is the capital N here.
+
+34
+00:01:34,620 --> 00:01:38,928
+ How many numbers between one and capital N are relatively prime to capital N?
+
+35
+00:01:38,928 --> 00:01:42,066
+ For the case where capital N is p,
+
+36
+00:01:42,066 --> 00:01:45,450
+ then all numbers from one to p_minus_one are relatively
+
+37
+00:01:45,450 --> 00:01:49,650
+ prime to this N. So that's why the exponent is p_minus_one.
+
+38
+00:01:49,650 --> 00:01:52,505
+ For the case where N is p_times_q,
+
+39
+00:01:52,505 --> 00:01:56,630
+ then the number of numbers between one and p_times_q,
+
+40
+00:01:56,630 --> 00:02:01,305
+ which are relatively prime to it, are p_minus_one_times_q_minus_one.
+
+41
+00:02:01,305 --> 00:02:01,305
+ That's what we should solve before
+

@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:01,790
+ To get an idea for the reduction,
+
+2
+00:00:01,790 --> 00:00:04,655
+ let's look at our earlier example of a vertex cover.
+
+3
+00:00:04,655 --> 00:00:07,745
+ The red vertices are our vertex cover in this graph.
+
+4
+00:00:07,745 --> 00:00:10,275
+ What do you notice about the vertices that are not red?
+
+5
+00:00:10,275 --> 00:00:14,165
+ The white vertices. They form an independent set in this graph.
+
+6
+00:00:14,165 --> 00:00:17,310
+ Let's take a look at another example of a vertex cover.
+
+7
+00:00:17,310 --> 00:00:19,170
+ There's a minimum sized vertex cover.
+
+8
+00:00:19,170 --> 00:00:21,580
+ What do you notice about the white vertices in this graph?
+
+9
+00:00:21,580 --> 00:00:24,200
+ They also are an independent set in this graph.
+
+10
+00:00:24,200 --> 00:00:27,600
+ We claim this holds in general as is a vertex cover in
+
+11
+00:00:27,600 --> 00:00:32,975
+ the graph if and only if S bar the complement of s is an independent set.
+
+12
+00:00:32,975 --> 00:00:35,780
+ So the red vertices are vertex cover and
+
+13
+00:00:35,780 --> 00:00:39,550
+ the non-red vertices are an independent set and vice versa.
+
+14
+00:00:39,550 --> 00:00:42,045
+ Let's prove this claim and then the reduction from
+
+15
+00:00:42,045 --> 00:00:42,045
+ independent set to vertex cover will be straightforward.
+

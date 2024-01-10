@@ -1,0 +1,260 @@
+1
+00:00:00,000 --> 00:00:05,285
+ Once again, we have a number R and we're trying to determine if R is prime or composite.
+
+2
+00:00:05,285 --> 00:00:09,525
+ Now we say number Z is a Fermat witness for R. First off,
+
+3
+00:00:09,525 --> 00:00:12,355
+ Z lies between one and R minus.
+
+4
+00:00:12,355 --> 00:00:16,140
+ And crucially Z raised to the power R minus one is
+
+5
+00:00:16,140 --> 00:00:20,190
+ not congruent to one mod R. Then by Fermat's little theorem,
+
+6
+00:00:20,190 --> 00:00:22,350
+ we know that R is composite.
+
+7
+00:00:22,350 --> 00:00:25,110
+ Because if R is prime every such Z,
+
+8
+00:00:25,110 --> 00:00:27,280
+ Z raised to the power R minus one,
+
+9
+00:00:27,280 --> 00:00:30,420
+ is congruent to one mod R. So if we get a Z where is not
+
+10
+00:00:30,420 --> 00:00:33,930
+ true then this R must be composite.
+
+11
+00:00:33,930 --> 00:00:39,930
+ So Z is a witness to the fact via Fermat's little theorem that R is composite.
+
+12
+00:00:39,930 --> 00:00:44,645
+ We want to first prove that every composite number has at least one Fermat witness.
+
+13
+00:00:44,645 --> 00:00:46,095
+ So let's prove this fact.
+
+14
+00:00:46,095 --> 00:00:49,910
+ Now, R is composite so we know it has at least two divisors.
+
+15
+00:00:49,910 --> 00:00:53,670
+ So take a Z which is a divisor of R. So clearly this Z,
+
+16
+00:00:53,670 --> 00:00:56,845
+ which is a divisor of R, lies between one and R minus one.
+
+17
+00:00:56,845 --> 00:00:58,370
+ What else do we know about this Z?
+
+18
+00:00:58,370 --> 00:01:00,060
+ Well, look at its GCD.
+
+19
+00:01:00,060 --> 00:01:02,670
+ What do we know about the GCD of R and Z?
+
+20
+00:01:02,670 --> 00:01:05,030
+ Well, if we take Z to be a divisor of R
+
+21
+00:01:05,030 --> 00:01:09,150
+ then we know the greatest common divisor of these two numbers is Z itself.
+
+22
+00:01:09,150 --> 00:01:11,010
+ And since R is composite,
+
+23
+00:01:11,010 --> 00:01:13,380
+ we know this divisor is greater than one.
+
+24
+00:01:13,380 --> 00:01:16,825
+ Well, actually, this proof works for any Z where this statement is true.
+
+25
+00:01:16,825 --> 00:01:21,165
+ So any Z which is not relatively prime to R. And if R is composite,
+
+26
+00:01:21,165 --> 00:01:25,710
+ we always know there is at least two such Z's which are not relatively prime to R. Now,
+
+27
+00:01:25,710 --> 00:01:28,560
+ if the GCD of R and Z is greater than one,
+
+28
+00:01:28,560 --> 00:01:29,840
+ what do we know?
+
+29
+00:01:29,840 --> 00:01:33,690
+ Well, if you recall from our previous lecture about modular arithmetic,
+
+30
+00:01:33,690 --> 00:01:35,260
+ what about the inverse of Z mod R?
+
+31
+00:01:35,260 --> 00:01:38,395
+ We know it does not exist.
+
+32
+00:01:38,395 --> 00:01:41,330
+ There is no inverse of Z mod R. Why?
+
+33
+00:01:41,330 --> 00:01:44,100
+ Because the inverse of Z mod R exist,
+
+34
+00:01:44,100 --> 00:01:47,385
+ if and only if the GCD of R and Z is one.
+
+35
+00:01:47,385 --> 00:01:49,200
+ They're relatively prime to each other.
+
+36
+00:01:49,200 --> 00:01:52,290
+ Now, we want a proof for this Z that Z raised to the power R
+
+37
+00:01:52,290 --> 00:01:55,670
+ minus one is not congruent to one mod R. What are we going to do?
+
+38
+00:01:55,670 --> 00:01:59,970
+ Let's suppose that it is congruent to one mod R. So suppose that Z raised
+
+39
+00:01:59,970 --> 00:02:01,980
+ to the power R minus one is congruent to
+
+40
+00:02:01,980 --> 00:02:05,090
+ one mod R. That's the opposite of what we're trying to prove.
+
+41
+00:02:05,090 --> 00:02:06,270
+ So what will show is that,
+
+42
+00:02:06,270 --> 00:02:09,170
+ if this holds then we get a contradiction.
+
+43
+00:02:09,170 --> 00:02:10,630
+ How will we get a contradiction?
+
+44
+00:02:10,630 --> 00:02:12,600
+ Will show that Z has
+
+45
+00:02:12,600 --> 00:02:17,210
+ an inverse mod R. And we know that's not the case therefore we have a contradiction,
+
+46
+00:02:17,210 --> 00:02:19,215
+ therefore this assumption cannot hold,
+
+47
+00:02:19,215 --> 00:02:24,945
+ and therefore Z raised to the power R minus one must not be congruent to one mod R. Okay?
+
+48
+00:02:24,945 --> 00:02:29,785
+ Now, we have the fact that Z raised to the power R minus one is congruent one mod R. Now,
+
+49
+00:02:29,785 --> 00:02:33,255
+ Z raised to the power R minus one is the same as the following.
+
+50
+00:02:33,255 --> 00:02:37,590
+ It's the same as Z raised to the power R minus two times Z.
+
+51
+00:02:37,590 --> 00:02:40,605
+ This product is Z raised to the power R minus one.
+
+52
+00:02:40,605 --> 00:02:43,675
+ So if Z raised to the power R minus one is congruent to one mod R,
+
+53
+00:02:43,675 --> 00:02:46,775
+ then Z raised to the R minus two times Z
+
+54
+00:02:46,775 --> 00:02:50,580
+ is also congruent to one mod R. Now, look at this statement.
+
+55
+00:02:50,580 --> 00:02:54,270
+ Z times Z to the R minus two is congruent to
+
+56
+00:02:54,270 --> 00:02:58,670
+ one mod R. That means that Z has an inverse. What's its inverse?
+
+57
+00:02:58,670 --> 00:03:01,220
+ It's this number Z to the are minus two.
+
+58
+00:03:01,220 --> 00:03:03,420
+ Because when we look at the product of these two,
+
+59
+00:03:03,420 --> 00:03:06,615
+ it's one mod R. That's the definition of the inverse.
+
+60
+00:03:06,615 --> 00:03:11,945
+ So Z to the R minus two is the inverse of Z and Z is the inverse of Z to the R minus two.
+
+61
+00:03:11,945 --> 00:03:15,000
+ But we know that Z does not have an inverse mod R,
+
+62
+00:03:15,000 --> 00:03:16,830
+ therefore we have a contradiction.
+
+63
+00:03:16,830 --> 00:03:23,220
+ And thus, this assumption cannot hold and therefore we know that Z to the R minus one is
+
+64
+00:03:23,220 --> 00:03:25,890
+ not congruent to one mod R. And that
+
+65
+00:03:25,890 --> 00:03:25,890
+ proves that every composite R has at least one Fermat witness.
+

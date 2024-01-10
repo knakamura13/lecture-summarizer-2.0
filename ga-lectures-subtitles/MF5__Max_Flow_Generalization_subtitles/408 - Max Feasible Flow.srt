@@ -1,0 +1,232 @@
+1
+00:00:00,000 --> 00:00:04,185
+ So we've proved this lemma: G, our original input,
+
+2
+00:00:04,185 --> 00:00:11,160
+ has a feasible flow if and only if our new construction G' has a saturating flow.
+
+3
+00:00:11,160 --> 00:00:15,960
+ So, to solve the feasible flow problem to find a feasible flow in this input graph,
+
+4
+00:00:15,960 --> 00:00:17,875
+ we simply construct this graph G',
+
+5
+00:00:17,875 --> 00:00:20,310
+ we run the max-flow problem,
+
+6
+00:00:20,310 --> 00:00:25,260
+ we check whether the size of this max-flow equals capital D,
+
+7
+00:00:25,260 --> 00:00:28,310
+ and therefore whether or not it's a saturating flow.
+
+8
+00:00:28,310 --> 00:00:30,020
+ If it is a saturating flow,
+
+9
+00:00:30,020 --> 00:00:33,885
+ then we've shown how to transform that saturating flow f'
+
+10
+00:00:33,885 --> 00:00:38,505
+ into a feasible flow f for this graph G. So,
+
+11
+00:00:38,505 --> 00:00:44,485
+ we know how to find a feasible flow f for this graph G if one exists.
+
+12
+00:00:44,485 --> 00:00:48,230
+ Once we have such a feasible flow f, can we transform it?
+
+13
+00:00:48,230 --> 00:00:50,550
+ Can we augment it to find a flow,
+
+14
+00:00:50,550 --> 00:00:53,400
+ a feasible flow of maximum size?
+
+15
+00:00:53,400 --> 00:00:56,355
+ So, can we find a maximum size feasible flow?
+
+16
+00:00:56,355 --> 00:00:59,085
+ Now recall how our max-flow algorithms worked,
+
+17
+00:00:59,085 --> 00:01:01,625
+ either Ford-Fulkerson or Edmonds-Karp.
+
+18
+00:01:01,625 --> 00:01:04,130
+ Both of them start with a zero flow.
+
+19
+00:01:04,130 --> 00:01:07,140
+ So every edge has flow zero initially then we build
+
+20
+00:01:07,140 --> 00:01:11,490
+ the residual graph and we find an augmenting path from s to t if one exists.
+
+21
+00:01:11,490 --> 00:01:13,710
+ If there exists one, we augment along
+
+22
+00:01:13,710 --> 00:01:17,025
+ that path then we build a new residual graph and we repeat.
+
+23
+00:01:17,025 --> 00:01:19,460
+ We keep augmenting along a path from s to t in
+
+24
+00:01:19,460 --> 00:01:23,705
+ the residual graph until there's no path from s to t in the residual graph,
+
+25
+00:01:23,705 --> 00:01:27,385
+ and therefore, the flow that we're at is a max-flow.
+
+26
+00:01:27,385 --> 00:01:30,345
+ Now we want to do a similar procedure for the feasible flow.
+
+27
+00:01:30,345 --> 00:01:34,080
+ So here, we're going to start at this feasible flow f that we found.
+
+28
+00:01:34,080 --> 00:01:38,022
+ Instead of starting at the zero flow as we did for the max-flow algorithms,
+
+29
+00:01:38,022 --> 00:01:40,600
+ here we're going to start with a feasible flow,
+
+30
+00:01:40,600 --> 00:01:44,465
+ and then we build the residual graph and we try to augment this flow.
+
+31
+00:01:44,465 --> 00:01:46,800
+ So we'd look for a path from s to t in
+
+32
+00:01:46,800 --> 00:01:50,600
+ this residual graph and augment along it if it exists and if none exists,
+
+33
+00:01:50,600 --> 00:01:53,945
+ we'll know that we're at a maximum size feasible flow.
+
+34
+00:01:53,945 --> 00:01:58,310
+ Now the only difference from before is that this residual graph is slightly different.
+
+35
+00:01:58,310 --> 00:02:02,130
+ Now the capacity of this edge from v to w in
+
+36
+00:02:02,130 --> 00:02:06,322
+ the residual graph for this current flow f. For forward edges,
+
+37
+00:02:06,322 --> 00:02:08,880
+ it's defined to be the leftover capacity.
+
+38
+00:02:08,880 --> 00:02:12,450
+ So it's the capacity minus the current flow.
+
+39
+00:02:12,450 --> 00:02:14,490
+ Now for reverse edges,
+
+40
+00:02:14,490 --> 00:02:17,550
+ so if there's an edge from w to v in the original graph,
+
+41
+00:02:17,550 --> 00:02:20,970
+ then we add the edge from v to w if there is flow from
+
+42
+00:02:20,970 --> 00:02:24,480
+ w to v. So normally in the residual graph,
+
+43
+00:02:24,480 --> 00:02:26,965
+ the capacity of this edge from v to w,
+
+44
+00:02:26,965 --> 00:02:30,720
+ this reverse edge, will be the flow along this edge.
+
+45
+00:02:30,720 --> 00:02:34,825
+ But now, we have the constraint that the flow can never go below the demand.
+
+46
+00:02:34,825 --> 00:02:37,875
+ So it can't decrease the flow below the demand.
+
+47
+00:02:37,875 --> 00:02:41,115
+ So the amount we can decrease the flow along this edge from
+
+48
+00:02:41,115 --> 00:02:46,045
+ wv is by how much the flow exceeds the demand.
+
+49
+00:02:46,045 --> 00:02:48,360
+ So we set the capacity of this reverse edge to be
+
+50
+00:02:48,360 --> 00:02:51,485
+ the flow along this edge minus the demand,
+
+51
+00:02:51,485 --> 00:02:53,975
+ and finally its zero otherwise.
+
+52
+00:02:53,975 --> 00:02:56,265
+ So, to find a max feasible flow,
+
+53
+00:02:56,265 --> 00:02:59,535
+ we run our max-flow algorithm with the following changes.
+
+54
+00:02:59,535 --> 00:03:01,239
+ Instead of starting at zero flow,
+
+55
+00:03:01,239 --> 00:03:03,305
+ we start at a feasible flow,
+
+56
+00:03:03,305 --> 00:03:05,803
+ and when we're building the residual graph,
+
+57
+00:03:05,803 --> 00:03:09,665
+ the reverse edges, their capacities is defined as
+
+58
+00:03:09,665 --> 00:03:09,665
+ not the flow along the edge but how much the flow exceeds the demand.
+

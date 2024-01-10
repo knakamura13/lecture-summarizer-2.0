@@ -1,0 +1,272 @@
+1
+00:00:00,000 --> 00:00:02,475
+ Let's take a look at the running time of Euclid's algorithm.
+
+2
+00:00:02,475 --> 00:00:06,585
+ The only non-trivial step in each round is computing X mod Y.
+
+3
+00:00:06,585 --> 00:00:08,115
+ How long does that take to compute?
+
+4
+00:00:08,115 --> 00:00:12,390
+ Well that involves dividing X by Y which takes the order N squared time,
+
+5
+00:00:12,390 --> 00:00:14,295
+ where N is the number of bits.
+
+6
+00:00:14,295 --> 00:00:17,465
+ So the time is order N square time per round.
+
+7
+00:00:17,465 --> 00:00:20,795
+ How many rounds or recursive calls do we have in this algorithm though?
+
+8
+00:00:20,795 --> 00:00:23,845
+ Here's the key lemma for figuring out the number of rounds.
+
+9
+00:00:23,845 --> 00:00:25,980
+ If X is at least Y which is the case for
+
+10
+00:00:25,980 --> 00:00:29,305
+ our algorithm the first parameter is always at least the second parameter.
+
+11
+00:00:29,305 --> 00:00:30,480
+ Then X mod Y,
+
+12
+00:00:30,480 --> 00:00:33,000
+ which is the second parameter in our recursive call,
+
+13
+00:00:33,000 --> 00:00:35,350
+ that's the only parameter which is changing,
+
+14
+00:00:35,350 --> 00:00:37,855
+ is strictly less than X over two.
+
+15
+00:00:37,855 --> 00:00:41,965
+ So the one parameter which is changing goes down by a factor of at least two.
+
+16
+00:00:41,965 --> 00:00:43,940
+ So let's take a look at the algorithm.
+
+17
+00:00:43,940 --> 00:00:46,350
+ Let's say we have a call with X and Y,
+
+18
+00:00:46,350 --> 00:00:49,975
+ then a recursive call is going to be Y, X mod Y.
+
+19
+00:00:49,975 --> 00:00:52,040
+ What happens in our next recursive call?
+
+20
+00:00:52,040 --> 00:00:55,500
+ Well this second parameter is going to become the first parameter.
+
+21
+00:00:55,500 --> 00:00:56,790
+ So we get X mod Y,
+
+22
+00:00:56,790 --> 00:00:59,093
+ is the first parameter. What's the second parameter?
+
+23
+00:00:59,093 --> 00:01:03,400
+ The second parameter is Y mod X mod Y.
+
+24
+00:01:03,400 --> 00:01:06,235
+ Okay, it's a little bit hard to write. Let's skip it.
+
+25
+00:01:06,235 --> 00:01:09,150
+ It's not important. What does this lemma tell us?
+
+26
+00:01:09,150 --> 00:01:11,130
+ It tells us this X mod Y,
+
+27
+00:01:11,130 --> 00:01:12,536
+ which is right here,
+
+28
+00:01:12,536 --> 00:01:15,250
+ this is strictly less than X over two.
+
+29
+00:01:15,250 --> 00:01:17,910
+ So notice after two rounds of the algorithm,
+
+30
+00:01:17,910 --> 00:01:19,680
+ what happens to the first parameter?
+
+31
+00:01:19,680 --> 00:01:22,070
+ It went down by least a factor two.
+
+32
+00:01:22,070 --> 00:01:23,670
+ So how many rounds does the algorithm have?
+
+33
+00:01:23,670 --> 00:01:25,470
+ It's going to have at most two N rounds.
+
+34
+00:01:25,470 --> 00:01:27,510
+ Why? Because every other round we've
+
+35
+00:01:27,510 --> 00:01:31,845
+ shown the first parameter goes down by a factor of at least two.
+
+36
+00:01:31,845 --> 00:01:35,415
+ Since we have order N rounds and we have order N squared time per round,
+
+37
+00:01:35,415 --> 00:01:38,130
+ the total running time is order N cubed.
+
+38
+00:01:38,130 --> 00:01:41,815
+ So we've established the running time of the algorithm modulo this lemma.
+
+39
+00:01:41,815 --> 00:01:45,180
+ Let's go ahead and prove this lemma which is would be quite straightforward to prove.
+
+40
+00:01:45,180 --> 00:01:49,525
+ Once we break it up into the appropriate cases the proof will be almost immediate.
+
+41
+00:01:49,525 --> 00:01:51,660
+ We're going to break it up based on the size of Y,
+
+42
+00:01:51,660 --> 00:01:55,800
+ either Y is small and then X mod Y is immediately small,
+
+43
+00:01:55,800 --> 00:02:01,055
+ or Y is big and then we'll figure out another reason why X mod Y is small.
+
+44
+00:02:01,055 --> 00:02:03,225
+ So let's first take the case where Y is small.
+
+45
+00:02:03,225 --> 00:02:05,620
+ Let's say Y is at most X over two.
+
+46
+00:02:05,620 --> 00:02:08,000
+ What do we know about X mod Y? How big can it be?
+
+47
+00:02:08,000 --> 00:02:12,530
+ The largest it can be is Y minus one which is smaller than Y.
+
+48
+00:02:12,530 --> 00:02:16,103
+ What we know about Y? Y is at most X over two. So what have we shown?
+
+49
+00:02:16,103 --> 00:02:17,820
+ We've show that X mod Y is strictly
+
+50
+00:02:17,820 --> 00:02:21,120
+ smaller than X over 2 which is what we're trying to prove.
+
+51
+00:02:21,120 --> 00:02:23,310
+ Now let's take the case where Y is big.
+
+52
+00:02:23,310 --> 00:02:25,755
+ Y is strictly greater than X over 2.
+
+53
+00:02:25,755 --> 00:02:27,540
+ What do we know about X divided by Y?
+
+54
+00:02:27,540 --> 00:02:30,240
+ Well Y goes into X at most one time.
+
+55
+00:02:30,240 --> 00:02:34,140
+ So this is one. So what does that imply about X mod Y?
+
+56
+00:02:34,140 --> 00:02:37,500
+ In order to get the remainder when we do X divided by Y,
+
+57
+00:02:37,500 --> 00:02:40,755
+ we just have to subtract off Y one time from X.
+
+58
+00:02:40,755 --> 00:02:44,120
+ So X mod Y is equal to X minus Y.
+
+59
+00:02:44,120 --> 00:02:47,190
+ Well we know that Y is strictly greater than X over 2,
+
+60
+00:02:47,190 --> 00:02:50,820
+ so X minus Y is strictly smaller than X minus X
+
+61
+00:02:50,820 --> 00:02:55,050
+ over 2 because Y is strictly bigger than X over 2.
+
+62
+00:02:55,050 --> 00:02:57,380
+ And this is clearly at most X over 2.
+
+63
+00:02:57,380 --> 00:02:58,830
+ And that's what we're trying to prove.
+
+64
+00:02:58,830 --> 00:03:03,120
+ We prove that X mod Y is strictly smaller than X over 2,
+
+65
+00:03:03,120 --> 00:03:05,055
+ which is what we're trying to prove in the lemma.
+
+66
+00:03:05,055 --> 00:03:06,765
+ That completes the proof of the lemma,
+
+67
+00:03:06,765 --> 00:03:08,220
+ and therefore we've shown that
+
+68
+00:03:08,220 --> 00:03:08,220
+ the running time of Euclid's algorithm is order N cubed time.
+

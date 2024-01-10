@@ -1,0 +1,188 @@
+1
+00:00:00,000 --> 00:00:03,735
+ So let's formalize this notion of doing a random walk on the web graph,
+
+2
+00:00:03,735 --> 00:00:06,145
+ where occasionally we hit the random button.
+
+3
+00:00:06,145 --> 00:00:07,680
+ And by hitting the random button,
+
+4
+00:00:07,680 --> 00:00:09,995
+ we're going to go to a random web page.
+
+5
+00:00:09,995 --> 00:00:12,505
+ So we're going to have an additional parameter Alpha
+
+6
+00:00:12,505 --> 00:00:16,355
+ and this Alpha is going to be the probability that we hit the random button.
+
+7
+00:00:16,355 --> 00:00:20,340
+ Actually, to be consistent with the actual PageRank definition,
+
+8
+00:00:20,340 --> 00:00:22,125
+ Alphas can be a complement of that event.
+
+9
+00:00:22,125 --> 00:00:23,780
+ So with probability one minus Alpha,
+
+10
+00:00:23,780 --> 00:00:27,410
+ we're going to hit the random button and go to a random web page in the graph.
+
+11
+00:00:27,410 --> 00:00:28,985
+ And with probably Alpha,
+
+12
+00:00:28,985 --> 00:00:32,775
+ we're going to follow a random edge out of the current web page.
+
+13
+00:00:32,775 --> 00:00:35,630
+ So this parameter Alpha is called the damping parameter.
+
+14
+00:00:35,630 --> 00:00:38,690
+ It's strictly greater than zero and it's at most one.
+
+15
+00:00:38,690 --> 00:00:40,505
+ Why is it called the damping parameter?
+
+16
+00:00:40,505 --> 00:00:45,835
+ Because what we're doing is we're scaling down this original webgraph by a factor Alpha.
+
+17
+00:00:45,835 --> 00:00:49,070
+ So we're scaling down the webgraph by a factor Alpha and then we're
+
+18
+00:00:49,070 --> 00:00:53,320
+ adding in a complete graph of weight one minus Alpha.
+
+19
+00:00:53,320 --> 00:00:55,090
+ So now let's look at our random walk.
+
+20
+00:00:55,090 --> 00:00:56,880
+ Let's say we're currently at a web page Y.
+
+21
+00:00:56,880 --> 00:00:59,870
+ Then with probability Alpha,
+
+22
+00:00:59,870 --> 00:01:03,240
+ we're going to follow a random outgoing link from Y.
+
+23
+00:01:03,240 --> 00:01:04,630
+ So if Alpha equals one,
+
+24
+00:01:04,630 --> 00:01:07,890
+ this is exactly the same as our original random walk.
+
+25
+00:01:07,890 --> 00:01:10,694
+ So we're not using this random button at all,
+
+26
+00:01:10,694 --> 00:01:12,435
+ because one minus Alpha is zero.
+
+27
+00:01:12,435 --> 00:01:14,050
+ But when Alpha is strictly less than
+
+28
+00:01:14,050 --> 00:01:17,050
+ one then we're going to use the random button sometimes.
+
+29
+00:01:17,050 --> 00:01:18,850
+ So with probability one minus Alpha,
+
+30
+00:01:18,850 --> 00:01:20,555
+ we're going to go to a random page.
+
+31
+00:01:20,555 --> 00:01:25,145
+ This destination page is chosen uniformly at random from all web pages.
+
+32
+00:01:25,145 --> 00:01:26,935
+ So this is our random surfer model.
+
+33
+00:01:26,935 --> 00:01:31,490
+ So you give me a parameter Alpha and then my random walk looks like the following.
+
+34
+00:01:31,490 --> 00:01:36,134
+ I'm currently at a web page Y, with probability Alpha.
+
+35
+00:01:36,134 --> 00:01:37,755
+ I'll look at all the outgoing links from Y
+
+36
+00:01:37,755 --> 00:01:40,240
+ and I'll choose one of those uniformly at random.
+
+37
+00:01:40,240 --> 00:01:42,435
+ And with probability one minus Alpha,
+
+38
+00:01:42,435 --> 00:01:47,765
+ I'm going to go to a random web page uniformly at random from all web pages in the graph.
+
+39
+00:01:47,765 --> 00:01:49,220
+ So I'm at this web page Y,
+
+40
+00:01:49,220 --> 00:01:54,520
+ I flip a coin or I choose a random number uniformly at random between zero and one.
+
+41
+00:01:54,520 --> 00:01:57,792
+ If this random number is at most Alpha,
+
+42
+00:01:57,792 --> 00:02:00,815
+ then I choose a random outgoing link.
+
+43
+00:02:00,815 --> 00:02:04,230
+ If this random number is strictly greater than Alpha ,
+
+44
+00:02:04,230 --> 00:02:09,205
+ then I go to a random web page uniformly at random from all web pages.
+
+45
+00:02:09,205 --> 00:02:10,930
+ Now what Alpha should we choose?
+
+46
+00:02:10,930 --> 00:02:13,699
+ Well according to Wikipedia,
+
+47
+00:02:13,699 --> 00:02:13,699
+ Google apparently chooses an Alpha which is at roughly 0.85.
+

@@ -1,0 +1,244 @@
+1
+00:00:00,000 --> 00:00:02,625
+ Let's consider an LP in standard form,
+
+2
+00:00:02,625 --> 00:00:08,160
+ and we'd like to figure out whether there are some axis which satisfy these constraints.
+
+3
+00:00:08,160 --> 00:00:10,445
+ So, this has nothing to do with the objective function.
+
+4
+00:00:10,445 --> 00:00:12,450
+ Simply looking at the constraints,
+
+5
+00:00:12,450 --> 00:00:16,080
+ is there any point x satisfying all of the constraints?
+
+6
+00:00:16,080 --> 00:00:18,350
+ So, is the feasible region empty or not?
+
+7
+00:00:18,350 --> 00:00:20,205
+ Let's make a new variable z.
+
+8
+00:00:20,205 --> 00:00:22,350
+ Now, X was a vector of size n,
+
+9
+00:00:22,350 --> 00:00:24,805
+ so, it consisted of n variables.
+
+10
+00:00:24,805 --> 00:00:27,365
+ That's not a vector, that's just a single variable.
+
+11
+00:00:27,365 --> 00:00:29,430
+ Now, consider one of the constraints here,
+
+12
+00:00:29,430 --> 00:00:34,100
+ a1x1 plus a2x2 and so on,
+
+13
+00:00:34,100 --> 00:00:37,285
+ up to anxn is at most little b.
+
+14
+00:00:37,285 --> 00:00:41,145
+ Now, is there a solution to this under the non-activity constraint?
+
+15
+00:00:41,145 --> 00:00:42,765
+ Well, there may or may not be.
+
+16
+00:00:42,765 --> 00:00:47,365
+ But suppose, we take the same constraint and we add in z to the left hand side.
+
+17
+00:00:47,365 --> 00:00:51,126
+ We keep the non-negativity constrains for the variables x1 through xn,
+
+18
+00:00:51,126 --> 00:00:53,625
+ but z is unrestricted.
+
+19
+00:00:53,625 --> 00:00:56,395
+ So, it can take on positive or negative values.
+
+20
+00:00:56,395 --> 00:00:59,495
+ In this case, there is always a solution to this new equation.
+
+21
+00:00:59,495 --> 00:01:02,640
+ Why? Simply set z small enough,
+
+22
+00:01:02,640 --> 00:01:04,430
+ and then, this is trivially satisfied.
+
+23
+00:01:04,430 --> 00:01:07,269
+ So, let's think of z as negative infinity though,
+
+24
+00:01:07,269 --> 00:01:09,275
+ in fact it's a finite number.
+
+25
+00:01:09,275 --> 00:01:12,090
+ It suffices to take a small enough number relative
+
+26
+00:01:12,090 --> 00:01:15,345
+ to the numbers a1 through an and little b.
+
+27
+00:01:15,345 --> 00:01:19,450
+ So, this constraint is trivially satisfied for a small enough z.
+
+28
+00:01:19,450 --> 00:01:22,943
+ Now, the question is, whether there is a solution to this equation,
+
+29
+00:01:22,943 --> 00:01:24,570
+ when z is at least zero.
+
+30
+00:01:24,570 --> 00:01:27,220
+ If we can find a solution to this new equation,
+
+31
+00:01:27,220 --> 00:01:29,050
+ where z is non-negative then,
+
+32
+00:01:29,050 --> 00:01:32,870
+ we can drop z and we still have this condition satisfied.
+
+33
+00:01:32,870 --> 00:01:35,760
+ So, our original constrain is equivalent to
+
+34
+00:01:35,760 --> 00:01:39,780
+ the new constrain with the extra condition that z is at least zero.
+
+35
+00:01:39,780 --> 00:01:41,250
+ But if we drop this constraint,
+
+36
+00:01:41,250 --> 00:01:43,110
+ that z is non-negative then,
+
+37
+00:01:43,110 --> 00:01:45,180
+ there's trivially a solution to this.
+
+38
+00:01:45,180 --> 00:01:47,010
+ So, we have a starting point,
+
+39
+00:01:47,010 --> 00:01:48,420
+ and then we can run an LP,
+
+40
+00:01:48,420 --> 00:01:50,670
+ and we maximize z,
+
+41
+00:01:50,670 --> 00:01:54,845
+ and we see whether there's a solution with z as non-negative.
+
+42
+00:01:54,845 --> 00:01:56,660
+ So, we just consider one constraint,
+
+43
+00:01:56,660 --> 00:01:58,890
+ let's consider all n constraints.
+
+44
+00:01:58,890 --> 00:02:04,375
+ So, we look at the new LP which has the constraints Ax plus z is at most b,
+
+45
+00:02:04,375 --> 00:02:06,335
+ and x is non-negative,
+
+46
+00:02:06,335 --> 00:02:08,505
+ but z is unrestricted.
+
+47
+00:02:08,505 --> 00:02:10,034
+ Since z is unrestricted,
+
+48
+00:02:10,034 --> 00:02:12,980
+ it's trivial to always find a feasible point.
+
+49
+00:02:12,980 --> 00:02:15,820
+ We simply set z to be a small enough number.
+
+50
+00:02:15,820 --> 00:02:20,100
+ Now, our goal is to figure out whether there is a solution whereas z is non-negative.
+
+51
+00:02:20,100 --> 00:02:22,710
+ So, we add in the objective function maximize z.
+
+52
+00:02:22,710 --> 00:02:25,320
+ This new LP is always feasible,
+
+53
+00:02:25,320 --> 00:02:31,250
+ and we can run this LP and check whether the optimal value of z is non-negative.
+
+54
+00:02:31,250 --> 00:02:35,672
+ If the optimal value is non-negative, then that point,
+
+55
+00:02:35,672 --> 00:02:37,850
+ those Xs, if we ignore z,
+
+56
+00:02:37,850 --> 00:02:40,460
+ give us a feasible point to the original LP.
+
+57
+00:02:40,460 --> 00:02:43,925
+ And if this LP is optimized when z is negative,
+
+58
+00:02:43,925 --> 00:02:46,810
+ then we know that the original LP is infeasible.
+
+59
+00:02:46,810 --> 00:02:50,960
+ So, this gives us a way to check whether an LP is feasible or not,
+
+60
+00:02:50,960 --> 00:02:55,700
+ and it also gives us this feasible point for this LP if it is feasible.
+
+61
+00:02:55,700 --> 00:02:55,700
+ So, that'll give us a starting point for the simplex algorithm.
+

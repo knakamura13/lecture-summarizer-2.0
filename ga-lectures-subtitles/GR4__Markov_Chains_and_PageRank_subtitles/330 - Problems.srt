@@ -1,0 +1,208 @@
+1
+00:00:00,110 --> 00:00:05,535
+ Now here's what we just saw. We saw that if we did the random walk on the web graph,
+
+2
+00:00:05,535 --> 00:00:09,740
+ then a stationary distribution satisfies this identity.
+
+3
+00:00:09,740 --> 00:00:13,735
+ And this is what we'd like to define the PageRank for this web page to be.
+
+4
+00:00:13,735 --> 00:00:16,290
+ First off, is this well defined?
+
+5
+00:00:16,290 --> 00:00:18,930
+ Think back to our discussion about Markov chains and
+
+6
+00:00:18,930 --> 00:00:22,345
+ about stationary distributions of Markov chains.
+
+7
+00:00:22,345 --> 00:00:24,760
+ What are some of the key issues that can arise when we talk
+
+8
+00:00:24,760 --> 00:00:27,485
+ about stationary distributions of Markov chains?
+
+9
+00:00:27,485 --> 00:00:29,920
+ Was there a unique stationary distribution or
+
+10
+00:00:29,920 --> 00:00:32,410
+ are there multiple stationary distributions?
+
+11
+00:00:32,410 --> 00:00:34,330
+ Well, if there are multiple stationary distributions
+
+12
+00:00:34,330 --> 00:00:37,180
+ and it's not clear which one we are referring to.
+
+13
+00:00:37,180 --> 00:00:40,210
+ Also, we want that no matter where we start this random walk,
+
+14
+00:00:40,210 --> 00:00:43,326
+ we're always going to reach the stationary distribution.
+
+15
+00:00:43,326 --> 00:00:46,600
+ For instance, what if G has many strongly connected components?
+
+16
+00:00:46,600 --> 00:00:47,845
+ I mean, this is definitely the case.
+
+17
+00:00:47,845 --> 00:00:51,055
+ The web graph is going to have many strongly connected components.
+
+18
+00:00:51,055 --> 00:00:53,905
+ So, there might be one strongly connected component,
+
+19
+00:00:53,905 --> 00:00:57,595
+ very small strongly connected component containing my web page.
+
+20
+00:00:57,595 --> 00:01:01,615
+ And, perhaps, if you start the random walk in that strongly connected component,
+
+21
+00:01:01,615 --> 00:01:06,390
+ you might have a high probability of ending at my particular web page.
+
+22
+00:01:06,390 --> 00:01:10,536
+ Now, does that mean that I should have a high PageRank? Probably not.
+
+23
+00:01:10,536 --> 00:01:12,840
+ Now, there might be another strongly connected component,
+
+24
+00:01:12,840 --> 00:01:18,408
+ a very giant component and this giant component probably contains Google's web page.
+
+25
+00:01:18,408 --> 00:01:21,730
+ And now, if you start the random walk in that giant component,
+
+26
+00:01:21,730 --> 00:01:26,380
+ then you probably have a good probability of ending at Google's web page.
+
+27
+00:01:26,380 --> 00:01:27,760
+ So Google's web page should have
+
+28
+00:01:27,760 --> 00:01:31,407
+ a high PageRank because in that component it has a high rank.
+
+29
+00:01:31,407 --> 00:01:35,930
+ So how can we ensure that the Markov chain has a unique stationary distribution?
+
+30
+00:01:35,930 --> 00:01:39,170
+ We want to ensure that there's only one strongly connected component
+
+31
+00:01:39,170 --> 00:01:42,140
+ and also we want to get rid of any periodicity.
+
+32
+00:01:42,140 --> 00:01:44,815
+ There might be some parts of the graph which are bipartite.
+
+33
+00:01:44,815 --> 00:01:47,640
+ The easy way we discussed for making sure that there's
+
+34
+00:01:47,640 --> 00:01:52,137
+ a unique stationary distribution is to make the graph fully connected.
+
+35
+00:01:52,137 --> 00:01:53,710
+ So we're going to add edges,
+
+36
+00:01:53,710 --> 00:01:55,795
+ maybe with very small probability,
+
+37
+00:01:55,795 --> 00:01:58,975
+ but there will be edges between every pair of vertices.
+
+38
+00:01:58,975 --> 00:02:00,250
+ So, from any web page,
+
+39
+00:02:00,250 --> 00:02:04,210
+ we'll have some positive probability of going to any other particular web page.
+
+40
+00:02:04,210 --> 00:02:06,910
+ So, suppose your web browser had a random button.
+
+41
+00:02:06,910 --> 00:02:08,335
+ If you hit this random button,
+
+42
+00:02:08,335 --> 00:02:11,025
+ then it's going to take you to a random web page.
+
+43
+00:02:11,025 --> 00:02:15,180
+ The web page will be chosen uniformly at random from all web pages.
+
+44
+00:02:15,180 --> 00:02:16,725
+ So if there are a million web pages,
+
+45
+00:02:16,725 --> 00:02:20,820
+ you have probably one over a million of ending at any particular web page.
+
+46
+00:02:20,820 --> 00:02:22,610
+ Now, let's suppose you're surfing the web.
+
+47
+00:02:22,610 --> 00:02:25,000
+ What's the random walk going to look like?
+
+48
+00:02:25,000 --> 00:02:28,320
+ So, with some probability you're going to follow a random outgoing link from
+
+49
+00:02:28,320 --> 00:02:32,735
+ the current web page and with some probability you're going to hit the random button.
+
+50
+00:02:32,735 --> 00:02:35,950
+ And that's going to take you to a random web page in the whole graph.
+
+51
+00:02:35,950 --> 00:02:39,260
+ So, that random button is going to make the graph fully connected.
+
+52
+00:02:39,260 --> 00:02:39,260
+ Let's formalize this random walk that we're talking about here.
+

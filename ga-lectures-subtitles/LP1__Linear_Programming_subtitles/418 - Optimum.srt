@@ -1,0 +1,100 @@
+1
+00:00:00,000 --> 00:00:02,995
+ Now, how do we find the optimal point?
+
+2
+00:00:02,995 --> 00:00:07,549
+ Our goal is to maximize this function x1 plus 6x2.
+
+3
+00:00:07,549 --> 00:00:13,470
+ So, let's look at this line x1 plus 6x2 equal C. We're trying to maximize the C,
+
+4
+00:00:13,470 --> 00:00:16,144
+ which intersects this feasible region.
+
+5
+00:00:16,144 --> 00:00:18,510
+ So, let's find the maximum value of this C,
+
+6
+00:00:18,510 --> 00:00:23,065
+ where this linear function intersects the feasible region.
+
+7
+00:00:23,065 --> 00:00:24,855
+ So, let's take a look at this function,
+
+8
+00:00:24,855 --> 00:00:27,750
+ this linear function for different values of C. Now,
+
+9
+00:00:27,750 --> 00:00:31,620
+ here's the line x1 plus 6x2 equals 600.
+
+10
+00:00:31,620 --> 00:00:35,485
+ Now, all these points on the line which intersect the feasible region,
+
+11
+00:00:35,485 --> 00:00:42,149
+ so these points, all satisfy the five constraints and achieve profit of 600.
+
+12
+00:00:42,149 --> 00:00:45,520
+ Now, clearly these are not optimal because we can move up this line.
+
+13
+00:00:45,520 --> 00:00:47,465
+ Now, we can think of moving up this line into
+
+14
+00:00:47,465 --> 00:00:51,200
+ the last point when we intersect the feasible region.
+
+15
+00:00:51,200 --> 00:00:54,030
+ Now, it turns out the maximum value of C for which
+
+16
+00:00:54,030 --> 00:00:58,409
+ this line intersects the feasible region is C equals 1300.
+
+17
+00:00:58,409 --> 00:01:01,049
+ This line x1 plus 6x2 equals
+
+18
+00:01:01,049 --> 00:01:06,021
+ 1300 intersects the feasible region at this corner of this polygon,
+
+19
+00:01:06,021 --> 00:01:08,935
+ this vertex of this feasible region.
+
+20
+00:01:08,935 --> 00:01:11,590
+ This is the point 100, 200.
+
+21
+00:01:11,590 --> 00:01:14,614
+ So, we know the optimum is at the point x1 equals
+
+22
+00:01:14,614 --> 00:01:19,530
+ 100 and x2 equals 200 and that achieves a profit of 1300.
+
+23
+00:01:19,530 --> 00:01:21,989
+ Now, this was a simple two dimensional example.
+
+24
+00:01:21,989 --> 00:01:24,450
+ Let's look at a simple three dimensional example and then we'll
+
+25
+00:01:24,450 --> 00:01:24,450
+ get some idea of how it generalizes to higher dimensions.
+

@@ -1,0 +1,108 @@
+1
+00:00:00,000 --> 00:00:03,260
+ Here's the general formulation of the max-flow problem.
+
+2
+00:00:03,260 --> 00:00:05,390
+ So the input is a flow network.
+
+3
+00:00:05,390 --> 00:00:06,960
+ Flow network, once again,
+
+4
+00:00:06,960 --> 00:00:12,150
+ consists of a directed graph with a specified start vertex and end vertex,
+
+5
+00:00:12,150 --> 00:00:13,525
+ and for each edge,
+
+6
+00:00:13,525 --> 00:00:19,045
+ we're given a capacity which is a positive number specified by c_sub_e.
+
+7
+00:00:19,045 --> 00:00:23,350
+ Our goal is to find the maximum amount of flow that can be sent from s to t.
+
+8
+00:00:23,350 --> 00:00:29,400
+ This flow is specified by these variables f_ sub_e for each edge in the directed graph.
+
+9
+00:00:29,400 --> 00:00:32,005
+ Now what are the constraints on these flows?
+
+10
+00:00:32,005 --> 00:00:34,485
+ The first constraint is the capacity constraint.
+
+11
+00:00:34,485 --> 00:00:40,050
+ For every edge, the flow along that edge cannot exceed the capacity of that edge,
+
+12
+00:00:40,050 --> 00:00:42,900
+ and the flow must be non-negative.
+
+13
+00:00:42,900 --> 00:00:45,645
+ The second constraint is conservation of flow.
+
+14
+00:00:45,645 --> 00:00:49,465
+ The flow originates at the source vertex s and ends
+
+15
+00:00:49,465 --> 00:00:53,091
+ at the sync vertex t. But for all other vertices,
+
+16
+00:00:53,091 --> 00:00:57,585
+ so for all v in the vertex set minus s and t,
+
+17
+00:00:57,585 --> 00:00:59,475
+ for all such vertices v,
+
+18
+00:00:59,475 --> 00:01:01,470
+ the flow must be conserved.
+
+19
+00:01:01,470 --> 00:01:04,910
+ So the flow into v must equal the flow out of v.
+
+20
+00:01:04,910 --> 00:01:08,505
+ Nothing can be lost or gained at vertex v. Formerly,
+
+21
+00:01:08,505 --> 00:01:11,305
+ the flow into v is the following.
+
+22
+00:01:11,305 --> 00:01:17,475
+ It's a sum over edges w to v of the flow along this edge which is specified by f_sub_wv,
+
+23
+00:01:17,475 --> 00:01:25,950
+ and the flow out of v is a sum over edges v to z of the flow along that edge,
+
+24
+00:01:25,950 --> 00:01:27,720
+ which is specified by f_sub_vz.
+
+25
+00:01:27,720 --> 00:01:31,320
+ A valid flow is one which satisfies
+
+26
+00:01:31,320 --> 00:01:34,020
+ the capacity constraints and conserves
+
+27
+00:01:34,020 --> 00:01:34,020
+ the flow at every vertex except for the source and the sync.
+

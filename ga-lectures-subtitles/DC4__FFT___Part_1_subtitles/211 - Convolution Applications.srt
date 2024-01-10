@@ -1,0 +1,104 @@
+1
+00:00:00,000 --> 00:00:01,650
+ Before we dive into the algorithm,
+
+2
+00:00:01,650 --> 00:00:05,955
+ let us take a look at a few of the many applications of convolution.
+
+3
+00:00:05,955 --> 00:00:08,580
+ One important application is filtering.
+
+4
+00:00:08,580 --> 00:00:11,110
+ So here we have a data set of endpoints.
+
+5
+00:00:11,110 --> 00:00:12,780
+ What we are going to do is we are going to replace
+
+6
+00:00:12,780 --> 00:00:16,350
+ each data point by a function of their neighboring points.
+
+7
+00:00:16,350 --> 00:00:20,490
+ This is used for such things as reducing noise or adding effects.
+
+8
+00:00:20,490 --> 00:00:24,070
+ Let's take a look at a more detailed example of filtering so it becomes clear.
+
+9
+00:00:24,070 --> 00:00:29,880
+ In mean filtering we have a parameter capital M and we replace the data point Yj
+
+10
+00:00:29,880 --> 00:00:36,775
+ by the mean of the neighboring 2M+1 points and we do this for all j.
+
+11
+00:00:36,775 --> 00:00:40,740
+ Now this smooth dataset Yi had can be viewed as the convolution of
+
+12
+00:00:40,740 --> 00:00:46,480
+ Y with a vector f. The vector f is this vector of size 2M+1.
+
+13
+00:00:46,480 --> 00:00:51,300
+ To smooth the data set in this way with computers convolution with this simple
+
+14
+00:00:51,300 --> 00:00:56,130
+ vector f. Now of course we can smoothen more sophisticated ways for example,
+
+15
+00:00:56,130 --> 00:00:59,645
+ we can replace this factor f by a Gaussian function,
+
+16
+00:00:59,645 --> 00:01:03,265
+ in this way points nearby Yj are given more weight.
+
+17
+00:01:03,265 --> 00:01:06,180
+ In particular a Gaussian filter uses the following vector.
+
+18
+00:01:06,180 --> 00:01:08,130
+ This quantities Z, is just
+
+19
+00:01:08,130 --> 00:01:12,930
+ a normalizing factor so that the sum of the entries in this vector sum up to one.
+
+20
+00:01:12,930 --> 00:01:15,345
+ Now there are many other filters one might consider.
+
+21
+00:01:15,345 --> 00:01:18,960
+ A different type of filter one might consider is Gaussian blur.
+
+22
+00:01:18,960 --> 00:01:21,825
+ This is used to add some visual effect to an image,
+
+23
+00:01:21,825 --> 00:01:23,865
+ in particular to blur an image.
+
+24
+00:01:23,865 --> 00:01:28,590
+ In particular, Gaussian blur applies a two dimensional Gaussian filter to an image.
+
+25
+00:01:28,590 --> 00:01:30,690
+ Now let's get back to our original problem of how do we
+
+26
+00:01:30,690 --> 00:01:30,690
+ compute the convolution of a pair of vectors.
+

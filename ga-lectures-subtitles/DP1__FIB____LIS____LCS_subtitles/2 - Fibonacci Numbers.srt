@@ -1,0 +1,84 @@
+1
+00:00:00,000 --> 00:00:01,860
+ Given an integer n, we're going to look at
+
+2
+00:00:01,860 --> 00:00:05,235
+ an algorithm for generating the n Fibonacci number.
+
+3
+00:00:05,235 --> 00:00:07,344
+ This will be a very simple algorithm,
+
+4
+00:00:07,344 --> 00:00:10,470
+ but it will illustrate the idea of dynamic programming and then,
+
+5
+00:00:10,470 --> 00:00:12,679
+ we'll look at dynamic programming in general;
+
+6
+00:00:12,679 --> 00:00:15,119
+ the techniques for designing
+
+7
+00:00:15,119 --> 00:00:19,350
+ a dynamic programming algorithm and we'll look at some more sophisticated examples.
+
+8
+00:00:19,350 --> 00:00:23,910
+ Recall the Fibonacci numbers are the following sequence, 0, 1, 1,
+
+9
+00:00:23,910 --> 00:00:27,269
+ 2, 3, 5, 8,13,
+
+10
+00:00:27,269 --> 00:00:29,510
+ 21, 34 and so on.
+
+11
+00:00:29,510 --> 00:00:33,719
+ There's a simple recursive formula that defines the Fibonacci numbers.
+
+12
+00:00:33,719 --> 00:00:37,174
+ The first two numbers in the sequence are zero and one,
+
+13
+00:00:37,174 --> 00:00:42,435
+ and then the n Fibonacci number is the sum of the previous two Fibonacci numbers.
+
+14
+00:00:42,435 --> 00:00:45,159
+ We're going to take as input and non-negative integer n
+
+15
+00:00:45,159 --> 00:00:49,259
+ and our goal is to output the nth Fibonacci number.
+
+16
+00:00:49,259 --> 00:00:52,200
+ We want an efficient algorithm and therefore we're aiming
+
+17
+00:00:52,200 --> 00:00:55,174
+ for a running time which is polynomial in n. Now,
+
+18
+00:00:55,174 --> 00:00:58,710
+ the Fibonacci numbers are defined by this simple recursive formula.
+
+19
+00:00:58,710 --> 00:01:04,019
+ Therefore, we might think a recursive algorithm is a natural algorithm for this problem.
+
+20
+00:01:04,019 --> 00:01:05,489
+ Let's look at that natural algorithm,
+
+21
+00:01:05,489 --> 00:01:05,489
+ that natural recursive algorithm and when then we'll
+

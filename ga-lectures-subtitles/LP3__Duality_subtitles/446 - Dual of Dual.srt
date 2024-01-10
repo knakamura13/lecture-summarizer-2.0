@@ -1,0 +1,172 @@
+1
+00:00:00,000 --> 00:00:01,740
+ Let's do a quick sanity check.
+
+2
+00:00:01,740 --> 00:00:03,295
+ Let's take a primal LP.
+
+3
+00:00:03,295 --> 00:00:05,635
+ So take a primal LP in canonical form,
+
+4
+00:00:05,635 --> 00:00:07,740
+ maximize C transpose X,
+
+5
+00:00:07,740 --> 00:00:09,600
+ Ax is at most B,
+
+6
+00:00:09,600 --> 00:00:11,180
+ X is at least zero.
+
+7
+00:00:11,180 --> 00:00:16,695
+ Now let's take the dual of this LP and then let's take the dual of that dual LP.
+
+8
+00:00:16,695 --> 00:00:19,120
+ What should the final result be?
+
+9
+00:00:19,120 --> 00:00:21,610
+ Well, it should be equivalent to the original LP.
+
+10
+00:00:21,610 --> 00:00:24,460
+ The dual of the dual should be the primal.
+
+11
+00:00:24,460 --> 00:00:26,030
+ So let's check that as true.
+
+12
+00:00:26,030 --> 00:00:28,155
+ Let's take the dual of this LP.
+
+13
+00:00:28,155 --> 00:00:32,449
+ This gives us minimize B transpose Y.
+
+14
+00:00:32,449 --> 00:00:33,820
+ Our variables now are Y.
+
+15
+00:00:33,820 --> 00:00:36,885
+ The constraints are that A transpose Y is at least C,
+
+16
+00:00:36,885 --> 00:00:38,530
+ and Y is nonnegative.
+
+17
+00:00:38,530 --> 00:00:40,705
+ Now we want to take the dual of this LP.
+
+18
+00:00:40,705 --> 00:00:43,650
+ First, we have to convert it into a canonical form.
+
+19
+00:00:43,650 --> 00:00:47,305
+ Now in order to convert this LP into canonical or standard form,
+
+20
+00:00:47,305 --> 00:00:49,980
+ it changes min into a max.
+
+21
+00:00:49,980 --> 00:00:52,240
+ So we multiply it by negative 1.
+
+22
+00:00:52,240 --> 00:00:58,040
+ This minimization is equivalent to maximizing negative B transpose Y.
+
+23
+00:00:58,040 --> 00:01:01,050
+ We do a similar trick to convert this greater than or
+
+24
+00:01:01,050 --> 00:01:04,440
+ equal to constraint into a less than or equal to constraint.
+
+25
+00:01:04,440 --> 00:01:07,410
+ It becomes negative A transpose Y is at
+
+26
+00:01:07,410 --> 00:01:11,955
+ most negative C and we keep the last non-negativity constraint.
+
+27
+00:01:11,955 --> 00:01:14,760
+ Now let's take the dual of this LP.
+
+28
+00:01:14,760 --> 00:01:16,880
+ Let's denote the new variables as Z.
+
+29
+00:01:16,880 --> 00:01:19,530
+ The dual will be a minimization problem.
+
+30
+00:01:19,530 --> 00:01:22,040
+ The objective function will be defined by this vector,
+
+31
+00:01:22,040 --> 00:01:27,370
+ negative C. So we get negative C transpose times Z as the objective function.
+
+32
+00:01:27,370 --> 00:01:30,715
+ The constraints will be defined by the transpose of this,
+
+33
+00:01:30,715 --> 00:01:35,875
+ so it will simply be negative A times Z is at least negative B.
+
+34
+00:01:35,875 --> 00:01:37,770
+ And Z is at least 0.
+
+35
+00:01:37,770 --> 00:01:41,010
+ Now if you convert this into canonical or standard form,
+
+36
+00:01:41,010 --> 00:01:43,450
+ the objective function becomes maximize
+
+37
+00:01:43,450 --> 00:01:51,260
+ C transpose Z which is the same as the original primal LP with X replaced by Z.
+
+38
+00:01:51,260 --> 00:01:57,380
+ And this constraint becomes A times Z is at most B.
+
+39
+00:01:57,380 --> 00:02:02,565
+ Which is again, is equivalent to the original constraint with X replaced by Z.
+
+40
+00:02:02,565 --> 00:02:04,510
+ So these two LPs are equivalent.
+
+41
+00:02:04,510 --> 00:02:07,590
+ So if you take an LP and you take it's dual,
+
+42
+00:02:07,590 --> 00:02:09,515
+ and then you take it dual once again,
+
+43
+00:02:09,515 --> 00:02:09,515
+ you get back the original LP. The primal LP.
+

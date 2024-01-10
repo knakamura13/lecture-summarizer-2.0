@@ -1,0 +1,148 @@
+1
+00:00:00,000 --> 00:00:04,805
+ Now here's an example of a Markov chain whose graph corresponds to a bipartite graph.
+
+2
+00:00:04,805 --> 00:00:07,680
+ Let's look at some basic properties of this Markov chain.
+
+3
+00:00:07,680 --> 00:00:11,130
+ Suppose we start our random walk from one of these vertices on the left side,
+
+4
+00:00:11,130 --> 00:00:12,930
+ either state one, three,
+
+5
+00:00:12,930 --> 00:00:14,330
+ or five. What do we know?
+
+6
+00:00:14,330 --> 00:00:16,564
+ We know at time one we're on the right side,
+
+7
+00:00:16,564 --> 00:00:18,720
+ and actually at any odd time we're on
+
+8
+00:00:18,720 --> 00:00:22,490
+ the right side and at any even time we're on the left side.
+
+9
+00:00:22,490 --> 00:00:24,768
+ Now suppose we start on the right side,
+
+10
+00:00:24,768 --> 00:00:28,790
+ so at times zero we're at either vertex two or vertex four.
+
+11
+00:00:28,790 --> 00:00:30,535
+ Now we have the opposite situation,
+
+12
+00:00:30,535 --> 00:00:32,738
+ at odd times where on the left side,
+
+13
+00:00:32,738 --> 00:00:35,545
+ at even times we're guaranteed to be on the right side.
+
+14
+00:00:35,545 --> 00:00:39,075
+ So the punch line is that the starting state matters in this graph.
+
+15
+00:00:39,075 --> 00:00:43,110
+ Whenever we have a bipartite graph the starting state matters.
+
+16
+00:00:43,110 --> 00:00:47,045
+ Now we want a simple way to ensure that our Markov chain is not bipartite,
+
+17
+00:00:47,045 --> 00:00:51,325
+ and even more so we want to ensure that the Markov chain has no periodic structure.
+
+18
+00:00:51,325 --> 00:00:52,680
+ Instead of being bipartite,
+
+19
+00:00:52,680 --> 00:00:56,980
+ having these cycles of period two we could have cycles a period three.
+
+20
+00:00:56,980 --> 00:00:58,980
+ So in general, if we want to ensure that the graph has
+
+21
+00:00:58,980 --> 00:01:02,410
+ no periodic structure, that is aperiodic.
+
+22
+00:01:02,410 --> 00:01:04,540
+ Well what's an easy way to ensure that?
+
+23
+00:01:04,540 --> 00:01:07,795
+ An easy way is to have a self loop on each vertex.
+
+24
+00:01:07,795 --> 00:01:10,260
+ So with some probability we stay where we are.
+
+25
+00:01:10,260 --> 00:01:13,560
+ This can be a very small, miniscule probability.
+
+26
+00:01:13,560 --> 00:01:16,695
+ So let's say with probability point 01 we stay where we are,
+
+27
+00:01:16,695 --> 00:01:20,700
+ and then we can rescale the other probabilities so that they sum up to one.
+
+28
+00:01:20,700 --> 00:01:22,758
+ In terms of their transition matrix,
+
+29
+00:01:22,758 --> 00:01:24,895
+ this means that our diagonals,
+
+30
+00:01:24,895 --> 00:01:29,130
+ the self loops are out diagonal entries in this transition matrix.
+
+31
+00:01:29,130 --> 00:01:33,350
+ We want all of these diagonal entries to be strictly greater than zero.
+
+32
+00:01:33,350 --> 00:01:35,835
+ So we want the diagonal entries to be positive.
+
+33
+00:01:35,835 --> 00:01:39,145
+ If they're positive, that destroys any periodic structure.
+
+34
+00:01:39,145 --> 00:01:41,965
+ It can't be bipartite or any periodic structure.
+
+35
+00:01:41,965 --> 00:01:45,030
+ So for every state i, we'll make sure that the probability of going from
+
+36
+00:01:45,030 --> 00:01:48,810
+ state i and staying in state i is strictly greater than zero.
+
+37
+00:01:48,810 --> 00:01:48,810
+ Okay that gets around this pitfall.
+

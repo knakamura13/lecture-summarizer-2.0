@@ -1,0 +1,136 @@
+1
+00:00:00,000 --> 00:00:04,320
+ Now we call this Fermat witness that we just derived a trivial Fermat witness.
+
+2
+00:00:04,320 --> 00:00:06,315
+ Why is it a trivial Fermat witness?
+
+3
+00:00:06,315 --> 00:00:08,700
+ This is a Fermat witness, z,
+
+4
+00:00:08,700 --> 00:00:10,500
+ where it also has the property that
+
+5
+00:00:10,500 --> 00:00:14,050
+ the greatest common divisor of z and r is greater than 1.
+
+6
+00:00:14,050 --> 00:00:16,030
+ So z and r are not relatively prime.
+
+7
+00:00:16,030 --> 00:00:20,005
+ Notice, such as z already proves that r is composite.
+
+8
+00:00:20,005 --> 00:00:22,710
+ If z and r have a non-trivial divisor,
+
+9
+00:00:22,710 --> 00:00:25,350
+ then we know that r has a non-trivial divisor,
+
+10
+00:00:25,350 --> 00:00:26,700
+ and therefore, it's not prime.
+
+11
+00:00:26,700 --> 00:00:29,550
+ So, any z where this is the case,
+
+12
+00:00:29,550 --> 00:00:30,840
+ proves that r is composite,
+
+13
+00:00:30,840 --> 00:00:32,850
+ there's no reason to run Fermat's test.
+
+14
+00:00:32,850 --> 00:00:34,645
+ So that's why we called such a z,
+
+15
+00:00:34,645 --> 00:00:36,600
+ a trivial Fermat witness.
+
+16
+00:00:36,600 --> 00:00:40,500
+ Now there always exists a trivial Fermat witness for composite numbers.
+
+17
+00:00:40,500 --> 00:00:45,210
+ Why? Because every composite number has at least two non-trivial divisors.
+
+18
+00:00:45,210 --> 00:00:47,625
+ The question is whether a composite number r,
+
+19
+00:00:47,625 --> 00:00:49,985
+ has a non-trivial Fermat witness.
+
+20
+00:00:49,985 --> 00:00:53,760
+ This is a number z which is relatively prime to r. Now it turns
+
+21
+00:00:53,760 --> 00:00:57,780
+ out that some composite numbers have no non-trivial Fermat witnesses,
+
+22
+00:00:57,780 --> 00:00:59,505
+ these are called pseudo primes,
+
+23
+00:00:59,505 --> 00:01:01,055
+ but those are relatively rare.
+
+24
+00:01:01,055 --> 00:01:02,855
+ For all the other composite numbers,
+
+25
+00:01:02,855 --> 00:01:05,610
+ they have at least one non-trivial Fermat witness,
+
+26
+00:01:05,610 --> 00:01:07,110
+ and if they have at least one,
+
+27
+00:01:07,110 --> 00:01:09,585
+ then in fact, they have many Fermat witnesses.
+
+28
+00:01:09,585 --> 00:01:14,665
+ And therefore it will be easy to find a Fermat witness and that's the key point.
+
+29
+00:01:14,665 --> 00:01:17,530
+ Trivial Fermat witnesses always exist.
+
+30
+00:01:17,530 --> 00:01:21,975
+ Every composite number has at least two trivial Fermat witnesses.
+
+31
+00:01:21,975 --> 00:01:25,200
+ But if a composite number has a non-trivial Fermat witness,
+
+32
+00:01:25,200 --> 00:01:27,450
+ then there are many Fermat witnesses,
+
+33
+00:01:27,450 --> 00:01:30,025
+ they're dense and therefore they're easy to find.
+
+34
+00:01:30,025 --> 00:01:30,025
+ And that's what we'll utilize for our primality testing algorithm.
+

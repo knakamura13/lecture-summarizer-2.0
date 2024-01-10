@@ -1,0 +1,144 @@
+1
+00:00:00,000 --> 00:00:02,230
+ Take a look at this lemma that we're trying to prove.
+
+2
+00:00:02,230 --> 00:00:06,990
+ Look at a clause Cj and let's say Cj is of size K and let's
+
+3
+00:00:06,990 --> 00:00:12,525
+ suppose the clause is X1 or X2 and so on, up to XK.
+
+4
+00:00:12,525 --> 00:00:14,720
+ So assuming all the literals are positive form.
+
+5
+00:00:14,720 --> 00:00:16,410
+ Let's just do the analysis for
+
+6
+00:00:16,410 --> 00:00:21,120
+ this simpler case and the same approach will apply to the general clause.
+
+7
+00:00:21,120 --> 00:00:23,250
+ And in fact since we're just looking at
+
+8
+00:00:23,250 --> 00:00:26,085
+ this clause in isolation and because of the symmetry,
+
+9
+00:00:26,085 --> 00:00:30,480
+ we can always convert this clause to appear in this form.
+
+10
+00:00:30,480 --> 00:00:33,310
+ Now, what was the LP constraint for this clause?
+
+11
+00:00:33,310 --> 00:00:36,460
+ Let's look at it in terms of the optimal solution to the LP.
+
+12
+00:00:36,460 --> 00:00:41,580
+ So variable X1 has this variable in the LP Y1_hat_star.
+
+13
+00:00:41,580 --> 00:00:43,530
+ We want that if this is 0,
+
+14
+00:00:43,530 --> 00:00:49,140
+ meaning X1 is false and if that's the case for all K of these variables,
+
+15
+00:00:49,140 --> 00:00:54,820
+ then we want that this variable Zj_hat_star is 0 in this case.
+
+16
+00:00:54,820 --> 00:00:56,970
+ So if all of these literals are unsatisfying,
+
+17
+00:00:56,970 --> 00:01:01,974
+ meaning all these variables are set to false then all of these Y's are set to 0,
+
+18
+00:01:01,974 --> 00:01:06,845
+ then Zj must be 0 corresponding to this clause being unsatisfied.
+
+19
+00:01:06,845 --> 00:01:08,700
+ This is the LP constraint.
+
+20
+00:01:08,700 --> 00:01:11,250
+ Now, we're trying to analyze the probability that this clause is
+
+21
+00:01:11,250 --> 00:01:14,190
+ satisfied after the randomized rounding procedure.
+
+22
+00:01:14,190 --> 00:01:19,045
+ This is of course the same as 1 minus the probability that this clause is unsatisfying.
+
+23
+00:01:19,045 --> 00:01:21,520
+ What's the probability that this clause is unsatisfied?
+
+24
+00:01:21,520 --> 00:01:25,115
+ Well, what's the probability that all these variables are set to false?
+
+25
+00:01:25,115 --> 00:01:28,210
+ So we're going to look at the product over these K variables.
+
+26
+00:01:28,210 --> 00:01:33,180
+ The I one is set to false with probably one minus Yi_hat_star.
+
+27
+00:01:33,180 --> 00:01:34,830
+ Now, for your call dilemma,
+
+28
+00:01:34,830 --> 00:01:39,420
+ we're trying to show that the probability that this clause is satisfied is at least 1
+
+29
+00:01:39,420 --> 00:01:44,395
+ minus 1 over E times this quantity Zj_hat_star.
+
+30
+00:01:44,395 --> 00:01:46,140
+ What we know is that
+
+31
+00:01:46,140 --> 00:01:52,020
+ the probably it satisfied equals 1 minus this product, of these Yi's.
+
+32
+00:01:52,020 --> 00:01:57,625
+ Now we know how to relate the sum of these Yi's to this Zj_star.
+
+33
+00:01:57,625 --> 00:02:00,505
+ How do we relate the product to the sum?
+
+34
+00:02:00,505 --> 00:02:06,040
+ So we want to relate this product to this sum and then we can relate it to Zj_hat_star.
+
+35
+00:02:06,040 --> 00:02:08,570
+ To relate this product to this sum,
+
+36
+00:02:08,570 --> 00:02:08,570
+ we're going to use the geometric mean, arithmetic mean, inequality.
+

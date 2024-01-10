@@ -1,0 +1,176 @@
+1
+00:00:00,000 --> 00:00:02,610
+ Here's a solution to problem 6.1.
+
+2
+00:00:02,610 --> 00:00:06,240
+ Let's reformulate our subproblem using our insight we just gained.
+
+3
+00:00:06,240 --> 00:00:12,125
+ We wanted to add the extra condition that the subproblem had to include a_i.
+
+4
+00:00:12,125 --> 00:00:17,910
+ So we define s of i as a max sum which we can obtain from a substring of a_1
+
+5
+00:00:17,910 --> 00:00:24,420
+ through a_i with the extra restriction that a_i has to be included in that substring.
+
+6
+00:00:24,420 --> 00:00:28,165
+ Now, we will be able to re-express a recurrence for s of i.
+
+7
+00:00:28,165 --> 00:00:30,170
+ First off, let's handle the base case;
+
+8
+00:00:30,170 --> 00:00:32,635
+ that's i equals zero. What's s of zero?
+
+9
+00:00:32,635 --> 00:00:34,090
+ Well, we have the empty string,
+
+10
+00:00:34,090 --> 00:00:35,520
+ so that's, of course, zero.
+
+11
+00:00:35,520 --> 00:00:37,920
+ Now, let's look at s of i for i at least one.
+
+12
+00:00:37,920 --> 00:00:41,090
+ Well, we are required to use a_i,
+
+13
+00:00:41,090 --> 00:00:42,810
+ so let's add an a_i.
+
+14
+00:00:42,810 --> 00:00:44,325
+ So by including a_i,
+
+15
+00:00:44,325 --> 00:00:50,425
+ this sum is at least a_i plus where do we append onto it?
+
+16
+00:00:50,425 --> 00:00:52,290
+ Well, there are two possibilities;
+
+17
+00:00:52,290 --> 00:00:56,325
+ either we just use a_i by itself or we append it on to
+
+18
+00:00:56,325 --> 00:00:59,970
+ the longest substring from a_1
+
+19
+00:00:59,970 --> 00:01:04,770
+ through a_i minus one and we're going to take the best of those two possibilities.
+
+20
+00:01:04,770 --> 00:01:06,805
+ So if we have a_i by itself,
+
+21
+00:01:06,805 --> 00:01:09,310
+ then we get zero for the rest,
+
+22
+00:01:09,310 --> 00:01:11,290
+ for a_1 through a_i minus one,
+
+23
+00:01:11,290 --> 00:01:15,204
+ or if we take the optimal substring for a_1 through a_i minus one,
+
+24
+00:01:15,204 --> 00:01:17,875
+ what's the sum from that?
+
+25
+00:01:17,875 --> 00:01:22,415
+ Well, it's s of i minus one and we're going to take the best of these two scenarios.
+
+26
+00:01:22,415 --> 00:01:24,155
+ Now, clearly if this is negative,
+
+27
+00:01:24,155 --> 00:01:26,620
+ then we're going to just use a_i by itself,
+
+28
+00:01:26,620 --> 00:01:27,945
+ and if this is positive,
+
+29
+00:01:27,945 --> 00:01:31,115
+ then we're going to take this solution and append on a_i to it.
+
+30
+00:01:31,115 --> 00:01:32,835
+ So this gives us the recurrence,
+
+31
+00:01:32,835 --> 00:01:36,204
+ it's easy to fill the table by going from i equals
+
+32
+00:01:36,204 --> 00:01:39,585
+ zero up to n. What's the final output of the algorithm?
+
+33
+00:01:39,585 --> 00:01:42,780
+ It's not necessarily s of n because that's the longest
+
+34
+00:01:42,780 --> 00:01:46,439
+ the maximum sum from a substring which includes a_n.
+
+35
+00:01:46,439 --> 00:01:50,630
+ But we're just looking for the maximum sum we can obtain from any substring,
+
+36
+00:01:50,630 --> 00:01:52,590
+ we don't care what the last character is.
+
+37
+00:01:52,590 --> 00:01:57,105
+ So, we need to try all possibilities for the last character or number.
+
+38
+00:01:57,105 --> 00:02:00,155
+ So we do a max over i of s of i.
+
+39
+00:02:00,155 --> 00:02:02,840
+ So we take our one-dimensional table and we look for
+
+40
+00:02:02,840 --> 00:02:05,855
+ the max entry in that table and that's the output.
+
+41
+00:02:05,855 --> 00:02:07,785
+ And what's the running time of this algorithm?
+
+42
+00:02:07,785 --> 00:02:10,910
+ Well, each entry of the table takes order one time because we
+
+43
+00:02:10,910 --> 00:02:14,150
+ just have to look at two numbers and how many entries in the table are there,
+
+44
+00:02:14,150 --> 00:02:14,150
+ and there's order n. So the total run time is order n.
+

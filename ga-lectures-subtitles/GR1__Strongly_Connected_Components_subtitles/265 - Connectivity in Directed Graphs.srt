@@ -1,0 +1,88 @@
+1
+00:00:00,000 --> 00:00:02,790
+ We're looking now at connectivity in directed graphs.
+
+2
+00:00:02,790 --> 00:00:06,270
+ So the remainder of the lecture we're going to be talking about directed graphs.
+
+3
+00:00:06,270 --> 00:00:07,740
+ First off, we have to talk about what is
+
+4
+00:00:07,740 --> 00:00:11,175
+ the correct notion of connectivity between a pair of vertices.
+
+5
+00:00:11,175 --> 00:00:12,535
+ So let us take a pair of vertices,
+
+6
+00:00:12,535 --> 00:00:16,285
+ V and W and we we'll say they're strongly connected.
+
+7
+00:00:16,285 --> 00:00:19,880
+ If there's a path from V to W and W to V. I have
+
+8
+00:00:19,880 --> 00:00:24,600
+ this vertex V and this vertex W and there's a path from V to W,
+
+9
+00:00:24,600 --> 00:00:29,040
+ it may pass through many vertices on the way and there's a path from
+
+10
+00:00:29,040 --> 00:00:34,300
+ W to V that may pass through many vertices along the way and these paths may intersect.
+
+11
+00:00:34,300 --> 00:00:37,495
+ So these vertices V and W are strongly connected.
+
+12
+00:00:37,495 --> 00:00:40,625
+ So instead of connected components in undirected graphs,
+
+13
+00:00:40,625 --> 00:00:43,010
+ the analog for directed graphs is going to be
+
+14
+00:00:43,010 --> 00:00:46,835
+ strongly connected components which we'll denote as SCC.
+
+15
+00:00:46,835 --> 00:00:48,425
+ Now an undirected graphs,
+
+16
+00:00:48,425 --> 00:00:51,925
+ the connected component is a maximal set of connected vertices.
+
+17
+00:00:51,925 --> 00:00:54,815
+ We keep adding in connected vertices as long as we can.
+
+18
+00:00:54,815 --> 00:00:57,810
+ For directed graphs, strongly connected components
+
+19
+00:00:57,810 --> 00:01:00,935
+ are the maximal set of strongly connected vertices.
+
+20
+00:01:00,935 --> 00:01:04,500
+ So we keep adding in strongly connected vertices as long as we can.
+
+21
+00:01:04,500 --> 00:01:06,750
+ Let's take a look at a specific example and mark
+
+22
+00:01:06,750 --> 00:01:06,750
+ the strongly connected components in the example to make sure everybody understands it.
+

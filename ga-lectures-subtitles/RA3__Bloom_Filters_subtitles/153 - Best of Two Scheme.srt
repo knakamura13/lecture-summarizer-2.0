@@ -1,0 +1,128 @@
+1
+00:00:00,000 --> 00:00:03,845
+ Now, let's look at the following twist on the balls and bins problem.
+
+2
+00:00:03,845 --> 00:00:05,429
+ This is going to be a better approach,
+
+3
+00:00:05,429 --> 00:00:08,215
+ better in the sense that it's going to reduce the max load.
+
+4
+00:00:08,215 --> 00:00:10,175
+ Now, in the previous balls and bins problem,
+
+5
+00:00:10,175 --> 00:00:12,500
+ each ball was going to a random bin and it was
+
+6
+00:00:12,500 --> 00:00:15,150
+ independent of the assignment for the other balls.
+
+7
+00:00:15,150 --> 00:00:20,150
+ Therefore, we could have assigned all the balls simultaneously, in parallel.
+
+8
+00:00:20,150 --> 00:00:23,420
+ They could have all been assigned to bins at the same time,
+
+9
+00:00:23,420 --> 00:00:27,155
+ or we could assign them one by one, sort of sequentially.
+
+10
+00:00:27,155 --> 00:00:30,620
+ So, we could have taken ball one and assigned it to a random bin,
+
+11
+00:00:30,620 --> 00:00:32,880
+ take ball two, assign to a random bin,
+
+12
+00:00:32,880 --> 00:00:35,825
+ and so on, up to ball n. That's what we're going to do here.
+
+13
+00:00:35,825 --> 00:00:37,860
+ We're going to assign the balls sequentially,
+
+14
+00:00:37,860 --> 00:00:40,855
+ and we're going to look at a slight twist of the other scheme.
+
+15
+00:00:40,855 --> 00:00:42,989
+ So, let's go through the balls from one through n,
+
+16
+00:00:42,989 --> 00:00:47,355
+ index i will correspond to the current ball that we're considering.
+
+17
+00:00:47,355 --> 00:00:50,670
+ In the old scheme, we choose one random bin say j,
+
+18
+00:00:50,670 --> 00:00:54,410
+ and we assigned the i ball to bin bj.
+
+19
+00:00:54,410 --> 00:00:56,100
+ Now, in the new scheme what we're going to do is,
+
+20
+00:00:56,100 --> 00:00:57,815
+ we're going to choose two random bins,
+
+21
+00:00:57,815 --> 00:01:00,395
+ say j and k. Now,
+
+22
+00:01:00,395 --> 00:01:03,930
+ which bin are we going to assign the ith ball?
+
+23
+00:01:03,930 --> 00:01:06,530
+ Well we're going to assign it to the better of these two bins.
+
+24
+00:01:06,530 --> 00:01:07,850
+ What exactly do we mean?
+
+25
+00:01:07,850 --> 00:01:10,460
+ We mean the one which has smaller load.
+
+26
+00:01:10,460 --> 00:01:13,365
+ So, let load of j and load of k
+
+27
+00:01:13,365 --> 00:01:17,435
+ denote the current load in these particular bins bj and bk,
+
+28
+00:01:17,435 --> 00:01:21,750
+ and we're going to assign this ith ball to the least loaded of these two.
+
+29
+00:01:21,750 --> 00:01:26,105
+ So if the load of bj is structurally smaller than the load of bk,
+
+30
+00:01:26,105 --> 00:01:29,900
+ then we assign the ith ball to bin bj.
+
+31
+00:01:29,900 --> 00:01:33,540
+ And in the other case, we assign the ith ball to bin bk.
+
+32
+00:01:33,540 --> 00:01:33,540
+ So, the ith ball is going to the least loaded of these two bins.
+

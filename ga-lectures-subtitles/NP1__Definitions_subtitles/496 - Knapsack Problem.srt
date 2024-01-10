@@ -1,0 +1,128 @@
+1
+00:00:00,000 --> 00:00:03,880
+ We've looked so far at the satisfiability problem, SAT,
+
+2
+00:00:03,880 --> 00:00:06,495
+ the colorings problem, and MST;
+
+3
+00:00:06,495 --> 00:00:08,130
+ minimum spanning tree problem.
+
+4
+00:00:08,130 --> 00:00:11,265
+ And we've seen why each of these are in the class NP.
+
+5
+00:00:11,265 --> 00:00:13,380
+ Now let's take a look at the knapsack problem which
+
+6
+00:00:13,380 --> 00:00:15,720
+ we studied in the dynamic programming section.
+
+7
+00:00:15,720 --> 00:00:18,830
+ Let me remind you the formulation of the knapsack problem.
+
+8
+00:00:18,830 --> 00:00:21,705
+ Now the input to the knapsack problem are n objects.
+
+9
+00:00:21,705 --> 00:00:24,315
+ For each object, were given an integer weigh,
+
+10
+00:00:24,315 --> 00:00:26,535
+ and we are given an integer value.
+
+11
+00:00:26,535 --> 00:00:28,700
+ The weights are denoted as W to the first and W to the nth,
+
+12
+00:00:28,700 --> 00:00:32,530
+ and the values are denoted by V to the first through V to the nth.
+
+13
+00:00:32,530 --> 00:00:37,225
+ And in addition, we're given a total capacity for the backpack or knapsack.
+
+14
+00:00:37,225 --> 00:00:41,970
+ Now the output for the knapsack problem is a subset of objects which fit in the backpack,
+
+15
+00:00:41,970 --> 00:00:44,365
+ so their total weight is at most capital B.
+
+16
+00:00:44,365 --> 00:00:47,700
+ And we want to subset which maximizes the total value.
+
+17
+00:00:47,700 --> 00:00:50,300
+ Let's make this a little bit more mathematically precise.
+
+18
+00:00:50,300 --> 00:00:52,665
+ By total weight and most capital B,
+
+19
+00:00:52,665 --> 00:00:56,880
+ we mean that if you sum over the objects in the subset S,
+
+20
+00:00:56,880 --> 00:01:01,180
+ their weights sum up at most capital B.
+
+21
+00:01:01,180 --> 00:01:03,923
+ Our objective is to maximize the total value.
+
+22
+00:01:03,923 --> 00:01:10,060
+ The total value for a subset S is the sum over the objects in the subset of their values.
+
+23
+00:01:10,060 --> 00:01:16,073
+ And we're trying to find the subset S which maximizes this sum of the total value,
+
+24
+00:01:16,073 --> 00:01:20,730
+ subject to the constraint that the sum of their weights is at most capital B.
+
+25
+00:01:20,730 --> 00:01:22,290
+ Now if you recall there were two variants of
+
+26
+00:01:22,290 --> 00:01:25,550
+ the knapsack problem that we studied in dynamic programming section.
+
+27
+00:01:25,550 --> 00:01:27,420
+ There was the version with repetition.
+
+28
+00:01:27,420 --> 00:01:32,290
+ So there was unlimited supply of each object or there was a version without repetition,
+
+29
+00:01:32,290 --> 00:01:34,760
+ so we had at most one copy of each object.
+
+30
+00:01:34,760 --> 00:01:37,560
+ Now which of these two variants that you consider, it doesn't matter.
+
+31
+00:01:37,560 --> 00:01:39,540
+ For the following discussion,
+
+32
+00:01:39,540 --> 00:01:39,540
+ it holds for both of these version.
+

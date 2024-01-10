@@ -1,0 +1,148 @@
+1
+00:00:00,000 --> 00:00:03,555
+ What we just saw is a Ford-Fulkerson algorithm, takes running time,
+
+2
+00:00:03,555 --> 00:00:06,075
+ order M times capital C,
+
+3
+00:00:06,075 --> 00:00:09,080
+ where capital C is a size of the max-flow.
+
+4
+00:00:09,080 --> 00:00:13,315
+ But this assume that the capacities were integer values.
+
+5
+00:00:13,315 --> 00:00:16,680
+ Now there are two problems or unpleasant aspects of this.
+
+6
+00:00:16,680 --> 00:00:20,245
+ The first is that, we're assuming that the capacities are integer values.
+
+7
+00:00:20,245 --> 00:00:23,520
+ The other is that, the running time depends on the output.
+
+8
+00:00:23,520 --> 00:00:25,680
+ It depends on the size of the max-flow,
+
+9
+00:00:25,680 --> 00:00:29,145
+ which depends on the size of the capacities in the input.
+
+10
+00:00:29,145 --> 00:00:32,370
+ Since the running time of this algorithm depends on the numbers,
+
+11
+00:00:32,370 --> 00:00:34,395
+ the capacities in the input,
+
+12
+00:00:34,395 --> 00:00:37,885
+ we say that this running time is pseudo-polynomial.
+
+13
+00:00:37,885 --> 00:00:40,605
+ This is much like the situation for Knapsack.
+
+14
+00:00:40,605 --> 00:00:45,465
+ And there we discussed that the running time should depend on the log of these numbers,
+
+15
+00:00:45,465 --> 00:00:49,025
+ and ideally, the running time should be independent of these numbers.
+
+16
+00:00:49,025 --> 00:00:52,140
+ What we're going to see next is the Edmonds-Karp algorithm.
+
+17
+00:00:52,140 --> 00:00:55,070
+ This is very similar to the Ford-Fulkerson algorithm.
+
+18
+00:00:55,070 --> 00:00:56,405
+ It's got the same paradigm,
+
+19
+00:00:56,405 --> 00:00:58,050
+ but in the Ford-Fulkerson algorithm,
+
+20
+00:00:58,050 --> 00:01:01,965
+ we just find any path from s to t in the residual network,
+
+21
+00:01:01,965 --> 00:01:05,150
+ and we can run DFS or BFS to find such a path.
+
+22
+00:01:05,150 --> 00:01:07,530
+ In the Edmonds-Karp algorithm,
+
+23
+00:01:07,530 --> 00:01:12,450
+ we take the shortest path from s to t. Shortest means minimum number of edges.
+
+24
+00:01:12,450 --> 00:01:14,460
+ We don't care about the weights on the edges.
+
+25
+00:01:14,460 --> 00:01:15,660
+ To find such a path,
+
+26
+00:01:15,660 --> 00:01:18,215
+ we just run BFS, and then,
+
+27
+00:01:18,215 --> 00:01:24,373
+ what can prove is that the number of rounds is going to be at most M times N,
+
+28
+00:01:24,373 --> 00:01:26,340
+ since each round, again,
+
+29
+00:01:26,340 --> 00:01:27,615
+ takes order M time,
+
+30
+00:01:27,615 --> 00:01:30,147
+ the total running time will be order M squared N.
+
+31
+00:01:30,147 --> 00:01:33,955
+ So the running time will be independent of the size of the max-flow,
+
+32
+00:01:33,955 --> 00:01:38,465
+ and we no longer need this assumption that the capacities are integer values.
+
+33
+00:01:38,465 --> 00:01:44,190
+ Finally, we'll point out that Orlin has a current past algorithm from 2013,
+
+34
+00:01:44,190 --> 00:01:47,700
+ in contrast, the Edmonds-Karp algorithm is from 1972.
+
+35
+00:01:47,700 --> 00:01:49,555
+ So roughly 40 years later.
+
+36
+00:01:49,555 --> 00:01:53,850
+ And he achieves a running time of order M times N. This is currently the
+
+37
+00:01:53,850 --> 00:01:53,850
+ best for general graphs for the exact solution of the max-flow problem.
+

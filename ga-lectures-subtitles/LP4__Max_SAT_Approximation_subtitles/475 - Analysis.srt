@@ -1,0 +1,192 @@
+1
+00:00:00,000 --> 00:00:02,235
+ Going back to our analysis from earlier,
+
+2
+00:00:02,235 --> 00:00:05,730
+ we're looking at the probability that this Jth clause is satisfied.
+
+3
+00:00:05,730 --> 00:00:09,045
+ This equals one minus the probability it's unsatisfied,
+
+4
+00:00:09,045 --> 00:00:11,040
+ which is the product over I,
+
+5
+00:00:11,040 --> 00:00:14,395
+ from one to K of one minus YI hat star.
+
+6
+00:00:14,395 --> 00:00:16,140
+ Now, we can apply the arithmetic mean,
+
+7
+00:00:16,140 --> 00:00:18,260
+ geometric mean and inequality.
+
+8
+00:00:18,260 --> 00:00:19,800
+ Now, we can apply the arithmetic mean,
+
+9
+00:00:19,800 --> 00:00:21,445
+ geometric mean and inequality.
+
+10
+00:00:21,445 --> 00:00:24,615
+ The arithmetic mean is one over K times the sum
+
+11
+00:00:24,615 --> 00:00:28,475
+ of I going from one to K of one minus YI hat star.
+
+12
+00:00:28,475 --> 00:00:30,930
+ And then we're raising it to the Kth power,
+
+13
+00:00:30,930 --> 00:00:35,250
+ since we dropped that one over Kth root of the geometric mean.
+
+14
+00:00:35,250 --> 00:00:39,120
+ Now, the inequality said that the geometric mean is at most the arithmetic mean.
+
+15
+00:00:39,120 --> 00:00:43,110
+ But we're doing negative of this so we get that it's at least.
+
+16
+00:00:43,110 --> 00:00:45,420
+ Now, we can simplify this a bit.
+
+17
+00:00:45,420 --> 00:00:48,330
+ We can do the sum over each of these terms separately.
+
+18
+00:00:48,330 --> 00:00:53,005
+ And the first term is a sum over I from one to K of one.
+
+19
+00:00:53,005 --> 00:00:55,380
+ That's simply K. So,
+
+20
+00:00:55,380 --> 00:00:57,330
+ that divides by this one over K. So,
+
+21
+00:00:57,330 --> 00:00:59,090
+ we get one for the first term.
+
+22
+00:00:59,090 --> 00:01:01,230
+ So, we get a one for this first one,
+
+23
+00:01:01,230 --> 00:01:07,690
+ and the second term becomes one over K times the sum over I from one to K,
+
+24
+00:01:07,690 --> 00:01:09,465
+ of YI hat star.
+
+25
+00:01:09,465 --> 00:01:13,730
+ And then we get this whole quantity raised to the Kth power still.
+
+26
+00:01:13,730 --> 00:01:15,030
+ Now we're in business,
+
+27
+00:01:15,030 --> 00:01:18,270
+ because we have this sum over these YI hat stars.
+
+28
+00:01:18,270 --> 00:01:20,325
+ Now, if you recall before,
+
+29
+00:01:20,325 --> 00:01:23,010
+ we had this constraint from the linear program.
+
+30
+00:01:23,010 --> 00:01:26,745
+ It said that if each of these variables was set to false,
+
+31
+00:01:26,745 --> 00:01:29,215
+ so each of these Ys was set to zero,
+
+32
+00:01:29,215 --> 00:01:32,610
+ then the corresponding ZJ must be zero.
+
+33
+00:01:32,610 --> 00:01:34,390
+ Now, this is actually a linear program,
+
+34
+00:01:34,390 --> 00:01:36,690
+ so we don't have this integral constrains.
+
+35
+00:01:36,690 --> 00:01:43,965
+ So, we simply know that the sum of these Ys is at least this real number Z.
+
+36
+00:01:43,965 --> 00:01:45,755
+ But, we still have this inequality,
+
+37
+00:01:45,755 --> 00:01:48,660
+ and our goal is to relate this probability that
+
+38
+00:01:48,660 --> 00:01:52,560
+ this clause is satisfied to this quantity ZJ hat star.
+
+39
+00:01:52,560 --> 00:01:55,320
+ So, we can apply this inequality,
+
+40
+00:01:55,320 --> 00:01:59,480
+ plug it in, and we can drop these Ys and get the Z.
+
+41
+00:01:59,480 --> 00:02:01,255
+ Now, this is at least.
+
+42
+00:02:01,255 --> 00:02:04,530
+ Then we're doing a negative, and then another negative.
+
+43
+00:02:04,530 --> 00:02:08,850
+ So, we get that this is at least one minus the quantity,
+
+44
+00:02:08,850 --> 00:02:12,340
+ one minus the ZJ hat star over K,
+
+45
+00:02:12,340 --> 00:02:14,400
+ all raised to the Kth power.
+
+46
+00:02:14,400 --> 00:02:19,790
+ So, we replace the sum over Ys by ZJ hat star.
+
+47
+00:02:19,790 --> 00:02:22,140
+ Now, we have to do a bit of calculus to simplify this.
+
+48
+00:02:22,140 --> 00:02:22,140
+ What we want to do is we want to move this ZJ outside of this Kth power.
+

@@ -1,0 +1,156 @@
+1
+00:00:00,000 --> 00:00:03,630
+ Now what are we missing in this graph of available capacities?
+
+2
+00:00:03,630 --> 00:00:07,425
+ Well, if we reverse engineer a little bit and we look at the optimal solution,
+
+3
+00:00:07,425 --> 00:00:11,050
+ we see that we want to augment along this path.
+
+4
+00:00:11,050 --> 00:00:16,440
+ So we'd like to augment the current flow along this path from s to b,
+
+5
+00:00:16,440 --> 00:00:20,010
+ b to a and a to t. In this way,
+
+6
+00:00:20,010 --> 00:00:22,215
+ we want to increase the flow along this edge,
+
+7
+00:00:22,215 --> 00:00:24,083
+ s to b, in this edge,
+
+8
+00:00:24,083 --> 00:00:25,910
+ a to t, to seven.
+
+9
+00:00:25,910 --> 00:00:30,195
+ But what does it mean to augment along this edge from b to a?
+
+10
+00:00:30,195 --> 00:00:32,840
+ There's no such edge in this flow network.
+
+11
+00:00:32,840 --> 00:00:35,300
+ We'll think about this as a pipe.
+
+12
+00:00:35,300 --> 00:00:37,290
+ So when we send flow along this edge,
+
+13
+00:00:37,290 --> 00:00:40,835
+ a to b, we're opening up faucet.
+
+14
+00:00:40,835 --> 00:00:43,770
+ So we're sending more flow along this pipe.
+
+15
+00:00:43,770 --> 00:00:45,410
+ If we send flow from b to a,
+
+16
+00:00:45,410 --> 00:00:47,300
+ it's like we're closing the faucet,
+
+17
+00:00:47,300 --> 00:00:51,310
+ so we're sending less flow from a to b.
+
+18
+00:00:51,310 --> 00:00:55,130
+ The point is that this graph of available capacities is not properly
+
+19
+00:00:55,130 --> 00:00:59,730
+ representing everything that's possible to do from this current flow.
+
+20
+00:00:59,730 --> 00:01:04,210
+ In particular, we want to send an edge from b to a,
+
+21
+00:01:04,210 --> 00:01:09,020
+ and this edge should have available capacity 10. Why 10?
+
+22
+00:01:09,020 --> 00:01:13,185
+ Because the current flow from a to b is 10 units.
+
+23
+00:01:13,185 --> 00:01:17,636
+ So, if we send at most 10 units of flow from b to a,
+
+24
+00:01:17,636 --> 00:01:21,855
+ that corresponds to decreasing the flow from a to b.
+
+25
+00:01:21,855 --> 00:01:23,495
+ Now if we look at this graph,
+
+26
+00:01:23,495 --> 00:01:26,600
+ this is no longer the graph of available capacities.
+
+27
+00:01:26,600 --> 00:01:28,785
+ This graph is called the residual network.
+
+28
+00:01:28,785 --> 00:01:32,405
+ And in this graph, we can find a path from s to t. Namely,
+
+29
+00:01:32,405 --> 00:01:34,250
+ we can find this path that we're looking for,
+
+30
+00:01:34,250 --> 00:01:42,470
+ you go s to b, b to a and a to t. The capacity of this path is seven units.
+
+31
+00:01:42,470 --> 00:01:46,135
+ So we can augment the flow by seven units along this path.
+
+32
+00:01:46,135 --> 00:01:50,060
+ So the flow from s to b will change to seven units,
+
+33
+00:01:50,060 --> 00:01:56,960
+ we'll send seven units from b to a by decreasing the flow from a to b by seven units,
+
+34
+00:01:56,960 --> 00:02:00,040
+ so it will go down from 10 to three.
+
+35
+00:02:00,040 --> 00:02:02,150
+ And from a to t,
+
+36
+00:02:02,150 --> 00:02:04,765
+ the flow will increase by seven units.
+
+37
+00:02:04,765 --> 00:02:07,820
+ And then, we'll be at a Max-flow for this example.
+
+38
+00:02:07,820 --> 00:02:09,290
+ So the key idea is to look at
+
+39
+00:02:09,290 --> 00:02:09,290
+ the residual network instead of the network of available capacities.
+

@@ -1,0 +1,240 @@
+1
+00:00:00,000 --> 00:00:01,850
+ Here's the general Crypto setting.
+
+2
+00:00:01,850 --> 00:00:04,825
+ I got Alice over here and we got Bob over here.
+
+3
+00:00:04,825 --> 00:00:08,085
+ Alice has a message M, that she wants to send to Bob.
+
+4
+00:00:08,085 --> 00:00:11,400
+ Now, they have a communication line that they can talk over.
+
+5
+00:00:11,400 --> 00:00:15,970
+ The problem is, that there's someone eavesdropping on this conversation.
+
+6
+00:00:15,970 --> 00:00:22,355
+ So, whatever transmitted over this communication line can be seen in the clear by Eve,
+
+7
+00:00:22,355 --> 00:00:25,265
+ who's the eavesdropper on the communication.
+
+8
+00:00:25,265 --> 00:00:29,870
+ So, Eve sees everything in the clear that's communicated on this line.
+
+9
+00:00:29,870 --> 00:00:32,880
+ So, Alice doesn't want to send the message by itself.
+
+10
+00:00:32,880 --> 00:00:34,800
+ She wants to encrypt a message.
+
+11
+00:00:34,800 --> 00:00:36,946
+ So, Alice is going to take the message M,
+
+12
+00:00:36,946 --> 00:00:42,680
+ she is going to feed that into the encryption scheme and out is going to pop E(M),
+
+13
+00:00:42,680 --> 00:00:45,195
+ the encrypted form of M, the message.
+
+14
+00:00:45,195 --> 00:00:48,235
+ She's going to send that along the transmission line.
+
+15
+00:00:48,235 --> 00:00:51,060
+ Bob, meanwhile is going to have his decryption box.
+
+16
+00:00:51,060 --> 00:00:53,065
+ So, he's going to take this encrypted message,
+
+17
+00:00:53,065 --> 00:00:55,685
+ feed that as input into his decryption box,
+
+18
+00:00:55,685 --> 00:00:58,650
+ an arrow is going to pop the decrypted message.
+
+19
+00:00:58,650 --> 00:01:01,130
+ Meanwhile, Eve what did she see?
+
+20
+00:01:01,130 --> 00:01:02,790
+ She sees this encrypted message,
+
+21
+00:01:02,790 --> 00:01:05,740
+ because that's what sent over this communication line.
+
+22
+00:01:05,740 --> 00:01:07,530
+ And, from the encrypted message,
+
+23
+00:01:07,530 --> 00:01:09,680
+ she doesn't know how to decrypt.
+
+24
+00:01:09,680 --> 00:01:11,580
+ Only, Bob knows how to decrypt.
+
+25
+00:01:11,580 --> 00:01:13,760
+ Now, this is a public key cryptosystem.
+
+26
+00:01:13,760 --> 00:01:15,750
+ By public key, we mean that
+
+27
+00:01:15,750 --> 00:01:20,190
+ no communication needs to be happen between Alice and Bob in private.
+
+28
+00:01:20,190 --> 00:01:23,620
+ So, they don't need to have any coordination beforehand.
+
+29
+00:01:23,620 --> 00:01:26,160
+ What's going to happen is, Bob is going to do a computation on his
+
+30
+00:01:26,160 --> 00:01:29,925
+ own and he's going to compute a public key and a private key.
+
+31
+00:01:29,925 --> 00:01:32,355
+ His public key is going to be two numbers,
+
+32
+00:01:32,355 --> 00:01:37,395
+ N capital N and and E. Capital N it's going to correspond to P times Q,
+
+33
+00:01:37,395 --> 00:01:40,320
+ the product of two primes and E is going to
+
+34
+00:01:40,320 --> 00:01:44,588
+ be some number which is relatively prime to P minus one times Q minus 1.
+
+35
+00:01:44,588 --> 00:01:47,245
+ He's going to announce to the world,
+
+36
+00:01:47,245 --> 00:01:48,975
+ N and E. Now,
+
+37
+00:01:48,975 --> 00:01:53,075
+ anybody that wants to send a message to Bob is going to take his public key.
+
+38
+00:01:53,075 --> 00:01:55,613
+ They're going to take their message and using M,
+
+39
+00:01:55,613 --> 00:02:01,050
+ they're going to encrypt their message using N and E, the public key.
+
+40
+00:02:01,050 --> 00:02:04,380
+ But, the thing is only Bob knows how to
+
+41
+00:02:04,380 --> 00:02:08,665
+ decrypt messages that are encrypted using his public key.
+
+42
+00:02:08,665 --> 00:02:12,620
+ So, he's going to have a private key D, what is D?
+
+43
+00:02:12,620 --> 00:02:17,835
+ D is going to be the inverse of E mod P minus one times, Q minus one.
+
+44
+00:02:17,835 --> 00:02:19,725
+ Only he knows P and Q,
+
+45
+00:02:19,725 --> 00:02:24,540
+ so only he can compute D. He can compute D and then he can take
+
+46
+00:02:24,540 --> 00:02:27,930
+ this encrypted message and he can raises the power D and
+
+47
+00:02:27,930 --> 00:02:31,830
+ then take it mod N and that will give him the original message.
+
+48
+00:02:31,830 --> 00:02:34,480
+ But, only Bob knows how to compute this private key,
+
+49
+00:02:34,480 --> 00:02:36,600
+ so only he can do this decryption.
+
+50
+00:02:36,600 --> 00:02:39,775
+ But, there's no coordination that needs to happen between Alice and Bob.
+
+51
+00:02:39,775 --> 00:02:42,825
+ Bob does this computation on his own.
+
+52
+00:02:42,825 --> 00:02:45,960
+ He computes N and E and announces it to
+
+53
+00:02:45,960 --> 00:02:50,515
+ the world and he computes this private D and keeps it to himself.
+
+54
+00:02:50,515 --> 00:02:54,430
+ Meanwhile, anybody that wants to send a message to Bob looks up his public key,
+
+55
+00:02:54,430 --> 00:02:57,145
+ sees his N and E, he uses that to encrypt,
+
+56
+00:02:57,145 --> 00:03:00,265
+ the sender encrypted message in the clear.
+
+57
+00:03:00,265 --> 00:03:03,405
+ So, anybody can see the encrypted message and then,
+
+58
+00:03:03,405 --> 00:03:05,230
+ only Bob can decrypt it.
+
+59
+00:03:05,230 --> 00:03:06,540
+ So, let's detail this scheme,
+
+60
+00:03:06,540 --> 00:03:06,540
+ this is a RSA cryptosystem.
+

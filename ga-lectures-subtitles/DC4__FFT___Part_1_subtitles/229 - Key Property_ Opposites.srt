@@ -1,0 +1,44 @@
+1
+00:00:00,000 --> 00:00:04,005
+ There are two key properties of the nth roots of unity which we're going to utilize.
+
+2
+00:00:04,005 --> 00:00:06,050
+ The first holes for even n,
+
+3
+00:00:06,050 --> 00:00:09,030
+ the nth root satisfies the plus minus property.
+
+4
+00:00:09,030 --> 00:00:12,220
+ This was the key property for our divide and conquer approach.
+
+5
+00:00:12,220 --> 00:00:17,385
+ The first n over two of the nth roots of unity are opposite of the last n over two.
+
+6
+00:00:17,385 --> 00:00:20,280
+ In other words, omega sub n to the zero power
+
+7
+00:00:20,280 --> 00:00:24,555
+ equals negative omega sub n to the n over two.
+
+8
+00:00:24,555 --> 00:00:28,005
+ And in general, omega sub n to the jth power equals
+
+9
+00:00:28,005 --> 00:00:32,460
+ negative omega sub n to the n over two plus j.
+
+10
+00:00:32,460 --> 00:00:36,975
+ So the nth roots of unity look like a perfect choice for our divide and conquer approach,
+
+11
+00:00:36,975 --> 00:00:36,975
+ because they satisfy the plus minus property.
+

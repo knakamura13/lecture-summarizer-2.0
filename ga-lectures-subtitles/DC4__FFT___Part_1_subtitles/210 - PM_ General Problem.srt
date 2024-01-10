@@ -1,0 +1,56 @@
+1
+00:00:00,000 --> 00:00:03,780
+ Once again, the general computational problem that we're considering is,
+
+2
+00:00:03,780 --> 00:00:07,088
+ given this vector of coefficients for A of X,
+
+3
+00:00:07,088 --> 00:00:09,765
+ and this vector of coefficients defining B of X,
+
+4
+00:00:09,765 --> 00:00:13,800
+ we want to compute their convolution C. Now a simple algorithm for
+
+5
+00:00:13,800 --> 00:00:18,030
+ computing this convolution is going to compute each of these coefficients in turn.
+
+6
+00:00:18,030 --> 00:00:20,010
+ Now there were order n coefficient.
+
+7
+00:00:20,010 --> 00:00:22,430
+ How long did it take to compute each coefficient?
+
+8
+00:00:22,430 --> 00:00:25,170
+ Well a naive algorithm takes order K time to compute
+
+9
+00:00:25,170 --> 00:00:30,475
+ the Kth coefficient because there are order K terms that we have to sum up.
+
+10
+00:00:30,475 --> 00:00:34,030
+ This is going to lead to an order n squared time algorithm to compute all
+
+11
+00:00:34,030 --> 00:00:37,835
+ of the order n coefficients of the polynomial C of X.
+
+12
+00:00:37,835 --> 00:00:41,220
+ What we are going to do now in this lecture is an order n log
+
+13
+00:00:41,220 --> 00:00:44,660
+ n time algorithm for computing this product polynomial C of X,
+
+14
+00:00:44,660 --> 00:00:44,660
+ the convolution of a_n.
+

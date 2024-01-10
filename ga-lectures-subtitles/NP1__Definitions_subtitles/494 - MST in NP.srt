@@ -1,0 +1,160 @@
+1
+00:00:00,000 --> 00:00:03,615
+ Let's see why the MST problem lies in the class NP.
+
+2
+00:00:03,615 --> 00:00:07,105
+ First off, is the MST problem of the correct form.
+
+3
+00:00:07,105 --> 00:00:09,865
+ If there is a solution are we outputting a solution.
+
+4
+00:00:09,865 --> 00:00:12,365
+ And if there is no solution, we're outputting no.
+
+5
+00:00:12,365 --> 00:00:14,140
+ Well, the way the problem is formulated,
+
+6
+00:00:14,140 --> 00:00:15,720
+ we're always outputting a solution.
+
+7
+00:00:15,720 --> 00:00:17,911
+ We're always outputting a tree T,
+
+8
+00:00:17,911 --> 00:00:20,355
+ which is guaranteed to be a minimum weight.
+
+9
+00:00:20,355 --> 00:00:23,200
+ And the way the problem is formulated there always is a solution.
+
+10
+00:00:23,200 --> 00:00:25,685
+ We're simply looking for the tree of minimum weight.
+
+11
+00:00:25,685 --> 00:00:27,810
+ So there was always a tree of minimal weight,
+
+12
+00:00:27,810 --> 00:00:29,770
+ so we're always outputting a solution.
+
+13
+00:00:29,770 --> 00:00:31,450
+ There's never in no instance.
+
+14
+00:00:31,450 --> 00:00:33,995
+ There's never no tree of minimum weight.
+
+15
+00:00:33,995 --> 00:00:36,840
+ Sum tree has to be of minimum weight.
+
+16
+00:00:36,840 --> 00:00:40,990
+ So there's always a solution to this problem and we're always outputting a solution.
+
+17
+00:00:40,990 --> 00:00:42,730
+ Now, suppose we're given a graph G,
+
+18
+00:00:42,730 --> 00:00:46,375
+ which is our input to the MST problem and we're given a tree T,
+
+19
+00:00:46,375 --> 00:00:49,465
+ which we claim is a solution to the MST problem.
+
+20
+00:00:49,465 --> 00:00:54,630
+ How do we verify that T is in fact a solution to the MST problem for G?
+
+21
+00:00:54,630 --> 00:00:58,315
+ Well, first we have to verify that T is a tree.
+
+22
+00:00:58,315 --> 00:01:02,590
+ Or we can simply run the BFS or DFS algorithm to check that T is a tree.
+
+23
+00:01:02,590 --> 00:01:08,175
+ To check that T connects up the graph G and that T has no cycles.
+
+24
+00:01:08,175 --> 00:01:10,985
+ Now, how do we check that T is of minimum weight?
+
+25
+00:01:10,985 --> 00:01:13,550
+ Well, we can run Kruskal's or Prim's algorithm,
+
+26
+00:01:13,550 --> 00:01:15,131
+ that's going to give it an MST.
+
+27
+00:01:15,131 --> 00:01:19,145
+ Then for that given MST that's outputted by Kruskal's or Prim's algorithm,
+
+28
+00:01:19,145 --> 00:01:21,680
+ we check its weight and then we check that T has
+
+29
+00:01:21,680 --> 00:01:25,055
+ the same weight as that output from Kruskal's or Prim's algorithm.
+
+30
+00:01:25,055 --> 00:01:27,290
+ There's no reason why Kruskal's or Prim's algorithm might
+
+31
+00:01:27,290 --> 00:01:29,775
+ generate this particular tree T,
+
+32
+00:01:29,775 --> 00:01:32,630
+ but they're going to output a MST and we
+
+33
+00:01:32,630 --> 00:01:36,030
+ checked the weight of that MST outputted by these algorithms,
+
+34
+00:01:36,030 --> 00:01:39,440
+ and then we compare that to the weight of the tree T. And therefore,
+
+35
+00:01:39,440 --> 00:01:43,475
+ we can verify that T has minimum weight and that T is a tree.
+
+36
+00:01:43,475 --> 00:01:45,800
+ And therefore, T is an MST.
+
+37
+00:01:45,800 --> 00:01:48,560
+ It takes us order N plus M time to run BFS or
+
+38
+00:01:48,560 --> 00:01:54,045
+ DFS and it takes us o(mlogn) time to run Kruskal's or Prim's algorithm.
+
+39
+00:01:54,045 --> 00:01:58,250
+ So the total time of our verification algorithm is o(mlogn).
+
+40
+00:01:58,250 --> 00:01:58,250
+ This shows that the MST problem is in NP.
+

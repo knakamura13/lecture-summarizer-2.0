@@ -1,0 +1,108 @@
+1
+00:00:00,000 --> 00:00:02,895
+ Now, let's go ahead and write a recurrence for C(i,j).
+
+2
+00:00:02,895 --> 00:00:06,270
+ In our graphical view, this corresponds to the root of
+
+3
+00:00:06,270 --> 00:00:10,985
+ the tree which corresponds to Ai through Aj.
+
+4
+00:00:10,985 --> 00:00:13,305
+ We're going to try all possibilities for the split
+
+5
+00:00:13,305 --> 00:00:16,230
+ at index L and we're going to take the best of those.
+
+6
+00:00:16,230 --> 00:00:18,171
+ The best means minimum costs,
+
+7
+00:00:18,171 --> 00:00:20,700
+ so we're going to do a minimization over the choices of
+
+8
+00:00:20,700 --> 00:00:25,360
+ L and L is allowed to vary between i and j minus one.
+
+9
+00:00:25,360 --> 00:00:28,433
+ And we have this left subtree and this right subtree.
+
+10
+00:00:28,433 --> 00:00:32,130
+ The left subtree corresponds to Ai through Al.
+
+11
+00:00:32,130 --> 00:00:35,915
+ The right subtree corresponds to Ai plus one through Aj.
+
+12
+00:00:35,915 --> 00:00:41,224
+ The minimum cost for computing this left subtree is the entry C(i,l).
+
+13
+00:00:41,224 --> 00:00:45,205
+ The minimum costs for computing this right subtree is Cl plus 1j.
+
+14
+00:00:45,205 --> 00:00:47,225
+ Finally, we have to combine these together.
+
+15
+00:00:47,225 --> 00:00:50,835
+ Recall this product matrix is of size Mi minus one
+
+16
+00:00:50,835 --> 00:00:55,215
+ by Ml and this product matrix is of size Ml by Mj.
+
+17
+00:00:55,215 --> 00:00:56,790
+ To multiply these together,
+
+18
+00:00:56,790 --> 00:01:00,270
+ the cost is Mi minus one times Ml times Mj.
+
+19
+00:01:00,270 --> 00:01:02,795
+ Adding that term into our recurrence.
+
+20
+00:01:02,795 --> 00:01:08,210
+ We take the mean over the choices of L where L can vary from i to j minus one.
+
+21
+00:01:08,210 --> 00:01:09,780
+ And for that specific L,
+
+22
+00:01:09,780 --> 00:01:12,310
+ the cost is the cost for the left subtree
+
+23
+00:01:12,310 --> 00:01:16,620
+ C(i,l) plus the costs for the optimal right subtrees CL plus
+
+24
+00:01:16,620 --> 00:01:20,010
+ one j plus the cost of merging that left subtree with
+
+25
+00:01:20,010 --> 00:01:24,890
+ that right subtree which is Mi minus one times Ml times Mj.
+
+26
+00:01:24,890 --> 00:01:28,980
+ We take the sum of those three terms and we take
+
+27
+00:01:28,980 --> 00:01:28,980
+ the L which minimizes that sum some That's our recurrence for C(i,j).
+

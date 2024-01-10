@@ -1,0 +1,212 @@
+1
+00:00:00,000 --> 00:00:02,895
+ Now, let's take a look at this graph we constructed.
+
+2
+00:00:02,895 --> 00:00:05,970
+ What is the maximum flow size that can occur in this graph?
+
+3
+00:00:05,970 --> 00:00:08,460
+ Certainly, it's upper bounded by the capacity,
+
+4
+00:00:08,460 --> 00:00:13,495
+ the total capacity out of S-prime or the total capacity into T-prime.
+
+5
+00:00:13,495 --> 00:00:15,275
+ Let's take a look at those quantities.
+
+6
+00:00:15,275 --> 00:00:22,010
+ Let capital D denote the total demand in this original network G. So,
+
+7
+00:00:22,010 --> 00:00:27,065
+ we're going to sum over edges in this original network of the demand along that edge.
+
+8
+00:00:27,065 --> 00:00:30,140
+ Notice, this is the same as summing over the vertices of
+
+9
+00:00:30,140 --> 00:00:35,435
+ the total demand into the vertex because every edge has one tail.
+
+10
+00:00:35,435 --> 00:00:38,885
+ And similarly, we can count from the head of the edge.
+
+11
+00:00:38,885 --> 00:00:43,890
+ So, we can sum over vertices of the total demand out of each vertex.
+
+12
+00:00:43,890 --> 00:00:47,680
+ Now, in this graph, what does the total capacity out of S-prime?
+
+13
+00:00:47,680 --> 00:00:54,410
+ Well, the capacity along this edge from S-prime to a is defined as demand into a.
+
+14
+00:00:54,410 --> 00:00:58,655
+ So this total capacity out of vertex S-prime
+
+15
+00:00:58,655 --> 00:01:03,935
+ is a sum over vertices in the original graph of the demand into that vertex.
+
+16
+00:01:03,935 --> 00:01:06,680
+ That's equal to the quantity D. Similarly,
+
+17
+00:01:06,680 --> 00:01:10,370
+ if we look at that the total capacity into the vertex T-prime,
+
+18
+00:01:10,370 --> 00:01:13,640
+ that's equal to the total demand out of the vertices,
+
+19
+00:01:13,640 --> 00:01:16,410
+ which is also equal to capital D. So,
+
+20
+00:01:16,410 --> 00:01:21,155
+ if we look at the value of flow F-prime in this new graph G-prime that we constructed,
+
+21
+00:01:21,155 --> 00:01:26,060
+ what do we know about the size of this flow F-prime in this graph G-prime?
+
+22
+00:01:26,060 --> 00:01:28,640
+ We know it's upper bounded by the total capacity out of
+
+23
+00:01:28,640 --> 00:01:32,090
+ S-prime or the total capacity into T-prime.
+
+24
+00:01:32,090 --> 00:01:35,030
+ Both of those quantities are capital D. So,
+
+25
+00:01:35,030 --> 00:01:39,470
+ the size of this flow F-prime is in most capital D. Therefore,
+
+26
+00:01:39,470 --> 00:01:42,500
+ we say this flow F-prime is saturating,
+
+27
+00:01:42,500 --> 00:01:46,205
+ if the size of this flow F-prime is capital D.
+
+28
+00:01:46,205 --> 00:01:50,180
+ This means that this flow F-prime is of maximum size.
+
+29
+00:01:50,180 --> 00:01:55,235
+ So, all of these edges out of S-prime are fully capacitated, they're fully saturated.
+
+30
+00:01:55,235 --> 00:01:58,530
+ And all these edges into T-prime are fully saturated.
+
+31
+00:01:58,530 --> 00:02:00,800
+ So, in a saturating flow F-prime,
+
+32
+00:02:00,800 --> 00:02:03,565
+ we fully capacitated the edges out of S-prime,
+
+33
+00:02:03,565 --> 00:02:06,890
+ and fully capacitated the edges into T-prime.
+
+34
+00:02:06,890 --> 00:02:09,680
+ What we're going to prove is that G, our original network,
+
+35
+00:02:09,680 --> 00:02:12,380
+ has a feasible flow if and only if,
+
+36
+00:02:12,380 --> 00:02:16,580
+ this new network G-prime that we constructed has a saturating flow.
+
+37
+00:02:16,580 --> 00:02:17,645
+ Once, we prove this lemma,
+
+38
+00:02:17,645 --> 00:02:20,305
+ this gives us a way to find a feasible flow.
+
+39
+00:02:20,305 --> 00:02:25,055
+ What we do is we take our input to the feasible flow problem, we construct G-prime,
+
+40
+00:02:25,055 --> 00:02:27,995
+ we run max-flow on this graph, G-prime,
+
+41
+00:02:27,995 --> 00:02:32,045
+ and we check if the size of the max-flow is equal to capital D,
+
+42
+00:02:32,045 --> 00:02:34,160
+ and therefore, it is saturating or not.
+
+43
+00:02:34,160 --> 00:02:36,555
+ If it is a saturating flow, then,
+
+44
+00:02:36,555 --> 00:02:39,530
+ we know that there is a feasible flow and actually
+
+45
+00:02:39,530 --> 00:02:42,950
+ our proof of this lemma will give us a construction.
+
+46
+00:02:42,950 --> 00:02:46,580
+ So, we can take this saturating flow F-prime and construct
+
+47
+00:02:46,580 --> 00:02:50,120
+ a feasible flow F for this original network G. So,
+
+48
+00:02:50,120 --> 00:02:52,670
+ what we've done so far is transform the input to
+
+49
+00:02:52,670 --> 00:02:56,715
+ the feasible flow problem into an input to the max-flow problem.
+
+50
+00:02:56,715 --> 00:02:58,820
+ And now, by proving this lemma,
+
+51
+00:02:58,820 --> 00:03:01,130
+ we're going to show how to transform the solution to
+
+52
+00:03:01,130 --> 00:03:06,125
+ the saturating flow problem or to the max-flow problem on this graph G-prime,
+
+53
+00:03:06,125 --> 00:03:06,125
+ into a solution to the feasible flow problem.
+

@@ -1,0 +1,272 @@
+1
+00:00:00,000 --> 00:00:02,535
+ Now, let's write the pseudocode for our algorithm.
+
+2
+00:00:02,535 --> 00:00:09,165
+ We are solving the knapsack version where objects can get used in most once.
+
+3
+00:00:09,165 --> 00:00:12,355
+ So its the no repeat version of knapsack that we're solving.
+
+4
+00:00:12,355 --> 00:00:17,405
+ Now, the input to the algorithm are the weights for the N objects W1 through Wn,
+
+5
+00:00:17,405 --> 00:00:19,990
+ the values for the N objects,
+
+6
+00:00:19,990 --> 00:00:24,555
+ V1 through Vn, and the total capacity available capital B.
+
+7
+00:00:24,555 --> 00:00:27,180
+ Now let's start with the base cases which are going to be
+
+8
+00:00:27,180 --> 00:00:30,225
+ the first row in the first column of the table.
+
+9
+00:00:30,225 --> 00:00:32,385
+ For the first row of the table,
+
+10
+00:00:32,385 --> 00:00:34,110
+ as we mentioned before,
+
+11
+00:00:34,110 --> 00:00:36,900
+ the entries are all going to be zero because we
+
+12
+00:00:36,900 --> 00:00:40,635
+ have a subset of the empty set which we are using.
+
+13
+00:00:40,635 --> 00:00:42,675
+ The first column of the table,
+
+14
+00:00:42,675 --> 00:00:45,370
+ we have total capacity zero available.
+
+15
+00:00:45,370 --> 00:00:48,990
+ So once again, we have the max value is zero.
+
+16
+00:00:48,990 --> 00:00:52,890
+ Now let's fill the interior of the table and we'll do it row by row.
+
+17
+00:00:52,890 --> 00:00:57,720
+ So, we have a for loop where i varies from 1 to N. This will be the current row.
+
+18
+00:00:57,720 --> 00:01:02,785
+ And then we'll vary the parameter little b from 1 to capital B.
+
+19
+00:01:02,785 --> 00:01:05,520
+ This will bring us along the current row.
+
+20
+00:01:05,520 --> 00:01:06,880
+ To fill the entry K(i, b),
+
+21
+00:01:06,880 --> 00:01:14,605
+ we have to first check whether fits in the current capacity available which is little b.
+
+22
+00:01:14,605 --> 00:01:18,015
+ So, we need to check whether the weight of the ith object
+
+23
+00:01:18,015 --> 00:01:22,030
+ which is Wi is smaller than little b or not.
+
+24
+00:01:22,030 --> 00:01:23,325
+ If the weight is smaller,
+
+25
+00:01:23,325 --> 00:01:24,420
+ then we have two scenarios.
+
+26
+00:01:24,420 --> 00:01:26,115
+ We can either include object i,
+
+27
+00:01:26,115 --> 00:01:27,692
+ or we don't include object i,
+
+28
+00:01:27,692 --> 00:01:30,195
+ and we're going to take the best of those two scenarios.
+
+29
+00:01:30,195 --> 00:01:31,617
+ If we include object i,
+
+30
+00:01:31,617 --> 00:01:33,268
+ we gain value Vi4,
+
+31
+00:01:33,268 --> 00:01:41,085
+ and we gain the value from the optimal solution to a subset of the first i-1 objects,
+
+32
+00:01:41,085 --> 00:01:45,173
+ and with total capacity available B-Wi.
+
+33
+00:01:45,173 --> 00:01:47,690
+ Or if we don't include object i,
+
+34
+00:01:47,690 --> 00:01:52,980
+ we gain value K(i-1,b) which is the optimal solution,
+
+35
+00:01:52,980 --> 00:01:55,620
+ which is a subset of the first i-1 objects,
+
+36
+00:01:55,620 --> 00:01:57,285
+ with the same capacity available.
+
+37
+00:01:57,285 --> 00:01:58,760
+ And we are going to take the best of those two.
+
+38
+00:01:58,760 --> 00:02:00,865
+ So we're going to take the maxi of those two entries.
+
+39
+00:02:00,865 --> 00:02:05,830
+ And the other scenario where object i does not fit in the current capacity available,
+
+40
+00:02:05,830 --> 00:02:07,968
+ then we know that the entry K(i,
+
+41
+00:02:07,968 --> 00:02:11,850
+ b) is just the same as the previous row, K(i-1, b),
+
+42
+00:02:11,850 --> 00:02:14,492
+ since the optimal solution,
+
+43
+00:02:14,492 --> 00:02:16,500
+ since it doesn't include object i,
+
+44
+00:02:16,500 --> 00:02:20,070
+ will be a subset of the first i-1 objects.
+
+45
+00:02:20,070 --> 00:02:22,305
+ And finally, what is our algorithm going to return?
+
+46
+00:02:22,305 --> 00:02:24,935
+ It's going to return the bottom right entry of the table.
+
+47
+00:02:24,935 --> 00:02:29,676
+ This is the max value which we can obtain using a subset of objects 1 through N,
+
+48
+00:02:29,676 --> 00:02:32,395
+ and the total capacity capital B.
+
+49
+00:02:32,395 --> 00:02:35,355
+ This is our original problem that we're trying to solve,
+
+50
+00:02:35,355 --> 00:02:37,710
+ and that's the solution that we're trying to obtain.
+
+51
+00:02:37,710 --> 00:02:40,861
+ Now, we can go and look at the running time of our algorithm.
+
+52
+00:02:40,861 --> 00:02:42,865
+ We first have our base cases,
+
+53
+00:02:42,865 --> 00:02:47,945
+ the first for loop is over capital B entries, that's over the first row.
+
+54
+00:02:47,945 --> 00:02:50,130
+ That takes time, order capital B.
+
+55
+00:02:50,130 --> 00:02:54,430
+ Second for loop is over the first column,
+
+56
+00:02:54,430 --> 00:02:56,850
+ that's of size order N. Now we have our
+
+57
+00:02:56,850 --> 00:03:00,325
+ nested for loops which are going over the interior of the table.
+
+58
+00:03:00,325 --> 00:03:02,058
+ First one is of size order N,
+
+59
+00:03:02,058 --> 00:03:06,915
+ the second nested for loop is of size order Capital B.
+
+60
+00:03:06,915 --> 00:03:09,450
+ And then, within this nested for loops
+
+61
+00:03:09,450 --> 00:03:13,095
+ is an if-then-else statement which is going to be order one time.
+
+62
+00:03:13,095 --> 00:03:17,345
+ This is order one time. This one is order capital B.
+
+63
+00:03:17,345 --> 00:03:20,490
+ Our loop is of size order N. And so
+
+64
+00:03:20,490 --> 00:03:25,495
+ the total run time of these nested for loops is order N and times capital B.
+
+65
+00:03:25,495 --> 00:03:28,750
+ So, the total run time is order N times capital B.
+
+66
+00:03:28,750 --> 00:03:33,870
+ That completes the algorithm for the case where objects can be used at most once,
+
+67
+00:03:33,870 --> 00:03:37,020
+ and then we'll go back and we'll look at the solutions to
+
+68
+00:03:37,020 --> 00:03:37,020
+ the problem when we allow the object to be used multiple times.
+

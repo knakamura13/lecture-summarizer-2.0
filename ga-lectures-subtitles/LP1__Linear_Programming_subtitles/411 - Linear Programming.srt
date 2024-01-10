@@ -1,0 +1,60 @@
+1
+00:00:00,000 --> 00:00:04,590
+ Linear programming is a very general technique for solving optimization problems.
+
+2
+00:00:04,590 --> 00:00:07,110
+ It handles any problem that can be formulated as
+
+3
+00:00:07,110 --> 00:00:09,930
+ an optimization over a set of variables with
+
+4
+00:00:09,930 --> 00:00:12,570
+ a goal known as the objective function and
+
+5
+00:00:12,570 --> 00:00:16,895
+ the constraints can all be expressed as linear functions of the variables.
+
+6
+00:00:16,895 --> 00:00:20,605
+ We'll see that max flow can be formulated as a linear program.
+
+7
+00:00:20,605 --> 00:00:25,830
+ Also, we'll see that many problems from operations research can be expressed as LPs.
+
+8
+00:00:25,830 --> 00:00:27,540
+ We'll describe the general idea of
+
+9
+00:00:27,540 --> 00:00:32,585
+ the simplex algorithm which is widely used for solving LPs.
+
+10
+00:00:32,585 --> 00:00:35,060
+ We'll take a closer look at one of the beautiful aspects
+
+11
+00:00:35,060 --> 00:00:37,567
+ of linear programming, LP duality.
+
+12
+00:00:37,567 --> 00:00:42,975
+ We'll explain what LP duality is and some of the useful consequences for us.
+
+13
+00:00:42,975 --> 00:00:46,765
+ Finally, we'll look at an application of LP to approximation algorithms.
+
+14
+00:00:46,765 --> 00:00:49,100
+ We'll use linear programming to design
+
+15
+00:00:49,100 --> 00:00:49,100
+ an approximation algorithm to the classic set problem.
+

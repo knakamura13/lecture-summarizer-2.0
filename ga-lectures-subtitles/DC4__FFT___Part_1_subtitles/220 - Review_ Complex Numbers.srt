@@ -1,0 +1,188 @@
+1
+00:00:00,000 --> 00:00:03,720
+ We saw that we need to consider complex numbers for our choice of the n
+
+2
+00:00:03,720 --> 00:00:07,735
+ or two n points where we evaluate the polynomial A(x).
+
+3
+00:00:07,735 --> 00:00:11,840
+ Here, I'll give a brief review of the relevant concepts regarding complex numbers.
+
+4
+00:00:11,840 --> 00:00:13,860
+ Some of you may get a bit scared at the use of
+
+5
+00:00:13,860 --> 00:00:17,310
+ complex numbers but the mathematics involved is fairly simple,
+
+6
+00:00:17,310 --> 00:00:19,105
+ so don't get intimidated at all.
+
+7
+00:00:19,105 --> 00:00:23,330
+ And the final algorithm that we get is very simple and very beautiful.
+
+8
+00:00:23,330 --> 00:00:26,850
+ We have a complex number Z which is a plus bi.
+
+9
+00:00:26,850 --> 00:00:29,950
+ A Is the real part and B is the imaginary part.
+
+10
+00:00:29,950 --> 00:00:33,405
+ It's often convenient to look at complex numbers in the complex plane.
+
+11
+00:00:33,405 --> 00:00:34,710
+ In the complex plane,
+
+12
+00:00:34,710 --> 00:00:36,420
+ one of the axis corresponds to
+
+13
+00:00:36,420 --> 00:00:41,255
+ the real component and one of the axis corresponds to the imaginary component.
+
+14
+00:00:41,255 --> 00:00:43,800
+ So, for this number A plus bi,
+
+15
+00:00:43,800 --> 00:00:46,000
+ we look at A in the real axis,
+
+16
+00:00:46,000 --> 00:00:50,215
+ B in the imaginary axis and we look at this point ab.
+
+17
+00:00:50,215 --> 00:00:54,930
+ This number Z corresponds to the point ab in the complex plane.
+
+18
+00:00:54,930 --> 00:00:57,050
+ Now, there's another way to describe this point,
+
+19
+00:00:57,050 --> 00:01:00,030
+ this number Z and it's called the polar coordinates.
+
+20
+00:01:00,030 --> 00:01:02,130
+ In polar coordinates, we look at the length of
+
+21
+00:01:02,130 --> 00:01:05,240
+ this vector from the origin to this point Z.
+
+22
+00:01:05,240 --> 00:01:09,250
+ Let's call R, the length and we look at this angle theta.
+
+23
+00:01:09,250 --> 00:01:13,030
+ This number Z in polar coordinates is R comma theta.
+
+24
+00:01:13,030 --> 00:01:15,765
+ Just as we had two representations of a polynomial,
+
+25
+00:01:15,765 --> 00:01:18,425
+ either the coefficients or the values.
+
+26
+00:01:18,425 --> 00:01:21,315
+ We also have two representations of a complex number.
+
+27
+00:01:21,315 --> 00:01:27,090
+ Either, with the cartesian coordinates ab or the polar coordinates R theta.
+
+28
+00:01:27,090 --> 00:01:28,950
+ Now it turns out the polar coordinates are more
+
+29
+00:01:28,950 --> 00:01:32,460
+ convenient for certain operations such as multiplication.
+
+30
+00:01:32,460 --> 00:01:34,935
+ Before we delve into properties of polar coordinates,
+
+31
+00:01:34,935 --> 00:01:37,150
+ let's review some basic properties.
+
+32
+00:01:37,150 --> 00:01:39,735
+ First off, how do we convert between polar coordinates
+
+33
+00:01:39,735 --> 00:01:42,730
+ and complex or cartesian coordinates?
+
+34
+00:01:42,730 --> 00:01:44,730
+ Well, if you remember a little bit of trigonometry,
+
+35
+00:01:44,730 --> 00:01:46,520
+ you'll recall that A,
+
+36
+00:01:46,520 --> 00:01:49,470
+ this length A is equal to R times
+
+37
+00:01:49,470 --> 00:01:54,270
+ cos theta and this length B is equal to R times sin theta.
+
+38
+00:01:54,270 --> 00:01:59,340
+ So, this gives us a way to convert between cartesian coordinates and polar coordinates.
+
+39
+00:01:59,340 --> 00:02:02,160
+ Now there's a third way of representing complex numbers.
+
+40
+00:02:02,160 --> 00:02:04,610
+ This is given to us by Euler's formula.
+
+41
+00:02:04,610 --> 00:02:08,300
+ This gives us a quite compact representation of complex numbers.
+
+42
+00:02:08,300 --> 00:02:10,515
+ The basic fact is Euler's formula,
+
+43
+00:02:10,515 --> 00:02:18,330
+ which says that cosine theta plus I times sin theta equals exponential of i times theta.
+
+44
+00:02:18,330 --> 00:02:22,425
+ Then we can multiply both sides by R and then we have that this number Z,
+
+45
+00:02:22,425 --> 00:02:28,745
+ this complex number Z equals R times exponential of i times theta.
+
+46
+00:02:28,745 --> 00:02:32,070
+ The basic idea of the proof of this Euler's formula is by looking at
+
+47
+00:02:32,070 --> 00:02:32,070
+ the Taylor expansion of exponential function cosine and sine function.
+

@@ -1,0 +1,112 @@
+1
+00:00:00,000 --> 00:00:04,170
+ Let's look at one more variant of shortest path problem and this will give us a chance to
+
+2
+00:00:04,170 --> 00:00:08,810
+ look at a slightly different style of dynamic programming solution.
+
+3
+00:00:08,810 --> 00:00:11,190
+ So what we did before with Bellman-Ford was we had
+
+4
+00:00:11,190 --> 00:00:13,170
+ a single source and we looked at
+
+5
+00:00:13,170 --> 00:00:16,530
+ the shortest path from that single source to all other vertices.
+
+6
+00:00:16,530 --> 00:00:19,520
+ Now we're going to look at all pairs shortest path.
+
+7
+00:00:19,520 --> 00:00:21,870
+ Once again we're given a directed graph,
+
+8
+00:00:21,870 --> 00:00:24,540
+ G, along with edge weights.
+
+9
+00:00:24,540 --> 00:00:28,195
+ And these edge weights again can be positive or negative.
+
+10
+00:00:28,195 --> 00:00:30,480
+ Now, for a pair of vertices Y and Z,
+
+11
+00:00:30,480 --> 00:00:32,910
+ let's define dist of y,
+
+12
+00:00:32,910 --> 00:00:36,450
+ z to be the length of the shortest path from y to z.
+
+13
+00:00:36,450 --> 00:00:39,195
+ Previously, we are always looking at the shortest path from
+
+14
+00:00:39,195 --> 00:00:42,720
+ a single start vertex S to the given vertex.
+
+15
+00:00:42,720 --> 00:00:45,533
+ Now we're looking at for all pairs of vertices,
+
+16
+00:00:45,533 --> 00:00:46,890
+ we're looking at the shortest path.
+
+17
+00:00:46,890 --> 00:00:50,435
+ So we have this N squared size matrix dist.
+
+18
+00:00:50,435 --> 00:00:54,870
+ Our goal in this problem is to find the length of the shortest path between
+
+19
+00:00:54,870 --> 00:00:59,070
+ from y to z and we want to do it for all pairs of vertices Y and Z.
+
+20
+00:00:59,070 --> 00:01:01,150
+ So for all N squared vertices,
+
+21
+00:01:01,150 --> 00:01:05,005
+ we want to find the distance from Y to Z.
+
+22
+00:01:05,005 --> 00:01:08,390
+ Now last lecture we saw Bellman-Ford algorithm,
+
+23
+00:01:08,390 --> 00:01:13,690
+ which did the distance from a single start vertex s to all other vertices.
+
+24
+00:01:13,690 --> 00:01:18,955
+ Can we use that as an easy algorithm to solve this all pairs shortest path problem?
+
+25
+00:01:18,955 --> 00:01:24,530
+ Yes. So the easy approach to solve this all pairs shortest path problem is to run
+
+26
+00:01:24,530 --> 00:01:26,150
+ Bellman-Ford algorithm which has
+
+27
+00:01:26,150 --> 00:01:31,810
+ a single start vertex and we try all N possibilities for the start vertex.
+
+28
+00:01:31,810 --> 00:01:31,810
+ So we run Bellman-Ford-
+

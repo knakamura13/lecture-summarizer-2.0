@@ -1,0 +1,92 @@
+1
+00:00:00,000 --> 00:00:01,620
+ For a given undirected graph,
+
+2
+00:00:01,620 --> 00:00:04,080
+ how do we find it's connected components?
+
+3
+00:00:04,080 --> 00:00:07,560
+ Well, we simply run DFS and we keep track of the component number.
+
+4
+00:00:07,560 --> 00:00:10,500
+ So, each vertex is going to have its component number stored.
+
+5
+00:00:10,500 --> 00:00:12,660
+ Let me remind you of this pseudocode for DFS,
+
+6
+00:00:12,660 --> 00:00:15,910
+ because we're going to make some tweaks to it during the course of this lecture.
+
+7
+00:00:15,910 --> 00:00:18,345
+ So, the DFS algorithm takes as input a graph,
+
+8
+00:00:18,345 --> 00:00:21,840
+ G. For now, let's think of G as an undirected graph.
+
+9
+00:00:21,840 --> 00:00:24,540
+ But later, we're going to run the same algorithm on
+
+10
+00:00:24,540 --> 00:00:27,535
+ a directed graph and it's going to be identical pseudocode.
+
+11
+00:00:27,535 --> 00:00:32,160
+ And we assume that the graph is given to us in adjacency list representation.
+
+12
+00:00:32,160 --> 00:00:35,875
+ And for now, we're looking at connected components of undirected graph.
+
+13
+00:00:35,875 --> 00:00:39,700
+ So, the vertices are going to be labeled by a connected component number.
+
+14
+00:00:39,700 --> 00:00:42,990
+ We're going to have a counter which is the current connected component number.
+
+15
+00:00:42,990 --> 00:00:47,030
+ We're going to have an array which keeps track of whether we visited a vertex yet or not,
+
+16
+00:00:47,030 --> 00:00:48,810
+ and we're going to start off by initializing
+
+17
+00:00:48,810 --> 00:00:52,860
+ the visited array to false for all vertices of the graph.
+
+18
+00:00:52,860 --> 00:00:55,890
+ Now, we go through the vertices in an arbitrary order.
+
+19
+00:00:55,890 --> 00:00:59,060
+ Now, if we get to a vertex that we haven't visited yet, what do we do?
+
+20
+00:00:59,060 --> 00:01:02,150
+ Well, this means that we found a new connected component.
+
+21
+00:01:02,150 --> 00:01:04,545
+ So, we increment the connected component number
+
+22
+00:01:04,545 --> 00:01:07,340
+ and then we start exploring from this vertex.
+
+23
+00:01:07,340 --> 00:01:07,340
+ And let's now look at the subroutine for explore.
+

@@ -1,0 +1,64 @@
+1
+00:00:00,000 --> 00:00:02,919
+ So imagine you're studying for your PhD,
+
+2
+00:00:02,919 --> 00:00:06,715
+ and you're trying to come up with some measure for the importance of web pages.
+
+3
+00:00:06,715 --> 00:00:09,325
+ So you might think of the analogy with academic papers.
+
+4
+00:00:09,325 --> 00:00:11,270
+ What's the importance of an academic paper?
+
+5
+00:00:11,270 --> 00:00:13,750
+ How do you measure the importance of an academic paper?
+
+6
+00:00:13,750 --> 00:00:15,630
+ Well one way that we still use,
+
+7
+00:00:15,630 --> 00:00:17,460
+ is using citation counts.
+
+8
+00:00:17,460 --> 00:00:20,718
+ How many other papers cite your paper?
+
+9
+00:00:20,718 --> 00:00:22,615
+ What does that mean in terms of web pages?
+
+10
+00:00:22,615 --> 00:00:24,240
+ Well might be the number of links,
+
+11
+00:00:24,240 --> 00:00:26,210
+ hyperlinks to your web page.
+
+12
+00:00:26,210 --> 00:00:29,340
+ So our first idea for defining the rank of a page x,
+
+13
+00:00:29,340 --> 00:00:33,510
+ is to define pi of x to be the number of links to the page x,
+
+14
+00:00:33,510 --> 00:00:35,670
+ number of hyperlinks to the web page x.
+
+15
+00:00:35,670 --> 00:00:39,705
+ In terms of the graph, this means we're going to look at the number of in neighbors to x.
+
+16
+00:00:39,705 --> 00:00:39,705
+ How many edges come into x.
+

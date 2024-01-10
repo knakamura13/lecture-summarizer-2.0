@@ -1,0 +1,84 @@
+1
+00:00:00,000 --> 00:00:01,690
+ To prove the reverse direction,
+
+2
+00:00:01,690 --> 00:00:05,770
+ what we want to do now is take a feasible flow f in the graph G,
+
+3
+00:00:05,770 --> 00:00:10,750
+ and we want to construct a saturating flow f-prime in this new graph G-prime.
+
+4
+00:00:10,750 --> 00:00:13,320
+ Now for each edge of the original network G,
+
+5
+00:00:13,320 --> 00:00:16,320
+ we're going to define the new flow along that edge to be
+
+6
+00:00:16,320 --> 00:00:20,105
+ the old flow shifted down by the demand along this edge.
+
+7
+00:00:20,105 --> 00:00:23,580
+ Now that defines a flow for all the edges in the original network.
+
+8
+00:00:23,580 --> 00:00:25,350
+ What about the new edges that we added to
+
+9
+00:00:25,350 --> 00:00:28,220
+ this graph G-prime when we did the construction?
+
+10
+00:00:28,220 --> 00:00:30,090
+ Well for every vertex in the original network,
+
+11
+00:00:30,090 --> 00:00:34,425
+ we have an edge from s-prime and edge to t-prime.
+
+12
+00:00:34,425 --> 00:00:38,460
+ So we have this edge from s-prime to v and v to t-prime.
+
+13
+00:00:38,460 --> 00:00:40,940
+ Now we're trying to construct a saturating flow.
+
+14
+00:00:40,940 --> 00:00:44,138
+ So each of these edges is supposed to be fully capacitated.
+
+15
+00:00:44,138 --> 00:00:48,985
+ So we might as well set this flow to be equal to its capacity which is the total demand
+
+16
+00:00:48,985 --> 00:00:54,765
+ into v for this edge and the total demand out of v for the edge two t-prime.
+
+17
+00:00:54,765 --> 00:00:58,525
+ That defines a flow f-prime for all the edges except for one.
+
+18
+00:00:58,525 --> 00:01:02,915
+ We have this edge from t to s which had infinite capacity.
+
+19
+00:01:02,915 --> 00:01:06,300
+ We want to set the flow along this edge to be equal to
+
+20
+00:01:06,300 --> 00:01:10,830
+ the size of this flow f. That defines the flow f-prime.
+
+21
+00:01:10,830 --> 00:01:10,830
+ Now we have to check that f-prime is valid and it's a saturating flow.
+

@@ -1,0 +1,1 @@
+The solution to this problem is 2,3,8,5,12. To get the x cubed coefficient 5, we obtain it in the following way, multiplying 3x square by negative x, we get negative 3x cubed. Multiplying 2x by 4x square, we get 8x cubed. Adding these up, we get 5x cubed.

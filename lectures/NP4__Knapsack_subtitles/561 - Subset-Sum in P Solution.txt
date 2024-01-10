@@ -1,0 +1,1 @@
+This is false. Just like with the knapsack problem, this is not polynomial in the input size. To be polynomial in the input size, the running time would have the N times polynomial in log t.

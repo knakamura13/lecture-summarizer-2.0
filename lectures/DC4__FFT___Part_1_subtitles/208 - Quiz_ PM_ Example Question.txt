@@ -1,0 +1,1 @@
+Let's take a quick quiz to make sure you're familiar with multiplying polynomials and let's consider the polynomial A(x), which is 1 + 2x + 3x squared. And B(x), let's define as 2 - x + 4x squared. So the vector of coefficients for A(x) is (1, 2, 3), and the vector for B(x) is (2, -1, 4). And now compute the convolution of A and B.

@@ -1,0 +1,1 @@
+In this lecture, we'll explore the beautiful theory of LP duality. We'll start with a motivating example and then this will lead us into the general formulation of the dual LP. And we'll look at the weak duality theorem and some of its consequences. And finally, we'll look at the strong version of the duality theorem.

@@ -1,0 +1,1 @@
+Let's take a short probability quiz to give a quick refresher on some basic probability. Let's look at what is the probability, that the first log and balls are assigned to bin bi for a particular i. We want to look at the probability that the first log and balls are assigned to this particular bi. Go ahead, and write the quantity here.

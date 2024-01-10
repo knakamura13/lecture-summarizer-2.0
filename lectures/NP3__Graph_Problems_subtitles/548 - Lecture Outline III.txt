@@ -1,0 +1,1 @@
+We've shown clique is NP-complete, now let's show that vertex cover is NP-complete.

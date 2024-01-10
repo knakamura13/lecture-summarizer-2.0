@@ -1,0 +1,1 @@
+Let's pause for a quick quiz. So what was the running time of the Bellman-Ford algorithm? And now if we run Bellman-Ford algorithm N times, so we're running it for all N possible start vertices, what's the running time of this approach for the all pairs shortest path problem?

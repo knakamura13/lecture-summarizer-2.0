@@ -1,0 +1,1 @@
+Let's take a look at an example to make sure you're okay with the terminology. Here's an example with two strings of length seven. Let's do a quick check to make sure you understand the problem definition. In this example, what's the longest common subsequence? Go ahead and mark the longest common subsequence in this example and also indicate the length of it.

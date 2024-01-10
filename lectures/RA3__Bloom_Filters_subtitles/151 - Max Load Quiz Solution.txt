@@ -1,0 +1,1 @@
+The solution is one_over_N, the probability that the max load is at least Log n, is at most one_over_N. Let's go through it in more details to see why this is the case.

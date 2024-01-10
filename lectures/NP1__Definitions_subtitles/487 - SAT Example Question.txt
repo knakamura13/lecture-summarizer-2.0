@@ -1,0 +1,1 @@
+Let's make sure you recall the notation for the SAT problem. So once you go ahead and write a satisfying assignment for this formula, so give an assignment for X1, X2 and X3, so that the formula evaluates to TRUE. If there's no such satisfying assignment then go ahead and enter no.

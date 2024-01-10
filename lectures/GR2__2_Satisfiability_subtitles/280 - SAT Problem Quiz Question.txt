@@ -1,0 +1,1 @@
+Now here's an example of a SAT input. The formula F is (x1 bar or x2 bar or x3) and (x2 or x3) and (x3 bar or x1 bar) and (x3 bar.) To make sure you understand this problem, why don't you go ahead and specify the output for this input. Either give a satisfying assignment if one exists, or-

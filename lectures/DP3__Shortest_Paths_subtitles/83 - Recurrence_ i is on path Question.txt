@@ -1,0 +1,1 @@
+Let's go ahead and take a break and see if you can express a recurrence for D of (i,s,t) in terms of smaller subproblems.

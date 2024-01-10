@@ -1,0 +1,1 @@
+As in the Bellman-Ford algorithm, the base case is the situation when i equals zero. That's when we have the empty set as possible intermediate vertices. So we have to go directly from s to t without any intermediate vertices allowed.

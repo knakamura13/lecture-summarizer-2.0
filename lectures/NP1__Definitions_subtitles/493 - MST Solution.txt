@@ -1,0 +1,1 @@
+Well in fact, both statements are true. The MST problem is in the class NP, and the MST problem is in the class P. Let's go ahead and see why both of these are true.

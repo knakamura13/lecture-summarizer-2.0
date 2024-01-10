@@ -1,0 +1,1 @@
+Let's take another quiz on some basic properties of the roots of unity. Let's consider even n. And let's look at the sum of the nth roots of unity. So let's take omegas sub n to the zero power, plus omega sub n to the first power, plus omega sub n squared, and so on, up to omega sub n to the n - 1. What does this sum equal?

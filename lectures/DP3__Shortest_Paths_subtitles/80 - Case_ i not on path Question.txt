@@ -1,0 +1,1 @@
+Let's pause for a moment and you go ahead and think about what is the solution to the recurrence in this case, where vertex i is not on the shortest path from s to t. And so, can we express D(i, s, t) in terms of smaller subproblem?

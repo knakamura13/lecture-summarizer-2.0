@@ -1,8 +1,0 @@
-1
-00:00:00,000 --> 00:00:02,475
- We've shown clique is NP-complete,
-
-2
-00:00:02,475 --> 00:00:02,475
- now let's show that vertex cover is NP-complete.
-

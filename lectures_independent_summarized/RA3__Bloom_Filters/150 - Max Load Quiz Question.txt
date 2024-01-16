@@ -1,0 +1,1 @@
+Prob. that bin Bi receives load ≥ log n ≤ 1/n². Can this stat assist in bounding max load prob. being ≥ log n? Further exploration needed to confirm.

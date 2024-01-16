@@ -1,0 +1,1 @@
+Valid topological ordering: X → Y → Z → U → W, edges flow left to right. Multiple topological orderings exist; U can occupy one of the last three positions—3 choices for U. Positions of Z, W determined post-U placement; Z precedes W. Graph has three distinct topological orderings.

@@ -1,0 +1,1 @@
+Omega_n^n equals 1 when multiplying omega_n^2 and omega_n^(n-2). In polar coords, multiplying numbers with magnitudes of 1 and summing angles yields a full rotation, 2π, confirming the inverse of omega_n squared is omega_n^(n-2).

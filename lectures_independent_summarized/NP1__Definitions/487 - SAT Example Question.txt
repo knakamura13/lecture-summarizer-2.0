@@ -1,0 +1,1 @@
+SAT problem notation entails assigning values to variables X1, X2, X3 to make a formula true. If no assignment achieves this, the response should be "no".

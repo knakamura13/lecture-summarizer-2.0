@@ -1,0 +1,1 @@
+Formulating a linear program with three variables (X1, X2, X3) for the production of products A, B, and C. Goal: maximize profit with objective function: maximize X1 + 6X2 + 10X3. Constraints include demand: X1 ≤ 300, X2 ≤ 200, supply: X1 + 3X2 + 2X3 ≤ 1000, and packaging: X2 + 3X3 ≤ 500, with all variables non-negative.

@@ -1,0 +1,1 @@
+Exploring two variations of a problem with distinct dynamic programming solutions: one with a single copy of each object aiming to identify a unique subset, and another allowing unlimited object use, leading to multisets with possible repetition. Initially focusing on the single-copy scenario before reviewing the unlimited supply case to develop appropriate algorithms.

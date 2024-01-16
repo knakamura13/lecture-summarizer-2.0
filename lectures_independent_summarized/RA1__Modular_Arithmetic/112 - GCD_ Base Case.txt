@@ -1,0 +1,1 @@
+Algorithm's base case defined: GCD(X, 0) = X. Got to this base case via recursive calls where 2nd param becomes 0 (kX mod X = 0). 1st param in recursion, a mult of X, is the GCD when 2nd param is 0. GCD(kX, X) resolves to X. This rationale underpins defining GCD of X and 0 as X.

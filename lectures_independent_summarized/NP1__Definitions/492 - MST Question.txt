@@ -1,0 +1,1 @@
+MST (Minimum Spanning Tree) problem involves finding a tree with the min weight in an undirected graph G with positive edge lengths. Question 1 asks if MST is in NP (decision problems verifiable in polynomial time), and question 2 queries if MST is in P (problems solvable in polynomial time).

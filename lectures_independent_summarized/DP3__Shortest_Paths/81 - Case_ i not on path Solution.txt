@@ -1,0 +1,1 @@
+When vertex i isn't on path P, path P uses just vertices 1 to i-1 as intermediates, thus D(i, s, t) = D(i-1, s, t). This is solved by the corresponding subproblem. Conversely, if i is on path P, the scenario is different and needs closer examination.

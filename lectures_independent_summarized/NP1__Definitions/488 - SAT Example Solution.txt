@@ -1,0 +1,1 @@
+Assigned x1 = true, x2 = false, x3 = false satisfies all clauses in a logic input: Clause 1 - x2 being false satisfies; Clause 2 - Not(x2) or x2 being true satisfies; Clause 3 & 4 - x3 being false satisfies. Each clause contains at least one true literal.

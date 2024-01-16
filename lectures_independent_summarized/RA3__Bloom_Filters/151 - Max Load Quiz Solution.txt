@@ -1,0 +1,1 @@
+Max load probability ≥ Log n is ≤ 1/N; detailed reasoning confirms this.

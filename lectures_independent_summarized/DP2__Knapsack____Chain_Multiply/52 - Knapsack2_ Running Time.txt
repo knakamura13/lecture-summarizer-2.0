@@ -1,0 +1,1 @@
+Writing time involves an outer loop of size B and a nested loop of size N, each step taking constant time; total run time therefore is O(NB). This algorithm maintains the original solution's run time but with reduced space and simplified to a one-dimensional table algorithm.

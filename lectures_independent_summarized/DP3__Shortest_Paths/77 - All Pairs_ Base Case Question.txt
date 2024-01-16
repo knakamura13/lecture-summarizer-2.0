@@ -1,0 +1,1 @@
+Defining D(IST) as the shortest path from vertex S to T, constrained by intermediate vertices from a prefix of series up to vertex I. Base case and solution linked to the Bellman-Ford algorithm's approach to single-source shortest paths.

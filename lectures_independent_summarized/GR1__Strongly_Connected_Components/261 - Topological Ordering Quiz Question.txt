@@ -1,0 +1,1 @@
+Example graph has 5 vertices requiring topological ordering; must list vertices so edges run left to right. Graph allows multiple topological orderings. Task to determine and specify total number of valid topological orderings for this graph.

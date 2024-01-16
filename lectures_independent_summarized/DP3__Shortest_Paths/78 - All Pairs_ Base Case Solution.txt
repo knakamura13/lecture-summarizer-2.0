@@ -1,0 +1,1 @@
+Base case in algorithm: i = 0, no intermediate vertices, direct path from s to t.

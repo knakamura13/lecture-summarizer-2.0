@@ -1,0 +1,1 @@
+Exploring the properties of roots of unity, specifically Omega_n and its inverse, with focus on expressing Omega_n squared with a positive exponent inverse.

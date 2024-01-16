@@ -1,0 +1,1 @@
+Developing recurrence for C(i,j) representing cost from matrix Ai to Aj. Optimal split at index L for minimal costs, L ranges i to j-1. Costs derived from summing optimal costs of left subtree C(i,l), right subtree C(l+1,j), and merge cost Mi-1 x Ml x Mj. Recurrence involves taking min sum of these terms across all L values from i to j-1 to find minimal cost C(i,j).

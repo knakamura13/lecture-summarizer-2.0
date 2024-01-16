@@ -1,0 +1,1 @@
+Numbers x, y and a, b are each congruent mod N; this allows the interchangeability of x with y and a with b in modular arithmetic operations. Demonstrated through addition and multiplication—x + a mod N equals y + b mod N and x * a mod N equals y * b mod N—this fundamental principle underpins larger mathematical work, showcasing the functional substitution based on congruence.

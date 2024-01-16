@@ -1,0 +1,1 @@
+Evaluated a given assignment of true/false values for an input formula f to confirm it satisfied the formula. Seeking running time for verification as function of n (variables) and m (clauses/parameters). Instructed to denote running time in big O notation.

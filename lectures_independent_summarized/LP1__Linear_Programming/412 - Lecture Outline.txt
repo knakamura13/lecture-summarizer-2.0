@@ -1,0 +1,1 @@
+Exploring linear programming (LP) as a technique to solve various problems, including max flow and production issues. Beginning with max flow solved via LP, followed by simple LP examples for production, before progressing to general LP formulation and standard form. Concluding with LP duality, an elegant and significant element of LP. Dive into expression of max flow as LP.

@@ -1,0 +1,1 @@
+Using k hash funcs (h1,...,hk) to build a hash tbl H init'd with all 0s. Insert element X by computing k hash vals & setting corresponding k bits in H to 1. For a query, check if all k bits are 1—if so, X likely in S; if any bit is 0, X definitely not in S. Guarantee only provided when a bit is 0.

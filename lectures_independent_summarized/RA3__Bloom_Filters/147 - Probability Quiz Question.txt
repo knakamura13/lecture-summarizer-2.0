@@ -1,0 +1,1 @@
+Probability quiz focus: determining probability of first log and balls being allocated to a specific bin (bi). Required: calculate and note this probability.

@@ -1,0 +1,1 @@
+Algorithm's runtime is O(n^b). Need to determine if this is efficient, i.e., if it's polynomial time. Efficient generally implies polynomial in input size. Running time in question may or may not be polynomial; if not, must specify why and what would qualify as polynomial regarding running time with respect to input size.

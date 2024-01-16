@@ -1,0 +1,1 @@
+Algorithm's runtime analysis shows nested for loops with constant time operations. Base cases involve two nested loops, size n, totaling O(n^2) time. General cases have three nested loops, size n, totaling O(n^3) time. Overall runtime is dominated by the O(n^3) general case.

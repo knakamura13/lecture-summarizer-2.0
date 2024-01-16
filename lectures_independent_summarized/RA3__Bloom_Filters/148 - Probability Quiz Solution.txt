@@ -1,0 +1,1 @@
+Soln for assigning log_n balls to bin Bi is one_over_n^log_n, because each ball has one_over_n chance of going to Bi, thus for log_n balls, it's the prod of individual probs: one_over_n^log_n.

@@ -1,0 +1,1 @@
+Variables in column vector x, maximizing obj function defined by c^T*x. Constraint matrix A sized m*n and RHS constraints in column vector b, size m. Obj function maximized subject to Ax ≤ b constraints and non-negativity of x. Feasible region non-empty if zero vector is feasible, otherwise LP infeasible.

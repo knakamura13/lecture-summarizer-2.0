@@ -1,0 +1,1 @@
+Directed graph with 12 vertices; need to identify and mark strongly connected components (SCCs). Analyzing number of SCCs present and determining which vertices form these SCCs. Essential for understanding SCC properties and implications in graph structure.

@@ -1,0 +1,1 @@
+Discussing reduction from problem A (colorings) to B (satisfiability), using notation from Dasgupta's textbook. Reduction indicates B is at least as challenging as A because solving B also solves A. Reduction defined as: an algorithm solving B in polynomial time can solve A in the same manner. Focus on how to demonstrate such a reduction from colorings to satisfiability.

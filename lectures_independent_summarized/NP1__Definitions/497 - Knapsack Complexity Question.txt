@@ -1,0 +1,1 @@
+Knapsack problem: class NP - true; class P - false. Need to determine validity of statements.

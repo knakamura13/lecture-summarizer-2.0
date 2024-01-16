@@ -1,0 +1,1 @@
+Examining a linear program example based on a production dilemma where company produces products A and B. Goal: maximize profit. Profit per unit: A=$1, B=$6. Demand limits: A <= 300 units/day, B <= 200 units/day. Supply/work constraints: <= 700 hours/day, A takes 1hr/unit, B takes 3hrs/unit. Linear expression of this situation is developed for analysis.

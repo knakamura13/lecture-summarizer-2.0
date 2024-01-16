@@ -1,0 +1,1 @@
+Exploring the RSA algorithm in cryptography context involves operations with N-bit numbers (X, Y, N) where N typically is a large number (1024 or 2048 bits), much larger than the standard 64-bit operations built into hardware. Need to assess the duration of basic arithmetic operations with these enlarged bit numbers.

@@ -1,0 +1,218 @@
+\section*{FIB    LIS    LCS}
+
+\subsection*{Dynamic Programming Overview}
+Dynamic programming (DP) is highly useful and a favorite teaching subject, yet initially challenging for students.
+Mastery requires practice, well beyond the provided homework.
+It`s crucial to tackle additional problems from various sources.
+Starting with calculating Fibonacci numbers as a simple DP example, the course will cover a range of DP problems, including Longest Increasing Subsequence (LIS), Longest Common Subsequence (LCS), the Knapsack Problem, Chain Matrix Multiplication, and shortest path algorithms using DP techniques.
+
+\subsection*{Fibonacci Numbers}
+Exploring an algorithm for generating the nth Fibonacci number with a focus on dynamic programming concepts and techniques.
+The Fibonacci sequence is characterized by each number being the sum of the two preceding ones, starting with 0 and 1.
+Looking to design an efficient algorithm that has a polynomial running time in relation to n, since a basic recursive formula defines Fibonacci numbers.
+Will also examine the limitations of a simple recursive approach before delving into more advanced examples of dynamic programming.
+The intention is to input a non-negative integer n and output the nth Fibonacci number effectively.
+
+\subsection*{FIB1  Recursive Algorithm}
+The natural recursive algorithm for computing the Nth Fibonacci number, Fib1, sums the previous two numbers in the sequence.
+It accounts for base cases where the first two numbers are 0 and 1.
+The running time T(n) includes constant time for the base cases and the sum of T(n-1) and T(n-2) for recursive calls.
+This running time is at least as large as the Nth Fibonacci number, which grows exponentially with the constant phi (\textasciitilde{}1.618), the golden ratio.
+Due to the exponential growth of Fibonacci numbers, the running time for computing the Nth Fibonacci is also exponential in n, making Fib1 highly inefficient.
+The need exists for a more efficient algorithm due to this poor performance.
+
+\subsection*{FIB1  Exp.
+Running Time}
+Algorithm computes nth Fibonacci number using inefficient recursion by recalculating subproblems multiple times, particularly smaller Fibonacci numbers at deeper recursion levels exponentially.
+Efficiency improved by starting with smaller subproblems using an array F to store Fibonacci numbers; F(i) represents ith Fibonacci number.
+Initiates with first two Fibonacci numbers, iteratively computes subsequent numbers using recursive formula.
+Method transforms algorithm from top-down recursion to bottom-up dynamic programming, systematically building up the solution and avoiding redundant calculations.
+This dynamic approach ensures calculation of nth Fibonacci number is efficient.
+
+\subsection*{FIB2  DP Algorithm}
+Developed dynamic programming algo to compute nth Fibonacci number.
+Algorithm uses an array F to store Fibonacci sequence, with base cases F\[0\]=0 and F\[1\]=1.
+Utilizes for loop from 2 to n, with each Fibonacci number being the sum of previous two stored values.
+Essential feature: no recursion used, despite recursive nature of Fibonacci formula.
+Running time analysis shows base cases require constant time, and the for loop iterates n times with a constant time operation within, resulting in a linear O(n) total run time for the algorithm.
+Algorithm showcases dynamic programming technique.
+
+\subsection*{FIB2  DP Recap}
+Dynamic Programming (DP) algorithms are designed based on the recursive nature of problems but are implemented without actual recursion to enhance performance and simplify runtime analysis.
+In contrast, memoization employs hash tables to remember solved sub-problems, which we avoid in this course to focus on pure DP techniques and avoid confusion.
+While some prefer memoization for its elegance, DP is acclaimed for its efficiency, reduced overhead, and simpler runtime analysis.
+Mastery of DP requires ample practice, as initially, it appears complex to students.
+Repetitive exercises in and out of class--from textbooks and online resources--are essential for students to internalize the DP approach, eventually finding it intuitive and straightforward to devise DP solutions.
+Consistent practice is emphasized as the key to excelling in the subject.
+
+\subsection*{Longest Increasing Subseq.}
+Exploring the dynamic programming approach to solve the Longest Increasing Subsequence (LAS) problem, which involves determining the maximum length of an increasing sequence of numbers within a given list of N numbers (A1 to AN).
+The focus is on calculating the sequence`s length, not the sequence itself, which simplifies the process of devising an algorithm to identify the sequence later.
+Unlike substrings that comprise consecutive elements from a larger string, subsequences are non-consecutive ordered selections from the string, with increasing subsequences defined by each element being strictly larger than its predecessor.
+For example, within a 12-number sequence, the longest increasing subsequence identified has a length of 6, composed of the following numbers: -3, 1, 4, 5, 8, 9.
+Hence, the developed algorithm should output the length `6` for this instance.
+This sets the stage for creating a dynamic programming solution to efficiently compute the length of the longest increasing subsequences in such numerical inputs.
+
+\subsection*{LIS  Subproblem Attempt 1}
+Designing a dynamic programming (DP) algorithm involves a standard recipe.
+First, define sub-problems; for Fibonacci numbers, this means identifying the i-th number in the sequence (F(i)).
+Next, establish a recursive relation connecting the solution of a sub-problem to smaller instances; F(i) is the sum of F(i-1) and F(i-2).
+Applying this to the longest increasing subsequence problem, define L(i) as the length of the longest increasing subsequence within the first i elements.
+The challenge then lies in expressing L(i) in terms of L(1) to L(i-1).
+Understanding how to construct this relationship is key for successfully applying DP to a given problem.
+
+\subsection*{LIS  Recurrence Attempt 1}
+To solve for L(I), the length of the longest increasing subsequence (LIS) ending with the I-th element, formulate subproblems based on earlier elements.
+For example, an array of n=12 elements, initially, L(1) is an LIS of length 1, since only one element is considered.
+As elements are added, track the LIS where L(2) is length 2 for the array \[5, 7\], and maintaining such sequences continues with each subsequent element.
+Challenges arise when elements cannot simply be appended, exemplified at L(9), where the current LIS does not accommodate the new element `A`, but an alternative sequence does, resulting in a longer LIS\@.
+Instead of tracking only the current LIS, track the smallest ending element of the LIS for more opportunities to append new elements and extend the LIS\@.
+Implement this by maintaining the LIS for each potential ending character, always seeking the minimum ending character.
+As the ending characters are limited to preceding array elements, there`s a finite set to consider.
+A new subproblem formulation includes computing L(I) by maintaining the LIS ending at each element A(I) of the array, providing a basis to compute the LIS when a new element is considered.
+To compute L(9), you then evaluate all potential sequences ending with preceding characters to find where `A` can be appended, creating the longest increasing sequence ending at `A`.
+This refined approach allows the calculation of L(I) by determining the feasibility of appending new characters onto existing sequences and optimizing the LIS considering all subproblems up to L(I-1).
+
+\subsection*{LIS  Subproblem Attempt 2}
+Introduced new subprob formula involving L(i) denoting longest inc subseq length incl a\_i.
+Key addition: a\_i must be in subseqs considered.
+Can express L(i) recurrence using L\_1 to L\_(i-1).
+Example given: L(1) = 1 (single element, 5), L(2) = 2 (5, 7 subseq), diverges at L(3) with length 1 (only 4), L(4) = 1 (only -3), L(5) = 3 (5, 7, 9), L(6) = 2 (-3, 1), L(7) = 4 (5, 7, 9, 10).
+For complex L(10), only subseqs that end with elemnts a\_i can append 8; select longest, add 1 for 8.
+Hence L(10) = 5, illustrates recurrence relation to solve L(i), relating back to previous L values.
+
+\subsection*{LIS  Recurrence Attempt 2}
+Defining longest increasing subsequence(length LIS) L(i) which includes ai, get 1 for ai, and add max length LIS before ai where elements are smaller than ai.
+Only consider earlier indices j where aj \textless{} ai for appending ai to form L(i) = L(j) + 1\. i must be after j in the array.
+With the recurrence relation for L(i) established, we can describe a dynamic programming (DP) algorithm to solve the problem, which will include pseudocode and runtime analysis.
+
+\subsection*{LIS  DP Algorithm}
+Develop pseudocode for the longest increasing subsequence (LIS) dynamic programming algorithm, using previously defined recurrence.
+Input sequence is a1 to an; use array L to store solutions.
+Fill L bottom-up, i from 1 to n.
+Initialize L of i to 1.
+Nested for loop where j ranges from 1 to i-1, checks if aj \textless{} ai and if appending ai to L of j yields a longer subsequence than current.
+If so, update L of i to this new max.
+After constructing L, algorithm`s output isn`t last entry (unlike with Fibonacci sequence), which only gives LIS ending at an.
+Instead, scan L to find max value, indicating the longest subsequence length, independent of ending position.
+Maintain max index in loop, and return the value at max index.
+Algorithm`s efficiency depends on running time analysis.
+
+\subsection*{LIS  DP Running Time Solution}
+The algorithm`s runtime is dominated by a set of nested for loops, iterating over a maximum of n elements each, paired with an Order(1) conditional statement, which collectively execute in Order(n\textasciicircum{}2) time.
+An additional non-nested for loop searches for a maximum value within the table and operates in Order(n) time.
+Consequently, the overall runtime complexity of the algorithm is determined to be Order(n\textasciicircum{}2).
+
+\subsection*{LIS Recap}
+Completed the development and time complexity analysis of a dynamic programming (DP) algorithm.
+Initially defined the sub-problem to find the longest increasing subsequence (LIS) length of an array prefix.
+Unable to find a suitable recurrence relation with the initial sub-problem, reformulated it by adding an extra condition--this mimicked strengthening an inductive hypothesis in a mathematical proof by adding conditions, facilitating the formulation of a recurrence for the sub-problems.
+The revised sub-problem included the array element itself.
+The algorithm solves this strengthened version, determining the LIS with a specific ending character.
+Solving this facilitates addressing the original issue--finding the LIS irrespective of the ending character--by drawing parallels with induction proof techniques.
+This approach exemplifies common strategies in DP algorithm design and problem-solving.
+
+\subsection*{Longest Common Subsequence}
+LCS (Longest Common Subsequence) dynamic programming example to find longest string length appearing as subsequence in 2 equal length strings X and Y\@.
+Focus on subsequence, not substring, with end goal to determine string length, later leading to identifying the actual subsequence.
+
+\subsection*{LCS Example Question}
+Examining an example to clarify terminology involving two strings of length seven.
+Task entails identifying the longest common subsequence within these strings, marking it, and noting its length.
+
+\subsection*{LCS Example Solution}
+Found substring `BCBA` (len 4) illustrating dynamic programming (DP) for Unix diff utility.
+DP solves longest common subsequence prob essential for file comparisons in Unix diff, showcasing practical application and relevance in computing tasks.
+
+\subsection*{LCS  Subproblem Attempt 1}
+Design dynamic programming algorithms: 1) Define subproblem: Choose a prefix of input, set L(i) as length of the longest common subsequence (LCS) in first i chars of X and Y\@.
+2) Define recurrence: Express L(i) using L(1) to L(i-1), determining LCS by breaking problem down into smaller instances.
+
+\subsection*{LCS  Recurrence Attempt 1}
+Defining a subproblem in the context of finding the longest common subsequence (LCS) between two prefixes of strings X and Y of equal length i, the author explains a recursive approach for computing the LCS length, not the subsequence itself.
+They introduce a function l(i), which represents this length for the prefixes.
+To develop a recursive relation for l(i), the author examines the last characters of prefixes X\_i and Y\_i.
+Two scenarios are considered: when these characters are the same and when they differ.
+For the scenario where X\_i equals Y\_i, it`s established that the LCS must end with this common character and thus, l(i) relates directly to l(i-1) plus one for the added common character.
+The second scenario, where X\_i is not equal to Y\_i, is suggested but not elaborated, indicating that the process will differ from the first case.
+
+\subsection*{LCS  Recurrence Problem}
+Exploring LCS (longest common subsequence) in sequences X and Y when last chars differ, with important observations: if last char of LCS is in X (Xi  Yi), then Yi isn`t included, vice versa if last char of LCS is in Y\@.
+LCS with both chars dropped reverts to subsequence of length (i-1) without increment.
+In other cases with just Xi or Yi dropped, no ready solution as prefix lengths differ, thus solution not in table.
+Current subproblem definition inadequate because it relies on equal-length prefixes.
+Key insight: subproblem must permit prefixes of differing lengths.
+Thus, redefining subproblems with two parameters i and j to represent lengths of X and Y prefixes respectively, resulting in a 2D table where L(i,j) gives LCS length of X1:Xi with Y1:Yj, allowing exploration of all i, j possibilities.
+
+\subsection*{LCS  Subproblem Attempt 2}
+Revised subproblem for sequences involves using two indices, i and j, to account for different prefix lengths in sequences x and y.
+A two-dimensional table will be used, where i and j vary from 0 to n, to represent the length of the longest common subsequence (LCS) between prefixes xi and yj.
+L(i, j) defines the LCS length for the first i characters of x and the first j characters of y.
+Base cases are set for i=0 or j=0, where LCS length is 0 because one sequence is empty.
+These foundations pave the way for defining a recurrence relation for the LCS problem.
+
+\subsection*{LCS  Recurrence Unequal Case}
+Developing a recurrence relation for finding the length of the longest common subsequence (LCS) between two sequences, X and Y, with lengths I and J, respectively.
+Different lengths of X and Y are considered.
+When the last characters, X\_i and Y\_j, differ, LCS could end with either one of these characters or with neither.
+The LCS length, denoted as L(i,j), then has two scenarios: 1) If last character of X isn`t included, L(i,j) = L(i-1,j), indicating the LCS without last char of X\@.
+2) If last character of Y isn`t included, L(i,j) = L(i,j-1), indicating the LCS without last char of Y\@.
+Select the greater length between these two scenarios for the optimal solution.
+This provides the recurrence relation for differing characters: L(i,j) = max(L(i-1,j), L(i,j-1)).
+This rule applies when the compared characters at the ends of the sequences do not match, providing a method for constructing the length of the LCS iteratively by comparing prefixes of increasing length.
+
+\subsection*{LCS  Recurrence Equal Case}
+When developing a recurrence relation for prefixes with different ending characters, we examine a modification when these characters are identical (both end in `A`).
+With X\_i = Y\_j, there are three options: omit X\_i (and Y\_j since they match), or conclude the optimal sequence with the shared character.
+For the first two options, the subproblem solution lengths are L(i,j) = L(i-1,j) or L(i,j-1) respectively.
+The unique third option, possible only when characters match, calculates L(i,j) = 1 + L(i-1,j-1), appending the common character to the optimal solution of the subproblem, determining the length of the longest common subsequence for the new problem.
+
+\subsection*{LCS  Recurrence Equal Recap}
+Recurrence for X\_i equals Y\_j involves three options: drop X\_i (L of i-1, j), drop Y\_j (L of i, j-1), or include both (gain +1, then L of i-1, j-1).
+However, only need to consider third option of appending common character and taking L of i-1, j-1 due to optimality.
+Adding unmatched characters to an optimal solution contradicts its optimality, because it would be shorter.
+If X\_i matches an earlier Y, any subsequences in the smaller prefix of Y are also in the larger one, so later matches with X\_i are equivalent or better, simplifying to just the last scenario.
+This insight simplifies the recurrence and completes its definition.
+
+\subsection*{LCS  Recurrence Summary}
+Recurrence for non-empty strings I, J where I, J \textgreater{}= 1.
+Case analysis: X\_I  Y\_J (characters differ), select the larger length from dropping last char from X or Y\@.
+If X\_I = Y\_J (chars match), add 1 and take optimal solution for (I-1, J-1).
+Base cases, when one string is empty yields length 0.
+Dynamic programming builds 2D table L row-wise for optimal solution lengths.
+Cells depend on three computed neighbors: diagonal (L\_I-1\_J-1), above (L\_I\_J-1), or left (L\_I-1\_J).
+Pseudocode adheres to populating 2D array L using these dependencies to build solutions incrementally.
+
+\subsection*{LCS  DP Algorithm Question}
+Developed a dynamic programming algorithm to solve for longest common subsequence (LCS) given two input strings, X and Y\@.
+Initialized the top row and the first column of the LCS matrix with zeros, representing base cases.
+The matrix is filled row by row, considering two main cases: matching last characters of X and Y leading to a recurrence that adds 1 to the value of the subproblem for strings X and Y minus their last characters, or differing last characters, leading to a recurrence that takes the maximum value between dropping the last character from either X or Y\@.
+Final result, the LCS length, is found in the matrix`s bottom right entry, L(n, n), which represents the LCS for the entire strings X and Y\@.
+
+\subsection*{LCS  DP Algorithm Solution}
+Algorithm runs in O(n\textasciicircum{}2) time due to nested for loops iterating over an order n seq.
+Base cases, with O(1) steps within an O(n) loop, contribute less to total time.
+Solving the longest comm subseq problem w/ dynamic programming req a 2D tbl to handle prefixes of x \& y of diff lengths.
+
+\subsection*{DP1  Practice Problems}
+Recommended practice with dynamic programming (DP) problems, highlighting text from `Algorithms` by Dasgupta et al.
+Problems identified for practice include: finding a max sum contiguous sequence (6.1), planning a trip with minimal penalty hotel stops (6.2), a problem named `yuck Donald`s` (6.3), segmenting a string into words (6.4), and finding the longest common subsequence (6.11), with a suggestion to try its variant involving substrings.
+Also outlines steps for creating a DP algorithm: (1) define subproblems, essentially smaller versions of the original problem applied to input prefixes; (2) create a recurrence relation to express a subproblem`s solution in terms of previously solved subproblems, possibly modifying (`strengthening`) subproblems to include an additional element constraint.
+Final solution may require searching entire table for optimal result rather than using last table element directly.
+Advises solving problems independently before seeking further instruction for maximized learning.
+
+\subsection*{DP1  Practice Problem 6.1}
+The problem addresses finding the substring (contiguous subsequence) with the maximum sum within a sequence of numbers a\_1 through a\_n.
+To solve this, it is essential to define a subproblem with the prefix of length i and establish a function, s(i), representing the maximum sum obtainable from a substring within this prefix.
+A recursive relationship is sought to express s(i) in terms of previous subproblems (s(1) to s(i-1)).
+The challenge arises in determining whether to include the number a\_i in the optimal subsequence sum s(i-1), which depends on whether the subsequence includes a\_(i-1) to maintain contiguity.
+This difficulty implies that the current subproblem definition is inadequate, as it doesn`t provide information about the endpoint of the subsequence.
+Hence, a refinement of the definition is necessary to account for the endpoint, ensuring that s(i) can be expressed in terms of smaller subproblems while preserving the requirement of contiguity.
+
+\subsection*{DP1  Practice Solution}
+Solved problem 6.1 by defining s(i) as the maximum sum obtainable from a substring ending with a\_i, from a\_1 to a\_i with the inclusion of a\_i.
+Base case s(0)=0 represents an empty substring.
+For s(i) where i \textgreater{}= 1, the recurrence is the maximum of either a\_i alone or a\_i plus s(i-1), depending on if s(i-1) is positive.
+Final algorithm output is the maximum value across all s(i), not just s(n), since the maximum sum substring may end before a\_n.
+The table is filled iteratively from i=0 to n, and the running time of the algorithm is O(n), with each entry requiring constant time and there being n entries.
+

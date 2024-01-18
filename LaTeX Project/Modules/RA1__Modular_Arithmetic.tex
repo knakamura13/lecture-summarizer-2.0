@@ -1,0 +1,163 @@
+\section*{Modular Arithmetic}
+
+\subsection*{Randomized Algorithms}
+Diving into randomized algorithms, starting with the elegance of the widely-used RSA Cryptosystem, demonstrating its reliance on modular arithmetic for effective cryptography.
+A grasp of this foundational math unveils the ingenuity of the RSA, crucial for understanding the security of Cryptosystems in frequent use.
+Transitioning to hashing applications, focusing on the simplicity and popularity of Bloom Filters across various fields.
+Emphasizing the necessity of basic probability analysis in grasping the mathematical underpinnings, with a practical programming project to implement and explore Bloom Filters.
+
+\subsection*{RSA  Lecture Overview}
+Studying RSA cryptosystem math; involves simple concepts with proper math background.
+Focus on Modular Arithmetic, understanding multiplicative inverses within it, and applying Euclid`s GCD algorithm.
+Covering Fermat`s Little Theorem to explain RSA algorithm`s design.
+Discussing primality testing to distinguish prime numbers from composites, utilizing Fermat`s Little Theorem.
+Upon mastering primality testing, the course will proceed to generating random primes, a crucial RSA component.
+Completing this will end RSA algorithm discussion.
+Ready to explore RSA-related algorithms.
+
+\subsection*{Huge Integers}
+Exploring the RSA algorithm in cryptography context involves operations with N-bit numbers (X, Y, N) where N typically is a large number (1024 or 2048 bits), much larger than the standard 64-bit operations built into hardware.
+Need to assess the duration of basic arithmetic operations with these enlarged bit numbers.
+
+\subsection*{Modular Arithmetic}
+Modular arithmetic, fundamental in the RSA algorithm, involves calculating the remainder when dividing numbers.
+When assessing X modulo two (X mod 2), it reveals the least significant bit of an integer X, indicating its parity: 1 if odd, 0 if even.
+In general, X mod N provides the remainder of X divided by any positive integer N\@.
+Congruence in this system is denoted with three lines instead of two.
+Two numbers X and Y are congruent modulo N (X  Y mod N) if they leave the same remainder when divided by N\@.
+This equivalency is crucial for understanding mathematical relationships within modular arithmetic.
+
+\subsection*{Example  Mod 3}
+Modular arithmetic example using mod three yields three possible values: 0, 1, or 2, forming three equivalence classes.
+Multiples of three modulo three equal zero.
+Numbers one more than multiples of three modulo three equal one, and numbers two more than multiples of three modulo three equal two.
+This applies to both positive and negative numbers; the rule for negative numbers is illustrated by separating the negative number into a multiple of three (Q) and a remainder (R), resulting in the same equivalence classes.
+For example, -3, 0, and 9 are congruent mod three, as are -2, 1, 4 mod three, and so forth, demonstrating that values remain consistent within their respective equivalence classes whether they are negative or positive.
+
+\subsection*{Basic Fact Question}
+Numbers x, y and a, b are each congruent mod N; this allows the interchangeability of x with y and a with b in modular arithmetic operations.
+Demonstrated through addition and multiplication--x + a mod N equals y + b mod N and x * a mod N equals y * b mod N--this fundamental principle underpins larger mathematical work, showcasing the functional substitution based on congruence.
+
+\subsection*{Modular Exp.  Naive Question}
+Modular exponentiation--a critical computing task for large n-bit numbers X, Y, N--is key, especially when n (\textasciitilde{}1000 or 2000) means X, Y, and N can be as large as 2\textasciicircum{}(1000 or 2000).
+Aim for an efficient algorithm, polynomial to the number of bits n, not the numbers` magnitude, which is exponentially greater, rendering an exponential time algorithm infeasible.
+Traditional multiplication of n-bit numbers takes O(n\textasciicircum{}2) time, making the naive method (multiplying sequentially and taking modulo N each step) exponentially slow at O(n\textasciicircum{}2 * 2\textasciicircum{}n), an impractical approach for large n.
+To improve, leverage repeated squaring for efficiency, relying on powers of two for a better time complexity.
+
+\subsection*{Modular Exp.  Fast Question}
+Repeated squaring algorithm involves comput.
+X\_mod\_N (a\_one), squaring to get X\textasciicircum{}2\_mod\_N (a\_one squared), \& skipping cubes for powers of 2 (X\textasciicircum{}4, X\textasciicircum{}8, through a\_two, a\_four, etc.).
+Each new term, a\_n, is derived by squaring the prev\. one, applicable to X to powers of 2.
+Calculate X\textasciicircum{}Y\_mod\_N by referencing Y`s binary form \& combining calculated powers of 2.
+Example clarifies the method.
+
+\subsection*{Mod Exp Algorithm}
+For even y, x\textasciicircum{}y simplifies to (x\textasciicircum{}(y/2))\textasciicircum{}2.
+For odd y, subtract 1 from y, halve it (rounding down to nearest integer), and square x to this power, then multiply by x to obtain x\textasciicircum{}y.
+A recursive algorithm performs modular exponentiation of x\textasciicircum{}y mod N, where x, y, N are n-bit integers, with N being positive.
+Base case: for y=0, result is 1 mod N\@.
+General case: compute x\textasciicircum{}(y/2) rounded down if y is odd, store as z.
+If y is even, return z\textasciicircum{}2 mod N; if odd, return x*z\textasciicircum{}2 mod N\@.
+Algorithm calls itself with halved y until base case reached.
+
+\subsection*{Multiplicative Inverse}
+Multiplicative inverses are critical for the RSA algorithm and involve subtleties within modular arithmetic.
+In normal arithmetic, a number`s multiplicative inverse is simply one divided by that number, which when multiplied together equals one.
+For example, 3`s inverse is 1/3, and 3 * (1/3) = 1.
+In modular arithmetic, for a number z and modulus N, the goal is to find an inverse such that when multiplied by z results in 1 mod N\@.
+The multiplicative inverse of z mod N is denoted as z\textasciicircum{}-1 mod N and is a number x that satisfies the equation x*z  1 (mod N).
+This inverse relationship is reciprocal; if x is z`s inverse mod N, then z is x`s inverse mod N\@.
+Understanding and computing such inverses is essential for the functionality of the RSA encryption algorithm.
+
+\subsection*{Inverse  Example}
+Examining inverses of integers 1 to 13 mod N, where N=14.
+Modulo inv has distinct rules, the key is common divisors with the modulus, N=14.
+1 and 13 are self-inverse (1 x 1 \& 13 x 13 are 1 mod 14).
+No inverse for numbers sharing divisors with 14 (2, 4, 6, 7, 8).
+Inverses exist for numbers coprime to 14; e.g., 3`s inverse is 5 (since 3 x 5 is 1 mod 14), 5`s inverse is 3, and 9`s inverse is 11 (9 x 11 is 1 mod 14).
+Pattern: Inverses exist if no common divisor with N=14, i.e., they`re relatively prime.
+
+\subsection*{Inverse  Existence}
+In the context of modular arithmetic, an entity X has a multiplicative inverse modulo another entity n (denoted by X inverse mod n) if and only if X and n are coprime, meaning their greatest common divisor (GCD) is one.
+Multiplicative inverses do not exist when X and n share any common factor, evident when the GCD is greater than one.
+Two numbers are considered relatively prime if they share no common divisors, even if individually they are not prime numbers.
+The existence of an inverse in modular arithmetic is thus contingent upon this coprimality between X and n.
+
+\subsection*{Inverse  Terminology}
+X has an inverse mod N implies uniqueness.
+Inverse example: X=3, N=11, inverse is 4 since 3*4  1 mod 11.
+Many equivalents to 4 mod 11 exist (e.g., 15, 26, -7), yet we define the inverse of X mod N as the smallest non-negative integer in the range 0 to N-1 for practicality.
+Inverse reported as `does not exist` if absent.
+Extended Euclid algorithm employed to find the inverses, occasionally necessitating additional steps to convert a negative output to the specified range.
+
+\subsection*{Inverse  Unique}
+In mathematical terms, if an inverse of X modulo N (X inverse mod N) exists, it is proven to be unique within the set of integers from 0 to N-1.
+To establish this uniqueness, a proof by contradiction is employed, beginning with the assumption that X has two distinct inverses mod N, denoted by Y and Z\@.
+When both Y and Z are multiplied by X, the congruence to 1 mod N confirms their status as inverses.
+Multiplying both sides of the equation XY  XZ (mod N) by the hypothetical inverse of X cancels out X, leaving Y  Z (mod N), which contradicts the original assumption that Y and Z are distinct mod N\@.
+This contradiction implies that X can only have one inverse modulo N when it exists.
+Further exploration will cover the conditions for the existence of an inverse mod N; specifically, an inverse exists when X and N are coprime--where the greatest common divisor (GCD) of X and N is 1.
+This future explanation includes using the extended Euclidean algorithm to find the inverse under this condition.
+Conversely, if X and N share a common factor (the GCD of X and N is greater than one), the inverse of X mod N does not exist.
+
+\subsection*{Inverse  Non-existence}
+Multiplicative inverses for a number X mod N do not exist when X and N share a common divisor greater than one, demonstrated by the impossibility of an even number X having an inverse mod an even N due to the resulting paradox of equating an even product with an odd number.
+Inverses do exist when X and N are relatively prime, with their greatest common divisor (GCD) being one.
+To ascertain the existence of an inverse and calculate it, the Euclidean algorithm is used to find the GCD of X and N\@.
+If the GCD is one, the extended Euclidean algorithm can then find the inverse of X mod N, thus proving its existence.
+
+\subsection*{GCD  Euclids Rule}
+Euclid`s algorithm is based on a fundamental principle, often referred to as Euclid`s rule, that asserts the greatest common divisor (GCD) of two positive integers X and Y (X \textgreater{}= Y \textgreater{} 0) is the same as the GCD of X mod Y and Y\@.
+The proof of this rule hinges on the reasoning that any divisor of X and Y must also divide X minus Y and Y, and vice versa.
+This is due to the fact that if a number D divides both X and Y, it naturally divides their difference (X minus Y).
+The converse holds true as well because if D divides X minus Y and Y, it also divides X, which is the sum of X minus Y and Y\@.
+By this logic, the common divisors of X and Y are the same as those of X mod Y and Y, leading to the same greatest common divisor.
+Euclid`s algorithm employs this iterative process of reducing X by modulating it with Y until the remainder is less than Y, effectively applying the GCD logic recursively until the result is reached.
+
+\subsection*{GCD  Euclids Algorithm}
+Euclid`s GCD algorithm is a recursive method for finding the greatest common divisor (gcd) of two non-negative integers, x and y, where x is greater than or equal to y.
+The base case occurs when y equals zero; the gcd is then simply x.
+In all other cases, the algorithm applies Euclid`s Rule, stating that the gcd of x and y is the same as the gcd of x mod y (the remainder of x divided by y) and y.
+The recursion involves flipping the order of the parameters to ensure the first remains larger.
+The algorithm returns the gcd of x and y.
+There`s a need for further discussion to clarify confusion around the base case.
+
+\subsection*{GCD  Base Case}
+Algorithm`s base case defined: GCD(X, 0) = X\@.
+Got to this base case via recursive calls where 2nd param becomes 0 (kX mod X = 0).
+1st param in recursion, a mult of X, is the GCD when 2nd param is 0.
+GCD(kX, X) resolves to X\@.
+This rationale underpins defining GCD of X and 0 as X\@.
+
+\subsection*{GCD  Running Time}
+Euclid`s algorithm executes by finding X mod Y, a calculation taking O(N\textasciicircum{}2) time, with `N` as the bit number in `X`.
+A key lemma indicates after each round the changing parameter halves, ensuring at most 2N rounds.
+With recursive calls at O(N\textasciicircum{}2) per round, total time complexity becomes O(N\textasciicircum{}3).
+The lemma is proven by dividing `Y` into cases.
+If `Y` is \textless{}= X/2, X mod Y \textless{} X/2.
+If `Y` is \textgreater{} X/2, X mod Y equals X - Y, which is \textless{} X/2, confirming the lemma and establishing the algorithm`s O(N\textasciicircum{}3) running time.
+
+\subsection*{Computing Inverses}
+Computing inverses involves the Extended Euclidean Algorithm, taking integers X and Y (X \textgreater{}= Y \textgreater{}= 0) and outputting integers alpha, beta, and D where D is the GCD of X and Y\@.
+Significantly, D equals X*alpha + Y*beta.
+For an inverse of X mod N to exist, GCD(X, N) must be 1.
+Running the algorithm with X and N, if D equals 1, indicates an inverse exists.
+The resulting alpha, where 1  X*alpha mod N, after simplification (neglecting N*beta as it`s 0 mod N), represents the inverse of X mod N\@.
+Alpha and beta serve as inverses of X mod Y and Y mod X, respectively, if X and Y are relatively prime.
+
+\subsection*{Inverses  Ext.
+Euclid Alg.
+Question}
+Extended Euclid algorithm outputs D (GCD of X, Y), alpha, and beta given inputs X \textgreater{}= Y, with alpha and beta fulfilling the relation D = Xalpha + Ybeta.
+Base case is when Y=0, where D=X, alpha=1, beta=0.
+In general cases, it utilizes Euclid`s rule (GCD(X, Y) = GCD(Y, X mod Y)) and recursively calls itself with Y and X mod Y\@.
+It returns D, alpha prime, beta prime, then manipulates them to find alpha and beta: alpha=beta prime, beta=alpha prime - (X/Y floored)beta prime.
+The algorithm`s correctness is proven via algebra; details are in the textbook.
+It takes O(N\textasciicircum{}2) time per iteration and O(N) iterations akin to Euclid`s algorithm, resulting in O(N\textasciicircum{}3) total runtime.
+
+\subsection*{Mod.
+Exp. + Inverses Recap}
+Reviewed modular arithmetic--X mod Y--and the polynomial-time modular exponentiation algorithm for repeated squaring, crucial for RSA algorithm with large bit-sized numbers X, Y, and N\@.
+Discussed multiplicative inverses, existing iff numbers are relatively prime (GCD of one), checking via Euclid`s algorithm, and computing inverses with the extended Euclid algorithm.
+These concepts and algorithms are fundamental for RSA cryptosystem implementation.
+

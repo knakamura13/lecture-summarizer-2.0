@@ -1,0 +1,116 @@
+\section*{Minimum Spanning Tree}
+
+\subsection*{Greedy Approach}
+Examining greedy optimization, particularly whether local optimal moves yield global optima.
+Greedy failed for knapsack but succeeded for minimum spanning tree (MST) via Kruskal`s algorithm, which will be emphasized for proof of correctness.
+Proof foundation lies in the cut property lemma, which guarantees Kruskal`s efficacy for MSTs and also validates Prim`s algorithm.
+Understanding the lemma`s statement and proof provides insight into algorithm correctness.
+A review of MST problem formulation and cut property details underpins these algorithm validations, showing they both work effectively for MSTs.
+
+\subsection*{MST Problem}
+Minimum spanning tree (MST) problem involves finding a subgraph of an undirected graph G, which is a tree that covers all vertices with the least possible sum of edge weights.
+The goal is to pinpoint the lightest connected subgraph (not a forest) wherein the total weight is the aggregate of its constituent edges` weights.
+
+\subsection*{Tree Properties}
+Trees in graph theory: connected acyclic graphs.
+Example provided: a graph with 17 vertices and 16 edges, demonstrating a basic property that any tree with `n` vertices has `n - 1` edges--minimum to connect all vertices without forming cycles.
+Another property: exactly one path between any two vertices, ensuring graph is both connected and acyclic.
+To prove a sub-graph is a tree for a cut property proof: demonstrate it`s connected and has `n - 1` edges.
+This proof combines the connection requirement with the edge count property.
+
+\subsection*{Greedy Approach for MST}
+Exploring the minimum spanning tree (MST) problem with a greedy approach on a weighted graph, the process includes sequentially choosing edges of increasing weight and adding them to an initially empty MST, ensuring no cycles form.
+Starting with the cycle edges--weighted one through six--each edge is added until the edge with a weight of six, which would create a cycle if included.
+Subsequently, edges weighted seven are all added, as they don`t form cycles.
+With edges weighted nine, all but the last are added.
+The final edge of weight nine isn`t included as it connects vertices V and W, which are already connected and would create a cycle.
+The heaviest edges, weighted twelve, are excluded for the same reason.
+The result of this process is an MST for the graph.
+
+\subsection*{Kruskals Algorithm}
+Kruskal`s algorithm addresses the Minimum Spanning Tree (MST) problem for undirected, weighted graphs.
+Process: sort all edges by weight using an algorithm like merge sort; starting with the lightest edge, iteratively add edges to a set X, avoiding any that would form a cycle.
+The process continues until all edges are considered, with early ones being lightest and later ones heaviest.
+The resulting set X, once all edges have been considered without creating cycles, forms an MST\@.
+
+\subsection*{Kruskals  Analysis}
+Kruskal`s algorithm`s runtime primarily involves sorting edges by increasing weight and checks for cycle creation when adding an edge.
+Sorting edges requires O(m log n) time, where m is the edges and n is the vertices.
+Checking for cycle creation involves identifying if vertices V and W are in the same component before adding edge E, using a union-find data structure.
+This step, as well as merging components, takes O(log n) per operation.
+With at most m operations, this leads to another O(m log n) runtime for this step.
+Both major steps (sorting edges and checking/merging components) consume O(m log n) time, resulting in the total runtime of the algorithm being O(m log n).
+The focus of Kruskal`s proof of correctness lies in understanding why the greedy approach is effective for this algorithm, but the specific mechanism of the union-find data structure, assumed as prior knowledge, is not elaborated upon here.
+
+\subsection*{Kruskals  Correctness}
+Kruskal`s algorithm proof of correctness relies on induction and the cut property.
+The algorithm selects edges in increasing weight, avoiding those that form cycles, in order to construct a minimum spanning tree (MST).
+Assuming the subset of edges X chosen so far is part of an MST, introducing a new edge E will either keep X within an MST (if E doesn`t create a cycle) or lead to a different MST\@.
+The crucial condition is that E must connect two separate components, one containing vertex V and the other W, without creating a cycle.
+X contains no edges between the component of V (S) and its complement (S\_bar).
+E is a minimum weight edge that crosses from S to S\_bar, which is key because when such an edge is added to X, the union X  E is still within an MST provided no other edges in X traverse from S to S\_bar.
+This principle, where a minimum weight edge can be added across a cut of the graph without other crossing edges, is known as the cut property, which will be formally proven to substantiate the algorithm`s correctness.
+
+\subsection*{Cuts}
+In graph theory, a cut is defined in an undirected graph G as a set of edges that divides the vertices into two disjoint subsets: S and its complement S bar.
+The edges constituting this cut are those connecting a vertex in S to a vertex in S bar.
+The distinction is vital for optimization problems in graph theory, specifically when seeking a minimum cut, which strives to minimize the number of edges required to separate the graph into at least two components, and the maximum cut, aimed at maximizing the size of the cut.
+Understanding the basic concept of a graph cut is foundational before exploring these optimization challenges.
+
+\subsection*{Cut Property}
+The cut property lemma asserts that if you`re constructing a minimum spanning tree (MST) for an undirected graph, by adding edges incrementally to a partial solution `X` that is assumed to be a subset of a true MST `T`, then choosing the minimum weight edge `E star` that crosses a cut--where one side of the cut is the subset `S` and the other is its complement `S bar`, and no edge of `X` yet crosses the cut--will allow this edge to be added to `X` maintaining its correctness as part of an MST\@.
+This conclusion applies even if `E star` leads to a different MST than the one initially considered `T`, because the objective is to find any MST, not a specific one.
+Using this approach and choosing edges in such a manner ensures the MST-building process is on the correct path.
+
+\subsection*{Cut Property  Kruskals}
+Kruskal`s algorithm correctness hinges on the cut property, which asserts any minimum weight edge crossing a cut (partition) is part of at least one minimum spanning tree (MST).
+When edge e* (minimum weight edge) connects vertices v and w in different components (partitions without a common path), it satisfies the lemma underlying the cut property.
+This ensures that e* can be added to the growing MST without increasing its total weight, advancing towards an MST\@.
+If an existing MST doesn`t include e*, one can insert e* and potentially remove another edge to form a new MST, T`, with weight less than or equal to the original.
+This principle confirms that continually adding such minimum crossing edges, as Kruskal`s algorithm does, results in an MST\@.
+This proof of concept is pivotal to understanding Kruskal`s method and reinforces the validity of the cut property for any set S\@.
+
+\subsection*{Proof Outline}
+Examining proof of a code property in graph theory.
+Consider graph G and a subset of edges x that are part of a minimum spanning tree (MST) T, marked in green.
+The set x is part of MST T, but exact edges of T are unknown.
+Define set S of vertices creating a cut that x doesn`t cross.
+Goal is to show existence of a minimal spanning tree T` that includes both x and a minimum weight edge e* crossing the cut between S and its complement S bar.
+Any edge e* selected must have minimum weight across the cut, equal to or less than other edges crossing the cut.
+Construct T` by modifying T to include e* while retaining x, thus creating a new MST equal in weight to T\@.
+This demonstrates that combining x with e* maintains the MST property, keeping the total weight minimal.
+
+\subsection*{Constructing T}
+Constructing an MST T` that includes a set X and a specific edge e* begins with acknowledging the existence of an MST T containing X\@.
+If e* is already in T, T` is simply T, requiring no further proof.
+If e* isn`t in T, a cycle is formed by adding e* to T, necessitating the removal of one edge to maintain the tree structure.
+The edge removed must have a greater or equal weight than e*, which is guaranteed because e* is the lightest edge crossing a specific cut (S to S-bar) in the graph.
+There is always an edge to remove since any path between the disconnected subsets S and S-bar in T must cross this cut at least once.
+T` is then obtained by adding e* to T and removing this edge, resulting in an MST that includes X and e*.
+It`s ensured that T` has minimum weight because the added edge e* is the minimum possible weight for connecting S and S-bar, and the dropped edge has an equal or greater weight, keeping T` competitive with T\@.
+This process successfully constructs MST T`, which must then be shown to be a minimum weight spanning tree.
+
+\subsection*{T is a Tree}
+Demonstrated that T prime (T`) is a tree by constructing it from tree T, adding and removing edges to maintain n-1 edges.
+To prove T` is a tree, showed it`s connected and has n-1 edges, conditions that define a tree.
+Connection established by identifying a path between any two vertices y and z in T` even after a specific edge (e`) removal from T that initially connected y and z.
+This was achieved by using an alternate path (P`) on the cycle created by adding edge e* to T\@.
+The alternate path P`, which replaces e` in the original path P from y to z in T, ensures all vertices remain connected in T`.
+Therefore, T` remains connected with n-1 edges, affirming T` is a tree.
+
+\subsection*{T is a MST}
+Subgraph T` derived from tree T by adding edge e* and removing edge e`.
+T` is confirmed as a tree.
+Goal: prove T` is a MST\@.
+Since T is known MST with min weight, T` must match T weight to be MST\@\. e* weight is least across cut and e` also crosses cut; hence, e* weight \textless{}= e` weight.
+Weight of T` is T weight + e* weight - e` weight.
+With e* \textless{}= e`, T` weight \textless{}= T weight, which is minimum.
+Thus, T` must be MST and e* weight = e` weight; otherwise, T wouldn`t be MST\@.
+Proves the cut property: for any cut, all edges crossing cut in tree must have equal weight for tree to be MST\@.
+Proof emphasizes two concepts: 1) adding e* to T forms cycle, removing any cycle edge yields new tree T`; 2) min-weight edge across a cut belongs to some MST, per cut property statement.
+
+\subsection*{Prims Algorithm}
+Prim`s algorithm addresses Minimum Spanning Tree (MST) problem, akin to Dijkstra`s algo for shortest path.
+Importance of understanding the cut property is emphasized to prove Prim`s algorithm`s correctness.
+Understanding Prim`s correctness entails using the cut property.
+

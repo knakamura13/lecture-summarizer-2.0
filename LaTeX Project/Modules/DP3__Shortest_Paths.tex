@@ -1,0 +1,188 @@
+\section*{Shortest Paths}
+
+\subsection*{Shortest Paths via DP}
+Exploring shortest path problems in directed graphs using dynamic programming, considering graphs represented as G with weighted edges W(e).
+Directed graphs are used to model undirected ones by replacing each edge with anti-parallel edges.
+The focus is on calculating the shortest path from a start vertex S to all other vertices, formulated as a distance array, dist(z), for every vertex Z, where dist(z) is the length of the shortest path from S to Z\@.
+Dijkstra`s algorithm is traditionally used to solve this problem.
+It operates similarly to BFS but requires a min heap or priority queue due to edge weights, making operations cost log(n) time, leading to a total runtime of (n+m) log(n).
+However, Dijkstra`s algorithm is limited to graphs with positive edge weights, failing when negative edges are present since it doesn`t reassess distances once computed.
+For graphs with negative edge weights, dynamic programming provides a solution to the shortest path problem as Dijkstra`s algorithm falls short in these cases.
+The goal is to develop an algorithm that can handle negative edge weights effectively.
+
+\subsection*{Negative Weight Cycles}
+Directed graph with edge weights that can be positive or negative.
+Need to find shortest path from start vertex S to all other vertices.
+Problem`s complexity arises due to negative weight edges.
+Example shows changing an edge weight from -2 to -6 can create a negative cycle (B-\textgreater{}A-\textgreater{}E-\textgreater{}B) where each iteration reduces path length by -1, allowing for an infinitely shorter path.
+In graphs with negative cycles, shortest path problem becomes undefined since path length can decrease infinitely.
+Alternately, if no negative cycle is reachable from S, the problem is well-defined, and shortest-path distances to all vertices can be computed.
+Goal: either find a reachable negative cycle or, if none exists, find shortest path lengths from S to all vertices using dynamic programming.
+
+\subsection*{Single Source  Subproblem}
+Designing a dynamic programming (DP) algorithm for the single-source shortest path problem in a directed graph with arbitrary edge weights, positive and negative, but no negative weight cycles.
+Assume starting at vertex S, needing shortest paths to all other vertices.
+Each vertex visited only once due to absence of negative cycles.
+Path P from S to a vertex Z has at most N-1 edges.
+The DP algorithm conditions on the number of edges: introduce variable I (0 to N-1) indicating the max number of edges allowed in the path.
+The subproblem, defined by parameters I and Z (Z being a vertex), is to find the function D of I, Z, representing the shortest path length from S to Z using at most I edges.
+Recurrence is built from I = 0, incrementally up to I = N-1 for the final solution.
+This implies that the DP approach iteratively expands the number of edges considered to solve the shortest path problem.
+
+\subsection*{Single Source  Recurrence}
+Defined a subproblem D(i,z) in dynamic programming to compute the shortest path from a source vertex s to a vertex z using at most i edges in a graph.
+Established the base case where D(0,s) = 0, as no edges are used, and any path to another vertex is infinitely long.
+Developed a recurrence that calculates D(i,z) by trying all predecessors y of z, and choosing the one that, when added to the edge weight W(y,z), minimizes the path length from s to z using i edges.
+Acknowledged that using exactly i edges might not yield the overall shortest path, as fewer may suffice.
+Therefore, adjusted the recurrence to minimize over paths using at most i edges, combining the best solution found with exactly i edges and the best found using fewer, i.e., min(D(i-1,y) + W(y,z), D(i-1,z)).
+This accounts for the possibility of shorter paths that do not utilize all available edges.
+
+\subsection*{Single Source  Summary}
+Determining the shortest path from S to Z with a maximum of I edges involves a dynamic programming approach where the solution is established using the optimal scenarios for fewer edges.
+For I=0, we have the base case.
+When considering paths with I edges, the path could use either I-1 or exactly I edges.
+To resolve this, we compare the shorter of two paths: one found in the table D at I-1 edges (D of I-1 Z) or the shortest path from S to a penultimate vertex Y plus the last edge from Y to Z, taking the minimum for all possible Y\@.
+Recurrence relationship for D of I Z is then defined, where computation builds upon the subproblems involving I-1 edges.
+This process is repeated, incrementing I from 0 up to N-1, to create a functional dynamic programming solution to find the shortest path.
+
+\subsection*{Single Source  Pseudocode}
+Developed in the `50s by Bellman and Ford, the Bellman-Ford algorithm finds the shortest paths from a single source in a weighted directed graph, handling negative edge weights.
+The algorithm initializes the distance to the source (S) as zero and iteratively relaxes edges to find the shortest paths, updating distances for a total of n-1 iterations, where n is the number of vertices.
+Each iteration inspects all edges and compares the current best-known distance with a new candidate path that includes the edge being relaxed; if the candidate is better, the best-known distance is updated.
+The algorithm can also identify negative weight cycles, as such cycles would continue to reduce the path length even after n-1 iterations.
+The overall time complexity is O(n*m), with n being the number of vertices and m the number of edges, which is less efficient than Dijkstra`s algorithm but is needed to accommodate graphs with negative weight edges and to detect negative weight cycles.
+The algorithm involves reversing the graph for edge relaxation and requires linear time to construct the reversed graph, contributing to its computational cost.
+
+\subsection*{Finding Negative Wt.
+Cycle}
+Detecting a negative weight cycle in a graph can be achieved using the Bellman-Ford algorithm.
+This algorithm utilizes a table with columns representing graph vertices (S, A, B, C, D, E in the example) and rows for path lengths.
+Starting with base case I=0, the source vertex S is set to 0 distance, and others are infinite.
+The algorithm iteratively updates the table for path lengths I=1 to I=N (number of vertices).
+Normally, the algorithm ends at I=N-1 as it considers paths using at most N-1 edges.
+If there`s no negative weight cycle, paths will not improve beyond this point.
+However, executing the algorithm for an additional iteration (I=N) may reveal shorter paths if a negative weight cycle exists, as this would continually decrease path lengths.
+When I=N produces different values than I=N-1, a negative weight cycle is present.
+The vertex involved in the cycle will show a decreased path length in row I=N\@.
+By backtracking, the cycle`s participating vertices can be identified.
+The Bellman-Ford algorithm thus finds the shortest paths and detects negative weight cycles in graphs with both positive and negative weight edges.
+
+\subsection*{All Pairs Shortest Path}
+Examining a variant of the shortest path prob., different from previous Bellman-Ford single source to all vertices.
+Now, considering all pairs shortest paths in a directed graph with pos\. or neg\. edge weights.
+Defined dist y, z as the length of the shortest path from y to z, expanding to include all vertex pairs.
+Goal is to find shortest paths for all N2 vertex pairs.
+A straightforward method to address this all pairs shortest path challenge is to apply Bellman-Ford algorithm N times, each with a different starting vertex, covering all vertex combinations.
+
+\subsection*{Naive Approach Question}
+Bellman-Ford algorithm running time is O(VE); running it N times for all pairs shortest path results in O(NVE) runtime.
+
+\subsection*{Naive Approach Solution}
+The Bellman-Ford algorithm is a single-source shortest path solver that employs dynamic programming and runs in O(nm) time, with n being the number of nodes and m the number of edges in a graph.
+This runtime is achieved by using an approach that iterates through all possible numbers of edges in a path (up to n-1) and through all the edges in the graph.
+Running Bellman-Ford n times results in a runtime of O(n\textasciicircum{}2m).
+In contrast, the Floyd-Warshall algorithm, designed to tackle the same problem, operates with a time complexity of O(n\textasciicircum{}3), which can be more efficient since m might be as large as n\textasciicircum{}2.
+The algorithms` names are not as crucial as understanding their dynamic programming concepts, which help reconstruct their running times and eventually the algorithms themselves.
+Both algorithms utilize distinctive dynamic programming methods distinct from previous examples, with Floyd-Warshall being the more time-efficient choice for certain connected graphs.
+
+\subsection*{All Pairs  Subproblem}
+Constructing a dynamic programming (DP) algorithm for shortest paths in a graph requires a different approach than the Bellman-Ford algorithm`s edge count conditioning.
+Instead, we consider a prefix of vertices as an input condition, ordering vertices from one to n, and using them as a basis for our DP approach.
+This method involves creating a three-dimensional DP table D, indexed by i (the prefix cut-off for vertex set), s (the start vertex), and t (the end vertex).
+The value D(i, s, t) represents the shortest path length from s to t using only vertices 1 through i as intermediates.
+We iterate over all vertices pairs for s and t and all prefixes i from 0 (empty set) to n (all vertices) to fill in this table.
+When i = n, D(n, s, t) indicates the shortest path from s to t over the entire graph.
+The next step involves developing a recurrence to efficiently compute this DP table.
+
+\subsection*{All Pairs  Base Case Question}
+Defining D(IST) as the shortest path from vertex S to T, constrained by intermediate vertices from a prefix of series up to vertex I\@.
+Base case and solution linked to the Bellman-Ford algorithm`s approach to single-source shortest paths.
+
+\subsection*{All Pairs  Base Case Solution}
+Base case in algorithm: i = 0, no intermediate vertices, direct path from s to t.
+
+\subsection*{All Pairs  Recurrence}
+Two scenarios for a path from S to T: directly connected by an edge or not.
+If connected, shortest path D(0, S, T) equals edge length W(ST).
+If not, shortest path without intermediates is infinite.
+For allowed intermediates 1 through I, we seek D(I, S, T).
+We define a recurrence to express D(I, S, T) in terms of smaller I values.
+Two cases: path includes I as the last vertex or it doesn`t.
+If it doesn`t include I, we examine this simpler scenario first.
+
+\subsection*{Case  i not on path Question}
+D(i, s, t) expression needed for a scenario where vertex i isn`t on the shortest path between s and t; this requires breaking it down into smaller subproblems.
+
+\subsection*{Case  i not on path Solution}
+When vertex i isn`t on path P, path P uses just vertices 1 to i-1 as intermediates, thus D(i, s, t) = D(i-1, s, t).
+This is solved by the corresponding subproblem.
+Conversely, if i is on path P, the scenario is different and needs closer examination.
+
+\subsection*{Case  i is on path}
+Developing a recurrence for D(i, s, t) considering i is on the shortest path from s to t, using only vertices 1 through i as intermediates.
+The path includes four segments: from s to a subset of vertices 1 to i-1, around that subset, through vertex i, and back through a subset of vertices 1 to i-1 to t.
+The subsets may be empty or include all vertices in that range.
+The goal is to express D(i, s, t) by segmenting the path into these parts, which simplifies creating the recurrence.
+
+\subsection*{Recurrence  i is on path Question}
+Determine a recursion for D(i,s,t) based on smaller subproblems.
+
+\subsection*{Recurrence  i is on path Solution}
+To create the recurrence for D(i, s, t), we modify the parameter i to i-1 to utilize a previously solved subproblem in a dynamic programming approach.
+For a path from s to i using the first i-1 vertices as intermediate points, we use D(i-1, s, i), while for i to t, we have D(i-1, i, t) with the same vertex set as intermediates.
+The total path length combines these subproblems.
+The recurrence formula for D(i, s, t) is thus the sum of D(i-1, s, i) and D(i-1, i, t).
+We then determine the optimal solution by comparing scenarios where vertex i is included or excluded from the path.
+
+\subsection*{Recurrence  Summary}
+Dynamic programming approach to finding the shortest path involves recurrence for D(i,s,t), depending on whether a vertex i is on the path.
+If i is on the path, compute the shortest path from start (s) to i using the first i-1 vertices and then from i to the target (t).
+If i isn`t on the path, D(i,s,t) equals D(i-1, s, t).
+Minimize between these two cases to find the shortest path.
+The recurrence uses previously solved subproblems, thereby solving D(i,s,t) progressively for i from 0 to n in a bottom-up manner.
+Next step is writing the pseudo-code for this dynamic programming algorithm.
+
+\subsection*{All Pairs  Pseudocode}
+Developed the Floyd-Warshall algorithm pseudo code for solving all pairs shortest path in a directed graph with potentially positive or negative edge weights.
+Start with a base case, initializing distances D\[0\]\[S\]\[T\] for all vertex pairs (S, T) where S and T range from 1 to N\@.
+If an edge exists from S to T, the base distance is the edge weight; if not, it`s set to infinity.
+Progress to the general case for I \textgreater{}= 1 iterating over all S and T, filling in D\[I\]\[S\]\[T\] based on two scenarios: with or without vertex I on the path.
+If I is not on the path, D\[I\]\[S\]\[T\] equals D\[I-1\]\[S\]\[T\].
+If I is on the path, the path is split at I, taking the sum of the shortest paths from S to I and I to T\@.
+The algorithm concludes by returning a matrix D\[N\] representing the shortest paths for all vertex pairs.
+The algorithm`s time complexity analysis is implied but not detailed.
+
+\subsection*{All Pairs  Running Time Question}
+Analyze algorithm running time.
+
+\subsection*{All Pairs  Running Time Solution}
+Algorithm`s runtime analysis shows nested for loops with constant time operations.
+Base cases involve two nested loops, size n, totaling O(n\textasciicircum{}2) time.
+General cases have three nested loops, size n, totaling O(n\textasciicircum{}3) time.
+Overall runtime is dominated by the O(n\textasciicircum{}3) general case.
+
+\subsection*{Finding Neg.
+Wt.
+Cycle \#2}
+Algorithm assumes no neg weight cycles, when present results incorrect.
+Detection of neg cycles essential, example with cycle total -1 shown.
+Algorithm revised to identify neg cycles; Focus on a vertex within cycle, outcomes D(n,a,a), D(n,b,b), D(n,c,c) should be -1.
+Negative diagonal matrix entries indicate neg cycles.
+Floyd-Warshall and Bellman-Ford algorithms detect neg cycles with diffs: former checks diagonals for all pairs, latter single source, both identify neg cycles.
+
+\subsection*{Comparing Algorithms}
+Modified example by changing edge direction from d to b.
+The focus is on comparing Bellman-Ford and Floyd-Warshall algorithms for detecting negative weight cycles.
+Bellman-Ford algorithm is for single-source shortest paths; if initiated from vertex d, it can`t detect a negative cycle like a-b-c since it`s not reachable from d.
+Bellman-Ford only finds negative cycles reachable from its start vertex.
+Floyd-Warshall, however, computes all-pairs shortest paths and can detect negative cycles anywhere in the graph irrespective of a starting vertex.
+Therefore, Floyd-Warshall would find the negative weight cycle a-b-c even when Bellman-Ford could not from the starting vertex d.
+
+\subsection*{DP3  Practice Problems}
+Homework problem after a lecture involves detecting arbitrage opportunities using graph algorithms from Chapter Four, by converting currency exchange to the negative weight cycle problem.
+Students should use existing algorithms for negative weight cycle detection as a non-modifiable `black box` subroutine to build an algorithm for arbitrage detection.
+The task is to create a function that translates currency exchange rates into a graph format, then run the negative weight cycle detection on this graph.
+The output may require conversion but should indicate if an arbitrage opportunity exists.
+This problem exemplifies the concept of reduction, which will be a recurring theme in the course for designing algorithms and later for demonstrating NP-completeness and computational hardness.
+This approach leverages a solution for a known problem to solve a new, related problem.
+

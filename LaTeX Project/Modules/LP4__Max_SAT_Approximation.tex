@@ -1,0 +1,190 @@
+\section*{Max SAT Approximation}
+
+\subsection*{Max-SAT}
+Assessing the viability of the SAT problem multiple times, we understand it`s NP-complete, making a polynomial time solution implausible.
+SAT is a search problem involving a Boolean formula in conjunctive normal form, where we seek true/false variable assignments to make the formula true, or return no if there`s no solution.
+Transitioning to the Max-SAT problem, which is an optimization version where the goal differs--despite the possibility of unsatisfiability, we seek an assignment that maximizes the number of satisfiable clauses.
+This introduces further complexity, with Max-SAT classified as NP-hard since there`s no efficient verification method to confirm a maximal solution.
+Recognizing Max-SAT`s complexity at least matches SAT`s, we acknowledge that approximations via linear programming are our best recourse, as polynomial time solutions remain out of reach.
+
+\subsection*{Approximate Max-SAT}
+In addressing the Max-SAT problem, define M* as the maximum number of clauses satisfiable within a given formula F, which contains M clauses.
+Create algorithm A that, upon inputting formula F, yields an assignment meeting L clauses.
+Aim to assure that L \textgreater{}= M*/2, establishing A as a one-half approximation algorithm for Max-SAT, where L represents the achievement of the formula under algorithm A compared to the optimum M*.
+Later discussions will target improving this to a three-quarters approximation algorithm.
+
+\subsection*{Outline}
+Examined a simple randomized algo for Max-SAT, resulting in 1/2 approximation.
+Proceeded to an LP-based algo achieving 1-1/e approximation, a slight improve over the first algo.
+Combined both algos to reach a 3/4 approximation for Max-SAT\@.
+
+\subsection*{Simple Scheme}
+Considering input f to the max stack problem with variables X\_1 to X\_n and clauses C\_1 to C\_M\@.
+A true-false assignment to the variables is made randomly without factoring in the formula f.
+Each X\_i has a 50\% chance to be true and 50\% to be false, akin to a coin flip.
+Performance is gauged by the number of satisfied clauses, referred to as W, which is a random variable.
+The focus is on the expected value of W, reflecting its average weighted by probabilities, with possible values from 0 to m.
+Analyzing this expectation directly is challenging due to dependencies between clauses.
+The analysis simplifies by breaking down W into individual clauses treated independently, allowing for easier expectation calculations clause by clause.
+
+\subsection*{Expectation}
+In the analysis of a randomized algorithm, capital W represents the count of clauses satisfied by random variable assignments, with each being true or false (50\% chance).
+Studying a single clause with a random variable Wj, which equals 1 if the clause (Cj) is satisfied and 0 if not, allows simplification.
+Summing Wj over all clauses equates to the total number satisfied, identical to capital W\@.
+To investigate the algorithm`s expected performance, the focus shifts to the expected value of W, which can be broken down into the summation of expected Wj for each clause.
+This approach simplifies evaluation since the expected satisfaction of individual clauses (Wj) is independent of others, enabling analysis of each clause in isolation.
+
+\subsection*{Analysis}
+Analyzing the expectation of the binary random variable Wj, representing the satisfaction of clause Cj by a random assignment where Wj=1 if satisfied and Wj=0 if not.
+The expectation equals the probability that Wj=1.
+Considering a K-sized clause Cj comprising literals like x1, x2 bar, \ldots, xK, the probability of Cj not being satisfied is the product of probabilities for each literal setting, equalling 2 to the -K\@.
+Therefore, the probability that Wj=1 is 1 - 2 to the -K, which improves as K increases since the minimum probability of satisfaction (when K=1) is one-half, suggesting the satisfaction likelihood rises with clause size.
+
+\subsection*{Finishing Off}
+Investigated expected no\. of satisfied clauses in random assignment.
+Defined W as random variable for count of satisfied clauses; WJ for individual clause CJ satisfaction.
+Proved expectation, or probability, that CJ is satisfied \textgreater{}=1/2 for each M clauses, leading to sum being at least M/2.
+Thus, random algorithm achieves at least a 1/2 approximation factor in expectation.
+Demonstrated de-randomization via deterministic algorithm for 1/2 approximation using conditional expectations.
+Process involves iterating over variables, comparing two possible settings (True/False) for each variable given fixed settings for previous variables, computing expected performance for each, and choosing the better setting before proceeding to next variable.
+Noted the method doesn`t address the optimal number of satisfied clauses but guarantees a random assignment satisfies \textgreater{}=1/2 of the clauses, providing at least a 1/2 approximation relative to the max possible satisfied clauses.
+Established every formula has at least one assignment satisfying \textgreater{}=1/2 of clauses, implying there`s at least one setting reaching or surpassing average M/2 satisfaction.
+
+\subsection*{Ek-SAT}
+Algorithm performance varies with clause size K in max-Ek-SAT\@.
+For K=3, a clause`s chance of being satisfied is 7/8,resulting in a 7/8 approx algorithm, optimal due to Hovstad`s proof that surpassing 7/8 is NP-hard.
+Clause satisfaction probability for any K is 1 - 2\textasciicircum{}-K, leading to a (1 - 2\textasciicircum{}-K) approx algorithm for max-Ek-SAT, effective for large clauses.
+A new LP-based algo targets small clauses.
+The challenge arises when clause sizes vary; the simple algorithm excels only for uniform size-3 clauses.
+
+\subsection*{Integer Programming}
+Exploring an approximation algorithm for Max-SAT using Linear Programming (LP) and its variant, Integer Linear Programming (ILP).
+Start by reviewing LP in canonical form, optimizing CTX subject to constraints Ax \textless{}= b and non-negative X values.
+ILP adds a constraint: elements of vector X must be integers (Z to the N).
+Unlike LP, ILP forfeits the property of having an optimal vertex within the feasible region and, notably, is NP-hard, unlike polynomially solvable LP\@.
+To leverage these approaches for Max-SAT, reduce Max-SAT to an ILP form, then apply LP relaxation by dismissing the integer constraint, allowing for real numbers in X\@.
+This LP solution will guide us to a suitable, nearly optimal integer solution to the original ILP\@.
+This process outlines an approximation for Max-SAT, accepting the solution is potentially non-optimal due to the NP-hardness of ILP\@.
+
+\subsection*{NP-Hard}
+Integer linear programming (ILP) is proven NP-hard by reducing Max-SAT to an ILP\@.
+For a Max-SAT problem with N variables and M clauses (constraints), an equivalent ILP is constructed with N + M variables; Y\_i for each original variable, and Z\_j for each clause.
+Y\_is are binary, representing the truth assignment of the corresponding variables (1 for true, 0 for false), while Z\_js are also binary, indicating if the respective clause is satisfied (1) or not (0).
+This forms the basis of the NP-hardness proof for ILP, aligning the satisfaction of Max-SAT clauses with integer linear constraints.
+
+\subsection*{Clauses}
+Constraint requirements for clauses in a logical setting established.
+Using clause titled `X5 or X3 or X6` as an illustration, a scenario outlined where assigning false to variables (X5, X3, X6) equates to setting corresponding variables (Y5, Y3, Y6) to 0.
+If all Y variables are 0, indicating the clause is not satisfied, an associated variable ZJ must also be 0.
+To enforce this, it is proposed that ZJ should be no greater than the sum of Y5, Y3, Y6, ensuring ZJ is 0 if all Ys are 0.
+If one or more Y variables are 1, ZJ can be 0 or 1.
+ZJs are to be maximized as part of the objective function, which will ideally take the value of 1 if possible, indicating clause satisfaction.
+The constraints ensure all variables (Ys and ZJs) range only between 0 and 1.
+
+\subsection*{Another Clause}
+Examining a clause with both positive and negative literals: X1!, X3, X2, X5!.
+Objective: Determine Z (ZJ for clause J) value based on variable truth values--Y1 (1), Y3 (0), Y2 (0), Y5 (1).
+ZJ to be 0 when clause is unsatisfied.
+Positive literals summed normally; for negative literals, use complement (1 - Y).
+ZJ`s maximum constrained by the sum of these adjustments.
+ZJ = 0 only if specific Y values match; otherwise, ZJ can be 0 or 1.
+Universal strategy involves identifying the positive (CJ+) and negative (CJ-) literals within a clause to properly constrain ZJ\@.
+In the example, CJ+ is X2 and X3; CJ- is X1 and X5.
+
+\subsection*{Reduction}
+General reduction from Max-SAT to integer linear programming (ILP) involves maximizing satisfied clauses.
+ILP uses binary variables Zj for each clause, representing satisfaction (1 if satisfied, 0 if not).
+Additionally, ILP includes binary variables Yi, linked to formula variables, restricted between 0 and 1.
+The objective is to maximize sum of Zj (satisfied clauses) under constraints that mirror clause satisfaction conditions.
+For clauses, if positive literals are unsatisfied due to corresponding Yi being 0, or negative literals are unsatisfied when Yi is 1, Zj must be 0, indicating clause dissatisfaction.
+If any literal is satisfied, Zj can be 1.
+As the goal is maximization, Zj will take 1 whenever possible.
+With constraints ensuring Yi and Zj are integers, this formulates an N+M dimensional ILP, which is an exact equivalent to the original Max-SAT problem.
+
+\subsection*{LP Relaxation}
+Considering an optimal point (Y-star, Z-star) for an ILP, with the objective function value at this point being M-star - the maximum number of satisfiable clauses in formula F\@.
+Noting that solving the ILP directly is not feasible in polynomial time, the approach shifts to transforming the ILP into a similar linear program (LP) by relaxing integer constraints.
+This LP can be solved in polynomial time yielding a solution (Y-hat-star, Z-hat-star), which will always be equal to or better than the ILP`s solution due to the LP having a larger feasible set.
+The LP`s solution provides an upper bound on M-star, but doesn`t directly find it.
+To bridge the gap between LP and ILP, the LP solution is converted into a feasible ILP solution by probabilistically rounding fractional values to integers.
+This creates a valid boolean assignment for F, which is proven to be close in quality to the LP solution.
+This method ensures the new integer solution isn`t significantly worse than the optimal ILP solution, thus providing a near-optimal solution within polynomial time constraints.
+
+\subsection*{Rounding}
+LP (linear programming) solutions yield optimal points denoted as vectors Y* and Z*.
+The task is to convert these to integers YI and ZJ, bearing in mind they may not be optimal.
+The challenge is to show that the integer solution found by rounding is close to the true optimal integer solution, which remains unknown.
+The rounding procedure should not significantly alter the objective function.
+Constraints in both LP and integer linear programming ensure variables are between 0 and 1--thus optimal solutions respect these bounds, allowing variables to be interpreted as probabilities.
+The solution uses randomized rounding where YI is set to 1 with a probability equal to its fractional optimal value and to 0 otherwise.
+Completing the algorithm provides a boolean assignment for the original variables: YI=1 sets XI to true; YI=0 sets it to false.
+This establishes a randomized method for assigning truth values, with an interest in expected algorithm performance.
+
+\subsection*{Expectation}
+Analysing the performance of a random algorithm solving a linear program (LP) that employs randomized rounding to satisfy clauses.
+Capital W represents the total number of satisfied clauses, a random variable with its expectation being a focus of investigation.
+For individual clause J, WJ equals 1 if satisfied (0 if not).
+The overall expected number of satisfied clauses, E\[W\], can be expressed as the sum of the expectations of individual clauses E\[WJ\], which equates to their probability of satisfaction.
+Proving a lemma shows each clause CJ`s satisfaction probability is at least 1 - 1/e times its LP value, ZJ hat star.
+This reasoning leads to the conclusion that E\[W\] is at least one minus 1 over E times the optimum for integer LP (M star).
+Thus, we achieve a 1 - 1/e approximation ratio, surpassing the previous one-half approximation.
+The key step is proving the lemma, after which this result defines the algorithm`s performance.
+
+\subsection*{Lemma}
+Examining lemma related to clause Cj of size K, with literals in positive form.
+Simplified case to be generalized later.
+LP constraint established where `if all literals false then variable Zj\_hat\_star = 0.` For randomized rounding, assessing prob\. that Cj satisfied, which equals 1 - prob\. of Cj being unsatisfied.
+This is further calculated as 1 - prod\. of (1 - Yi\_hat\_star) for each variable.
+Lemma aims to show prob\. of Cj satisfaction is at least 1 - (1/E) times Zj\_hat\_star.
+Sum of Yi`s linked to Zj\_hat\_star, lemma seeks to connect prod\. of Yi`s to this sum using the geometric mean-arithmetic mean inequality.
+
+\subsection*{AM-GM}
+Examining the relationship between arithmetic and geometric means for K non-negative weights (W1-WK).
+Arithmetic mean is the sum of weights divided by K, geometric mean is the Kth root of the weights` product.
+Arithmetic mean \textgreater{}= geometric mean.
+Applied this to one minus Yi star hat (presumably from a data set), with arithmetic mean of these values \textgreater{}= geometric mean.
+Taking the Kth power of both, an inequality is established for further use.
+
+\subsection*{Analysis}
+Analyzing the likelihood of a Jth clause being satisfied shows it is 1 minus the product of 1-YI hat star for I=1 to K\@.
+Using the AM-GM inequality, the geometric mean (negated) is at least the arithmetic mean of these 1 minus YI hat star terms.
+After simplification, the sum of constants (1) cancels out with 1/K, and it`s combined with the sum of YI hat stars, all raised to the K power.
+The prior linear program constraint indicated the sum of the Y variables must be at least a certain real number Z if they are set to false.
+This information allows replacing the sum of the YI hat stars with ZJ hat star, showing that the probability the clause is satisfied is at least 1 minus (1 - ZJ hat star / K) to the K power.
+This expression still contains the ZJ hat star within the K power, indicating a need for calculus to further simplify the expression.
+
+\subsection*{Calculus}
+Alpha, denoted ZJ hat star, correlates with clause CJ satisfaction probability, which is at least 1 - (1 - 1/alpha/K)\textasciicircum{}K\@.
+Transforming this from exponential to linear in alpha, define F(alpha) to equal the above.
+We claim F(alpha) \textgreater{}= some constant * alpha, where constant is 1 - (1 - 1/K)\textasciicircum{}K, independent of alpha but dependent on K, clause size.
+To prove this claim, establish F(alpha)`s concavity via its negative second derivative.
+Concavity ensures if F(alpha) \textgreater{} beta-alpha (a linear function where beta equals the constant) at alpha=0 and alpha=1, it exceeds it at all 0\textless{}alpha\textless{}1.
+Checking end points confirms the relation, with alpha=0 yielding 0, and alpha=1 easily verified.
+Thus, turned the original probability function linear in alpha.
+
+\subsection*{Finishing Up}
+Established the probability of satisfying clause Cj by converting a product to a sum using the AM-GM inequality, then connected this sum to Zj using LP constraints, yielding an inequality.
+Demonstrated that the expression is no less than a k-independent constant multiplying Zj*.
+Simplified by comparing a series representation of e\textasciicircum{}(-x) and recognizing that (1 - 1/K)\textasciicircum{}K is bounded above by e\textasciicircum{}(-1/K)\textasciicircum{}K\@.
+This comparison led to a conclusion that the probability expression is at least 1 - 1/e times Zj*, validating the lemma for a 1 - 1/e approximation algorithm through an LP-based algorithm`s analysis completion.
+
+\subsection*{Summary}
+LP-based algos apply general approach for hard probs, often reducible to ILPs.
+ILPs, powerful \& general, relaxed to LPs by dropping integrality constraints, solvable in poly time, commonly w/ simplex algos.
+LP solutions then randomized, rounded to get feasible ILP solutions that serve as heuristics for ILP optimal value.
+
+\subsection*{Comparison}
+Examined Max-SAT performance on exact K-SAT formulas with two algos: a simple randomized assignment (prob\. for each var\. is 1/2 true/false) and an LP-based scheme (integer lin\. prog\. relaxed to lin\. prog., then rounded).
+For K=1 (uni clauses), simple algo yields 1/2 approx\. factor, LP gives perfect 1.
+At K=2, both algos yield 3/4 approx\. factor.
+For K=3 and beyond, simple algo outperforms LP (simple algo approx\. 7/8 for K=3; LP approx\. 0.704).
+Crucially, best algo for any K gives at least 3/4 approx.
+Combining two algos can achieve at least 3/4 approx\. regardless of K\@.
+
+\subsection*{Best of 2}
+Combined algorithm uses a simple randomized method and an LP-based scheme to assign boolean values to variables in an input formula F\@.
+The algorithm chooses the assignment from these methods that satisfies the most clauses, M1 or M2.
+The expected performance of this algorithm is the max of M1 and M2, proven to be at least three-quarters of the optimal value of satisfied clauses, independent of clause length variations in F\@.
+Thus, we obtain a three-quarters approximation for max satisfiability problems, even with mixed clause lengths.
+Further calculus details are available in online notes.
+

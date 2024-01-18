@@ -1,0 +1,216 @@
+\section*{Strongly Connected Components}
+
+\subsection*{Graph Algorithms}
+Cover graph algos: DFS (depth-1st search), BFS (breadth-1st search), Dijkstra`s (single src shortest path).
+Review DFS for connected comps in undir\. graphs, extend to dir\. graphs for strongly connected comps.
+Strongly connected comps = connected comps analog in dir\. graphs, apply this for the two set prob.
+Examine MST (minimum spanning tree) prob using Kruskal`s and Prim`s algo, assess their correctness.
+Finally, delve into PageRank algo used by Google to rank webpages, based on Brin/Page invention.
+Introduce Markov chains for PageRank context, link to strongly connected comps.
+
+\subsection*{Outline}
+Exploring connectivity in graphs using DFS (depth-first search) algorithms, beginning with undirected graphs to determine connected components, a concept likely familiar.
+Moving to directed graphs, the focus shifts to their connected components equivalent.
+Examines DAGs (directed acyclic graphs) and topological sorting--ordering vertices to have all edges pointing in one direction.
+This serves as a precursor to understanding algorithms for more complex directed graphs.
+The key goal is to identify SCCs (strongly connected components) in general directed graphs, which can be done by applying the DFS algorithm twice, a simple method despite the gradual build-up in the lesson.
+The journey from basic DFS concepts to SCC identification in directed graphs is paced to develop intuition before delving into the more advanced topic.
+
+\subsection*{Undirected Graphs}
+Finding connected components in an undirected graph involves running DFS and assigning a component number to each vertex.
+The pseudocode for DFS starts by taking the graph G in adjacency list representation.
+It initializes visited vertices as false and iterates through them.
+If a vertex is unvisited, it marks a new component, increments the counter, and explores from that vertex using the explore subroutine.
+This process will later be applied to directed graphs without changing the pseudocode.
+
+\subsection*{Exploring Undirected Graphs}
+Exploring from a vertex Z for the first time in an undirected graph involves marking Z as visited, assigning it the current connected component count, and examining all its neighbors in the adjacency list.
+For each unvisited neighbor W, the Explore procedure recursively continues.
+Depth-First Search (DFS), a linear time algorithm, determines the runtime, specifically O(N + M), where N is the number of vertices and M is the number of edges.
+This process adequately identifies all connected components in an undirected graph.
+For directed graphs, additional information from the DFS is necessary to understand connectivity.
+
+\subsection*{DFS  Paths}
+DFS algorithm used to identify connected components in an undirected graph can also find paths between any pair of vertices (v and w) in the same component.
+Track the predecessor vertex for each visited vertex, using a `previous` array similar to Dijkstra`s algorithm.
+Initialize the `previous` array as null.
+Upon the first visit of a vertex, set its `previous` to the vertex from which it was discovered.
+Post DFS, the `previous` array enables backtracking to construct a path between any two connected vertices.
+Transitioning next to explore DFS applications in directed graphs.
+
+\subsection*{DFS on Directed Graphs}
+Directed graph connectivity determined using a DFS variant, capturing preorder and postorder numbers.
+DFS for undirected graphs revised by removing connected component tracking, focusing on vertex visitation times instead.
+Clock initialization at 1, recording visitation (preorder) and completion (postorder) times for vertices, informed by clock value which is incremented each step.
+Connectivity analysis relies primarily on postorder numbers, with preorder`s usage less clear outside of academic testing scenarios.
+Algorithm adapted to account for directed graph properties.
+
+\subsection*{Directed DFS  Example}
+Conducted a Depth-First Search (DFS) on an 8-vertex directed graph starting at vertex B\@.
+Vertices encountered were explored in alphabetical order.
+B, as the starting point, received the initial pre-order number.
+The exploration followed B-A-D-E-G, assigning pre-order numbers sequentially.
+G had no outgoing edges, resulting in a backtrack and it receiving the first post-order number.
+A non-tree edge from E to A was marked as a blue edge since A was previously visited.
+After exploring all of E`s edges, backtrack and post-order numbering continued from E to D, then to H, with G-H also marked as a blue edge since G was visited.
+Post-order numbers were assigned to the vertices upon backtracking completion.
+Then exploration proceeded from B to C and F, with F-B and F-H also designated as blue edges due to prior visits.
+Following this final subtree`s exploration and post-order numbering, the DFS concluded.
+
+\subsection*{Types of Edges}
+Edges in a DFS graph represent relationships between vertices, with black (explored) and blue edges (unexplored).
+The DFS `tree` might really be a forest with multiple components.
+Tree edges are black, linking reachable vertices such as B to A or A to D, with post order numbers increasing from the tail (D) to the head (A) of the edge.
+Blue edges are categorized as back, forward, or cross edges, with distinct properties.
+Back edges, like E to A or F to B, loop back from descendants to ancestors; their post order numbers decrease opposite to tree edges.
+Forward edges, like D to G, move down the tree; post order numbers here decrease similarly to tree edges.
+Cross edges, such as F to H, connect unrelated vertices; post order numbers decrease with these edges.
+The key distinction is that the post order number increases for back edges, but decreases for tree, forward, and cross edges.
+
+\subsection*{Cycles}
+Graph G has a cycle if and only if its DFS tree has a back edge, regardless of start vertex or adjacency list order.
+This holds both ways: if G has a cycle, a first vertex (i) will be explored, and all cycle vertices are in the subtree of i.
+One of these vertices, i - 1, has an edge to i, creating a back edge to an ancestor, indicating a cycle.
+Conversely, if there`s a back edge from a descendant (a) to an ancestor (b) in the DFS tree, a cycle is formed by following tree edges back from b to a, then taking the back edge from a to b.
+Therefore, a back edge presence signifies a cycle in G\@.
+
+\subsection*{Toplogical Sorting}
+DAGs, or directed acyclic graphs, lack cycles and thus exclude back edges in a DFS (depth-first search) tree.
+Useful for certain operations, like topological sorting, where vertices are arranged so that all directed edges flow from a vertex of lower order to one of higher order.
+By executing a DFS, we can facilitate a topological sort by arranging vertices in decreasing order of their post-order numbers, exploiting the fact that back edges do not exist, and post-order numbers decrease along edges in a DAG\@.
+With post-order numbers ranging between 1 and 2n, sorting can be optimized using an array of size 2n, allowing insertion and arrangement based on post-order numbers.
+The sorting step requires linear time, contrasting with the expected n log n time for typical sorting algorithms.
+Therefore, combined with the linear time (n plus m) required for DFS, the total time complexity for topologically sorting a DAG using this method is linear (N + M).
+
+\subsection*{Topological Ordering Quiz Question}
+Example graph has 5 vertices requiring topological ordering; must list vertices so edges run left to right.
+Graph allows multiple topological orderings.
+Task to determine and specify total number of valid topological orderings for this graph.
+
+\subsection*{Topological Ordering Quiz Solution}
+Valid topological ordering: X - Y - Z - U - W, edges flow left to right.
+Multiple topological orderings exist; U can occupy one of the last three positions--3 choices for U\@.
+Positions of Z, W determined post-U placement; Z precedes W\@.
+Graph has three distinct topological orderings.
+
+\subsection*{DAG Structure}
+Directed Acyclic Graphs (DAGs) are guaranteed to have at least one source vertex (no incoming edges) and one sink vertex (no outgoing edges).
+The presence of a source is confirmed by observing the first vertex in any topological ordering, as it cannot have any incoming edges due to the unilateral left-to-right direction of edges in such an ordering.
+The vertex with the highest post-order number in a DAG is always a source.
+Conversely, the last vertex in a topological ordering must be a sink since no edges can leave it without violating the specified direction; hence, the lowest post-order numbered vertex in a DAG will be a sink.
+An alternative method for topological sorting involves repeatedly finding and removing sink vertices from a graph and is a prelude to addressing topological sorting in more general directed graphs.
+This alternative algorithm reverses the process by outputting vertices from end (sink) to beginning (source), which is a process applicable to general directed graphs, the next subject of focus.
+
+\subsection*{Outline Review}
+Finding connected components in undirected graphs and topologically sorting Directed Acyclic Graphs (DAG) can be done with a single DFS run.
+For directed graphs, the equivalent concept is strongly connected components (SCCs).
+To find SCCs, we use an algorithm that requires just two runs of standard DFS\@.
+It is remarkable that identifying SCCs, which might seem more complex, can still be achieved with such a simple approach.
+
+\subsection*{Connectivity in Directed Graphs}
+Exploring directed graph connectivity, focusing on the concept of strong connectivity defined by the presence of reciprocal paths between two vertices V and W, such that each can be reached from the other.
+This introduces the idea of strongly connected components (SCCs) in directed graphs, which resemble connected components in undirected graphs but require bidirectional connectivity.
+SCCs consist of the largest possible subsets of vertices that are strongly connected.
+The concept was further clarified using a specific example to illustrate the identification of SCCs within a graph.
+
+\subsection*{SCC Quiz Question}
+Directed graph with 12 vertices; need to identify and mark strongly connected components (SCCs).
+Analyzing number of SCCs present and determining which vertices form these SCCs.
+Essential for understanding SCC properties and implications in graph structure.
+
+\subsection*{SCC Quiz Solution}
+Graph has five strongly connected components (SCCs): A alone, BE together, CFG together, D alone, HIJKL together.
+A, a SCC due to no incoming paths from other vertices.
+J within its SCC can reach and be reached by all others.
+D, a SCC since it can`t reach any vertices.
+Meta vertices created to represent each SCC show directed edges between SCCs, like between CFG and HIJKL due to an edge from F to I, revealing interesting properties in a graph of SCC meta vertices.
+
+\subsection*{Graph of SCC}
+Examining the metagraph of strongly connected components, each component (A, BE, D, CFG, H-L) becomes a vertex in the metagraph.
+Edges between vertices represent paths between the corresponding components.
+The metagraph might initially appear as a multigraph due to multiple edges but simplifying by removing these does not alter its fundamental characteristic.
+The critical observation is that this metagraph is always a Directed Acyclic Graph (DAG), as cycles would contradict the definition of maximal strongly connected components.
+A cycle would imply that two or more components could be merged into a larger component, violating their maximal status.
+The absence of cycles in the metagraph of strongly connected components is intrinsic to all directed graphs, leading to the property that every directed graph can be expressed as a DAG of its strongly connected components.
+This allows for complex directed graphs to be simplified into an organized structure with a clear topological ordering, where all edges proceed in one direction.
+The goal is to discover an efficient algorithm that identifies strongly connected components and arranges them topologically, achieving this with only two passes of Depth-First Search (DFS).
+Such an algorithm reveals a hidden, orderly structure within a potentially complex directed graph.
+
+\subsection*{SCC Algorithm Idea}
+The main idea of the strongly connected component (SCC) algorithm involves identifying SCCs in a topological order.
+In a Directed Acyclic Graph (DAG), vertices can be sorted topologically either by identifying sink vertices (with only incoming edges) and removing them, or by finding source vertices (with only outgoing edges) and removing them.
+For SCCs, the approach targets sink components.
+A sink SCC, when explored from any of its vertices using depth-first search (DFS), will only reach vertices within that SCC, unlike source SCCs that can potentially reach the entire graph.
+To isolate an SCC, once a vertex within it is found, DFS explores and reveals the whole component.
+These vertices are then removed from the graph, and the process repeats until no vertices are left.
+This procedure leverages the property that sink components do not have outbound edges to other SCCs, simplifying their identification and isolation.
+The crux of the algorithm is effectively finding vertices within sink SCCs to execute the precise exploration and extraction of components.
+
+\subsection*{Vertex in sink SCC}
+In directed acyclic graphs (DAGs), the vertex with the lowest post-order number is a sink vertex.
+When applying depth-first search (DFS) in general directed graphs containing cycles, it might be presumed that the same property holds--i.e., the vertex with the lowest post-order number belongs to a sink strongly connected component (SCC).
+This assumption, however, is incorrect; an example with three vertices (A, B, C) shows that such a vertex may actually reside in a source SCC, not a sink.
+Conversely, the opposite property is true: the vertex with the highest post-order number in a directed graph is always part of a source SCC, regardless of the DFS start point or neighbor order.
+This fact is accurate even when cycles are present, and it is useful for designing SCC algorithms--even though it does not help directly in identifying sink SCCs, which is often required.
+The proof of this property and its implications for SCC algorithms are anticipated but not included in this text.
+
+\subsection*{Finding sink SCC}
+DFS on a directed graph locates a vertex in a source SCC by identifying the vertex with the highest post order number.
+To find a vertex in a sink SCC, invert the graph: reverse all edges.
+This process flips the source and sink SCCs.
+If vertices V and W are strongly connected in graph G, they remain so in the reversed graph GR\@.
+The meta graph of SCCs in G is a DAG, and reversing edges changes the topological ordering.
+Run DFS on GR; the vertex with the highest post order number will be in a source SCC of GR and a sink SCC of G\@.
+This identifies vertices in sink SCCs of G and facilitates finding SCCs in topological order, progressing from right to left.
+
+\subsection*{SCC Example}
+Algorithm finds strongly connected components (SCCs) in a directed graph using two DFS runs--one on the original graph and one on its reverse.
+Initially, run DFS in the reverse graph to determine post-order numbering.
+The vertex with the highest post-order number indicates a source SCC in the reverse graph, which corresponds to a sink SCC in the original graph.
+Starting DFS from this vertex allows us to identify and `rip out` the entire SCC, label it, and reduce the graph.
+We then select the next vertex with the highest post-order number from the remaining graph and repeat the process.
+By doing this, we sequentially identify and label all SCCs, with DFS continuing from vertices with decreasing post-order numbers.
+The result is SCCs labeled in reverse topological order, providing structure to the components.
+This dual-DFS approach generalizes to any directed graph for efficient SCC identification and topological structuring.
+
+\subsection*{SCC Algorithm Question}
+Developed a strongly connected component (SCC) algorithm for directed graphs.
+Initial step is to reverse the input graph.
+Post that, deploy DFS on the reversed graph to identify the vertex with the highest post order number, indicating a sink SCC in the original graph.
+Next, arrange the original graph`s vertices by decreasing post order numbers obtained from the DFS on the reversed graph, aligning with topological ordering.
+The final step involves running DFS on the original graph, now ordered by these post order numbers.
+The process uses an algorithm akin to that for undirected connected components, where we assign a connected component number (CCnum) to mark each SCC during DFS\@.
+The result produces SCCs numbered in topological order.
+The method effectively utilizes the undirected components algorithm, adapted for directed graphs to identify and order SCCs.
+
+\subsection*{Simpler Claim}
+Two strongly connected components (SCCs), S and S`, are considered where S has a vertex V and S` has a vertex W, with an edge from V to W\@.
+The claim is that the maximum post-order number in S is greater than in S`.
+Due to the absence of cycles between SCCs, no path exists from S` to S\@.
+In proving the claim, a depth-first search (DFS) assigns post-order numbers to vertices.
+The first visited vertex, Z, from S union S` determines the proof`s direction.
+If Z is in S`, then all of S` is explored and assigned post-order numbers before any vertex in S is visited.
+Hence, all post-order numbers in S` are smaller than any in S\@.
+In the case where Z is in S, it is the root of the DFS subtree containing all vertices of S union S`, and as the last to finish, it has the maximum post-order number in S union S`.
+Therefore, Z, in S, confirms the maximum post-order number in S is greater than any in S`.
+This result proves the claim and validates the SCC algorithm, showing a vertex with the highest post-order number belongs to a source SCC, allowing for the computation and topological sorting of SCCs with two DFS runs.
+
+\subsection*{Proof of Key SCC Fact}
+Proved a fundamental property for SCC (Strongly Connected Component) algorithm correctness.
+The property states that the vertex with the highest post-order number is in a source SCC\@.
+Demonstrated that if a vertex in one SCC (S) can reach another (S`), the max post-order number in S is greater than that in S`.
+This leads to a method for topologically sorting SCCs by their max post-order numbers in decreasing order, ensuring edges progress from higher to lower post-order numbers.
+Hence, the SCC with the largest max post-order number, and thus the vertex with the highest post-order number, is positioned at the start, qualifying as a source SCC\@.
+Proving this enables topological sorting of SCCs based on max post-order numbers and confirms the initial assumption used in the SCC algorithm.
+The goal is to substantiate the simpler claim to validate the algorithm`s design.
+
+\subsection*{BFSDijkstras}
+DFS algorithm is used for solving connectivity in graphs.
+BFS, another algorithm, explores graphs in layers and returns distances from a start vertex in unweighted graphs, using adjacency list representation.
+It employs a `previous array` to reconstruct minimum length paths and operates in linear time, O(n+m).
+Dijkstra`s algorithm extends BFS for weighted graphs, requiring positive edge lengths.
+It outputs shortest path lengths, uses a min-heap or priority queue, and has a running time of O((n+m) log n).
+Negative edge lengths are addressed in dynamic programming lectures.
+Dijkstra`s variants exist, but the class focuses on the min-heap version.
+Familiarity with BFS and Dijkstra`s assumed, but textbook chapter four recommended for review.
+

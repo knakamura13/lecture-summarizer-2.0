@@ -1,0 +1,122 @@
+\section*{Duality}
+
+\subsection*{LP Duality}
+Exploring LP duality theory.
+Begins with a motivating example followed by the general formulation of the dual LP\@.
+Examines the weak duality theorem and its implications.
+Concludes with the strong duality theorem.
+
+\subsection*{Example}
+Early LP example with variables X\_1, X\_2, X\_3, and four constraints, including non-negativity.
+Simplex algorithm used, optimal value found at vertex (200, 200, 100) with objective function profit at 2400.
+Verification of optimality needed.
+Approach: upper bound the profit to confirm maximum profit cannot exceed 2400.
+Method involves using linear combinations of satisfied constraints to establish objective function upper bound.
+
+\subsection*{Upper Bound}
+Studying a specific 3D point (200,200,100) in a linear programming (LP) issue with profit as the objective function, valued at 2,400, intent on confirming its optimality for the highest profit.
+Examined a 4D vector Y (0,1/3,1,8/3) corresponding to LP`s four constraints.
+Taking feasible points that satisfy constraints, we considered the linear combination of constraints multiplied by respective elements of Y, yielding a new inequality expression.
+Simplified this expression, consolidating terms associated with variables X1, X2, and X3.
+Substituting vector Y into the simplified expression gave coefficients for X1, X2, and X3, which, when multiplied by their respective variable values, equaled 2,400--the value of the original LP`s objective at the investigated point.
+Concluded that since all feasible solutions to the LP can`t surpass 2,400 in value, and we have a point achieving this profit, this point must be the optimal solution, confirming its status as yielding the maximum profit possible in this LP\@.
+
+\subsection*{Dual LP}
+To find Y which provides an upper bound to an original objective function, we require Y to satisfy specific constraints so that when plugged into the left hand side (LHS), it yields at least the value of the objective function.
+For this, we identified that: 1) Y1 + Y3 must be at least 1 for X1.
+2) Y2 + 3Y3 + Y4 must be at least 6 for X2.
+3) 2Y3 + 3Y4 must be at least 10 for X3.
+Any Y meeting these conditions establishes an upper bound on the objective function.
+Our aim is to minimize the right hand side (RHS), which is composed of 300Y1, 200Y2, 1000Y3, 500Y4, yielding the smallest upper bound, thus, defining our dual linear program (LP).
+The original maximization LP has been converted to a minimization dual LP, with the inequality constraints also flipping from \textless{}= to \textgreater{}=.
+In this dual LP, there`s a symmetry with the original LP: 1) Coefficients from the original LP constraints are now defining the objective function of the dual LP (300, 200, 1000, 500).
+2) Coefficients from the original objective function establish the constraints of the dual LP\@.
+Furthermore, the number of variables in the original LP dictates the number of constraints in the dual LP, and the number of constraints in the original LP sets the number of variables in the dual LP\@.
+For our case with four constraints in the original LP, the dual will have four variables, resulting in three constraints from the three original variables.
+
+\subsection*{Dual LP Example}
+Translated primal LP with 3 variables and 4 constraints into a dual LP with 4 variables (y1, y2, y3, y4).
+Goal: minimize 300y1 + 200y2 + 1000y3 + 500y4 reflecting constraint values.
+Constraints: y1 + y3 \textgreater{}= 1, y2 + 3y3 + y4 \textgreater{}= 6, 2y3 + 3y4 \textgreater{}= 10; y`s must be non-negative.
+Feasible x sets lower profit bound; feasible y sets upper profit bound in primal LP\@.
+Dual LP provides complement to primal, with each offering bounds on achievable profit.
+
+\subsection*{General Form}
+In the general formulation of the Dual Linear Program (LP), the primal LP aims to maximize a profit function represented by C\textasciicircum{}T * X under constraints that Ax \textless{}= b and X \textgreater{}= 0, where A is an MxN matrix, X is a vector with N variables, and there are M constraints.
+In contrast, the Dual LP seeks to minimize the profit, essentially finding the smallest upper bound by minimizing b\textasciicircum{}T * Y\@.
+Its constraints are derived from the primal LP`s objective function, resulting in A\textasciicircum{}T * Y \textgreater{}= C with Y also being non-negative.
+The Dual LP has as many variables as the primal has constraints (M) and as many constraints as the primal has variables (N).
+It`s important that this Dual LP formulation requires the primal LP to be in canonical form--constraints must be inequalities in the `less than or equal to` sense, and the objective function must be maximization.
+Any LP can be converted to satisfy these canonical conditions before applying the dual formulation.
+
+\subsection*{Dual of Dual}
+Checking the duality in linear programming by considering a primal LP in canonical form and taking its dual twice.
+The primal LP maximizes C\textasciicircum{}TX subject to AX \textless{}= B, X \textgreater{}= 0.
+The first dual minimizes B\textasciicircum{}TY with constraints A\textasciicircum{}TY \textgreater{}= C, Y \textgreater{}= 0.
+To dualize this, we convert to canonical form: maximize -B\textasciicircum{}TY with -A\textasciicircum{}TY \textless{}= -C\@.
+Taking this LP`s dual, we get max C\textasciicircum{}TZ, AZ \textless{}= B, Z \textgreater{}= 0, which matches the original primal`s form, confirming the dual of the dual LP is the primal.
+
+\subsection*{Quiz  Dual LP Question}
+Practicing dual LP formulation.
+Original LP: Maximize 5x1 - 7x2 + 2x3 subject to x1 + x2 - 4x3 \textless{}= 1, 2x1 - x2 \textgreater{}= 3, with x1, x2, x3 \textgreater{}= 0.
+To determine dual LP, need to identify the number of variables and constraints.
+Dual LP will have variables corresponding to the primal constraints and constraints corresponding to the primal variables.
+The primal LP has two constraints, so the dual will have two variables.
+Since the primal LP has three variables, the dual will have three constraints, excluding non-negativity constraints.
+Next, the specifics of dual LP formulation will be addressed, including the objective and constraint functions.
+
+\subsection*{Quiz  Dual LP Constraints Question}
+In the context of linear programming (LP), a primal LP with three variables leads to a dual LP with three constraints corresponding to these variables.
+The primal`s two constraints give rise to two variables in the dual, named y1 and y2.
+The dual LP`s goal is to minimize the objective function, represented by a linear combination of y1 and y2 with coefficients d1 and d2, creating vector d to be determined.
+Matrix e signifies the coefficients of y1 and y2 for each of the three dual constraints.
+The constraints are `at least` typified by a vector f, which denotes the right-hand side values f1, f2, and f3 for each constraint, respectively.
+Additionally, the dual LP includes non-negativity constraints, requiring that y1 and y2 be non-negative.
+The next task involves specifying vector d, matrix e, and vector f to fully detail the dual LP\@.
+
+\subsection*{Quiz  Dual LP Constraints Solution}
+Conversion of a primal Linear Program (LP) to its Dual form begins with reformatting the primal into standard form.
+This standardization involves reversing inequalities, accomplished by multiplying them by negative one.
+For example, an inequality of -2x\_1 + x\_2 \textless{}= -3, when standardized, is expressed as -2x\_1 + x\_2 \textgreater{}= -3.
+The objective function of the Dual LP is derived from the right-hand side values of the primal`s constraints, yielding a vector d of \[1, -3\] and formulating a minimization goal of Y\_1 - 3Y\_2.
+The constraint matrix E for the Dual LP is constructed as the transpose of the primal`s constraint matrix, with rows corresponding to the primal LP`s variable columns.
+Transposing the primal`s variable columns \[1, -2\], \[1, 1\], and \[-4, 0\] generates Dual LP constraints of Y\_1 - 2Y\_2, Y\_1 + Y\_2, and -4Y\_1, respectively.
+The right-hand side values for these constraints are obtained from the primal`s objective function coefficients, forming a vector f of \[5, -7, 2\].
+Consequently, the Dual LP`s constraints are: Y\_1 - 2Y\_2 \textgreater{}= 5, Y\_1 + Y\_2 \textgreater{}= -7, and -4Y\_1 \textgreater{}= 2.
+
+\subsection*{Weak Duality}
+Weak duality theorem established: feasible primal LP at point X results in objective function value of C\textasciicircum{}T X, aimed to be maximized; feasible dual LP at point Y yields B\textasciicircum{}T Y as the objective function value, serving as an upper bound for primal`s objective function.
+Consequently, C\textasciicircum{}T X (primal`s objective) is always less than or equal to B\textasciicircum{}T Y (dual`s objective).
+This relationship confirms that any feasible solution for dual LP caps the maximum potential value of the primal LP`s objective function.
+
+\subsection*{Matching Values}
+In linear programming, established that a specific primal-dual LP pair had matched optimal objective function values (both 2400) at feasible points X (200, 200, 100) in the primal and Y in the dual.
+This demonstration is backed by the weak duality theorem which implies that if a feasible X in the primal and feasible Y in the dual have equal objective function values (C transpose X equals B transpose Y), then both are optimal; X is the primal maximum and Y is the dual minimum.
+Furthermore, the strong duality theorem guarantees the existence of such optimal primal-dual pairs assuming both LPs are feasible and bounded.
+Cases with infeasibility or unbounded solutions in either LP require separate consideration.
+
+\subsection*{Unbounded LP}
+Weak duality theorem implies if primal linear program (LP) is unbounded, dual LP is infeasible and if dual is unbounded, primal is infeasible.
+Not a bidirectional relationship, both primal and dual can be infeasible.
+Exercise to create example where both are infeasible.
+Key takeaway: unbounded primal means infeasible dual.
+
+\subsection*{Check Unbounded}
+To determine if a linear program (LP) in canonical form is unbounded, first establish its feasibility by adding a variable Z, changing the constraint to \textbackslash{}(AX + Z \textbackslash{}leq B\textbackslash{}), and ensuring a non-negative Z exists for a solution.
+If feasible, assess the feasibility of the dual LP\@.
+If the dual is infeasible, given the LP is feasible, it implies the LP is unbounded.
+This process involves two steps: confirming the primal LP`s feasibility and then testing the infeasibility of its dual.
+The weak duality theorem indicates if the dual is infeasible, the primal must either be unbounded or infeasible, but does not differentiate between these scenarios; hence, the necessity of the earlier feasibility check for the primal LP\@.
+
+\subsection*{Weak Duality - Part 2}
+Weak duality theorem implies: 1) If primal linear program (LP) is unbounded, then dual LP must be infeasible--this helps in determining if an LP is unbounded by first checking primal LP`s feasibility, then dual LP`s infeasibility.
+2) Finding feasible points for both primal and dual LPs with matching objective function values guarantees their optimality, confirming X as optimal for primal and Y for dual.
+Example provided showed such an optimal Y\@.
+Optimal X and Y, with matching objective values, exist when both primal and dual LPs are bounded and feasible.
+
+\subsection*{Strong Duality}
+Strong duality theorem ensures that a feasible and bounded primal linear programming (LP) problem has an equivalent dual LP problem that`s also feasible and bounded, with optimal solutions existing for both.
+Optimal values of objective functions are equal, with C transpose X star equaling B transpose Y star, where X star and Y star represent optimal points in the primal and dual LPs, respectively.
+This theorem provides a certificate for optimality in LP problems.
+Specifically, in max flow problems, the theorem equates the value of the objective function (size of max flow from S to T) in the primal LP to the capacity of the min st-cut in the dual LP, thereby proving the max flow min cut theorem using the strong duality principle.
+

@@ -1,0 +1,183 @@
+\section*{Graph Problems}
+
+\subsection*{Lecture Outline}
+Demonstrated 3SAT as NP-complete, explored graph theory`s Independent sets, clique problem, and vertex cover problem, and established their NP-completeness.
+Definitions provided for unfamiliar combinatorial issues.
+
+\subsection*{Independent Set}
+Independent set defined as subset of vertices in undirected graph G with no edges among them.
+The check involves ensuring no vertices in subset are adjacent.
+Finding large independent sets is challenging, whereas identifying small or trivial ones, like an empty set or single vertex, is simple.
+Example provided with a graph where a set of three vertices represents an independent set, illustrating the concept.
+
+\subsection*{Quiz  Max Independent Set Question}
+Max independent set problem confirmed to be in class NP\@.
+P=NP scenario could alter this classification.
+Standard for true/false questions adjusted to include `known to be` for clarity on such matters.
+
+\subsection*{Quiz  Max Independent Set Solution}
+The max independence set problem isn`t in the NP class because, unless P=NP, there`s no polytime method to verify a claimed max size solution`s validity.
+Similarly, the max value knapsack problem isn`t in NP, but its search version can be fixed to be in NP\@.
+
+\subsection*{Search Version}
+Input: undirected graph and goal g.
+Output: independent set S (size \textgreater{}= g) if possible, else NO\@.
+The problem is a search problem in NP class.
+Independent set problem is NP-complete.
+
+\subsection*{Proof Outline}
+The independent set problem is NP-complete, demonstrated through two steps.
+First, the problem is in NP because solutions can be verified in polynomial time.
+This is done by checking, in O(n\textasciicircum{}2) time, non-adjacency for vertex pairs in a proposed solution set S and confirming, in O(n) time, whether S meets the desired size g.
+Second, to establish NP-hardness, a polynomial-time reduction from a known NP-complete problem such as 3SAT to the independent set problem is shown.
+3SAT is chosen for its simplicity, with clauses limited to three variables compared to SAT`s potentially longer clauses.
+By accomplishing this reduction, the NP-completeness of the independent set problem is proven.
+
+\subsection*{3SAT  IS}
+Input from a 3-SAT problem with a formula F containing N variables (X1-Xn) and M clauses (C1-CM), where each clause has up to 3 literals, is translated into an Independent Set problem by constructing a graph G\@.
+Set a target `g` equal to M (the number of clauses) for the Independent Set problem.
+Construct graph G by making a vertex for each literal in a clause, leading to at most 3M vertices since there are M clauses.
+Edges are added within clauses to encode the literal relationships and between clauses to ensure consistent variable assignments across the graph.
+
+\subsection*{Clause Edges}
+Two edge types in graphs represent clauses and variables.
+Clause edges encode clauses by linking literals in complete subgraphs--a triangle for three literals, an edge for two, and a singleton for one.
+An independent set S in such a graph can contain only one vertex per clause, representing the satisfied literal for that clause.
+Achieving an independent set of size m aligns with finding a satisfying assignment for a formula, as exactly one literal per clause must be satisfied.
+However, a conflict arises when an independent set includes complementary literals, like x\_1 and x\_1 bar, yielding an assignment where x\_1 is both true and false--a contradiction.
+Thus, independent sets must be constructed to avoid simultaneously assigning both true and false to the same variable, ensuring they represent valid assignments.
+
+\subsection*{Variable Edges}
+Variable edges concept introduced to prevent including contradictory vertices (representing X\_i and X\_i-bar) in an independent set.
+This ensures valid assignments in independent sets.
+Clause edges guarantee that these assignments satisfy all clauses.
+A specific example demonstrates this approach.
+
+\subsection*{Example}
+Constructed a graph from a given 3-SAT formula with 4 variables (X, Y, W, Z), creating vertices for each literal in the formula`s clauses and adding edges to form triangles for clauses with three literals and a single edge for clauses with two.
+Variable edges connect each variable to its negated counterpart.
+Demonstrated that an independent set in the graph (no adjacent vertices) of size four can reflect a satisfying variable assignment for the formula (e.g., X=false, Y=false, W=false), with each chosen vertex in the independent set corresponding to a literal in the formula that reflects a variable`s value.
+Posited a general proof that there`s a direct correspondence between independent sets of size m in the graph and satisfying assignments of the formula, meaning each independent set represents a combination of variables that make the original formula true.
+
+\subsection*{Correctness}
+Proving a satisfying assignment for three set input F equates to an independent set of size at least g in a constructed graph.
+Forward direction proved by starting with a satisfying assignment for F leading to an independent set of size g.
+For each clause in F, one satisfied literal chosen, corresponding to a graph vertex, added to set S\@.
+Size of S is m (the number of clauses), matching goal size g, thus achieving required size.
+S only contains one vertex per clause, does not contain contradictory variables (X\_i and X\_i bar simultaneously) based on the assignment`s truth values.
+No clause edges or variable edges in S, meaning it`s edge-free.
+S is confirmed as an independent set, fulfilling the forward direction proof by creating an independent set size g from a satisfying F assignment.
+The reverse direction remains to be shown.
+
+\subsection*{Reverse Implication}
+The text delivers a proof demonstrating the reverse implication in the context of computational complexity theory, specifically establishing the NP-completeness of the Independent Set problem via a reduction from the 3SAT problem.
+It is explained that an independent set of size M implies a satisfying assignment for the 3SAT instance since each clause (triangle) of the graph has a vertex (literal) which can be set to true without contradiction--a result of not allowing both a literal and its negation (Xi and Xi bar) within the independent set due to added edges between them, thus avoiding false assignments.
+The proof confirms that the satisfaction of all clauses in the 3SAT formula corresponds to a valid assignment derived from the independent set of size at least M, solidifying the reduction`s correctness.
+The absence of an independent set of size M, in turn, entails no satisfying assignment for the formula.
+This equivalence substantiates that the Independent Set problem is indeed NP-complete.
+
+\subsection*{NP-hard}
+The independent set problem is NP-complete, confirmed through a reduction from all problems in NP class to it, indicating its equal or greater difficulty.
+Max Independent Set Problem, its optimization version, is not confirmed to be in NP but is reducible from the independent set problem, signifying it`s at least as hard as any NP problem.
+If Max Independent Set were in NP, it`d be NP-complete, but its classification is currently NP-hard.
+This reflects its comparative difficulty level: NP-hard indicates that solving it would enable solving all NP problems in polynomial time.
+NP-complete problems are the most challenging in NP, being both NP-hard and inside the NP class.
+
+\subsection*{Lecture Outline II}
+Demonstrated that the independent set problem is NP-complete through reduction from SAT, a logic problem.
+Proceeding to establish NP-completeness for Clique and Vertex Cover problems, leveraging the transformation from graph-based independent sets, simplifying the process.
+
+\subsection*{Clique}
+Clique defined as fully conn\. subgraph in undir\. graphs.
+Any vertex pair (X, Y) in subset S must share edge to form clique.
+Given graph has largest clique of size 5, all poss\. vertex pairs connected.
+Finding large cliques is hard since small ones (empty set, single vertex, any two connected vertices) are easy to identify.
+The real challenge is in identifying the max\. size clique.
+
+\subsection*{Clique  Search Version}
+The Clique problem involves finding a subset of vertices S in an undirected graph G that forms a clique of at least size g, aiming for the largest possible clique.
+Unlike a trivial task of finding at most g size (where an empty set could suffice), the challenge is to determine if such a clique exists; if it does, output the clique, if not, output NO\@.
+The focus is on proving the Clique problem`s NP-completeness.
+
+\subsection*{Clique  Proof Outline}
+The Clique problem is established as NP-complete by first demonstrating that it belongs to the NP class through polynomial-time verification of proposed solutions.
+Validation involves checking if a subset of vertices, S, in a given graph G forms a clique of size at least g, by assessing whether each vertex pair is connected--an operation that takes O(n\textasciicircum{}3) time with a simple algorithm but can be reduced to O(n\textasciicircum{}2).
+The second proof element shows that the Clique problem is at least as hard as any NP problem by reducing an NP-complete problem to it.
+The similar graph-based Independent set problem, which is NP-complete, is selected for this reduction, thereby confirming the Clique problem`s NP-completeness.
+
+\subsection*{IS Clique Idea}
+Independent sets and cliques in graphs are fundamentally opposite concepts--an independent set lacks edges between its vertices, while a clique is a subset with edges connecting all pairs of vertices.
+To utilize a clique-solving algorithm for independent set problems, one can invert a given graph G to its complement G bar, which retains the same vertices but includes an edge between vertex pair X,Y only if such an edge is absent in G\@.
+Consequently, a set S is an independent set in G if and only if S is a clique in G bar.
+This relationship is intuitive and requires no formal proof; the absence of edges among vertices in S in graph G ensures that in G bar, all vertices in S are interlinked, qualifying S as a clique.
+Conversely, if S is a clique in G bar, it must be an independent set in the original graph G\@.
+
+\subsection*{IS Clique}
+Demonstrated reduction from independent set problem to clique problem, utilizing graph G and goal g.
+Reduction involves using G`s complement G bar and g as inputs for the clique problem.
+A solution S to the clique problem in G bar signifies S is an independent set in G\@.
+Consequently, verifying that the clique problem remains NP-complete hinges on this reasoning.
+If no clique of size g exists in G bar, there`s no independent set of size g in G\@.
+The correctness of this reduction is confirmed through these observations, hence establishing the NP-completeness of the clique problem.
+
+\subsection*{Lecture Outline III}
+Demonstrated clique as NP-complete; aim to establish vertex cover also as NP-complete.
+
+\subsection*{Vertex Cover}
+A vertex cover in an undirected graph G consists of a subset of vertices that covers every edge, meaning for each edge, at least one of its endpoints is included in the set.
+This set can be as large as including all vertices, ensuring all edges are covered.
+For example, if an edge is denoted by (x, y), then either x, y, or both must be in the vertex cover set S\@.
+In a given example graph, the red vertices form such a cover.
+
+\subsection*{VC  Search Version}
+Vertex cover problem involves an undirected graph G and aims to find the minimum size vertex cover S within a budget b.
+If a vertex cover smaller or equal to b exists, it`s identified, otherwise, the output is NO\@.
+This problem is proven to be NP-complete.
+
+\subsection*{VC  Proof Outline}
+Vertex cover problem is NP-complete; proved in two steps.
+First, vertex cover, S, verification in polynomial time: checking each edge to confirm at least one endpoint in S (done in O(n+m)) and S size validation (done in O(n)).
+These show S as a potential solution in polynomial time.
+Second, must demonstrate vertex cover problem`s equivalency to other NP-complete problems.
+Chose independent set for reduction, being a graph problem similar to clique.
+The two-stage proof confirms the NP-completeness of the vertex cover problem.
+
+\subsection*{VC  Reduction Idea}
+Red vertices represent a vertex cover in a graph, while white vertices are an independent set.
+Evidence suggests that a minimum vertex cover corresponds to an independent set, with a general claim that a vertex set S is a cover if its complement S bar is independent, implying a one-to-one correlation between vertex covers and independent sets.
+Proving this claim facilitates a reduction from the problem of finding an independent set to finding a vertex cover.
+
+\subsection*{Forward Implication}
+Vertex cover S implies that its complement, S bar, is an independent set.
+Demonstrated this by showing that in graph edges, at least one endpoint is always part of the vertex cover S, ensuring that the complement S bar consists of non-adjacent vertices.
+Since S bar doesn`t include both vertices of any edge, it qualifies as an independent set, as no two vertices within it share an edge.
+
+\subsection*{Reverse Implication}
+Proving reverse implication that if S-bar is an independent set, then S is a vertex cover.
+Since no edge lies entirely within independent set S-bar, at least one endpoint of each edge must be outside S-bar, meaning it`s in S\@.
+Hence, S covers all edges, proving it`s a vertex cover.
+Claim proven, ready for reduction.
+
+\subsection*{IS VC}
+Reduced Indep.
+Set prob\. to Vertex Cover prob\. by setting budget b=n-g in graph G\@.
+Correctness rests on claim: If G has a Vertex Cover (VC) size \textless{}= N-g=b, then comp\. set S is an ind\. set of size \textgreater{}= g.
+So, find VC in G with size b ensures Ind.
+Set size g.
+No VC of size b implies no Ind.
+Set of size g.
+
+\subsection*{IS VC Correctness}
+Reduced independence set problem (ISP) to vertex cover problem (VCP) using graph G and goals--ISP goal as g to VCP budget b, where b = n - g.
+Solved VCP with solution s \textless{}= b.
+Complementary set S-bar returned as ISP solution for s as a vertex cover, implying S-bar is an independent set \textgreater{}= g.
+No VCP solution means no ISP solution, confirming the reduction`s correctness.
+Proved VCP is NP-complete.
+
+\subsection*{Practice Problems}
+Chapter Eight`s practice problems are key to understanding NP-completeness, with favorites including problem 8.4, which challenges spotting errors in an NP-completeness proof, and 8.10 requiring proofs of NP-completeness through generalization, comparing with known problems.
+Problem 8.14 tackles the Clique plus Independent set issue, while 8.19 deals with the Kite problem.
+Proving NP-completeness involves two steps: demonstrating it`s in NP (often straightforward), and reducing a known NP-complete problem to the new problem, where similarity guides selection of the known problem.
+Two reduction methods exist: generalization -- setting parameters to transform the new problem into a known one -- and gadget construction, where inputs are modified with additional structures.
+Mastery of NP-completeness, like dynamic programming, is achieved through extensive practice.
+

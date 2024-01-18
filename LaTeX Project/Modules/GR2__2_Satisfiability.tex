@@ -1,0 +1,115 @@
+\section*{2 Satisfiability}
+
+\subsection*{SAT  Notation}
+Exploring the strongly connected components algorithm applied to the SAT (satisfiability) problem, crucial for understanding NP completeness.
+Boolean formulas with n variables are considered, each taking true or false values.
+Literals are variables or their negations, with 2n possible literals.
+These formulas use conjunctions (ANDs), disjunctions (ORs), and negations (NOTs).
+CNF (conjunctive normal form) structures these into clauses, each an OR of literals; a formula in CNF is an AND of multiple such clauses.
+To satisfy a CNF formula, each clause must have at least one true literal.
+Despite any formula being convertible to CNF, this can significantly increase formula size.
+Example provided with a CNF formula containing various-sized clauses demonstrating satisfaction through specific variable assignments that fulfill all clauses, resulting in the entire formula evaluating to true.
+
+\subsection*{SAT Problem}
+SAT problem input: formula f in conjunctive normal form with n variables (x1-xn) and m clauses.
+Need output: a satisfying assignment (true/false for each variable) making formula true.
+If none exists, output `no`.
+
+\subsection*{SAT Problem Quiz Question}
+SAT problem example provided with the formula: (!x1  !x2  x3)  (x2  x3)  (!x3  !x1)  (!x3).
+Request to specify output: provide a satisfying variable assignment if possible, otherwise indicate unsatisfiability.
+
+\subsection*{k-SAT}
+Assigning X\_1=false, X\_2=true, X\_3=false satisfies the given clauses in the formula\. k-SAT is a specific SAT problem variant where each clause has at most k literals; the example provided is 3-SAT but applies to all k\textgreater{}=3.
+SAT, including k-SAT for k\textgreater{}=3, is NP-complete, indicating no known polynomial-time solutions for these cases.
+However, there exists a polynomial-time algorithm for 2-SAT which can be solved using strongly connected components, marking a sharp contrast to the complexity of k-SAT for k\textgreater{}=3.
+
+\subsection*{Simplifying Input}
+Addressing 2-SAT problem with input F of variables x1 - x4 and five clauses by simplifying to remove unit clauses.
+Unit clauses (single literal) determine variable state to satisfy clause; x1 assigned false, simplifying formula.
+Process eliminates clauses containing negation of assigned literal and removes satisfied literals from other clauses, creating F prime reduced formula.
+If new unit clauses form, procedure repeats until formula is empty or only contains two-literal clauses.
+Claim: original formula F satisfiable iff F prime is satisfiable.
+Process naturally leads to assumption that all 2-SAT problem inputs can be reduced to clauses of size two - simplifies problem solving, closely relates to strongly connected components algorithm used in solving 2-SAT\@.
+
+\subsection*{Graph of Implications}
+Converting a Boolean logic problem with a formula F consisting of variables and clauses into a graph problem.
+In the formula, let N = number of variables (X1, \ldots, XN) and M = number of clauses.
+Construct a directed graph to represent the problem.
+The graph will have 2N vertices, one for each literal and its negation (X1, X1 Bar, \ldots, XN, XN Bar), and 2M edges, representing implications derived from the clauses (a clause of literals alpha and beta yields edges from Alpha Bar to beta and from Beta Bar to alpha).
+Example: a formula with 3 variables/clauses generates a graph with 6 vertices and edges that encode implications such as setting X1 true requires X2 to be false to satisfy the clause X1 Bar or X2 Bar, visualized as directed edges (X1 to X2 Bar, X2 to X1 Bar).
+The graph construction generalizes to any formula with clauses of two literals.
+
+\subsection*{Graph Properties}
+A two-SAT problem was analyzed through graph representation, where vertices represent literals and edges signify implications.
+A crucial observation was that a path from a literal X\_i to its negation X\_i-bar implies the literal can`t be true without contradiction.
+If X\_i is set to true, it leads to setting X\_i to false, creating a contradiction, which rules out a true assignment for X\_i.
+Conversely, no implications rise from setting X\_i to false if there`s no path from X\_i-bar.
+The unsatisfiability becomes clear if there`s a path from X\_i to X\_i-bar and back from X\_i-bar to X\_i; neither true nor false can be assigned to X\_i without leading to a contradiction.
+This condition translates to X\_i and X\_i-bar being in the same strongly connected component (SCC) in the graph.
+Whenever a variable and its negation are in the same SCC, the formula cannot be satisfied.
+In contrast, if each variable and its negation belong to separate SCCs, a satisfying assignment exists, and the formula is satisfiable.
+The graph properties are therefore pivotal in determining the satisfiability of a two-SAT Boolean formula.
+
+\subsection*{SCCs}
+If xi and xi bar (the positive and negative literals) are in the same strongly connected component (SCC) of a graph, then the formula cannot be satisfied due to inevitable contradictions arising from any assignment of truth values.
+Contrarily, if each xi and xi bar pair is in separate SCCs, the formula is satisfiable.
+This condition will be demonstrated by constructing an algorithm designed to find a satisfying assignment for the formula, effectively proving a formula`s satisfiability when its literals are appropriately divided among different SCCs.
+
+\subsection*{Algorithm Idea}
+Use a strongly connected component (SCC) algorithm to find a sink SCC in a graph.
+Assign truth values to literals in the sink SCC to satisfy them, setting them to true, which means any complements are set to false.
+No outgoing edges from a sink SCC means no implications from these assignments.
+Once assigned, remove the sink SCC and repeat on the remaining graph.
+Key concern is ensuring the complement of the sink SCC (denoted S bar) is a source SCC--having no incoming edges, it`s safe to set S bar to false without worrying about subsequent implications.
+The process involves setting sink SCCs to true and ensuring their complements, if source SCCs, are set to false.
+
+\subsection*{Algorithm Idea 2}
+Transitioning from discussing a sink strongly connected component (SCC) to a source SCC, the key is to manage variable implications in a logical graph.
+With a source SCC, labeled S prime comprised of X4 and X2bar, setting this SCC to false will accordingly set X4 to false (unsatisfying it) and X2 to true.
+The source SCC lacks incoming edges, preventing any problematic backward implications.
+The false setting removes the component from consideration without worrying about outgoing implications.
+The counterpart literals, X4bar and X2, reside in a sink SCC, which has inbound but not outbound edges, ensuring all literals within it can be satisfied without further implications.
+Both processing source and sink SCCs--by setting the former to false and latter to true--achieve the same result, satisfying their literals without causing complications due to their strong connection and lack of problematic edges.
+These operations are complementary; sink and source SCCs contain inverted literals (if one is true, the other is false).
+Implementing this strategy allows the removal of SCCs in pairs (S prime and S prime bar), thus eliminating both the positive and negative literals of a variable from the graph.
+This step reduces the complexity of the logical formula and graph, permitting the repetition of the process.
+Consequently, the formula simplifies progressively, facilitating the resolution of the logical structure it represents.
+
+\subsection*{2SAT Algorithm}
+Key idea: Developed an algorithm for solving 2SAT problems based on unproven but utilized property that conflicting variables (Xi and Xi bar) belong to separate strongly connected components (SCCs) in the implication graph.
+Algorithm steps: 1) Simplify input formula f by eliminating unit clauses, ensuring all remaining clauses have size 2.
+2) Construct a graph of implications based on f.
+3) Run SCC algorithm on the implication graph G, ordering SCCs topologically.
+4) Set the last (sink) SCC to `true`, their logical opposites (source SCC) to `false`.
+5) Remove the satisfied sink SCC and its complement source SCC from G\@.
+6) Repeat the process, setting truth values and removing SCCs, till G is empty and f is satisfied.
+Performance: Main computational effort lies in constructing SCCs, which is linear time.
+Overall algorithm runs in time proportional to the sum of vertices and edges (O(n+m)).
+Proof needed: The algorithm`s validity hinges on the yet-to-be-demonstrated assumption that every sink and its complementary source SCC can be assigned opposite truth values without conflict.
+
+\subsection*{Proof of Key Fact}
+To prove that a sink component S implies that its complement S bar is a source component and vice versa, a claim about the connectivity of literals in a strongly connected component (SCC) is used.
+The claim states that if there`s a path from literal alpha to beta, there is a corresponding path from beta bar to alpha bar.
+Applying this claim, for any two vertices (literals) alpha and beta in the sink component S, which are strongly connected, there are paths from alpha to beta and from beta to alpha.
+By the claim, there are paths from beta bar to alpha bar and from alpha bar to beta bar.
+This shows alpha bar and beta bar are strongly connected in their own SCC, S bar, signifying that complements of literals in an SCC are also strongly connected.
+Although this establishes that the complement of an SCC is another SCC, it does not directly demonstrate the sink-source relationship.
+However, it is a stepping stone towards proving that a sink SCC implies that its complement is a source SCC, and the reverse can also be proved using similar reasoning.
+The final part of showing a sink leads to a source and vice versa remains to be proven.
+
+\subsection*{Rest of Proof}
+Have demonstrated that for any sink strongly connected component (SCC) S in a graph, the complement S bar constitutes a source SCC\@.
+This is derived from the logical connection that no outgoing edges from any vertex (literal) in S implies no incoming edges to the corresponding complements in S bar.
+Thus, if all vertices in S lack incoming edges, their complements in S bar lack outgoing edges, confirming S bar as a source SCC\@.
+This relationship is reversible, confirming the duality: if S bar is a source then S is a sink SCC\@.
+The key fact established is that sink SCCs and source SCCs are complements.
+The remaining task is to verify the underlying claim supporting this conclusion.
+
+\subsection*{Proof of Claim}
+To prove that a path from alpha to beta guarantees a path from beta bar to alpha bar and vice versa, consider a path via vertices gamma0 (alpha) to gammal (beta).
+For any edge between two points, say gamma1 to gamma2, derived from the clause gamma1 bar or gamma2, there`s also an edge from gamma2 bar to gamma1 bar.
+Following this for each segment, a path is constructed from gammal bar (beta bar) to gamma0 bar (alpha bar).
+This symmetry is reversible.
+Exhibiting this proves the correctness of the linear time algorithm for 2-SAT\@.
+

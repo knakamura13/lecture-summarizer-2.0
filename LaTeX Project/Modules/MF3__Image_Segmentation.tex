@@ -1,0 +1,92 @@
+\section*{Image Segmentation}
+
+\subsection*{Image Segmentation}
+Lecture explores max flow use in computer vision for Image Segmentation, aiming to divide an image into objects, specifically separating the foreground from the background, using a given image example to distinguish a triangle from its surroundings.
+
+\subsection*{Formulation}
+Examining pixelated images using graphs, with pixels represented as vertices.
+Example given with a small magnified image structured by undirected graph G\@.
+It has nine vertices, edges connect neighboring pixels.
+
+\subsection*{Parameters}
+In the context of an undirected graph G representing pixels, each pixel is associated with two non-negative parameters: fi, representing the likelihood of the pixel being in the foreground, and bi, denoting background likelihood.
+Additionally, for each pair of neighboring pixels, a non-negative separation penalty pij is defined, representing the cost of classifying the pixels into different objects.
+
+\subsection*{Example}
+In the given image example, parameters were set to define the likelihood of pixels being in the foreground or background, with white pixels more likely foreground and black pixels likely background.
+Notably, the matrix defining this is symmetric, allowing for the foreground and background labels to be reversible.
+Sample separation penalties are applied when pixels differ, but in this case, there is no penalty for separating pixels into different objects.
+The example is simplified, using monochromatic pixels and simple weights for demonstration purposes.
+
+\subsection*{Partition}
+Aim to segregate pixel vertices into sets F (foreground) and B (background).
+Assign weight to partitions: FB score for foreground pixels, BJ score for background.
+Separation penalties subtracted for edges between F and B pixels, with penalty value CIJ\@.
+Objective: identify pixel assignment to F and B with the highest cumulative weight.
+
+\subsection*{Min-Cut}
+Goal: transform a maximization problem into a min st-cut problem by modifying weights.
+Challenge: currently, the problem involves both summation and subtraction of non-negative terms.
+Solution: necessary to convert the subtraction of separation penalties into addition to ensure all terms are positive/non-negative, aligning with min st-cut problem where all capacities are positive.
+
+\subsection*{Reformulation}
+Sum of foreground (FG) and background (BG) likelihoods across pixels denoted by L\@.
+Weight of a partition FB computed using FG weight (fi) per FG pixel and BG weight (bj) per BG pixel.
+Weight sum equals L minus FG pixels` BG likelihood sum and BG pixels` FG likelihood sum.
+Summing FG and BG pixels` FG likelihood gives total FG likelihood.
+Adding BG pixels` BG likelihood yields total BG likelihood.
+Upon subtracting edge separation penalty from both sides, equation represents weight W of FB\@.
+Define W-prime of FB comprising three terms, showing right-hand side equals L minus W-prime of FB\@.
+
+\subsection*{New Weights}
+L represents total pixel likelihoods for foreground (F) and background (B).
+Weight of partition F, B is sum of assigned vertices` likelihoods, corrected by a separation penalty for edges.
+New weight W` is similar but adds penalty instead of subtracting.
+Key relationship: W\_F,B = L - W`\_F,B\@.
+Thus, maximization of W is equivalent to minimization of W`, turning our problem into a min instead of a max problem.
+All W` terms are positive.
+This converts the problem into a mean SD cut, solvable by max flow in flow networks--maximize flow to find mean SD cut solution.
+
+\subsection*{New Problem}
+New problem formulation involves an undirected graph representing an image.
+Each vertex I (pixel) has associated non-neg\. weights fi and bi.
+Edges have non-neg\. weight Pij.
+Aim to partition vertices into two sets, F and B, minimizing weight w` of FB, which also maximizes weight w of FB, thus addressing the original image segmentation problem.
+Next step: reduce this to a max flow problem.
+
+\subsection*{Flow Network}
+Converting image segmentation to max-flow involves redefining the problem`s undirected graph as a directed graph G-prime.
+In this conversion, each undirected edge between neighboring pixels is replaced with bi-directional edges representing flows in both directions.
+Capacity constraints on these edges are dictated by separation penalties, labeled as Pij, reflecting the cost of segmenting adjacent pixels.
+Additionally, the graph incorporates specific vertices representing foreground and background, integrating pixel likelihoods relative to these concepts into the network structure.
+This setup prepares the image segmentation issue for resolution through max-flow algorithms.
+
+\subsection*{Foreground}
+Adding vertex S to represent foreground pixels in a directed graph.
+Shrink vertices for clarity.
+Introduce vertices S (source) and t (sink) for max-flow problem: S for foreground, t for background.
+Connect S to each pixel vertex with edge capacity fi to encode foreground likelihoods.
+
+\subsection*{Background}
+Constructed a flow network from an undirected graph to solve max-flow problem.
+Each edge leads from original graph vertices to a new vertex `t`, with `t` as a sink and another vertex `s` as a source.
+The capacity of edges to `t` represents the background likelihood, while the capacities from `s` reflect the foreground likelihood; separation penalties are also included.
+With capacities defined for every edge, the graph is ready for the max-flow problem input.
+
+\subsection*{Cuts}
+Executing max-flow on a flow network yields a flow of max size, equivalent to the min capacity S,T cut.
+Understanding S,T cuts involves examining partitions and cut capacities, focusing on edges from set F (foreground) to set B (background), excluding edges from B to F\@.
+Assigning pixels to F yields edges to sink T (capacity B,I), assigning pixels to B gives edges from source S (capacity F,J).
+For each undirected edge with ends in F and B, its directed edge`s capacity is P,I,J\@.
+Summing capacities of edges crossing the cut equals W prime (F,B), the sum of edge capacities from S to B, I to T, and separation penalty P,I,J for F and B assignments.
+The goal: minimize W prime.
+Running max-flow and finding the min S,T cut achieves this, identifying the partition that minimizes W prime.
+
+\subsection*{Solution}
+Solved img segmentation by mapping it to a max flow problem in a network.
+Converted img to undirected graph, added source (s) and sink (t) vertices, and turned edges bi-directional for flow network.
+Defined capacities, ran max flow to get max-size flow f*.
+Max flow size equals min st-cut capacity per max flow min-cut theorem.
+Min-capacity cut corresponds to min-weight partition w prime, inverse to original max-weight partition goal w.
+Hence, finding min w prime yields max w partition, solving img segmentation via max flow.
+

@@ -1,0 +1,101 @@
+\section*{Fast Integer Multiplication}
+
+\subsection*{Divide and Conquer}
+Divide and Conquer (D\&C) algorithms, such as binary search or merge sort, demonstrate their power in handling complex large-scale problems which are beyond the capacity of hardware implementations.
+Addressing multiplication of two n-bit numbers, often running into thousands of bits as in RSA encryption, D\&C offers a faster solution than standard methods.
+This approach also solves finding the median in an unsorted array without sorting it.
+Additionally, the Fast Fourier Transform (FFT) algorithm, a cornerstone in fields like signal processing and hailed as a pivotal numerical tool since 1994, hinges on understanding complex numbers.
+Despite the initial complexity, mastering FFT reveals its elegance and simplicity, and investing time and effort in learning it proves rewarding, as it is considered a masterpiece in the realm of algorithms.
+
+\subsection*{D\&C  Overview}
+Divide and conquer techniques expounded with RSA algorithm examples: fast modular exponentiation and Euclid`s GCD\@.
+Exploring n-bit integer multiplication vital for large integers in RSA, where standard hardware operations are insufficient.
+Traditional multiplication takes n\textasciicircum{}2 time; aim for a faster algorithm.
+Also covering linear-time median calculation and Fast Fourier Transform (FFT).
+Assumed prior knowledge includes merge sort and solving recurrences, with textbook resources for refreshment.
+Next focus: efficient n-bit integer multiplication.
+
+\subsection*{Multiplying Complex \#s}
+Exploring Gauss`s method in processing n-bit integer multiplication: Op cost--a key constraint.
+Multiplication proves costly, effort aimed at minimizing mult.
+Count while add/sub considered cheap, abundant use tolerated.
+Insight applied to complex number multiplication (a+bi)*(c+di), expanding requires four real mults\. traditionally: ac, bd, bc, ad.
+Goal: reduce mult\. without sacrificing outcome.
+Gauss`s strategy: without calculating bc and ad separately, compute their sum directly, reducing required mults\. from four to three without compromising the product calculation of the two complex numbers.
+This technique demonstrates optimization potential in computation, vital in cases where certain ops, such as mult., are significantly more resource-intensive than others like add/sub.
+
+\subsection*{Improved Approach}
+Complex number multiplication traditionally requires four real multiplications: ac, bd, bc, and ad.
+Goal: reduce to three real multiplications to calculate the product of two complex numbers, a+bi and c+di.
+Achieved by computing bc + ad, not individually but as part of an expression.
+The method: use the fact that bc + ad are the cross terms in the expansion of (a + b)(c + d).
+With expressions rearranged, bc + ad equals (a + b)(c + d) - ac - bd.
+The three necessary real multiplications are then: ac, bd, and (a + b)(c + d).
+These calculations allow us to determine ac, bd, and additively bc + ad to get the complex product.
+This reduction in multiplications applies not only to complex numbers but can accelerate multiplying large n-bit integers beyond the standard quadratic time.
+The essence of this approach is to consider the sum of the real and imaginary parts (a + b) and (c + d) of each complex number and multiply them to obtain a key term used to simplify the overall calculation, revealing the clever and efficient nature of the algorithm.
+An example with (5 + 3i)(7 - 6i) hints at using these sums, 8 and 1, to efficiently find the product.
+
+\subsection*{D\&C  Naive Approach}
+Exploring n-bit integer multiplication using divide and conquer mimics merge sort: split inputs (n is a power of 2 for simplicity) in halves, resolve recursively, then combine\. x and y split into x\_l/x\_r and y\_l/y\_r (left/right n/2 bits).
+Demonstrated with binary 182 (1011 0110), split into x\_l (1011 or 11) and x\_r (0110 or 6), with 182 equaling 11 times 2\textasciicircum{}4 plus 6.
+This shows x (or y) as x\_l shifted by n/2 (multiplied by 2\textasciicircum{}(n/2)) plus x\_r.
+The method aims to simplify computations by handling smaller parts sequentially, leaning on the relations between original and half-sized numbers stemming from binary representation and positional value.
+
+\subsection*{Naive  Recursive idea}
+Recursive approach to multiply n-bit numbers x and y by splitting each into two n/2-bit numbers: xl (first n/2 bits of x), xr (last n/2 bits of x), yl (first n/2 bits of y), and yr (last n/2 bits of y)\. x equals xl * 2\textasciicircum{}(n/2) + xr and y equals yl * 2\textasciicircum{}(n/2) + yr.
+Multiplying x and y yields 2\textasciicircum{}n * xl * yl + 2\textasciicircum{}(n/2) * (xl * yr + yl * xr) + xr * yr.
+To compute x * y, recursively compute products of n/2-bit numbers: xl * yl, xl * yr, xr * yl, and xr * yr, leading to a recursive algorithm for the larger product.
+This method needs refinement for efficiency.
+
+\subsection*{Naive  Pseudocode Question}
+Divide and conquer algorithm for n-bit int multiplication, assuming n=2\textasciicircum{}k.
+Split x into XL (first n/2 bits) and XR (last n/2 bits), y into YL and YR similarly.
+Compute products: XL*YL=A, XR*YR=B, XL*YR=C, XR*YL=D\@.
+Combine as Z=x*y=2\textasciicircum{}n*A + 2\textasciicircum{}(n/2)*(C+D) + B\@.
+Running time not detailed, but algorithm recursively computes four n/2-bit multiplications and combines them to produce result Z\@.
+
+\subsection*{Naive  Running Time}
+Algorithm`s run time analysis reveals partitioning x and y into halves takes O(n) time.
+Recursively compute A, B, C, D, each n/2 bit pairs, total 4*T(n/2).
+Computing final product z requires O(n) time for three additions of n bit numbers and shifting for multiplication by powers of 2, hence also O(n).
+Combination of recursive subsolutions and additional operations results in T(n)= 4*T(n/2) + O(n) running time, which solves to O(n\textasciicircum{}2), the same as straightforward multiplication.
+Improvement hinges on reducing four subproblems to three, leveraging Gauss`s idea.
+
+\subsection*{D\&C  Improved Approach}
+The text outlines a divide and conquer algorithm for multiplying two numbers, X and Y\@.
+Initially, X times Y is expressed as a sum involving four sub-products based on left (l) and right (r) partitions of X and Y\@.
+The traditional method would compute these four sub-products (x\_l*y\_l, x\_l*y\_r, x\_r*y\_l, x\_r*y\_r) recursively, leading to an O(n\textasciicircum{}2) time algorithm.
+The goal is to reduce the subproblems from four to three, inspired by Gauss`s method for complex numbers.
+By defining cross terms (x\_l*y\_r + x\_r*y\_l), they can be computed without calculating each individually.
+This is achieved by multiplying the sums (x\_l+x\_r) and (y\_l+y\_r) and then subtracting the previously calculated recursive products (A = x\_l*y\_l and B = x\_r*y\_r) from the result (referred to as C).
+With these three recursive computations (A, B, and C), they can be combined using the expression 2\textasciicircum{}n*A + 2\textasciicircum{}(n/2)*(C - A - B) + B to find X times Y\@.
+This improved algorithm has only three subproblems to recursively solve, making it a more efficient approach.
+
+\subsection*{Improved  Pseudocode Question}
+Developed an enhanced multiplication algorithm named Fast Multiply, improving the previous order n square time methodology by modifying the end section.
+Maintains original setup: inputs two n-bit integers (x and y), outputs their product.
+Inputs split into two halves, XL, XR for x and YL, YR for y.
+Fast Multiply recursively computes three products--XL times YL (A), XR times YR (B), and (XL + XR) times (YL + YR) (C)--instead of four.
+Applies Gauss`s technique for combining results: multiplies A by 2\textasciicircum{}n, adds product of (C - A - B) by 2\textasciicircum{}(n/2), and adds B\@.
+Outputs Z, the final product, significantly reducing subproblems to three.
+
+\subsection*{Improved  Running Time}
+New algorithm divides a problem into three sub-problems, each involving the multiplication of n/2-bit numbers, recursively computed.
+The combination step of these sub-problems takes O(n) time.
+By solving the recurrence relationship with the substitution method, we observe it creates a geometric series with log2n terms, which leads to an increasing series where the last term is dominant.
+The complexity is therefore determined to be O(n * (3/2)\textasciicircum{}log2n).
+Upon simplifying, the complexity translates to O(n\textasciicircum{}(log2\textasciicircum{}3)), which evaluates to O(n\textasciicircum{}1.59) through the conversion of the base of the exponent.
+Hence, the algorithm improves from O(n\textasciicircum{}2) to O(n\textasciicircum{}1.59).
+Further reduction of the exponent is possible by segmenting the input into more parts; however, this increases the constant hidden in the Big O notation, making the combination of solutions more computational intensive.
+
+\subsection*{Improved  Summary}
+Algorithm demonstrates a clever multiplication technique using binary representation.
+For illustrative purposes, consider X=182 and Y=154, in binary: 10110110 and 10011010, respectively.
+The approach divides X into XL (1011, or 11 in decimal) and XR (0110, or 6), and Y into YL (1001, or 9) and YR (1010, or 10).
+It computes XL*YL (11*9=99), XR*YR (6*10=60), and (XL+XR)*(YL+YR) = 17*19 = 323.
+The algorithm then follows a specific formula: Multiply XL*YL by 2\textasciicircum{}n (where n=8), subtract XL*YL and XR*YR from the (XL+XR)*(YL+YR) product, multiply the result by 2\textasciicircum{}(n/2), and add XR*YR to get the final product of X*Y, equaling 28,028.
+The process works with seemingly unrelated numbers, like 17 and 19 from our example, a non-intuitive aspect of the algorithm.
+Although further details on similar matrix multiplication (Strassen`s algorithm) and the upcoming linear-time median algorithm are available, they`re not covered here due to complexity.
+This multiplication method represents a fast way to multiply n-bit integers.
+

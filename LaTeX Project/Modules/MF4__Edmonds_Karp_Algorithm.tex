@@ -1,0 +1,89 @@
+\section*{Edmonds Karp Algorithm}
+
+\subsection*{Max-Flow Min-Cut Algorithms}
+Ford-Fulkerson and Edmonds-Karp algorithms both address the max-flow problem.
+Ford-Fulkerson uses augmenting paths in the residual graph via DFS or BFS, with a runtime of O(M*C), assuming integral capacities.
+Edmonds-Karp is a variant of Ford-Fulkerson, employing BFS for finding paths.
+Its runtime outperforms Ford-Fulkerson at O(m\textasciicircum{}2*n) and does not insist on integral capacities, only positivity.
+This session will recap Ford-Fulkerson and highlight Edmonds-Karp`s distinctions before exploring the latter`s runtime analysis in depth.
+
+\subsection*{Ford Fulkerson Algorithm}
+Ford-Fulkerson algorithm operates on a directed graph with integer edge capacities, denoted C\_sub\_e, to find a maximum flow from source, s, to sink, t.
+Initially, flows are set to zero.
+Algorithm constructs a residual network, G\_superscript\_f, then searches for an augmenting path using BFS or DFS from s to t.
+If no path exists, current flow is max size; if path exists, find minimum capacity, c(P), along path and augment flow by c(P).
+This process repeats, updating residual network and searching for paths until no augmenting path can be found, indicating termination of the algorithm and an optimal solution.
+Focus now shifts to Edmonds-Karp algorithm.
+
+\subsection*{Edmonds-Karp Algorithm}
+The Edmonds-Karp algorithm differentiates from the Ford-Fulkerson by exclusively using BFS to search for st-paths in the residual network.
+The algorithm`s efficiency doesn`t rely on integer capacities; any positive value is sufficient.
+An essential attribute of both Edmonds-Karp and Ford-Fulkerson is that during each iteration, the residual network must alter by at least one edge reaching full capacity and thus being removed in the subsequent step, whether it`s a forward or backward edge.
+Additional edges may also be removed or added, and understanding these changes is important.
+
+\subsection*{Proof Outline}
+Edmonds-Karp algorithm`s run time proven to be O(m\textasciicircum{}2n).
+Number of algorithm`s augmenting path rounds \textless{}= m*n.
+Each round involves BFS, which is O(m) time given m \textgreater{}= n.
+Total run time O(m\textasciicircum{}2n) due to O(m) per round and O(mn) rounds.
+Focus: Prove max rounds = mn.
+Each round, residual graph`s edge, min capacity on augmenting path, deleted.
+Edge can be re-added later.
+Key lemma: An edge e deleted and re-added to residual graph \textless{}= n/2 times.
+As m edges exist, each potentially deleted n/2 times, total rounds \textless{}= n/2 * m, confirming the algorithm`s run time.
+Proof details follow to support lemma.
+
+\subsection*{BFS Properties}
+Key lemma states an edge in the residual graph is deleted and reinserted \textless{}= n/2 times.
+To prove it, we use BFS properties, which operates on directed/undirected graphs without considering edge weights.
+BFS starts at vertex s and outputs an array of size n, where dist(v) is the min number of edges from s to v, ignoring edge weights.
+For weighted edges, Dijkstra`s algorithm is needed.
+BFS also determines the shortest path from s to v using the fewest edges.
+
+\subsection*{BFS Example}
+BFS (Breadth-First Search) algorithm analysis when applied to flow network at initial flow (zero flow along edges) shows that residual network corresponds to the original network.
+Running BFS begins at source vertex s, exploring adjacent vertices a, b, and c in sequence, then their subsequent connections which include d, e, and f.
+A path is formed (s-a-d-t) characterized by its edges connecting vertices whose levels increment by 1, signifying BFS finds the shortest path in terms of edge count from source to target (t).
+The path`s progression observes vertices at levels that correlate to their minimum distance from source s, incrementally rising by 1 per edge; no level skips or regressions being possible due to BFS`s layer-by-layer exploration, ensuring the shortest path is found.
+This level increment consistency is a vital BFS property underlining the reliability of the path established.
+
+\subsection*{BFS Properties - Part 2}
+In the Edmonds-Karp algorithm, vertex levels in the residual network are examined, focusing on vertex Z\@.
+As the algorithm progresses and the residual network evolves with edge deletions and additions, it is shown that vertex levels can only stay the same or increase, never decrease.
+For example, if an edge from A to D is removed, the level of D increases because the shortest path from source S to D gets longer.
+Conversely, adding edges, such as from B to D, might intuitively seem to reduce D`s level, but that`s not the case.
+The proof lies in understanding the modifications within the residual network, particularly which edges get added or removed, supporting the claim about non-decreasing levels of vertices.
+
+\subsection*{AddDelete Edges}
+A residual graph`s edges are adjusted during flow network operations based on whether they are in the network or are back edges.
+A forward edge is added when its flow is lessened from full capacity, implying a back edge was used in an augmenting path; it`s removed when its flow meets capacity due to augmentation on that edge.
+Conversely, a back edge is added when flow on the forward edge starts from zero, indicative of the forward edge`s use in augmentation; it is removed when the forward edge`s flow is depleted by sending flow back, meaning the back edge was on the augmenting path.
+Thus, edge adjustments in residual networks are directly linked to their roles in augmenting paths that alter flow levels.
+
+\subsection*{Conclusion}
+Adding edge y to z in a residual network implies reverse edge z to y is on the augment path.
+Removing edge y to z indicates edge y to z is on the augment path.
+Edge removal equals capacity elimination, necessitating increased flow via this edge; it must be on augment path for flow increase.
+Adding an edge equals spare capacity rise; flow reduction on the edge requires augmentation of the reverse direction edge, placing it on the augment path.
+
+\subsection*{Proof of Claim}
+Vertex levels in the Edmonds-Karp algorithm remain stable or increase, never decrease.
+Levels might seem to drop if a shorter path appears, but this is discounted by edge removals; focus is on edge additions.
+Analyzing a Y-to-Z edge addition, the reverse must be part of the augmenting path (by BFS properties, every subsequent vertex level is one higher than the previous).
+Given Z`s level is i, Y`s is i+1, making the Y-to-Z addition from higher to lower level, not reducing Z`s level.
+Hence, vertex levels remain constant or rise with each algorithm round, refuting the possibility of level decrease.
+The proof underscores this stability while hinting at a bound on algorithm rounds derived from occasional strict level increases.
+
+\subsection*{DeleteAdd Effect}
+The lemma addresses how the levels of vertices change when an edge is deleted and then added back into a residual network, specifically regarding vertex v and its neighbor w.
+If an edge from v to w is deleted, it implies that w`s level is one more than v`s level at the time of deletion.
+When the edge is reintroduced, v`s level must then be one more than w`s.
+Since v`s level doesn`t decrease and w`s level was at least i+1 earlier, reintroducing the edge ensures v`s level is at least i+2.
+In essence, deleting and re-adding an edge to the network causes the associated vertex level to increase by at least two.
+
+\subsection*{Finishing Off}
+Edge deletion and reinsertion in a residual network leads to at least a two-level increase for the originating vertex.
+Vertex levels range from 0 for source S to n.
+Thus, an edge can be deleted and readded to the residual network a maximum of n/2 times.
+With m edges in the graph, this establishes a limit of nm rounds for the Edmonds-Karp algorithm, concluding its analysis.
+

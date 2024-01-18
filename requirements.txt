@@ -4,3 +4,4 @@ pathlib>=1.0.1
 python-dotenv>=0.21.0
 requests>=2.31.0
 tqdm>=4.65.0
+unidecode~=1.2.0

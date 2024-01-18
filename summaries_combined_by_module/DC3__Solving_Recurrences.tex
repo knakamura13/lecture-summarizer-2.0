@@ -1,0 +1,54 @@
+\section*{Solving Recurrences}
+
+\subsection*{Solving Recurrences}
+Refresher on solving recurrences in divide and conquer algos: Merge sort`s recurrence T(N) = 2T(N/2) + O(N), implying log-linear complexity.
+Naive integer multiplication recurrence T(N) = 4T(N/2) + O(N) claims quadratic complexity.
+Improved integer multiplication lessens to 3 subproblems: T(N) = 3T(N/2) + O(N), resulting in O(N\textasciicircum{}log2(3)) complexity--approx\. 1.6 exponent.
+Median finding algo recurrence T(N) = T(3N/4) + O(N) claims linear complexity.
+Solutions for these recurrences illustrate different algorithm efficiency ranging from logarithmic to polynomial time complexity.
+
+\subsection*{Example 1}
+Considering the recurrence relation T(n) = 4T(n/2) + O(n), O(n) is defined by a constant c yielding T(n)  4T(n/2) + cn with the base case for inputs of size 1 being O(1), which is equated with c.
+The recurrence is restated as T(n) \textless{}= cn + 4T(n/2) after which T(n/2) is replaced iteratively by its recurrence expression; this process generates terms like cn with other terms being reduced by powers of 2 and multiplied by powers of 4.
+This iterative substitution leads to a geometric series in c times n (cn(1 + 2 + 2\textasciicircum{}2 + \ldots)) combined with a decreasingly scaled recurrence term (4\textasciicircum{}3 T(n/2\textasciicircum{}3)), indicating a pattern consistent with a geometric series.
+
+\subsection*{Expanding out}
+Analyzing a recurrence relation T(N) = 4T(N/2) + O(N), the relation evolves by substitution into a form that reveals a geometric series when substituted I - 1 times.
+Recognizing the base case occurs at T(1), we set I equal to log\_2(N), which simplifies the relation to evaluate the overall complexity.
+Key observations include that T(1) can be bounded by constant C and 4\textasciicircum{}(log\_2(N)) is O(N\textasciicircum{}2).
+The geometric series, due to its increasing nature, is dominated by its last term, which simplifies to O(N).
+Consequently, the overall complexity of the recurrence is determined to be O(N\textasciicircum{}2), stemming from the geometric progression within the recursive structure.
+
+\subsection*{Geometric Series}
+Exploring a geometric series with a positive constant alpha as an example: term dominance determined by alpha`s value relative to 1 in solving recurrences within big O notation.
+If alpha \textgreater{} 1, last term dominates--the series is O(alpha to the power of j).
+If alpha \textless{} 1, the series is dominated by the first term, thus O(1).
+For alpha = 1, all terms equal and series is O(k+1).
+Analyzed recurrence had alpha = 2, last term dominated.
+In merge sort, with alpha = 1, series results in O(k).
+Median finding algorithm example had alpha = 3/4, making the series O(1).
+
+\subsection*{Manipulating Polynomials}
+Need to manipulate polynomial with exponents that are logarithmic expressions.
+Transformation of 3\textasciicircum{}(log base 2 of n) into a polynomial n\textasciicircum{}c.
+Key step involves changing the exponential base to match the logarithmic base, in this case from 3 to 2, by expressing 3 as 2\textasciicircum{}(log base 2 of 3).
+By substitution and using logarithmic properties, the exponent becomes a product: log base 2 of 3 * log base 2 of n, which allows for swapping exponents and simplifying.
+This leads to identifying the polynomial`s exponent c as log base 2 of 3, proving that 3\textasciicircum{}(log base 2 of n) equals n\textasciicircum{}(log base 2 of 3).
+
+\subsection*{Example 2}
+Analyzing the recurrence relation T(n) = 3T(n/2) + O(n), which originates from a sophisticated integer multiplication algorithm.
+After removing the big O notation, T(n) is defined recursively with a geometric series component and a linear term, leading to an expression involving i iterations of successive subproblems.
+The iteration stops when the subproblem size becomes 1, where i equals log base 2 of n.
+This stopping point is determined by the rate at which subproblem size is reduced in this recurrence, which here is by a factor of 2.
+This leads to a final expression in which T(n) is largely dominated by a term that grows proportional to (3/2)\textasciicircum{}log base 2 of n.
+Simplifying the expression, we see that the n from the O(n) terms cancels out with the denominator`s n from the geometric series term, revealing that the solution to the recurrence is ultimately O(n\textasciicircum{}log base 2 of 3).
+This indicates that the time complexity of the algorithm is polynomial and specifically related to n raised to the power of log base 2 of 3.
+
+\subsection*{General Recurrence}
+Analyzing recurrences with constants a \& b \textgreater{} 1, the form T(n) = aT(n/b) + O(n) expands into a geometric series.
+The series` behavior depends on the a/b ratio.
+If a \textgreater{} b, the series increases and the last term defines the growth, resulting in O(n\textasciicircum{}logb(a)).
+For a = b, the series` terms are constant, creating O(n log n) growth, like with merge sort.
+If a \textless{} b, the series decreases and the first term prevails, simplifying the growth to O(n).
+Extensions of this concept, for recurrences of the form O(n\textasciicircum{}d), follow the master theorem, which offers a more detailed solution framework.
+

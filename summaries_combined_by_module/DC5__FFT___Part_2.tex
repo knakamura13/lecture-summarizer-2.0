@@ -1,0 +1,146 @@
+\section*{FFT   Part 2}
+
+\subsection*{FFT  High-Level}
+The Fast Fourier Transform (FFT) algorithm evaluates a polynomial A(x) of degree at most N-1, where N is a power of 2.
+To multiply two such polynomials, it is necessary to evaluate A(x) at 2N points, which can be achieved by padding A(x) with zeros.
+The evaluation points chosen are the Nth roots of unity, which have the special properties of symmetry and square root relationships that reduce computational complexity.
+The algorithm breaks down A(x) into two smaller polynomials: A even(x) derived from the even coefficients of A(x), and A odd(x) from the odd coefficients, both of degree at most N/2-1.
+These polynomials are evaluated recursively at the squared roots, then merged back to find the values of A(x) at the original Nth roots of unity.
+This key merging step requires linear time relative to the number of evaluated points (order N).
+The process of breaking down the problem into subproblems of half the size, solving the subproblems recursively, and combining the solutions, follows a divide-and-conquer strategy similar to that used in merge sort and results in a running time of order NlogN\@.
+This efficient computational time scale allows the FFT to convert the polynomial from coefficient form to its values at the Nth roots of unity expediently.
+
+\subsection*{FFT  Pseudocode}
+FFT algorithm pseudocode outlines processing a polynomial A(x) represented by vector A`s coefficients, with n as a power of two.
+Omega acts as an nth root of unity, expressed in polar coordinates (1, 2 pi/n) and as e\textasciicircum{}(2pi*i/n), termed Omega\_sub\_n.
+This Omega enables both the direct FFT, which computes polynomial values at nth roots of unity (output: A evaluated at Omega\textasciicircum{}0 to Omega\textasciicircum{}(n-1)), and the inverse FFT, by utilizing Omega as Omega\_sub\_n\textasciicircum{}(n-1) to reconstruct coefficients from values.
+
+\subsection*{FFT  Core}
+The FFT (Fast Fourier Transform) algo works by applying a divide and conquer approach.
+Initiated for N=1, deemed the base case, it directly returns the value of polynomial A at 1.
+For N\textgreater{}1, A is split into even and odd-indexed terms, forming vectors A\_even and A\_odd.
+Each has size N/2, derived from the original vector of size N\@.
+These are run through recursive FFT calls with the squared root of unity, yielding values for A\_even and A\_odd at N/2 roots of unity.
+A`s value at Nth roots of unity is calculated by combining A\_even and A\_odd results with appropriate multipliers.
+For every jth point, values are computed with an addition or subtraction operation depending on the point`s relationship to Omega\textasciicircum{}j and Omega\textasciicircum{}(N/2+j).
+The process operates efficiently, with time complexity linearly proportional to N\@.
+The algo is valid for any Nth root of unity, excluding Omega=1, as opposites are needed for the FFT property to hold.
+
+\subsection*{FFT  Concise}
+FFT algorithm`s elegance lies in its brevity.
+Simple base case: n=1, return polynomial constant term a0.
+Split vector a into even-indexed a\_even, odd-indexed a\_odd.
+Apply FFT recursively to a\_even, a\_odd with o\textasciicircum{}2.
+Record results from a\_even as s0 to s(n/2-1), from a\_odd as t0 to t(n/2-1).
+Combine subproblem results to resolve original problem: rj = a(x) at o\textasciicircum{}j is s\_j + o\textasciicircum{}j*tj; r(n/2+j) is s\_j - o\textasciicircum{}j*tj.
+Return sequence r0 to r(n-1).
+
+\subsection*{FFT  Running Time}
+The algorithm`s runtime analysis shows that partitioning the vector `a` into even and odd elements requires O(n).
+It uses recursive calls, each on a subvector of size n/2 for both even and odd elements.
+Computing the R`s necessitates O(1) per pair, amounting to O(n) in total.
+The runtime recurrence relation T(n) = 2T(n/2) + O(n) is satisfied, which resolves to O(n log n), establishing the efficiency of the Fast Fourier Transform algorithm.
+
+\subsection*{Poly Mult\. using FFT}
+Completed the FFT (Fast Fourier Transform) algorithm to multiply polynomials, specifically to compute the convolution of vectors A and B, representing polynomial coefficients.
+The goal is to obtain polynomial C which is the product of A and B, or their convolution.
+Given the degree of C is 2n-2, we need the polynomial evaluated at 2n-1 points.
+Padded vectors A and B with zeros to evaluate at 2n points using FFT, ensuring n is a power of 2.
+Upon obtaining A and B at the 2n roots of unity, used element-wise multiplication for these values, which requires constant time per element, resulting in C at the 2n roots of unity in linear time (order n).
+To retrieve coefficients from the values of C, implemented the inverse FFT, similar to the original FFT, achieving the necessary conversion.
+
+\subsection*{Linear Algebra View}
+Inverse FFT requires understanding FFT from a linear algebra perspective, where FFT is seen as matrix-vector multiplication.
+The polynomial A(X) at a point x\_j is the sum of terms a\_0 to a\_n-1 times powers of x\_j, which can be interpreted as an inner product of two vectors: one vector with powers of x\_j and another with coefficients of A(X).
+FFT computes A(X) at n points, which means evaluating A(X) at x\_0 to x\_n-1.
+In matrix terms, the matrix rows are the powers of the x points, while the vector is formed from the coefficients of A(X).
+Thus, the first matrix row contains powers of x\_0, the next row those of x\_1, and so on up to x\_n-1.
+
+\subsection*{LA View of FFT}
+Evaluated a polynomial A(x) at points x0 to xN-1 using lin algebra, now comparing with FFT perspective\. nth roots of unity replace x points, x\_j = o\_n\textasciicircum{}j where o\_n is nth root of unity.
+Vectors/matrices updated: A(1), A(o\_n)\ldotsA(o\_n\textasciicircum{}(n-1)).
+Coeff\. vector of A(x) stays same.
+Matrix rows derived from powers of o\_n.
+First row all ones (powers of 1), second row powers of o\_n, mimicking nth roots of unity.
+Subsequent rows powers of o\_n\textasciicircum{}2\ldotso\_n\textasciicircum{}(n-1).
+Matrix is symmetric (entry\_ij = entry\_ji) and only a function of o\_n, suggesting inherent matrix properties related to o\_n powers.
+
+\subsection*{LA for Inverse FFT}
+In our linear algebraic approach to Fast Fourier Transform (FFT), we define a vector `a`, a resultant vector `A`, and a matrix `M` with subscript `n` indicating its dependency on the size and the nth root of unity `omega sub n`.
+The FFT operation is represented as A = Mn * a, where Mn contains powers of `omega sub n`.
+Conversely, the Inverse FFT (IFFT) aims to find vector `a` from vector `A` by employing the inverse of matrix `Mn`.
+This process involves calculating the product of the inverse of Mn and vector A\@.
+The matrices for FFT and IFFT resemble each other with the relationship between `Mn` and its inverse being a key aspect of transitioning between the time and frequency domains.
+
+\subsection*{Inverse FFT}
+FFT transforms coefficients a(x) into values A at nth root of unity via matrix M multiplication.
+Inverse FFT retrieves coefficients by multiplying values by inverse of M\@.
+Inverse matrix M is scaled by 1/n and uses nth roots of unity inverses, omega\_n\textasciicircum{}(n-1), as elements.
+Omega\_n inverse is computed by n-th power, yielding 1 (omega\_n * omega\_n\textasciicircum{}(n-1) = omega\_n\textasciicircum{}n = 1).
+Understanding the inverse requires visualizing complex plane unit circle or using polar coordinates.
+Inverse FFT matrix simplification includes substituting omega\_n inverses into matrix M, scaled by 1/n.
+
+\subsection*{Inverse FFT via FFT}
+FFT computes polynomial A(x) at nth roots of unity using matrix M and vector a to output A\@.
+Inverse FFT aims to recover coefficient vector a from A using the inverse of M, 1/n times M with (Omega\_n)\textasciicircum{}(n-1).
+By running FFT using A and (Omega\_n)\textasciicircum{}(n-1) as inputs and scaling the result by 1/n, we retrieve a.
+Interestingly, inverse FFT is similar to FFT, differing only in the order of nth roots of unity, clockwise versus counterclockwise.
+This fact means FFT algorithms are interchangeable for inverse FFT, given any nth root of unity.
+This completes the polynomial multiplication and convolution algorithm, utilizing the established FFT approach.
+
+\subsection*{Quiz  Inverses Question}
+Exploring the properties of roots of unity, specifically Omega\_n and its inverse, with focus on expressing Omega\_n squared with a positive exponent inverse.
+
+\subsection*{Quiz  Inverses Solution}
+Omega\_n\textasciicircum{}n equals 1 when multiplying omega\_n\textasciicircum{}2 and omega\_n\textasciicircum{}(n-2).
+In polar coords, multiplying numbers with magnitudes of 1 and summing angles yields a full rotation, 2p, confirming the inverse of omega\_n squared is omega\_n\textasciicircum{}(n-2).
+
+\subsection*{Quiz  Sum of Roots Question}
+The sum of nth roots of unity, for even n, equals zero.
+This covers summing omega\_n\textasciicircum{}0, omega\_n\textasciicircum{}1, \ldots up to omega\_n\textasciicircum{}(n-1).
+
+\subsection*{Quiz  Sum of Roots Solution}
+The nth roots of unity sum to zero due to the symmetry in their distribution around the complex unit circle.
+The plus-minus property employed in the divide and conquer algorithm demonstrates that each root has an opposite counterpart: for example, 1 (omega raised to the 0) and minus 1 (halfway around the unit circle).
+Pairs cancel each other out, with the first half of the roots negating the second half, resulting in a total sum of zero.
+This holds for any even integer n.
+
+\subsection*{Proof of Claim}
+In solving a matrix M inverse dilemma, it`s crucial to acknowledge that the sum of consecutive powers of any nth root of unity (except for the number 1) will sum to zero.
+This statement is not true for omega equals 1, as the sum would then equal N\@.
+However, multiplying such a series (from 1 to omega\textasciicircum{}(N-1)) by (Z-1) and expanding the product, we see that all intermediate terms cancel out, leaving only Z\textasciicircum{}N and -1.
+Substituting Z with omega (the nth root of unity), and knowing that omega raised to the N equals 1, it follows that omega\textasciicircum{}N-1 must equal zero.
+Since we rule out omega as 1, (Z-1) cannot be zero, forcing the sum of the powers of omega to equate to zero, thereby proving the original claim.
+This proof is critical in addressing the inverse of matrix M\@.
+
+\subsection*{Proof of Lemma}
+Proving lemma for matrix M inv\. as 1/n times M with o\_n\textasciicircum{}-1.
+Rewritten, multiplying by M yields I on LHS and 1/n M(o\_n\textasciicircum{}-1) * M(o\_n) on RHS\@.
+I has 1s diagonally, 0s elsewhere.
+Must show diagonal entries of M product are n and off-diagonals (kj) are 0, satisfying I, with diagonal entries being 1 after multiplying by 1/n, confirming off-diagonals as 0.
+Focus on validating diagonal entries as n, off-diagonal as zero in two cases.
+
+\subsection*{Diagonal Entries}
+Examined the proof for diagonal entries of the product of matrices M(o\_n)\textasciicircum{}-1 and M(o\_n).
+M(o\_n) is a matrix associated with FFT, with entries modified by o\_n to the power of their indices.
+The inverse, M(o\_n)\textasciicircum{}-1, replaces o\_n with its reciprocal.
+For the k-th diagonal entry (k,k), the analysis focused on the dot product of the k-th row of M(o\_n)\textasciicircum{}-1 and the k-th column of M(o\_n).
+Each term in the dot product equates to one since multiplying o\_n by its reciprocal raised to matching powers results in one.
+There are n such terms corresponding to the dimension of the matrix; hence, the k-th diagonal entry sums to n, confirming the initial assertion for diagonal entries.
+
+\subsection*{Off-Diagonal Entries}
+To demonstrate that the off-diagonal entries of a product matrix equal zero, we consider two distinct indices k and j.
+When k  j, the entry at position k, j is shown to be zero by evaluating the dot product between the kth row of one matrix and the jth column of another.
+This dot product is a sum of terms involving powers of omega\_n\textasciicircum{}(j-k), where omega\_n is an nth root of unity.
+By changing variables to omega representing omega\_n\textasciicircum{}(j-k), the sum simplifies to 1 + omega + omega\textasciicircum{}2 + \ldots + omega\textasciicircum{}(n-1).
+Since omega is an nth root of unity but not equal to 1, the sum of these powers equals zero.
+This conclusion relies on the underlying property of nth roots of unity, which stipulates that the sum of its consecutive powers--when the base is not equal to 1--will always result in zero.
+This property confirms the zero value of off-diagonal entries and completes the proof of the lemma.
+
+\subsection*{Back to Poly Mult.}
+Revisited polynomial multiplication algo, detailing final step with inverse FFT transforming poly C\_of\_x values to coeffs.
+Vector t used as first param, representing C\_of\_x values at 2n roots of unity.
+Second param is inverse of 2n-th root of unity, i.e., omega\_2n\textasciicircum{}(2n-1).
+Running FFT with these params yields 2n points, denoted as vector C\@.
+Post-FFT, scale output by 1/2n to obtain C\_of\_x coeffs, finalizing the algo for both polynomial multiplication and convolution.
+

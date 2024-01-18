@@ -1,0 +1,140 @@
+\section*{Linear Programming}
+
+\subsection*{Linear Programming}
+Linear programming (LP) efficiently solves optimization problems by optimizing a set of variables within linear constraints towards an objective function.
+Both max flow and various operations research problems can be expressed as LPs.
+The simplex algorithm, a prevalent solution method for LPs, will be detailed.
+LP duality, a key feature of LP, offers valuable insights and applications, including its utilization in developing approximation algorithms, such as one for the set cover problem.
+
+\subsection*{Lecture Outline}
+Exploring linear programming (LP) as a technique to solve various problems, including max flow and production issues.
+Beginning with max flow solved via LP, followed by simple LP examples for production, before progressing to general LP formulation and standard form.
+Concluding with LP duality, an elegant and significant element of LP\@.
+Dive into expression of max flow as LP\@.
+
+\subsection*{Max-Flow as LP}
+Directed graph G w/ pos\. capacities for edges defines the max flow prob.
+Linear program (LP) with m variables, each representing an edge`s flow.
+Objective to max total flow from source vertex S, by summing flows over outgoing edges from S\@.
+Must satisfy constraints: flow on edge non-neg; can`t exceed edge capacity.
+Flow conservation: inflow equals outflow for internal vertices (except S and T).
+LP formulation powerful for max flow, considering linear obj\. function and constraints, easily adaptable for solving variants of the max flow problem.
+
+\subsection*{Simple 2D Example}
+Examining a linear program example based on a production dilemma where company produces products A and B\@.
+Goal: maximize profit.
+Profit per unit: A=\$1, B=\$6.
+Demand limits: A \textless{}= 300 units/day, B \textless{}= 200 units/day.
+Supply/work constraints: \textless{}= 700 hours/day, A takes 1hr/unit, B takes 3hrs/unit.
+Linear expression of this situation is developed for analysis.
+
+\subsection*{2D LP Formulation}
+Max profit by determining units of Products A \& B to produce daily; x1 = units of A, x2 = units of B\@.
+Profit: \$1/unit A (\$x1), \$6/unit B (\$6x2).
+Constraints: x1 \textless{}= 300, x2 \textless{}= 200; x1, x2 \textgreater{}= 0 (no negatives).
+Supply constraint: 700 man hours available.
+Time: 1hr/unit A (x1) + 3hrs/unit B (x2) \textless{}= 700 hrs.
+Aim to maximize profit within these parameters.
+
+\subsection*{2D LP Recap}
+Maximize X\_1 + 6X\_2, subject to constraints: X\_1 \textless{}= 300 (A demand), X\_2 \textless{}= 200 (B demand), X\_1 and X\_2 \textgreater{}= 0 (non-negativity), and a supply constraint.
+Each constraint represents a half plane in a two-dimensional space with X\_1 and X\_2.
+Intersection of five half planes forms a feasible region containing sets of X that satisfy all constraints.
+Aim to find X values within this region that will optimize the objective function.
+
+\subsection*{2D Geometric View}
+Examining a two-dimensional variable space, with the first constraint limiting x1 to a maximum of 300 and the second capping x2 at 200, restricts feasible points to the lower-left quadrant bounded by these lines.
+Adding non-negativity constraints forms a rectangle; within this, the final (fifth) constraint further narrows the possible area to a tan-colored convex polygon, identified as the feasible region where all five constraints are met.
+
+\subsection*{Optimum}
+Maximizing function x1 + 6x2 to find the optimal point within a feasible region defined by constraints.
+The linear relationship x1 + 6x2 = C represents various profit lines.
+The goal is to maximize C, where the line intersects the feasible region.
+Through evaluation, the line x1 + 6x2 = 600 is suboptimal, as a higher C value is achievable.
+The optimal solution is found where the line x1 + 6x2 = 1300 intersects the feasible region`s vertex, yielding the maximum profit at point (100, 200), with C, or profit, being 1300.
+This concept applicable in 2D extends to 3D and higher dimensions.
+
+\subsection*{Key Issues}
+In the realm of optimization problems, linear programming (LP) allows finding the optimum solution over a feasible region, illustrated by a tan set.
+Often, the optimal solution may involve fractional values, even though integer solutions are sometimes needed, like in the given production example.
+Addressing fractional solutions involves algorithms such as the Max-set Approximation Algorithm, which is covered in the lecture LP4.
+Linear programming is efficiently solvable in polynomial time, which places it in the complexity class P\@.
+However, its counterpart that seeks integer solutions, integer linear programming (ILP), falls into the complexity class NP-complete, indicating that it is unlikely to be solvable in polynomial time.
+This will be further discussed in the Max-set Approximation Algorithm lecture.
+The optimal LP solution lies at a vertex or corner of the feasible region, which is a convex polygon in this context.
+This trait assures that if an optimal line intersects non-vertex points on an edge of the polygon, there must be a vertex that is at least as good as or better than those points, hence a vertex is always part of the optimal solution set.
+A vertex that is optimal is at least as optimal as adjacent vertices, and due to the convex nature of the feasible region, such points will be globally optimal.
+Convexity plays a crucial role in ensuring that the feasible region is a single, contiguous shape without indentations.
+In a convex set, any line segment connecting two points within the set remains entirely inside the set.
+This property is pivotal to the simplex algorithm, a method used to find the optimal solution by iteratively moving from one vertex to an adjacent one with a better value until no neighbor offers an improvement, thereby reaching the global optimum.
+The executive summary thus focuses on the LP`s polynomial-time solvability, the distinction between LP and ILP in terms of complexity classes, the geometric aspect of LP solutions lying at the vertices of the convex feasible region, and the significance of convexity in optimization.
+It also introduces the simplex algorithm`s local greedy approach for finding the optimum LP solution by exploring vertices within the feasible region.
+
+\subsection*{3D Example}
+Explored a linear programming example with products A, B, C, each with associated profits: \$1 for A, \$6 for B, \$10 for C\@.
+Demand is capped at 300/day for A, 200/day for B, and unlimited for C\@.
+Production is limited to 1000 hours/day, with A, B, and C requiring 1, 3, and 2 hours respectively to produce.
+An added packaging constraint allows a max of 500 units/day, with A needing no packaging, B one unit, and C three units per product.
+
+\subsection*{3D LP Formulation}
+Formulating a linear program with three variables (X1, X2, X3) for the production of products A, B, and C\@.
+Goal: maximize profit with objective function: maximize X1 + 6X2 + 10X3.
+Constraints include demand: X1 \textless{}= 300, X2 \textless{}= 200, supply: X1 + 3X2 + 2X3 \textless{}= 1000, and packaging: X2 + 3X3 \textless{}= 500, with all variables non-negative.
+
+\subsection*{3D Geometric View}
+Maximize LP with obj\. func\. max x1 + 6x2 + 10x3.
+Under 7 constraints: 2 demand, 1 supply, 1 packaging, and non-negativity.
+Geometrical analysis in 3D space reveals feasible region as intersection of 7 half spaces forming convex polyhedron, signifying feasible solutions that meet all constraints.
+Convexity critical for LP algorithm efficiency.
+Will apply general LP formulation to determine optimum solution for example given.
+
+\subsection*{Standard Form}
+Standard linear program form involves maximizing a linear objective function with n variables, x1 to xn, using coefficients c1 to cn.
+Subject to m constraints, each defined by coefficients a11 to a1n (for the first) up to am1 to amn (for the mth), each less than or equal to values b1 to bm, respectively.
+Additionally, all n variables must be non-negative.
+A total of m+n constraints apply, which can be concisely represented with linear algebra.
+
+\subsection*{Linear Algebra View Question}
+Variables in column vector x, maximizing obj function defined by c\textasciicircum{}T*x.
+Constraint matrix A sized m*n and RHS constraints in column vector b, size m.
+Obj function maximized subject to Ax \textless{}= b constraints and non-negativity of x.
+Feasible region non-empty if zero vector is feasible, otherwise LP infeasible.
+
+\subsection*{Converting to Standard Form Question}
+Converting an arbitrary linear program (LP) to standard form includes several transformations: to minimize a linear function, multiply it by -1 to maximize -C*X, equivalently.
+Change constraints A1 through An from \textgreater{}=B to \textless{}=-B by also multiplying by -1.
+For equality constraints set to B, split into two inequalities, \textless{}=B and \textgreater{}=B, with the latter becoming \textless{}=-B after negation.
+Strict inequalities (e.g., X\textless{}100) aren`t allowed as they yield ill-defined LPs with optimal points indeterminate, since they imply an open feasible region rather than a closed convex polyhedron.
+To handle unconstrained variables, split them into their positive (X+) and negative (X-) components, both non-negative, replacing X with X+ minus X-.
+All variables can thus be treated as non-negative.
+
+\subsection*{General Geometric View}
+In an n-dimensional space with a large n, we`re considering a system with n variables and m constraints, in addition to n non-negativity constraints, yielding a total of n + m constraints.
+A feasible region is defined, which is delineated by the intersection of n + m half-spaces corresponding to each constraint, resulting in a convex polyhedron.
+The vertices of this polyhedron are its corners, and determining a vertex is posed as a query to be addressed.
+
+\subsection*{Vertices}
+Specify vertices of a feasible region in a convex polyhedron by identifying the n constraints met with equality and ensuring the point also satisfies the other m constraints.
+The max number of vertices is given by the combinatorial number (n+m choose n), denoting exponential growth in n.
+Neighbors of a vertex, defined by exchanging one satisfied constraint for another, have an upper bound of n*m possible neighbors.
+
+\subsection*{LP Algorithms}
+Ellipsoid algorithm and interior point methods solve linear programs in polynomial time, with ellipsoid having more theoretical interest and interior point methods being extensively used.
+Simplex algorithm, though potentially exponential in the worst case, is widely adopted for its efficiency and guaranteed optimal solutions upon completion, especially for large LPs.
+Will explore simplex algorithm`s high-level concept.
+
+\subsection*{Simplex Algorithm}
+The simplex algorithm starts at a feasible point, initially the zero vector, which meets N non-negativity constraints.
+It must also satisfy M additional constraints, otherwise the linear program (LP) is infeasible, with no solutions meeting all constraints.
+If feasible, the algorithm performs a local search for neighboring vertices to find one with a strictly higher objective function value.
+It can check up to N times M neighbors, and if a higher-value neighbor is found, the algorithm moves to that point and repeats the process.
+Multiple better neighbors entail choosing one based on heuristics, like random selection or the highest objective value.
+However, if no neighbors have a higher value, the current vertex is optimal due to the convexity of the feasible region; no other points can surpass its value, making it the global optimum of the LP\@.
+The algorithm is demonstrated through an example with three variables to clarify the process.
+
+\subsection*{Simplex Example}
+Utilized the simplex algorithm to maximize an objective function across a three-dimensional convex polyhedron.
+Starting from (0, 0, 0) with zero profit, iteratively moved to neighboring vertices with higher profit at each step: from zero profit at the origin to a profit of 300 at (300, 0, 0), then to 1500 at (300, 200, 0), increasing to 2000 at (300, 200, 50), and finally reaching the peak at 2400 with point (200, 200, 100).
+Each new vertex corresponded to satisfying a set of constraints with equality while maintaining the others with inequalities.
+After examining all neighboring points from the peak vertex and finding none better, concluded the current vertex as the optimal solution to the linear programming problem.
+

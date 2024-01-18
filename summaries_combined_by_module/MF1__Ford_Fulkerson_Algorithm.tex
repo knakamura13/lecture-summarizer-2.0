@@ -1,0 +1,114 @@
+\section*{Ford Fulkerson Algorithm}
+
+\subsection*{Max-Flow}
+Exploring the Max-flow graph problem; focusing on the Ford Fulkerson Algorithm and proving its correctness.
+Will also cover the Max-flow min-cut theorem.
+Application to computer vision via Image Segmentation will be discussed.
+To address more complex scenarios, will delve into Max-flow with demand constraints and methods to simplify back to the original problem.
+Concluding with speed improvements brought by the Edmonds-Karp Algorithm.
+
+\subsection*{Lecture Outline}
+Focused on solving the max flow prob.
+Started with Ford-Fulkerson (FF) algo, progressed to Edmonds-Karp (EK) algo; EK runtime analysis more complex.
+Introduced the max flow = min-cut theorem, foundational for algo correctness and applications, including image segmentation prob where an image is divided into foreground and background using max flow and the aforementioned theorem.
+
+\subsection*{Problem Setup}
+Maximizing supply transfer from start vertex s to end vertex t in a directed graph, ensuring not to surpass edge capacities, whether dealing with data like internet traffic where capacity equates to bandwidth, or physical goods like oil where capacity reflects pipeline limits.
+
+\subsection*{Problem Formulation}
+Max flow problem defined as optimizing flow within a flow network, comprised of a directed graph G with source (s) and sink (t) vertices.
+Each edge has a set capacity, a positive value.
+Objective: maximize flow originating at s and terminating at t by determining optimal flow (f\_sub\_e) along each edge.
+
+\subsection*{Max-Flow Problem}
+The max-flow problem involves determining the highest possible flow from a source vertex (s) to a sink vertex (t) in a directed graph that constitutes a flow network.
+Edges in this graph have assigned capacities (c\_sub\_e), and the flow (f\_sub\_e) on each edge must not surpass these capacities and must be non-negative.
+To satisfy conservation of flow, the input flow to any vertex (except s or t) must equal the output flow, ensuring no flow is lost or created within the network.
+Flow is computed as the sum of incoming flows (f\_sub\_wv) to vertex v and the sum of outgoing flows (f\_sub\_vz) from vertex v.
+Valid flow must adhere to both capacity and conservation constraints across the network.
+
+\subsection*{Max-Flow Goal}
+Max flow problem aims to identify a valid flow that adheres to capacity and conservation constraints, and maximizes the total flow sent.
+`Maximum size` refers to this total, measured by the flow out of the source (s) or into the sink (t).
+
+\subsection*{Quiz  Max-Flow Example Question}
+Understand max-flow problem formulation by reviewing a flow network example with defined start/end vertices and edge capacities.
+Determine a max-sized, valid flow conforming to two constraints: edge capacity limits and conservation of flow at vertices, barring the start (S) and end (T).
+
+\subsection*{Quiz  Max-Flow Example Solution}
+Max flow specified by green numbers on edges with red capacity numbers.
+Flows in and out of vertices equal (c=7, e=2, d=7).
+Flows don`t exceed edge capacities.
+Total flow size 12 units from source s to sink t, equals total incoming edge capacity to t--hence, max flow achieved.
+
+\subsection*{Cycles are OK}
+Cycles in flow networks, such as C-F-E-D-C, don`t impede max flow calculations as they might in shortest path problems with negative weight cycles.
+Utilizing cycles in a flow network isn`t beneficial since flow could bypass the cycle altogether, showing a direct path is more efficient.
+While parts of a cycle might be used, it`s not clear without analysis which portions might be beneficial.
+The presence of cycles in flow networks does not pose issues; they`re permissible and do not complicate the max flow problem-the problem remains well-defined with or without cycles.
+
+\subsection*{Anti-parallel Edges}
+To solve max-flow problems, simplifying the flow network by removing anti-parallel edges is proposed.
+Simplification helps streamline upcoming algorithm development.
+Example given: a network with A-B and B-A edges is reworked by splitting one of these edges, introducing an auxiliary vertex, and preserving the original capacity, thus eliminating anti-parallel edges.
+The capacity distribution ensures the equivalency of max-flow between the two networks, enabling interchangeable solutions for the max-flow problem.
+This advancement aids in clean input preparation for efficient max-flow algorithm application.
+
+\subsection*{Toy Example}
+Created a toy network with four vertices to test max flow algorithms, identified a max flow of size 17 which matches the network`s capacities from source (s) to sink (t), and will use this simple example throughout the development of algorithms.
+
+\subsection*{Simple Algorithm}
+Outline a basic algorithm using a flow network where we initialize flow to zero.
+Capacities equal input capacities initially because flow is zero.
+Find any s-t path (from source `s` to sink `t`) by running BFS or DFS to identify paths with available capacity.
+The path doesn`t need to be optimal; simply must have available capacity on all edges.
+Once a path is found, calculate minimum available capacity on this path, which is the max flow that can be sent through it.
+Augment this flow by the calculated amount, adjust the flow on the path accordingly, update available capacities, and repeat the process.
+Continue until no more s-t paths can be found with available capacity.
+The algorithm stops when no further augmentation is possible, which may yield a sub-optimal flow, such as the described example ending with a flow of 10 whereas the network has the capacity for a flow of 17.
+
+\subsection*{Backward Edges}
+Identifying a gap in available capacities graph concerning the optimal flow solution.
+Necessary to consider the reverse path b-to-a for flow augmentation, as it`s not represented in the initial graph.
+Conceptualize flow as a faucet; increasing flow a-to-b opens it, while b-to-a closes it, reducing flow a-to-b.
+Adding this reverse path with capacity equal to the existing flow (10 units) from a-to-b allows for such adjustment.
+This introduces the concept of the residual network, which accurately reflects all possible flow adjustments, unlike the available capacities graph.
+By utilizing the residual network, a path from s-to-t can be found with a capacity for 7-unit augmentation, thus altering flows from s-to-b to 7 units, reducing a-to-b from 10 to 3 units, and increasing a-to-t by 7 units to reach max flow in the example.
+Essential to focus on the residual network to effectively identify and implement optimal flow adjustments.
+
+\subsection*{Residual Network}
+Residual networks are tied to the flow network in max-flow problems, altering based on the current flow, denoted as fe.
+The residual network, expressed as G\textasciicircum{}f, maintains the flow network`s vertices but has modified edges dependent on fe, with differing weights/capacities.
+These edges include forward edges, mirroring the flow network but with capacities reduced by fe, and backward edges, existing only if there`s positive flow in the original network, their capacities equating to fe, effectively allowing flow negation.
+Residual networks also necessitate removing antiparallel edges from the original flow network to accommodate both forward and backward edges without issue.
+
+\subsection*{Ford-Fulkerson Algorithm}
+The Ford-Fulkerson algorithm approaches maximum network flow by utilizing residual networks.
+Start with a zero initial flow and construct the residual network which mirrors the flow network initially.
+Employ DFS or BFS to find a path from source (s) to sink (t); absence of a path halts the algorithm and outputs the current flow as max flow.
+If a path is found, identify its minimum capacity, denoted c(P), and augment the flow along this path by c(P), increasing flow on forward edges and decreasing on backward edges.
+Repeat constructing the residual network and searching for an s-t path.
+Continue until no s-t path exists, then output the current flow as the max flow solution.
+
+\subsection*{Running Time}
+Correctness of the discussed algorithm linked to the Max-flow=min-cut theorem, proof deferred.
+Focus on algorithm`s run time analysis under the condition that capacities must be integers.
+Relevance of this assumption tied to maintaining integer capacity in the residual network and ensuring each augmentation increases flow by at least one unit.
+Flow augmented by a minimum of one unit each iteration, implying a max of C rounds for the algorithm, where C represents the integer value of Max-flow sought.
+Upcoming Edmonds-Karp algorithm to address limitations of integer capacity assumption.
+
+\subsection*{Time per Round}
+Ford-Fulkerson algorithm efficiency analyzed.
+Time for one round (steps 2--5): update residual network, check for st-path, augment flow.
+Residual network update takes order N time due to path length \textless{}= N-1 edges\. st-path checked using DFS/BFS, linear time order N+M; bound by order M if edges \textgreater{}= N-1.
+Augmenting flow also order N time.
+One round time is determined by st-path check, order N\@.
+Total running time is order N per round, multipled by capital C (max flow increase).
+Thus, Ford-Fulkerson algorithm requires time order N*C\@.
+
+\subsection*{Discussion}
+Ford-Fulkerson algorithm for max-flow problem has a pseudo-polynomial running time of O(MC), depending on integer capacities (C).
+This is problematic as ideal algorithms should not be influenced by input magnitudes.
+Edmonds-Karp modifies Ford-Fulkerson by using the shortest path (minimum edges) in the residual network, leading to O(M2N) run time, which doesn`t depend on max-flow size or integer capacities.
+Orlin`s 2013 algorithm further improves the runtime to O(MN), the best known for max-flow on general graphs.
+

@@ -1,0 +1,226 @@
+\section*{Markov Chains and PageRank}
+
+\subsection*{PageRank Lecture Outline}
+Exploring the PageRank algorithm, fundamental to Google`s search engine, developed by Brin and Page to quantify webpage importance.
+Understanding PageRank necessitates familiarity with Markov chains, mathematical models for probability transitions among states, and their intrinsic properties.
+Central to this is the concept of stationary distribution within Markov chains, crucial for grasping PageRank`s design and operation.
+The discussion will elucidate stationary distribution identification and its relevance to Markov chain characteristics.
+This foundational knowledge is also applicable to advanced models like MCMC (Markov chain Monte Carlo) and simulated annealing.
+A specific example of a Markov chain will be analyzed to provide practical insight.
+
+\subsection*{Example  Markov Chain}
+Directed graph example used to represent a Markov Chain for activities during CS 6210 class.
+Time discretized into integer steps t=0,1,2,\ldots with four states: listening to Kishore, sleeping, checking email, playing StarCraft.
+Each state is a vertex in the graph; transitions between states are edges with weights indicating probabilities.
+Transition probabilities from one state at time `t` to another at `t+1` are quantified (e.g., email to StarCraft with probability 0.5).
+Probabilities must sum to 1 across all out-edges from any given state, ensuring they form a valid probability distribution for subsequent states.
+Probability values range from 0 to 1.
+Totality of the directed graph with weighted edges between 0 and 1 characterizes the Markov Chain, elucidating state transitions over time.
+
+\subsection*{General Markov Chain}
+Markov chains consist of N states, often a large number such as the total webpages on the internet in PageRank`s case.
+The states are represented as nodes in a weighted directed graph, numbered from 1 to N\@.
+The relationships between them are illustrated through an adjacency matrix called the transition matrix P\@.
+Entries in matrix P, denoted by P I J, signify the probability of transitioning from state I to state J\@.
+This matrix is stochastic, meaning each row adds up to one, indicating total probability distribution across possible next states from any given state, but the columns do not necessarily add up to one unless the matrix is doubly stochastic.
+
+\subsection*{2-Step Transitions}
+Markov chain four states, looking at trajectories in unweighted, weighted graphs.
+Adjacency matrix simple: State 1 connections 1 1 0 0.
+Matrix `A squared` from matrix A multiplication indicates number of paths of length 2 between states: value 2, State 1 to itself via two paths, e.g\. self-loop/self-loop or State 2 and back.
+Entry 4,1 shows paths State 4 to 1 also two ways: self-loop then edge or vice versa.
+Entry 4,2 is one, only one path--State 1 then State 2.
+No paths 4 to 3 of length 2, thus `A squared` entry 4,3 is 0.
+Weighted graph transition matrix reflects Markov chain probabilities instead of path counts.
+Matrix P accounts for probabilities of staying or moving states.
+`P squared` from matrix P multiplication, similar to `A squared,` but instead, entries indicate total probability weight of length 2 paths between states.
+For instance, entry 4,3 is 0--no length 2 paths between State 4 to State 3.
+Entry 2,1 in `P squared` shows probability 0.31 from State 2 to 1 in two steps, accounting for all possible intermediate pathways and their respective probabilities, like 2-1 with self-loop and 2-4-1.
+Overall, matrices `A squared` and `P squared` encapsulate, respectively, count of paths and probability weights for two-step transitions between states in a Markov chain`s unweighted and weighted graphs.
+
+\subsection*{k-Step Transitions}
+Matrix P serves as a transition matrix, mirroring an adjacency matrix with entries (i,j) indicating the probability of transitioning from state I to state J in one step.
+The square of matrix P calculates the probability for a two-step transition.
+Extending this, P raised to any non-negative integer K gives the probability of a transition occurring in K steps.
+
+\subsection*{Big k for 6210 Example}
+Observing powers of a transition matrix P for a Markov chain, specifically P raised to large exponents (e.g., P\textasciicircum{}10, P\textasciicircum{}20), reveals an intriguing property: all rows approach the same values, signifying convergence to a common row vector.
+This pattern of convergence is consistent across all rows and more pronounced at higher powers of P (e.g., P\textasciicircum{}20).
+Such an entry in the transition matrix signifies the probability of moving from any given stage at time zero to a specific stage at a chosen future time (e.g., time 20).
+This probability stabilizes and becomes independent of the initial state as time increases, indicating all states will eventually have the same probability of being in a particular stage at a large time scale.
+This property demonstrates the time independence of future states in large timescales for Markov chains, suggesting that the system`s future state does not depend on its initial state.
+
+\subsection*{Infinite Time}
+Examining the progression of matrix P raised to a higher power T, eventually as T approaches infinity, each row of P converges to a specific row vector pi.
+This convergence suggests that the probability of being in any given state J at time T is represented by pi(J), irrespective of the initial state.
+For instance, in a given 6210 scenario, regardless of the starting point, the probability of two distinct states at time T is 0.104 for sleeping and 0.406 for playing Starcraft.
+This concept is identified as the stationary distribution of a Markov chain, a state to which the system eventually stabilizes and remains constant over time.
+The fundamental question addressed is whether all Markov chains have a stationary distribution and whether it is unique or if there can be multiple stationary distributions.
+The existence and uniqueness of a stationary distribution is crucial for applications such as the page rank algorithm, where the stationary distribution of a Markov chain represents the likelihood of visiting a webpage in an infinite random walk across web pages.
+Lastly, the discussion hints at an intention to explore stationary distributions from a linear algebra perspective, suggesting a mathematical analysis to come.
+
+\subsection*{Linear Algebra View}
+In a given state transition system, starting from state two at time zero, the distribution of states at time t=1 can be found by referencing the second row of the transition matrix or by multiplying a vector with a one in the second entry by the matrix.
+The distribution at any time can be a vector (M) representing the probability over multiple states, summing to one.
+This initial distribution M0, when multiplied by the transition matrix P, yields the subsequent distribution M1 at t=1.
+However, for a stationary distribution p, once reached, the system remains in that distribution regardless of the step taken; thus, pP = p, indicating that p is an eigenvector of transition matrix P with an eigenvalue of one, designating it as the principal eigenvector.
+The setup assumes a unique stationary distribution by considering matrices with at most one eigenvector with eigenvalue one.
+
+\subsection*{Stationary Distribution}
+A stationary distribution pi for a Markov chain with transition matrix P satisfies piP = pi, indicating that the Markov chain remains in the same distribution after a step if it starts in pi.
+For a Markov chain with N states, the existence and uniqueness of such a stationary distribution are in question.
+All states ultimately reach the stationary distribution in the 62-10 example, highlighting a unique stationary distribution.
+The inquiry extends to whether this convergence is universal, and when unique, how swiftly the stationarity is achieved, termed as the mixing time--a focus of my research, although not discussed here.
+Furthermore, to guarantee a unique stationary distribution, understanding properties that lead to multiple stationary distributions is insightful, as it suggests opposing conditions that may ensure uniqueness and consistent convergence from any starting point.
+
+\subsection*{Bipartite Markov Chain}
+Markov chain graph corresponding to a bipartite structure analyzed.
+Starting on the left (states 1, 3, 5) ensures odd-time presence on the right side, and vice versa for starting on the right (states 2, 4).
+Key outcome: starting state influences position at even/odd times, highlighting the importance of the starting state in bipartite graphs.
+To negate bipartiteness and ensure aperiodicity, introduce self-loops on vertices with a small probability (e.g., 0.01) to allow staying in the same state.
+Rescale other probabilities to maintain total probability of 1.
+Transition matrix should have positive diagonal entries indicating self-loops, thus eliminating any periodic structure and creating a non-bipartite, aperiodic Markov chain.
+Ensure all states have a positive probability for self-transition to avoid periodic pitfalls.
+
+\subsection*{Multiple SCCs}
+Strongly connected components (SCCs) in a graph limit reachability when starting from different vertices.
+Ideally, the graph should have a single SCC, making it irreducible, meaning all vertices are strongly connected.
+Easily achieved by making the graph complete with all entries in transition matrix P positive, ensuring a positive probability of transition between any pair of vertices, thus making P irreducible.
+
+\subsection*{Ergodic MC}
+Ergodic Markov chains, characterized by being aperiodic and irreducible, possess a unique stationary distribution p.
+Aperiodicity is ensured by adding self-loops to prevent the graph from being bipartite, while irreducibility requires a fully connected graph where all state pairs are reachable in one step.
+When a Markov chain is both aperiodic and irreducible, any power T of the transition matrix will yield rows consisting entirely of p, signifying that from any starting state, the chain converges to p after T steps.
+PageRank applies this principle by treating the internet as a web graph where pages are states and hyperlinks between them as edges.
+To conform to the necessary ergodic properties, self-loops are added and full connectivity is ensured.
+PageRank is represented by the unique stationary distribution of this ergodic chain, indicating the relative importance of a webpage based on the likelihood that a long random walk ends at that page.
+
+\subsection*{What is Pi}
+Stationery Distribution PI (probability distribution) for Markov chains can be calculated directly in cases of symmetry, where transition probabilities between states I and J are equal (p\_i\_j = p\_j\_i).
+In these cases, PI is uniformly distributed (PI of I = 1/N for all I).
+A generalization of symmetry is reversibility, which doesn`t require equal probabilities but demands mutual accessibility between states (if an edge from I to J exists, one from J to I must too).
+With reversibility, PI can often be determined non-uniformly.
+Without reversibility, when edges between states only go one way, there`s no closed formula for PI\@.
+In such instances, one might rely on raising the transition matrix P to a high power to estimate PI, but no simple formula exists as in reversible or symmetric cases.
+This overview serves as a foundation to further explore algorithms like page rank.
+
+\subsection*{PageRank}
+The Page Rank algorithm, created by Brin and Page in 1998, is designed to determine the importance of web pages without the need for understanding Markov chains.
+Importance in this context is subjective and requires quantification by the algorithm itself.
+Earlier search engines of the mid-90s would search their database for pages containing a specific query term and then rank these pages by relevance.
+However, these systems could easily be manipulated by inserting common query terms into web pages, creating a need for a better ranking method.
+Page Rank resolves this by sorting and prioritizing web pages based on their established importance, thereby presenting the most significant pages first in search results.
+For instance, when searching for a term like `Markov chains,` a recognized news outlet like CNN featuring an article on the subject would be considered more important and therefore ranked higher than individual lecture notes on the same topic.
+The Page Rank algorithm offers a more sophisticated approach to rank web pages, taking into account their relative significance to provide more relevant search results.
+
+\subsection*{Webgraph}
+Examining the Web graph, a huge graph with web pages as vertices and directed hyperlinks as edges, where a page X may link to Y without reciprocity.
+The importance of a page, its rank p(X), needs a precise mathematical definition with natural interpretation, similar to stationary distribution in Markov chains but not yet related.
+To discuss page relationships, define `out of X` as the set of web pages that X hyperlinks to and `in of X` as those linking to web page X\@.
+These notational conventions help us quantify web page importance within the Web graph`s structure.
+
+\subsection*{First Idea}
+Studying PhD; need to evaluate web page importance.
+Use academic paper citation analogy; importance gauged by citation count.
+For web page, analogous measure is hyperlink count to the page.
+Proposing initial ranking method for a page x, termed pi of x, which counts the number of incoming hyperlinks to that page.
+Graphically, this is reflected by the number of edges leading into page x.
+
+\subsection*{Problem 1}
+Initial page ranking idea involved the in-degree of a webpage, basically counting the incoming links to set rank.
+Discovered imbalances in valuing each link equally, highlighted by an example where a link from a Georgia Tech faculty list (with \textasciitilde{}1000 links) to one`s personal page and a link from a high-profile page with just 5 links to another`s page were both valued equally.
+Resolved this by scaling the rank with the number of outgoing links from the referring page, assigning partial credit based on this.
+Therefore, a page linking out 1000 times would contribute 1/1000 of a point to the linked page`s rank, while a page with only 5 outgoing links would contribute 1/5 of a point per link.
+
+\subsection*{Second Idea}
+Evaluating web page X`s In neighbors, pages linking to X\@.
+Old method: count In neighbors.
+New method: scale by Y`s outgoing links.
+If Y has many out-links, gives less weight (1/1000).
+If Y has one out-link, gives full weight (1).
+Sum 1/out-links from each Y linking to X\@.
+
+\subsection*{Problem 2}
+Proposed solution for web page ranking involves scaling each inbound link by the linking page`s outbound links.
+Simple counts are unfair, as shown by the disparity in value between a link from a less significant personal webpage versus a prominent site like CNN\@.
+To reflect importance, the rank of a linking page (Pi) should determine its citation value.
+Thus, the worth of a citation is proportional to the rank of the referring page, divided by the number of outbound links it has.
+For example, a link from CNN is divided amongst its outbound links, assigning each linked page a fraction of CNN`s total rank value.
+The system ensures citations from authoritative pages are more valuable, influencing a page`s rank accordingly.
+
+\subsection*{Rank Definition}
+Web page value based on rank; value from page y proportional to its rank (pi of y).
+Rank of page x derived from sum of all web pages y linking to x, with each y contribution scaled by its rank divided by its number of outgoing links.
+Definition of PageRank for page x isn`t precise due to technicality revealed by Markov chains analysis.
+Proposing recursive definition for rank; questions about existence and uniqueness of pi for every web page (existence of a stationary distribution for Markov chain).
+Aim to ensure unique stationary distribution using Markov chain principles.
+Need to delve deeper into Markov chains to resolve issues in PageRank definition.
+
+\subsection*{Random Walk}
+Examining web graph G, it`s clear that vertices represent web pages and directed edges signify hyperlinks.
+A random walk on G models web surfing: starting from a page X, randomly following hyperlinks to traverse the graph.
+The process defines a Markov chain with a transition matrix reflecting the probability of moving from one webpage to another.
+For a given page Y with a hyperlink to X, the transition probability to X is the reciprocal of Y`s total hyperlinks.
+If there`s no link from Y to X, the matrix entry is zero.
+This setup creates a Markov chain with an identifiable stationary distribution, which represents the likelihood of being on any particular web page in the long run.
+
+\subsection*{Stationary Distribution}
+Stationary distribution p, satisfying pP = p, is invariant under transition matrix P and represents web page probabilities in a random walk.
+For a million web pages, p is a 1-million vector, P is a million-squared matrix.
+Entry pX is obtained by dot product of p`s row and P`s 900th column, summing only over Y with edge to X, reflecting web graph connectivity.
+In a simple random walk, a web page`s rank (stationary distribution) mirrors citation intuition where important pages are more likely to be visited, providing a natural importance measure.
+Essential components in p are determined by neighboring edges and citation counts, leading to equivalent random walk and citation-based page rank definitions.
+
+\subsection*{Problems}
+Random walks on web graphs aim to define PageRank by reaching a stationary distribution regardless of starting points.
+Key concerns include whether there`s a unique distribution and handling multiple strongly connected components, which could bias PageRank.
+Ensuring a unique stationary distribution requires a fully connected graph, eliminating strong components and periodicity by adding edges--even with low probabilities--between all vertices.
+This models a realistic browsing scenario where users might randomly jump to any webpage with equal likelihood, maintaining connectivity and fairness in the distribution used to calculate PageRank.
+
+\subsection*{Random Surfer}
+Random walks on the web graph include hitting a random button which takes the surfer to a random web page with probability 1 - a, where a is the damping parameter between 0 and 1.
+At a = 1, the surfer never uses the random button, following only outgoing links.
+As a decreases below 1, the chance of hitting the random button increases.
+This models a surfer either choosing a random link from the current page with probability a or jumping to any page randomly with probability 1 - a.
+The ideal value for a, as used by Google, is approximately 0.85, balancing direct link-following with random page jumps.
+
+\subsection*{Transition Matrix}
+Random walk defined as Markov chain, N denotes num\. of web pages/vertices in graph.
+Transition matrix size N x N includes two scenarios regarding Y to X edge: with/without hyperlink.
+Without hyperlink, transition probability is prod\. of (1 - Alpha) chance of random navigation and equal prob\. of 1/N for each page.
+With hyperlink, add probability Alpha of choosing the hyperlink, divided by the num\. of Y`s out-links.
+Ensures all vertex pairs connected, albeit with potentially minuscule weights, creating an ergodic Markov chain.
+This infers a unique stationary distribution Pi, independent of start state, reached over time for any starting position.
+Pi, the stationary probability of page X, is equated to its PageRank, representing its importance.
+
+\subsection*{Sink Nodes}
+The random surfer model has a problem with sink nodes--pages without outgoing links--making the model undefined for these cases.
+Three fixes are proposed.
+First, a self-loop keeps the surfer on the same page, which inflates that page`s rank artificially.
+Second, recursively removing sink nodes risks shrinking the graph and some pages never receiving a rank.
+Lastly, the preferred solution is directing the surfer to a random web page from the entire graph when landing on a sink node, effectively setting the choice probability (alpha) to zero for these cases.
+This method aligns with PageRank`s solution as per Wikipedia.
+
+\subsection*{Ergodic}
+The random surfer model, defining web navigation behavior, is ergodic when alpha (a), the probability of following a link, is less than one.
+This stipulation ensures a non-zero probability of moving from any page to another directly in a step, signified by the transition matrix P having all positive entries.
+Ergodicity hinges on the addition of a complete graph to the original web graph G, creating an augmented graph G-prime.
+This model allows for a random jump to any page, not solely through existing links.
+The degree to which a is less than one impacts how closely G-prime`s PageRank vector, the principle eigenvector, reflects the properties of G\@.
+A higher a, approaching one, suggests G-prime closely resembles the original web graph, implying the PageRank vector for G-prime could represent the characteristics of G accurately.
+Conversely, a lower a indicates G-prime is moving away from G, yet this leads to a faster convergence rate toward the PageRank vector due to the greater influence of the complete graph.
+Google`s choice of a at 0.85 balances resemblance to G (thus relevance of the PageRank result) and efficient convergence.
+Investigating the effects of varying a on the PageRank vector can reveal how the set and ordering of top-ranked sites shift with this parameter.
+Analyzing data with different a values, especially contrasting those close to one with 0.85 or 0.75, will illustrate these effects on the web page rankings.
+
+\subsection*{Finding Pi}
+To calculate the PageRank, one must determine the stationary distribution vector, pi.
+Start with any initial distribution, expressed as vector Mo.
+Multiply Mo by the transition matrix P to the power of t, through T iterations of the Markov chain--only a small number of steps is typically required due to rapid mixing from the probability (1-alpha) of selecting a random page.
+Convergence can be checked empirically.
+For massive web graphs, use the previous week`s pi as a starting point to approximate the current pi efficiently.
+Since the number of web pages (N) is very large, computing pi traditionally is impractical as it would take N squared time and space.
+Instead, computation must be done in linear time, order m, where m represents the number of edges in the web graph.
+This usually scales with N, being linear instead of N squared, making the process feasible for large networks.
+The described approach outlines the practical implementation of the PageRank algorithm in a resource-efficient manner for extensive web graphs.
+

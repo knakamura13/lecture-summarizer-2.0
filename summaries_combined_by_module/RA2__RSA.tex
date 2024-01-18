@@ -1,0 +1,203 @@
+\section*{RSA}
+
+\subsection*{Fermats Little Theorem}
+Exploring RSA cryptosystem`s foundation, focus on Fermat`s little theorem: for prime P and any number Z that is 1 \textless{}= Z \textless{}= P-1 and GCD(Z,P) = 1, then Z\textasciicircum{}(P-1) mod P = 1.
+This theorem`s proof hinges on the properties of prime numbers, notably that elements relatively prime to P have multiplicative inverses modulo P\@.
+This concept underpins not only RSA but also algorithms for primality testing.
+The theorem`s proof, described as both beautiful and reasonably challenging, leverages the relationship between primes and their inverses.
+The theorem is distinct from the more complex Fermat`s Last Theorem, famously proved by Andrew Wiles centuries after Fermat`s initial claim.
+
+\subsection*{Fermats Thm.  Proof}
+Fermat`s Little Theorem states that for a prime p and any integer z between 1 and p-1, z\textasciicircum{}(p-1) mod p equals 1.
+To prove this, we define set S containing integers 1 through p-1.
+S` is another set created by multiplying each element in S by z and taking mod p.
+Through an example with p=7 and z=4, we see S` is a permutation of S--different order but contains the same elements.
+Establishing that S and S` are permutations of one another is a step towards proving the theorem.
+
+\subsection*{Proof  Key Lemma}
+S and S` are sets with elements related to a prime number P\@.
+S consists of numbers 1 to P-1.
+S` has elements of the form kZ mod P for k=1 to P-1.
+To prove S and S` are identical, it is shown that S` elements are distinct and non-zero.
+For distinctness, assuming two elements are equal leads to a contradiction using the fact that every number 1 to P-1 has an inverse modulo P\@.
+Multiplying both sides of the congruence by the inverse of Z shows that equal elements must have the same index, contradicting the presumption of distinct indices, proving all elements in S` are distinct.
+For non-zero proof, if any S` element is zero, multiplying by Z`s inverse suggests index I would be zero modulo P, outside the range of 1 to P-1, another contradiction.
+Thus, S` elements are non-zero and occupy all values 1 to P-1, implying S equals S` with order as the only differing factor.
+
+\subsection*{Proof  Finishing Up}
+Goal to demonstrate Z\textasciicircum{}(P-1)  1 mod P\@.
+Examined sets S (1 to P-1) and S` (S elements x Z mod P).
+Proved S and S` identical, different orders.
+Multiplying S and S` elements separately yields identical products mod P: S gives 1x2x\ldotsx(P-1), S` yields Zx1, Zx2,\ldots, Zx(P-1).
+Sides equal mod P, left is $(P-1)!$ and right is Z\textasciicircum{}(P-1) x (P-1)!.
+As P is prime, each term 1 to P-1 has an inverse mod P\@.
+Multiplying by inverses cancels $(P-1)!$, results in Z\textasciicircum{}(P-1)  1 mod P, confirming the theorem.
+
+\subsection*{Eulers Theorem}
+Euler`s theorem extends Fermat`s little theorem from prime numbers to any positive integer N by asserting Z\textasciicircum{}ph(N)  1 mod N, given Z and N are relatively prime (GCD(Z,N)=1)\. ph(N), Euler`s totient function, signifies the count of numbers \textless{}= N that are coprime to N\@.
+For a prime P, ph(P) equals P-1, mirroring the case in Fermat`s theorem: raising Z to P-1 yields a remainder of 1 when divided by P\@.
+Euler`s theorem thus generalizes Fermat`s by applying a similar concept to a broader set of numbers, N, not limited to primes.
+
+\subsection*{Eulers Totient Quiz Question}
+Euler`s theorem examined for N = P * Q, with P and Q as prime numbers.
+Focus on determining phi of N (Euler`s totient function value) when N is the product of these primes.
+Objective: calculate quantity of numbers between 1 and P * Q that are relatively prime to PQ\@.
+Euler`s theorem here is an extension of Fermat`s little theorem when involving two primes.
+
+\subsection*{Eulers Totient Quiz Solution}
+Phi\_of\_n, when n=p*q (p and q are prime), is derived by counting the numbers between 1 and pq that are co-prime to pq\. p multiples from p to pq, and q multiples from q to pq, have a gcd of p or q with pq.
+Once removed, p*q original count minus the q multiples of p and p multiples of q, with pq double-counted and thus corrected by adding 1, results in phi\_of\_n=(p-1)*(q-1).
+
+\subsection*{Eulers Thm\. for N=pq}
+Euler`s Theorem states for N = PQ (P, Q = prime), if Z and N are coprime (GCD(Z, N) = 1), then Z\textasciicircum{}(phi(N)) = 1 mod N, where phi(N) = (P-1)(Q-1).
+This is foundational for RSA encryption.
+RSA uses prime pair P, Q to create N and leverages (P-1)(Q-1) to generate encryption and decryption keys, enabling secure message exchange.
+The theorem underpins the fundamental mechanism of RSA`s cryptographic process.
+
+\subsection*{RSA Alg.
+Idea}
+RSA relies on the difficulty of factoring the product of two large prime numbers.
+The foundation of RSA encryption/decryption begins with Fermat`s Theorem and the concept that a number raised to the product of a specific pair of exponents related to modulo prime numbers will return the original number.
+In RSA, a message, Z, encrypted with an exponent, B, and then decrypted with its inverse exponent, C - mutually inverse with respect to mod (P-1), where P is a prime number - yields the original message Z under mod P due to Fermat`s Theorem.
+To secure the process against deducing C given B and P, Euler`s Theorem is utilized with two primes, P and Q, and their product N\@.
+Encryption and decryption exponents, D and E, are inverses mod (P-1)(Q-1).
+Z raised to the power DE under mod N returns Z due to Euler`s Theorem, assuming Z and N are relatively prime.
+The public knows E and N but not D - the decryption key - which is privately derived from P, Q and E using the extended Euclidean algorithm.
+The RSA algorithm`s security is underpinned by the impracticality of deducing D without knowledge of P and Q, even while knowing their product, N\@.
+
+\subsection*{Crypto Setting}
+Alice needs to securely send a message (M) to Bob in the presence of an eavesdropper, Eve.
+To accomplish this, Alice encrypts M using an encryption scheme to produce E(M), which is sent to Bob through a communication line visible to Eve.
+Bob decrypts E(M) using his private decryption key, which Eve cannot access.
+The system used is a public key cryptosystem, RSA\@.
+In RSA, Bob generates a public key (N and E) by multiplying two prime numbers (P and Q) and selecting E that is coprime to (P-1)(Q-1).
+He broadcasts N and E publicly.
+Anyone, including Alice, can send messages to Bob by encrypting them with his public key.
+Bob is the only one who knows P and Q, allowing him to compute his private key (D), the modular multiplicative inverse of E modulo (P-1)(Q-1).
+D enables Bob to decrypt messages by raising them to the power of D and taking the result modulo N\@.
+This process does not require prior private communication between Alice and Bob, as public key encryption allows for secure message transmission without prior key exchange.
+
+\subsection*{RSA Protocol  Keys}
+Bob, the receiver in RSA protocol, creates his public and private keys starting with two randomly chosen N-bit prime numbers P and Q\@.
+He verifies their primality with an efficient testing algorithm.
+Next, Bob selects an encryption exponent E, relatively prime to the product of (P-1)(Q-1).
+He initially tries E=3 and uses Euclid`s GCD algorithm to verify relativeness.
+If unsuccessful, he continues with the next odd numbers until he finds a suitable E or resets with new primes.
+Multiplying P and Q, Bob gets N and can then publish his public key (N, E).
+For his private key, he determines D, the modular multiplicative inverse of E relative to (P-1)(Q-1), using the Extended Euclid algorithm.
+D remains secret, while N and E are shared publicly, completing his key setup.
+
+\subsection*{RSA Protocol  Encrypting}
+Alice desires to send an encrypted message M to Bob.
+She retrieves Bob`s public key (N, E) and encrypts M by raising it to power E and then taking modulus N, resulting in the encrypted message Y\@.
+For this operation, Alice employs a fast modular exponentiation algorithm for efficiency.
+Upon receiving Y, Bob decrypts it using his private key D by raising Y to power D and taking modulus N to recover the original message M\@.
+The decryption works because D is chosen as the multiplicative inverse of E mod (P-1)(Q-1), where N equals PQ and P, Q are primes.
+Euler`s theorem ensures this process succeeds when M and N are relatively prime (or share a prime factor).
+Bob`s decryption process is more computationally intensive due to his large D value, thus necessitating the use of the fast modular exponentiation algorithm.
+The RSA algorithm relies on the generation of random prime numbers, P and Q, which underpin the security of the encryption; methods of prime verification are explored subsequently in the text.
+
+\subsection*{RSA  Potential Pitfalls}
+RSA encryption depends on the relative primality of the message, m, and the modulus n (product of two large primes P and Q).
+If m shares a common factor with n, the cryptosystem can be broken as the greatest common divisor (GCD) provides the shared prime factor.
+Encrypted messages (m raised to power e mod n) can expose common factors, enabling adversaries to factorize n using Euclid`s algorithm and ultimately decrypt messages.
+To ensure security, m must be less than n but not too small to avoid direct decryption via cube roots in cases where e=3.
+Converting text to binary and segmenting into n-bit strings assures m \textless{} n, with leading bit considerations ensuring m`s maximum value is properly lesser than n.
+Avoiding small messages can be achieved by padding the message with a sufficiently large random number R\@.
+However, when a message is sent multiple times with the same exponent but different moduli, encrypted messages can be used in conjunction to decrypt the original message using the Chinese remainder theorem.
+Lastly, the RSA protocol necessitates effective primality testing to select appropriate P and Q, ensuring the continued security of the encryption mechanism.
+
+\subsection*{Recap of RSA}
+RSA encryption is fundamentally based on number theory, relying on properties of prime numbers and modular arithmetic.
+It utilizes Fermat`s little theorem, which states that if you have a prime number p and another number z, with z and p being relatively prime (having a greatest common divisor of one), then z raised to the power of (p-1) and taken modulo p will equal one.
+However, RSA actually employs a generalization of this theorem, known as Euler`s theorem.
+Specifically, RSA applies Euler`s theorem to the product of two primes, p and q.
+In this scenario, if you take a number z that is relatively prime to N (where N is the multiplication of p and q) and raise z to the power of (p-1)(q-1), modulo N will also yield one.
+This power of (p-1)(q-1) is derived from the count of numbers between 1 and N that are relatively prime to N, where N is the product of two distinct prime numbers, p and q.
+Understanding this mathematical background is key to grasping RSA algorithm`s encryption and decryption processes.
+
+\subsection*{Recap of RSA \#2}
+Euler`s theorem underpins the RSA algorithm.
+Start by selecting prime numbers p and q, multiply them to get N\@.
+Determine e, coprime to (p-1)(q-1), ensuring gcd(e, (p-1)(q-1)) is one.
+An inverse of e exists due to coprimality, defined as d, the private key--calculated using the extended Euclid algorithm.
+Publicize the public key N and e for encryption; keep d secret for decryption.
+Messages are encrypted as Y by raising them to the power of e and taking mod N, then sent.
+Decryption involves raising Y to the power of d, mod N, to retrieve the message m.
+Verification of e`s coprimality and inversion uses the Euclid algorithm.
+For ease and efficiency in calculations, e is chosen small or fast modular exponentiation via repeated squaring is used.
+Security hinges on the difficulty of deriving (p-1)(q-1) from N without factoring N into p and q, assuming factoring is computationally hard.
+The effectiveness of RSA depends on secure prime number selection for p and q.
+
+\subsection*{Random Primes}
+To securely select primes P and Q for cryptographic purposes, randomly choosing them ensures independence and security against those with prior access to prime tables.
+Random prime selection involves generating a random N-bit number R and testing for primality.
+R is determined by randomly assigning 0 or 1 to each bit, ensuring each bit and trial is independent.
+If R is prime, it`s used; otherwise, the process repeats.
+Primes being numerically dense means the probability R is prime is roughly 1/N, so for large bit sizes like 1000 or 2000, a prime is expected after \textasciitilde{}1000 or 2000 trials--a tolerable repetition rate.
+The remaining challenge concerns the primality test for R\@.
+
+\subsection*{Primality  Fermats Test}
+Deriving a Primality Testing Algorithm based on Fermat`s Little Theorem which states that if r is prime, any z (1 \textless{}= z \textless{} r) raised to r-1 modulo r equals one.
+To test if r is prime, find z where z\textasciicircum{}(r-1) modulo r  1; such a z indicates r is composite and serves as a Fermat witness.
+All composite numbers have at least one Fermat witness; many have a multitude, excluding Pseudo Primes.
+With numerous witnesses, finding them is straightforward, forming the basis of the Primality Testing Algorithm.
+The approach includes a strategy for handling Pseudo Primes, thus proving every composite has a Fermat witness.
+
+\subsection*{Trivial Witness}
+R being investigated for primality needs Fermat witnesses, Z, proving R composite if Z\textasciicircum{}R-1  1 mod R\@.
+All composite Rs have \textgreater{}=1 Fermat witness, shown by choosing a divisor of R as Z\@.
+Since Z and R share a GCD \textgreater{} 1, Z has no inverse mod R (inverse exists iff GCD(Z,R)=1).
+Assuming Z\textasciicircum{}R-1 = 1 mod R wrongly suggests Z has an inverse (Z\textasciicircum{}R-2), contradicting absence of an inverse, thus proving Z\textasciicircum{}R-1 must not equal 1 mod R and R is composite with a Fermat witness.
+
+\subsection*{Non-Trivial Witness}
+A trivial Fermat witness is a number z that shares a non-trivial divisor with a composite number r, immediately indicating r is not prime without needing Fermat`s test.
+All composite numbers have trivial Fermat witnesses since they have non-trivial divisors.
+The presence of a non-trivial Fermat witness, which is relatively prime to r, however, is significant.
+While some composite numbers, called pseudo primes, lack non-trivial Fermat witnesses, most have at least one; when one exists, many exist, making them easy to detect.
+This abundance of non-trivial Fermat witnesses is crucial for developing effective primality testing algorithms.
+
+\subsection*{No Non-Trivial Witnesses}
+Fermat witnesses are used to determine if a number r is composite; z is a non-trivial Fermat witness if z\textasciicircum{}(r-1)  1 mod r and z and r are relatively prime.
+Composite numbers typically have a trivial Fermat witness, but some, known as Carmichael Numbers, do not have non-trivial Fermat witnesses and thus seem prime under Fermat`s test.
+Since Carmichael Numbers (like 561, 1105) are rare, they`re usually disregarded, allowing the use of Fermat`s test as a simple method to check for primeness, as long as a non-trivial Fermat witness can be identified for composite numbers.
+
+\subsection*{Primality  Many Witnesses}
+Assuming every composite number has at least one non-trivial Fermat witness, it follows that at least half of the numbers 1 through r-1 are witnesses, suggesting that r is composite if for any number z from this set, z\textasciicircum{}(r-1) is not congruent to 1 mod r.
+This fact can be exploited to devise a primality test, which ignores Carmichael numbers, based on Fermat`s little theorem.
+If z\textasciicircum{}(r-1) is congruent to 1 mod r for any chosen z from the set, then r may be prime; if not, r is definitely composite.
+
+\subsection*{Simple Primality Alg.}
+Using a simple algorithm based on Fermat`s Little Theorem to test the primality of an n-bit number r, where a randomly selected Z from the range 1 to r-1 is used for Fermat`s Test.
+If Z\textasciicircum{}r-1 \% r equals 1, r might be prime; if not, r is definitively composite as Z acts as a witness.
+This method does not address Carmichael numbers but is still efficient for primality testing, with the theorem stating at least half the numbers in the set will witness r`s compositeness if r is indeed composite.
+
+\subsection*{Primality Alg.
+Analysis}
+Primality testing algorithm always correctly identifies a prime number r, as all z raised to r\_minus\_one modulo r equals one, according to Fermat`s theorem.
+When r is composite and not a Carmichael number, the algorithm can still be correct if it finds a Fermat witness (where z raised to r\_minus\_one modulo r doesn`t equal one).
+However, the algorithm may falsely identify r as prime if it finds a z that`s not a Fermat witness.
+Since at least half of z`s are Fermat witnesses, the probability of a false positive--mistaking r for prime--is at most 1/2.
+Current aim is to enhance the algorithm to reduce this false positive rate.
+
+\subsection*{Boosting Success}
+Our original primality testing algorithm had a max false positive rate of  1/2 .
+To reduce this rate, we now select K random numbers from 1 to R-1 and run a Fermat test on each.
+If any chosen number is a Fermat witness (its R-1 power is not congruent to 1 mod R), R is composite.
+If all numbers pass, R is likely prime.
+The probability of a composite R being incorrectly identified as prime (false positive) is at most  1/2 \textasciicircum{}K\@.
+By choosing K=100 from a large set, the false positive probability is significantly reduced to  1/2 \textasciicircum{}100, making the chance of an incorrect prime identification negligibly small and acceptable for cryptographic applications, assuming R is not a Carmichael number.
+Dealing with Carmichael numbers requires a slightly different approach, which is explained in the textbook.
+
+\subsection*{Addendum  Pseudoprimes}
+Primality testing improved to handle Carmichael numbers using an enhanced algo that goes beyond Fermat`s test, which can fail for these tricky composites.
+Example given with 1729, which is a Carmichael number; a standard primality test might falsely categorize it as prime.
+Typically, we`d pick a random Z, raise Z to X-1, then mod X, expecting a result other than 1 to confirm compositeness.
+For 1729, this does not work--raising 5 to 1728 mod 1729 indeed gives 1, leading to an incorrect assumption of primality.
+The novel approach involves factoring out powers of 2 from X-1 until reaching an odd exponent, then using fast modular exponentiation for computing.
+When the calculated power of 5 reaches 1 mod X during repeated squaring, rather than stopping, we backtrack to the first occurrence of a value different from 1, which is a `non-trivial` square root of 1 mod X\@.
+Non-trivial here means other than +-1, as primes only have these as square roots of 1 mod X\@.
+Finding such a non-trivial square root hence confirms the number in question is composite.
+While the underlying mathematics for why this works with at least 75\% of possible Z choices is complex, the operational part of the algo remains straightforward.
+Essentially, it`s the initial process with an additional check for a non-trivial square root of 1 in cases where the standard Fermat`s test doesn`t detect compositeness in numbers like Carmichael numbers.
+

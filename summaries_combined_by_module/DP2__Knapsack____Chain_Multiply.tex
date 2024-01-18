@@ -1,0 +1,228 @@
+\section*{Knapsack    Chain Multiply}
+
+\subsection*{Knapsack Problem}
+The knapsack problem involves selecting a subset of n items, each with an integer weight (w1 to wn) and value (v1 to vn), so their combined weight does not exceed a given capacity (B), while maximizing their total value.
+The challenge seeks an optimal solution that balances a limited capacity with the greatest possible value gain.
+This problem is similar to job scheduling with limited resources, aiming for optimal job selection based on value.
+It serves as an introductory example for dynamic programming techniques, with further applications and variants explored in subsequent homework assignments.
+
+\subsection*{Knapsack Problem Variants}
+Exploring two variations of a problem with distinct dynamic programming solutions: one with a single copy of each object aiming to identify a unique subset, and another allowing unlimited object use, leading to multisets with possible repetition.
+Initially focusing on the single-copy scenario before reviewing the unlimited supply case to develop appropriate algorithms.
+
+\subsection*{Greedy Algorithm  Question}
+Greedy approach`s pitfalls demonstrated using an example with four objects for a problem where the goal is to find the optimal solution that maximizes value without exceeding total capacity of 22.
+Objects values: 15, 10, 8, 1.
+Weights: 15, 12, 10, 5.
+Only one copy of each object can be used.
+The challenge is to identify the subset of objects that achieves maximum value while fitting within the backpack`s capacity constraint.
+
+\subsection*{Greedy Algorithm  Solution}
+Max value attainable is 18 by using objects 2 and 3 with total weight 22 and value 18.
+A greedy algorithm chooses items with the highest value per weight unit.
+In the example, it takes object 1 first (most value per unit) and then tries to fit others.
+After adding object 1 (15 units of weight), only 7 units of weight remain, disqualifying objects 2 and 3 due to their higher weight.
+Hence, it adds object 4, fitting the backpack.
+Greedy solution uses objects 1 and 4 for a total value of 16, which is suboptimal compared to the 18 from using objects 2 and 3.
+The greedy algorithm fails because an initially optimal choice prevents adding more valuable objects later, highlighting the advantage of dynamic programming for optimizing choices over time.
+
+\subsection*{Knapsack  No repetition}
+Designing a dynamic programming algorithm involves two primary steps.
+Initially, we define the sub-problem, typically considering a problem on a prefix of the input.
+We use K(I) to represent the maximum value obtainable with the first I objects.
+By adjusting the available set from N to I objects, we tailor the scope of the problem.
+The subsequent step is to establish a recursive relationship, formulating K(I) in terms of preceding, smaller sub-problems, such as K(1) through K(I-1).
+
+\subsection*{Knapsack  Recurrence 1}
+K(i) represents the maximum value achieved from a subset of the first i objects, aiming to establish a recurrence relation for K(i) based on smaller subproblems.
+Using an example with objects valued at 15, 10, 8, and 1 and weights 15, 12, and 5 accordingly, K(1) equals 15 by including the first object.
+For K(2), choosing between objects 1 and 2 favors object 1, as their combined weight exceeds the limit.
+K(3)`s optimal value of 18 involves objects 2 and 3, yet K(3) can`t be derived from K(1) or K(2).
+Instead, it uses a suboptimal solution from K(2) that allows spare capacity for object 3.
+To integrate object 3, the solution must consider the remaining capacity reduced by object 3`s weight.
+This evidence suggests subproblems must account for a prefix of objects and adjust available capacity, leading to the need for a revised dynamic programming algorithm approach.
+
+\subsection*{Knapsack  Subproblem 2}
+Revised the subproblem definition for a max value optimization using subset of i objects, addressing earlier issue where solution for Ki-1 was insufficient.
+Realized we need optimal solutions for (i-1) with weight limit (B-weight of ith object).
+Strategy involves a 2D table with parameters i (0 to n) and b (0 to B), defining KIB as the max value with subset of objects 1 through i, with weight \textless{}= b.
+The target is to find KNB, the max value for all n objects within weight B, at the table`s bottom right corner, solving the original problem.
+
+\subsection*{Knapsack  Recurrence 2}
+Recurrence for dynamic programming in backpack problem considers two scenarios: including or excluding object i (with value Vi, weight Wi) in backpack of capacity b.
+If Wi \textless{}= b, consider the max of including i (gain Vi + optimal value for remaining capacity b-Wi with objects 1 to i-1) and excluding i (optimal value with same b and objects 1 to i-1).
+If Wi \textgreater{} b, can`t include i, so use the latter optimal value only.
+Set base cases: for i=0 (empty set of objects) or b=0 (total weight available is zero), max value is zero.
+Fill a two-dimensional table row by row for DP algorithm, utilizing entries from previous row which represent optimal solutions to smaller subproblems.
+
+\subsection*{Knapsack  DP Pseudocode}
+Drafted pseudocode for the single-use knapsack problem with N objects, valuing input weights (W1-Wn), values (V1-Vn), and a total capacity (B).
+Base cases set first table row/column to zero (no capacity, or empty subset).
+Algorithm fills table dynamically, checking if object fits current capacity (b): if Wi \textless{} b, calculate max value by including or excluding object i, taking max.
+If Wi doesn`t fit, K(i, b) equals K(i-1, b).
+Final solution is the bottom right table value, representing max value for total capacity B\@.
+Running time: initialization (order B + order N), nested loops for table interior with constant time check (order N * B); total time complexity is order N * B, applicable to single-use object scenario.
+
+\subsection*{Knapsack in Poly-time Question}
+Algorithm`s runtime is O(n\textasciicircum{}b).
+Need to determine if this is efficient, i.e., if it`s polynomial time.
+Efficient generally implies polynomial in input size.
+Running time in question may or may not be polynomial; if not, must specify why and what would qualify as polynomial regarding running time with respect to input size.
+
+\subsection*{Knapsack in Poly-time Solution}
+The algorithm`s runtime for the problem in question is exponential, not polynomial relative to input size, specifically due to the factor capital B\@.
+Capital B`s representation in bits is proportional to its logarithm (log B).
+Input size comprises n items plus the log B space needed to represent capital B, denoted as n and log B\@.
+Despite being a polynomial in n and B, it is exponential in the actual input size, which includes log B\@.
+This aligns with the knapsack problem`s categorization as NP-complete, indicating that a polynomial-time solution for knapsack would imply the same for all NP problems, an unlikely prospect given longstanding challenges in the field.
+The inefficiency is further highlighted by demonstrating that a complex graph problem, when reduced to a knapsack instance, makes capital B exponential relative to graph size, thus causing the runtime to be exponential.
+
+\subsection*{Knapsack Repetition}
+Exploring a variant of the knapsack problem which permits an unlimited number of each object to be used, contrasting the previous single-use object constraint.
+Same dynamic programming approach applied; the subproblem definition modified to accommodate multisets of objects (allowing for repeated use) rather than subsets (single use).
+The subproblem K(i,b) focuses on maximizing value with objects 1 through i but now without the one-time-use restriction, considering the total weight limit b.
+
+\subsection*{Knapsack2  Recurrence}
+Defined a recurrence relation for a knapsack problem variant allowing unlimited copies of an item.
+Explored scenarios of either including an additional copy of item i or not.
+If not included, the resulting subproblem is K(i-1, b).
+If included, value v\_i is added and the capacity decreases by w\_i, but unlike the original problem, index i remains instead of decreasing to i-1, enabling reuse of item i.
+Validated the recurrence by ensuring subproblems are smaller and solvable with previously completed entries.
+For entries requiring a capacity less than the item`s weight, the item can`t be included.
+Running time to fill an n x b table is still O(nB), with each entry computed in constant time.
+
+\subsection*{Knapsack2  Recap}
+Examining the algorithm to simplify a 2D or 3D table to a smaller version, potentially for optimization in speed, space, or complexity.
+The specific context is a revised knapsack problem solution, where the argument `i` tracks considered objects.
+Due to the allowance of multiple uses of the same object in this problem variant, `i` is deemed unnecessary.
+By eliminating `i`, a new knapsack solution will feature only the weight parameter, thus simplifying the solution.
+
+\subsection*{Knapsack2  Simpler Subproblem}
+Dynamic programming applied to a simplified knapsack problem focusing on a single parameter, weight (b).
+Maximum capacity (B) ranges down to zero.
+Subproblem K(b) finds the maximum value using a weight up to b, using any items from a set of n.
+Unlike previous versions, the subproblem lacks an extra parameter and is not limited to the first i items.
+Recurrence is developed by considering all items as potential last items to add, maximizing their value (Vi), and respecting the weight constraint (Wi \textless{}= b).
+If an item fits, it is added, Vi is gained, and remaining capacity reduces by Wi, creating a new subproblem K(b-Wi) for optimal solution of reduced weight.
+Pseudo code for the algorithm fills a one-dimensional table from K(0) to K(B).
+Final entry K(B) solves the problem.
+
+\subsection*{Knapsack2  Pseudocode}
+Developed pseudocode for a knapsack problem allowing for multiple uses of items, inputting item weights (W1-Wn), values (V1-Vn), and total capacity (B).
+By utilizing a 1D array, start from index b=0, representing no items fitting current capacity B\@.
+Iterate through each item checking fit (Wi\textless{}=b) then compare the value of adding item i (Vi + K(b-Wi) where K represents the best solution for reduced capacity) to the previous best K(b).
+If it`s better, update K(b).
+The final entry of the array K(B) yields the maximum value obtainable with the given constraints.
+
+\subsection*{Knapsack2  Running Time}
+Writing time involves an outer loop of size B and a nested loop of size N, each step taking constant time; total run time therefore is O(NB).
+This algorithm maintains the original solution`s run time but with reduced space and simplified to a one-dimensional table algorithm.
+
+\subsection*{Knapsack2  Traceback}
+To generate a multi-set that yields the optimal solution, tracking the last added object I is crucial.
+An array S is created, with S(b)=0 for the initial empty set solution.
+Upon updating the solution, if the condition is met, S(b) is set to I to indicate the optimal solution involves adding object I and considering the smaller subproblem.
+S allows for backtracking to construct a multi-set that achieves the maximum value.
+This process is akin to the method used for determining the longest common sub-sequence.
+
+\subsection*{Chain Matrix Multiply}
+The current focus is the chain matrix multiplication dynamic programming problem, a more complex case than previous examples.
+The problem centers on efficiently multiplying a sequence of matrices.
+Efficiency here refers to computation cost.
+For instance, multiplying four matrices A, B, C, and D, each with specific integer dimensions such as A being 50x20, B 20x1, C 1x10, D 10x100.
+Compatibility between matrices for multiplication necessitates rows of one matrix to match the columns of the subsequent one.
+Matrix multiplication involves the inner product of rows and columns across matrices, implying the need for equal count of elements in these interacting dimensions.
+The goal is to determine the optimal order of multiplication to minimize computations.
+
+\subsection*{Order of Operation}
+Goal: Compute A x B x C x D efficiently.
+Matrix multiplication is associative, allowing multiple computation sequences.
+Standard method: (A x B) x C x D\@.
+Alternatives: (A x B) x (C x D), (A x (B x C)) x D, ((C x D) x B) x A\@.
+Need to determine the best sequence - the optimal parenthesization and its cost.
+Assigning costs to each operation will help identify the most efficient method for matrix multiplication.
+
+\subsection*{Cost for Matrix Multiply}
+Matrix multiplication involves calculating the product Z from matrices W (a x b) and Y (b x c), resulting in Z`s dimensions of a x c.
+To compute the entry Z(i,j), the inner product of row i from W and column j from Y is calculated.
+This requires b multiplications and b-1 additions for one entry.
+Since Z has a x c entries, the total cost involves a x c x b multiplications and a similar count of additions.
+However, multiplications are more computationally intensive; thus, the cost of computing Z, the product matrix of W times Y, is dominated by the multiplications, leading to a cost of a x b x c operations.
+
+\subsection*{General Problem}
+N matrices A1 to An must be multiplied, with matrix Ai being of dimension Mi-1 x Mi.
+The task is to find the least costly multiplication sequence, cost being dependent solely on matrix dimensions, not their contents.
+Required input: the dimensions (N+1 parameters) of N matrices.
+Identifying the minimum cost precedes determining the actual multiplication sequence (parenthesization) that achieves this cost.
+
+\subsection*{Graphical View}
+Matrix multiplication can be visualized using binary trees, providing an alternative perspective on parenthesization.
+In the binary tree, leaves represent the individual matrices (A, B, C, D), while internal nodes correspond to intermediate multiplications.
+The tree structure reveals the multiplication sequence: an example of multiplying A, B, C, and D in sequence is depicted by a tree where each parent node represents a progressive multiplication (AB, then AB*C, and finally AB*CD at the root).
+Another example illustrates the multiplication of A with B and C with D first, followed by multiplying the results, forming a different tree structure but with the same final product at the root.
+The organization of sub-trees indicates how multiplication operations are parenthesized and grouped in different scenarios.
+
+\subsection*{Chain Multiply  Prefixes}
+Dynamic programming algorithm for matrix chain multiplication problem begins by defining subproblems as the min\. cost of computing the product of the first i matrices.
+Recurrence formulation involves splitting the chain at index i to examine costs of left (product of A1 to Ai) and right child (Ai+1 to An).
+Initially considering prefixes, further inspection reveals that intermediate computations involve substrings from index i to j.
+This observation necessitates a revision of the subproblem definition to account for substrings rather than just prefixes or suffixes.
+This change aims to capture the true nature of the problem for developing an accurate and efficient dynamic programming solution.
+
+\subsection*{Chain Multiply  Substrings}
+Developing a method for matrix chain multiplication with parameters I and J defining the start and end of a substring of matrices.
+For a series of matrices A\_i through A\_j, the subproblem C(i,j) represents the minimum computation cost for their product.
+The base case is when I equals J, for a single matrix A\_i the cost is zero, represented by the diagonal in matrix C\@.
+The focus is on the upper diagonal, seeking a general recurrence for C(i,j) to calculate the minimum multiplication cost.
+
+\subsection*{Chain Multiply  Recurrence}
+Determining the entry C(i,j) involves calculating the matrix product of Ai through Aj.
+This is depicted as the root of a tree in a graphical representation.
+The task is to find optimal splits, represented by an index L, where Ai to Al forms the left subtree, and Al+1 to Aj forms the right subtree.
+The recurrence approach involves trying all split indices L, adding the minimum cost for computing the left and right subtrees (found in a precomputed table) to the combine cost.
+The combine cost for matrices of sizes Mi-1 by Ml and Ml by Mj is Mi-1*Ml*Mj.
+The minimum sum of costs among all potential L splits is chosen, totaling C(i,L) plus Cl+1,j, plus the combine cost.
+
+\subsection*{Chain Multiply  Summary}
+Developing recurrence for C(i,j) representing cost from matrix Ai to Aj.
+Optimal split at index L for minimal costs, L ranges i to j-1.
+Costs derived from summing optimal costs of left subtree C(i,l), right subtree C(l+1,j), and merge cost Mi-1 x Ml x Mj.
+Recurrence involves taking min sum of these terms across all L values from i to j-1 to find minimal cost C(i,j).
+
+\subsection*{Filling the Table}
+Examining the dynamic programming algorithm`s recurrence reveals a complex table-filling method targeted at computing the upper diagonal of a two-dimensional table C, where the entry indices satisfy j \textgreater{}= i.
+Begin by populating the base case, C(i, i), the table`s diagonal.
+The following step involves filling the off-diagonal entries, C(i, i+1), which rely exclusively on the previously computed diagonal entries.
+Subsequently, address C(i, i+2), using both diagonal and off-diagonal entries for computations.
+The final calculation is for C(1, n), which yields the minimum cost to multiply matrices from A\_1 to A\_n.
+The algorithm progresses methodically from the diagonal, moving to entries with greater index differences.
+This difference, termed the width S, signifies the relative distance from the diagonal (with base cases at width S=0).
+It then increases in increments--S=1 for off-diagonals, and so on--up to S=n-1, covering the table in stages determined by S\@.
+This structure will guide the pseudocode detailing for the dynamic programming algorithm.
+
+\subsection*{Chain Multiply  DP Pseudocode}
+Dynamic programming algorithm for minimum matrix chain multiplication cost calculates min cost to multiply N matrices.
+Sizes are given by n+1 numbers: M0 to Mn.
+Cost is 0 for diagonal since no computation needed.
+Algorithm utilizes width parameter S, starting from S=1 to n-1, avoiding last row.
+For each width, using varying index i for row, determines end index j (j=i+s) for substring defined.
+Then calculates C(i,j) by minimizing across all possible splits at index L between i and j-1.
+Cost at L adds costs of left, right subtrees (C(i,l), C(l+1,j)) with Mi-1, Ml, Mj.
+Minimization process loops through all L values to find current min.
+Nested loops used to compute for each subproblem, with final answer C(1,n) as top right matrix entry, representing min cost of A1 through An product.
+Runtime is O(n\textasciicircum{}3) due to three nested loops, different from usual method of filling in table row by row, algorithm progresses through substrings from diagonal to top right cell.
+
+\subsection*{DP2  Practice Problems}
+Prepared for Chapter 6 problems in Gupta Papademetriou Abaza Ronnie algorithms textbook.
+
+Key problems include:
+1) 6.17 on change-making with different coin denominations and values--advised to attempt all three variants.
+2) Problem 20 focuses on building an optimal binary search tree.
+3) Problem 7 looks for the longest palindrome subsequence and a variant targeting contiguous palindrome substrings.
+
+Key lessons from lecture:
+1) Start with prefixes when devising subproblems; move to substrings if needed.
+2) After solving with substrings, re-evaluate necessity for substrings which could simplify the solution and lead to faster algorithms.
+3) Priority is a correct algorithm, even if slower; efficiency can be optimized later.
+4) Proficiency in dynamic programming comes from extensive practice with varied problems from textbooks and online sources.
+5) Achieving ease with dynamic programming relies on recognizing patterns through repeated practice.

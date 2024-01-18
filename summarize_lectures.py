@@ -231,8 +231,8 @@ def summarize_with_gpt(_input_txt: str, _model: str = "gpt-3") -> str:
 
 if __name__ == "__main__":
     try:
-        lectures_dir = Path("lectures_independent")
-        summarize_dir = Path("lectures_independent_summarized")
+        lectures_dir = Path("lectures_individual")
+        summarize_dir = Path("summaries_individual")
         summarize_dir.mkdir(exist_ok=True)
 
         for module_dir in lectures_dir.iterdir():

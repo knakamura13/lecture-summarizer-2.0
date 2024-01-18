@@ -1,0 +1,122 @@
+\section*{3SAT}
+
+\subsection*{NP-Completeness}
+Proving 3SAT NP-complete, leveraging SAT`s known NP-completeness from Cook-Levin-Theorem (1971: Cook, Levin).
+Importance of NP-completeness underscored by Karp`s 1972 paper, identifying 21 additional NP-complete problems.
+Upcoming lectures to explore some of these 21, starting with 3SAT\@.
+
+\subsection*{3SAT}
+3SAT problem involves a boolean formula f in conjunctive normal form.
+Number of variables n, clauses m.
+3SAT`s specific constraint: each clause \textless{}= 3 literals.
+Task: find a satisfying assignment of true/false to variables so f evaluates to true.
+If no such assignment exists, no output.
+
+\subsection*{Proof Outline}
+3SAT problem NP-completeness to be proven.
+Firstly, show 3SAT in NP class, considered straightforward.
+Main task: reduce SAT to 3SAT as SAT is NP-complete.
+Reduction implies any problem in NP reduces to SAT, and then to 3SAT\@.
+Hence, a poly-time algorithm for 3SAT would solve all NP problems, due to transitive reductions.
+Proof of 3SAT`s place in NP class begins first.
+
+\subsection*{3SAT in NP}
+3SAT problem proven to be in class NP by demonstrating efficient verifiability of solutions.
+For a given input f and proposed true/false assignment for n variables, process entails checking each clause C--max three literals each.
+Verification time per clause is constant, hence for M clauses, verification takes O(M) time total.
+Assignment satisfaction of all clauses implies the entire formula f is satisfied, confirming 3SAT`s placement in NP\@.
+
+\subsection*{SAT 3SAT}
+Reducing SAT to 3SAT involves transforming a SAT problem`s input formula (f) into a 3SAT-compatible formula (f`).
+The challenge is to ensure that large clauses in f, with possibly n literals, are converted into clauses of at most three literals.
+The transformation must preserve the essential property that a satisfying assignment (s`) for f` can be converted into a satisfying assignment (s) for f, and vice-versa.
+This bi-directional satisfaction ensures that if there are no satisfying assignments for f`, yielding a `No` from an algorithm, then f must also have no satisfying assignments, allowing a consistent `No` response for the original SAT problem.
+Therefore, the goal is to construct an algorithm that uses 3SAT solutions to solve SAT problems efficiently and equivalently.
+
+\subsection*{Example}
+Converting SAT problem with 4 variables and 3 clauses (C1, C2, C3) into a 3-SAT problem: C1 and C3 remain unchanged as they are already valid for 3-SAT\@.
+C2, which has 4 literals, is modified by introducing a new variable y, splitting C2 into two clauses of at most three literals each: (!x2  x3  y) and (!y  !x1  !x4), labeled as C2`.
+The transformation maintains the satisfiability equivalence between the original clause C2 and the new pair C2`, ensuring the resulting formula is a valid 3-SAT representation with only clauses of size 3 or less.
+
+\subsection*{Claim  Forward}
+Proving bidirectional satisfiability between an original clause of size 4 (C\_2) and a new pair of clauses of size at most 3 (C`\_2).
+Forward direction: given a satisfying assignment for C\_2, consisting of x\_2, x\_3, x\_1, x\_4, one of these must be true: x\_2 = false, x\_3 = true, x\_1 = false, or x\_4 = false.
+Two cases align with C`\_2 clauses: 1) If x\_2 = false or x\_3 = true, set y = false, satisfying both new clauses.
+2) If x\_1 = false or x\_4 = false, set y = true, also satisfying both C`\_2 clauses.
+Therefore, a satisfying assignment for C\_2 can be used to construct a satisfying assignment for C`\_2, proving the clauses are satisfiable in the forward direction.
+
+\subsection*{Claim  Reverse}
+To show the reverse implication between satisfying assignments for C to the second prime and C to the second, consider the assignment that satisfies C to the second prime.
+Ignoring variable y, such an assignment also satisfies C to the second in all cases.
+If y is true, either x1 or x4 is false, satisfying C to the second.
+If y is false, either x2 must be false or x3 must be true to satisfy C to the second prime, thus also satisfying C to the second.
+Therefore, every satisfying assignment for C to the second prime corresponds to a satisfying assignment for C to the second, confirming the reverse implication and establishing the if and only if relationship.
+
+\subsection*{Quiz  5-SAT 3-SAT Question}
+Transformed a clause of size 5 into 3 clauses of size 3 by introducing 2 new vars y \& z.
+To ensure original clause C`s satisfiability is equivalent to the new clauses C`, C is replaced by C` in the orig\. input F for an equiv\. formula.
+New C` is to be defined with three literals each, using vars a-e (representing X2 bar, X3, X1 bar, X4 bar, X5) plus y \& z.
+The task is to create C` satisfying the if-and-only-if satisfiability condition with C\@.
+
+\subsection*{Quiz  5-SAT 3-SAT Solution}
+Construct a clause in three literals from a clause with K literals using K-3 new vars and K-2 clauses.
+Begins by assigning one literal`s complement (X\_1\_bar) to satisfy one clause, then set auxiliary vars Y, Z appropriately to satisfy remaining clauses.
+Reverse by considering assignments for Y, Z, and infer the assignment for original clause C using Y`s and Z`s truth values.
+This method ensures at least one literal in each clause of C\_prime corresponds to a literal in C; satisfying C\_prime will also satisfy C by appropriate assignments.
+Generalize this by creating new vars and clauses based on the clause size K, where size four needs one new var and for five, two new vars.
+This construction maintains the satisfaction relationship between the original and constructed sets of clauses.
+
+\subsection*{Big Clauses}
+General k-sized clauses labeled a1 to ak generate k-3 new vars Y1 to Yk-3, distinct for each clause, yielding n*m potential new vars across m clauses.
+Original clause C replaced by k-2 clauses; pattern starts with a1, a2, Y1, and alternates negations of newly introduced Y vars with subsequent a literals.
+Last clause differs, ending with ak-1, ak.
+This forms C\_prime formula.
+Claim: original clause C`s satisfiability equates to C\_prime`s satisfiability, allowing transformation of any clause \textgreater{}3 literals into 3-literal clauses, preserving satisfiability, critical for reducing to a three SAT problem.
+Proof of claim required to verify reduction validity.
+
+\subsection*{General Claim  Forward}
+Constructed a formula C with k literals and a related formula C` with k-2 clauses.
+Claimed C satisfiable iff C` satisfiable.
+Proved forward implication; an assignment satisfying C can be adjusted, using auxiliary variables, to satisfy C`.
+Satisfying a literal ai in C ensures the (i-1)th clause in C` is satisfied.
+For earlier clauses in C`, set auxiliary variables y1 to yi-2 to true.
+For later clauses, set auxiliary variables yi-1 to yk-2 to false.
+Thus, if at least one literal in C is true, the corresponding adjustments to auxiliary variables ensure C` is also satisfied.
+The reverse implication remains to be demonstrated.
+
+\subsection*{General Claim  Reverse}
+Proving the reverse implication shows that a satisfying assignment for C` guarantees a satisfying assignment for C\@.
+For C` satisfied by an assignment of K literals plus auxiliary variables, we assume all K literals are false and deduce a contradiction, thereby invalidating the assumption.
+Initial clauses necessitate setting auxiliary variables Y1 to Yk-3 to true.
+But with these and all K literals false, the last clause fails, contradicting C` satisfaction.
+This means at least one K literal must be true, satisfying C, independent of auxiliary variable assignments.
+
+\subsection*{SAT 3SAT}
+Formalized reduction from SAT to 3SAT involves handling clauses of an input formula: small clauses with \textless{}=3 literals are kept unchanged; larger clauses are split into (k-2) new clauses using (k-3) new variables, as per a defined construction.
+Proving an input formula f is satisfiable iff its transformed version f` in 3SAT is satisfiable is straightforward.
+This is due to the fact that each clause C and its transformed version C` maintain the same satisfiability condition.
+To show a satisfying assignment for f` can be converted into one for f, auxiliary variables are disregarded, and the original variables` assignment ensures f`s satisfiability.
+
+\subsection*{Correctness}
+To demonstrate the equivalence between the original formula f and the new formula f`, it`s established that an assignment satisfying f can also satisfy f` and vice versa.
+When a clause C in f has more than three literals, it`s replaced by a sequence called C` with additional variables exclusive to C`.
+These extra variables can be set independently without impacting other clauses.
+For C`, a specific assignment strategy achieves satisfaction: taking the first satisfied literal in C, setting the preceding variables to true, and the rest to false satisfies C`.
+Conversely, a satisfying assignment to f` implies at least one literal in the original clause C must be true, as C` couldn`t be satisfied otherwise.
+Therefore, the original variables` assignment satisfies f, disregarding the new variables.
+This forms a bidirectional satisfaction, thereby proving the formulas` equivalence.
+
+\subsection*{Satisfying Assignment}
+Transformed input SAT formula into 3SAT formula, denoted as f prime.
+Proved f is satisfiable iff f prime is satisfiable.
+If 3SAT algorithm finds f prime unsatisfiable, then f is unsatisfiable.
+If it finds a satisfying assignment for f prime, ignore new variable assignments and retain original ones for a satisfying assignment for f, completing the reduction.
+F prime, in the worst case, has nm variables and nm clauses due to a potential n new variables and n new clauses per original clause, yet the size of f prime is still polynomially related to f.
+Therefore, the a algorithm`s polynomial running time holds relative to the size of both f and f prime, concluding the NP-completeness proof.
+
+\subsection*{Practice Problems}
+First NP completeness proof observed: 3-SAT is NP-complete.
+Relevant practice problems:
+1) 8.3 involves Stingy SAT--objective to prove NP completeness.
+2) 8.8 deals with Exact 4-SAT--each clause contains exactly four literals; aim to prove NP completeness.
+

@@ -1,0 +1,131 @@
+\section*{FFT   Part 1}
+
+\subsection*{Polynomial Multiplication}
+Exploiting divide and conquer strategies similar to those used for multiplying large integers, which improve upon O(n\textasciicircum{}2) time complexity, we adapt these methods for polynomial multiplication by leveraging the Fast Fourier Transform (FFT).
+Given two polynomials, A(x) and B(x), both of maximum degree n-1 with coefficients A0 to An-1 and B0 to Bn-1, the objective is to calculate their product polynomial C(x).
+The degree of C(x) peaks at 2n-2, its coefficients ranging from C0 to C2n-2.
+Each coefficient of C(x), Ck, is the sum of the products of coefficients of A(x) and B(x) across all aligned terms contributing to the term degree k.
+Computing the coefficients vector for C(x) is essentially calculating the convolution of A and B\@.
+The approach fundamentally transforms the coefficient vectors of A and B to efficiently compute their convolution, thus attaining the coefficients of C(x) using FFT to harness better time efficiency in polynomial multiplication.
+
+\subsection*{Quiz  PM  Example Question}
+Understanding polynomial multiplication, A(x) = 1 + 2x + 3x\textasciicircum{}2, B(x) = 2 - x + 4x\textasciicircum{}2 with coefficient vectors (1, 2, 3) and (2, -1, 4) respectively.
+Task: calculate convolution of A and B\@.
+
+\subsection*{Quiz  PM  Example Solution}
+Solved prob: 2,3,8,5,12.
+For x\textasciicircum{}3 coeff 5: -3x\textasciicircum{}2 * -x = -3x\textasciicircum{}3, 2x * 4x\textasciicircum{}2 = 8x\textasciicircum{}3, sum = 5x\textasciicircum{}3.
+
+\subsection*{PM  General Problem}
+Exploring a computational problem involving the convolution C of two polynomials, A of X and B of X, characterized by their coefficient vectors.
+The basic approach to calculate C involves determining its coefficients sequentially, with n coefficients overall.
+Computing each coefficient takes time proportional to its position K due to the sum of K terms, resulting in an algorithm with quadratic time complexity O(n\textasciicircum{}2) for the entire operation.
+The objective is to introduce a more efficient method with O(n log n) time complexity to find the product polynomial C of X\@.
+
+\subsection*{Convolution Applications}
+Convolution has various applications, notably in filtering where data points are replaced by functions of neighboring points, reducing noise or adding effects.
+With mean filtering, a data point Yj is replaced by the average of adjacent 2M+1 points, effectively smoothing the dataset.
+This is achieved by convolving Y with a vector f, representing the neighboring data points.
+To enhance smoothing, f can be replaced by a Gaussian function, which gives more weight to proximate points, using a normalizing factor Z to ensure the vector sums to one.
+Beyond this, Gaussian blur is another filter technique, applying a 2D Gaussian filter to blur images.
+The goal is to understand the process of computing convolution between vectors.
+
+\subsection*{Polynomials Basics}
+Polynomials A(x) can be represented by coefficients or by their values at n distinct points, with it being unique for each representation.
+While coefficients are a natural representation, values ease polynomial multiplication.
+The Fast Fourier Transform (FFT) algorithm facilitates conversion between coefficients and values, optimizing the points chosen for evaluation to leverage this conversion.
+Specifically, FFT is used to change coefficients to values for multiplication, then back to coefficients post-multiplication, benefiting from the efficiency in multiplying polynomials in the values representation.
+The selection of points for the FFT is a critical aspect of its efficiency and elegance.
+
+\subsection*{MP  Values}
+Multiplying polynomials in value representation at 2n points enables computing the product polynomial C(x) efficiently; for each point, the computation is constant time, totaling linear, O(n), time.
+Polynomial C(x) results from products of corresponding values of polynomials A(x) and B(x), which can be done quickly since the degree of C(x) is at most 2n - 2, requiring at least 2n - 1 points.
+Utilizing Fast Fourier Transform (FFT), we can transform from coefficients to values in O(n log n) time, multiply the polynomials in O(n) time, and convert the resulting values back to coefficients with another application of FFT, also in O(n log n) time.
+The whole process emphasizes the efficiency of polynomial multiplication in the values representation when paired with FFT\@.
+
+\subsection*{FFT  Opposites}
+Focusing on a computational task involving a vector a, representing the coefficients of a polynomial A(x), with the goal to compute A(x)`s value at endpoints x1 through x2n.
+The selection of these endpoints is critical.
+A proposed approach assumes these endpoints exhibit a plus-minus property, meaning the first n points are the negatives of the subsequent points (Xn+1 = -X1, Xn+2 = -X2, \ldots, X2n = -Xn).
+This property is central to our methodology for endpoint selection.
+
+\subsection*{FFT  Splitting A(x)}
+The plus-minus property indicates first n points are the inverse of the subsequent n points, aiding in recursive computation of polynomial A(x) at 2n points.
+By evaluating A(x) at points xi and xn+i, leveraging the plus-minus principle, we find that these points are opposites.
+Splitting A(x) into even and odd terms, we find even terms consistent for xi and -xi, due to even powers, but the odd terms differ, as odd powers result in opposite values for xi and xn+i.
+This leads to the division of A(x) into even (a\_even) and odd coefficients (ai), facilitating the handling of the polynomial`s coefficients.
+
+\subsection*{FFT  Even \& Odd}
+Vector coefficients in a polynomial A(x) can be separated into even and odd terms, creating A even(Y) and A odd(Y) polynomials with degrees N/2-1 if A(x) is of degree N-1.
+A(x) equals A even(X\textasciicircum{}2) plus X times A odd(X\textasciicircum{}2), demonstrating a divide-and-conquer strategy.
+This reduces the original polynomial problem into two subproblems of halved degrees, although evaluations still needed at squares of initial points, not halving the evaluation requirement like the degree reduction.
+The interplay of even-odd terms simplifies complexities of the larger polynomial.
+
+\subsection*{FFT  Recursion}
+Polynomial A of X is decomposed into A even and A odd such that A(x) = A even(x\textasciicircum{}2) + x*A odd(x\textasciicircum{}2).
+When evaluating A at points XI and -XI (with the plus-minus property), A(XI) and A(-XI) both depend on A even and A odd at XI\textasciicircum{}2 but differ by the XI coefficient in front of A odd.
+With Y1\ldotsYN as the squares of XI\ldotsXN, A can be evaluated at XI and -XI in constant time, as long as A even and A odd are known at these squared points.
+Essentially, the evaluation of polynomial A at endpoint pairs with the plus-minus property is efficient, needing only the values of A even and A odd at the squares of the endpoints.
+
+\subsection*{FFT  Summary}
+Evaluating polynomial A(x) of degree n-1 at 2n points, x\_1 through x\_2n, is essential for polynomial multiplication.
+Initially, 2n points are chosen to construct Aeven and Aodd from the even and odd terms of A(x), reducing their degrees by half.
+The FFT algorithm is recursively applied to these two polynomials at n points, y\_1 through y\_n, which are the squares of the original 2n points and maintain a plus-minus property.
+Knowing values of Aeven and Aodd at x\textasciicircum{}2 allows for efficient evaluation of A(x) at x; this parallel process at 2n points requires linear time.
+The algorithm`s time complexity is comparable to merge sort, following T(n) = 2T(n/2) + O(n) and resolving to O(n log n).
+The plus-minus property must hold for all recursive levels, implying that the original and all subsequent 2n points adhere to this criterion, which forms the computational challenge of the algorithm.
+
+\subsection*{FFT  Recursive Problem}
+Choosing two endpoints to exhibit the plus-minus property involves duplicating the first N with their opposites for the second set.
+Upon recursion, the new endpoints are the squares of the original ones, necessitating the same property.
+For N as a power of two, each squared endpoint must be the opposite of its pair, but squares yield positive results, making real numbers insufficient.
+Thus, complex numbers are necessary to maintain the plus-minus property beyond the initial step, leading to a review of complex number properties for the selection of the 2N numbers to fulfill the criteria throughout the recursive process.
+
+\subsection*{Review  Complex Numbers}
+Complex numbers, denoted as Z = a + bi with real part A and imaginary part B, underpin the evaluation of the polynomial A(x).
+They are represented in the complex plane with two axes for real and imaginary components, respectively.
+Polar coordinates (R, theta), where R is the magnitude and theta is the angle to the horizontal axis, offer an alternative, useful depiction of complex numbers especially for multiplicative operations.
+Conversion between Cartesian (a, b) and polar (R, theta) coordinates involves trigonometry, with A = R * cos(theta) and B = R * sin(theta).
+Another potent representation is provided through Euler`s formula, e\textasciicircum{}(i*theta) = cos(theta) + i*sin(theta), which allows expressing complex numbers compactly as Z = R * e\textasciicircum{}(i*theta).
+Euler`s formula is proven via Taylor series expansions for the exponential, cosine, and sine functions.
+This foundational understanding of complex numbers facilitates the development of a simple yet elegant final algorithm for polynomial evaluation.
+
+\subsection*{Multiplying in Polar}
+Polar coordinates simplify multiplication of complex numbers: to multiply, just multiply magnitudes (r1 * r2) and add angles (th1 + th2).
+For a complex number Z with polar coordinates (r, th), its opposite -Z equals the product of its polar coordinates and those of -1, which are (1, p).
+Thus, -Z has polar coordinates (r, th + p), meaning -Z is a reflection of Z across the origin, maintaining the same distance r from the origin but with an adjusted angle th + p.
+This reflection technique is useful for easily determining opposites in the complex plane.
+
+\subsection*{Roots  Graphical View}
+Identifying nth roots of unity in complex plane; represent number 1 in polar as (1, multiple of 2pi * j for any integer j).
+For complex number Z in polar form as (r, theta), when raised to n, demands r\textasciicircum{}n=1 (all roots lie on unit circle of radius 1).
+Theta determined by equation n*theta = 2pi*j, solve for theta results in theta = 2pi*j/n.
+Example with n=8 yields 8 distinct root positions on unit circle at incremental angles of 2pi/8 (or pi/4), starting at 1 (0 degrees) up to 7pi/4, then repeating at 2pi.
+
+\subsection*{Roots  Notation}
+The nth roots of unity are located at equidistant points on the unit circle in polar coordinates as (1, 2pj/n) for j=0 to n-1, increments in angles of th=2p/n.
+Omega (on) denotes the point at j=1; subsequent points are powers of on\. on to the power of n equals 1.
+Nth roots are on\textasciicircum{}0 to on\textasciicircum{}(n-1).
+They can be expressed using Euler`s formula as on = e\textasciicircum{}(2pi/n); thus, on\textasciicircum{}j for j=0 to n-1 equals e\textasciicircum{}(2pij/n).
+
+\subsection*{Roots  Examples}
+Complex roots of unity distributed evenly around the unit circle, explored for n=2, n=4, n=8, n=16 where n=power of 2.
+For n=2, roots are at 1, -1; n=4 adds i, -i.
+Each increment in n subdivides circle further: n=8 step is pi/4, n=16 step is pi/8.
+Points at nth roots can be represented as omega\_n to various powers.
+Omega\_16 squared equals omega\_8, linking roots of different n.
+When n=power of 2, n-th root squared gives n/2-th roots.
+Also, negative roots are defined, omega\_n\textasciicircum{}j is opposite omega\_n\textasciicircum{}(j+n/2), reflecting across the circle.
+This patterning continues around the unit circle equidistantly, demonstrating symmetrical properties of roots of unity.
+
+\subsection*{Key Property  Opposites}
+Nth roots of unity key for divide \& conquer strategy due to two main properties.
+For even n, nth root has a plus-minus property where first half of nth roots are opposites of the last half, e.g., omega\_n\textasciicircum{}0 = -omega\_n\textasciicircum{}(n/2) and omega\_n\textasciicircum{}j = -omega\_n\textasciicircum{}(n/2 + j).
+This makes nth roots ideal for the approach due to the symmetric distribution of their values.
+
+\subsection*{Key Property  Squares}
+In complex polynomial evaluation, when n is a power of two, nth roots squared equate to n/2 roots, simplifying the evaluation process.
+Specifically, squaring both the jth nth root and the (n/2 + j)th nth root yields the jth n/2 root.
+This property is crucial for efficient polynomial evaluations using the Fast Fourier Transform (FFT) algorithm; by leveraging the relationship between nth roots and n/2 roots and applying a divide and conquer strategy, the FFT simplifies the evaluation of a polynomial A(x) at nth roots of unity.
+This recursive approach divides A(x) into its even and odd parts and evaluates these at the n/2 roots, which are recursively treated as the new subproblems following the same evaluation pattern as the initial problem, enabling the FFT to efficiently compute the necessary points for polynomial transformation.
+

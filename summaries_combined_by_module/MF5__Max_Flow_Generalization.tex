@@ -1,0 +1,107 @@
+\section*{Max Flow Generalization}
+
+\subsection*{Max-Flow with Demands}
+We`re exploring a generalized max-flow problem with added demand constraints for each edge.
+In this revised flow network, both capacities and demands define each edge, with the new aim to identify a feasible flow that meets or exceeds these demands while complying with the standard max-flow problem`s constraints.
+The central question we`re tackling is whether it`s possible to satisfy all demands with a feasible flow within the network.
+Once established, we can then look to optimize the feasible flow to maximize its size.
+
+\subsection*{Feasible Flow Example Question}
+Examining a directed graph with start and end vertex for feasible flow, marking edges with demand (green numbers) and capacity (red numbers).
+Some edges have specific demand constraints (e.g., at least 2 units, max 8 units), others have none (min 0 units, max 3 units).
+Question posed: Is there a feasible flow for this example?
+
+\subsection*{Reduction Overview}
+Reducing feasible flow to max-flow problem by using max-flow algorithms as a black box.
+Feasible flow seeks any valid flow, whereas max-flow aims for the largest possible one.
+To solve feasible flow, transform its input--a directed graph with edge capacities (C of E) and demands (D of E)--into max-flow input using a function, g.
+A new graph (G prime) and capacities (C prime) are defined for this purpose, but without demand constraints.
+Once the max-flow black box returns a result (F prime), another function, h, is used to convert it back into a feasible flow (F) for the original input graph, respecting the given capacities and demands.
+The challenge lies in detailing transformations g and h to manipulate inputs and outputs between the problems.
+
+\subsection*{Reduction  Vertices}
+Transforming a feasible flow problem (FFP) into a max flow problem (MFP) by modifying a directed graph G into G prime.
+In the example provided, graph G has four vertices with edges labeled with pairs of numbers indicating demand and capacity, respectively.
+Graph G prime is created by retaining G and adding vertices, including a new source (s prime) and sink (t prime); original source (s) and sink (t) become internal vertices.
+Edge capacities in G prime, denoted C prime, reflect both original capacities and demands from G\@.
+The construction of edges and capacities in G prime is not detailed but is crucial for solving the MFP based on the given FFP input.
+
+\subsection*{Original Edges}
+Edges from original flow network G are retained in new network G`.
+Capacities are modified to reflect both original capacities and demands, ensuring non-negative flow exists if and only if flow \textgreater{}= demand in G\@.
+New network flows must meet transformed capacity constraints, analogous to G`s.
+A zero flow in G` represents a flow of d (demand) in G, requiring a capacity shift by d units in G`.
+Example: an edge originally with capacity 10, after accounting for 3 units of demand, now has a reduced capacity of 7 in G`.
+Other edges similarly adjusted to capacities of 1 and 4, reflecting original capacities minus respective demands.
+
+\subsection*{New Edges}
+Created network G-prime by adding edges from G; capacities are original capacities shifted by demand.
+Need additional edges to ensure valid G-prime flows equate feasible G flows.
+Zero G-prime flow equals demand levels in G (e.g., zero to three).
+In G, zero inflow at a node doesn`t guarantee valid outflow due to demand.
+To rectify, add edges from s-prime to G nodes and G nodes to t-prime\. s-prime to vertex v edges capacity equals v`s demand in G\@.
+Edges to t-prime represent demand out of respective vertices.
+G-prime now structured to solve max-flow problem; viable solution corresponds to feasible flow in original network G\@.
+
+\subsection*{One More Edge}
+In constructing graph G prime, an additional edge from T to S is introduced to adjust for S and T being internal vertices with differing constraints on flow compared to the original graph.
+Despite no flow capacity into S and out of T in the current setup, this edge, with infinite capacity, ensures the flow out of S equals the flow into T, balancing the system and completing the construction of G prime.
+
+\subsection*{Saturating Flows}
+Max flow size in a graph is limited by the total capacity out of source S-prime or into sink T-prime, which is defined by the total demand D in the original network.
+Total demand is calculated by summing the demand on edges or at vertices.
+For the constructed graph G-prime, total capacity from S-prime equals total demand into vertices; similarly, capacity into T-prime equals total demand out of vertices, both equating to D\@.
+A flow F-prime is saturating if it reaches this maximum value D, fully using edge capacities out of S-prime and into T-prime.
+A feasible flow exists in the original network G if and only if G-prime has a saturating flow.
+Finding a feasible flow involves transforming the problem into a max-flow problem, running max-flow on G-prime, and checking if the max-flow equals D\@.
+If saturating, a feasible flow F for G can be constructed from the saturating flow F-prime in G-prime, thus solving the feasible flow problem by leveraging solutions to the max-flow problem.
+
+\subsection*{Saturating Feasible}
+Proving that a saturating flow G` guarantees a feasible flow in G\@.
+By taking saturating flow F` in G`, this allows the construction of feasible flow F in G\@.
+For each edge, flow in G set to the flow in G` plus its demand.
+F must be valid (inflow equals outflow for internal vertices and flow on edge does not exceed its capacity) and feasible (meeting demand constraints).
+F is feasible because F` non-negative ensuring F meets minimum demands.
+F also respects capacity constraints since flow F on edge E equals C` of E plus demand, where C` is the capacity in G` defined as original capacity C minus demand.
+Thus, F meets demand and capacity constraints--only need to verify inflow=outflow for every vertex to confirm F`s validity.
+
+\subsection*{f is Valid}
+To validate flow F in a graph, it`s necessary to prove that for each internal vertex (excluding source S and sink T), the inflow equals the outflow.
+Given that F` is a valid flow from the max flow problem on constructed graph G`, inflow equals outflow at each vertex in G`.
+Mapping this to G, edges from new vertex S` - in G` - to vertex V and original connections U to V remain, where edges out of S` are fully utilized as per F` saturating flow, with edge capacities equal to V`s demand.
+By defining F` as F plus demand on each edge, F`s inflow at V equals F`s inflow when adjusting for edge demands, as the demands cancel out.
+Similarly, algebra shows F`s outflow at V equals F`s outflow.
+Hence, F`s inflow and outflow at V match, verifying F as a valid flow.
+This demonstrates that a saturating flow F` can be converted to a feasible flow F by adjusting F` for edge demands.
+The reverse proof remains.
+
+\subsection*{Feasible Saturating}
+Proving the reverse direction involves transforming a feasible flow f in graph G into a saturating flow f` in a modified graph G`.
+This adaptation is achieved by reducing the flow in each edge of G by its demand and defining new flows in G` that match the demand at every node, specifically with edges from the new source s` and to the new sink t`.
+Flows from s` to each vertex and from each vertex to t` are set to match their respective total incoming and outgoing demands.
+Additionally, the edge from t to s, which has infinite capacity, is assigned a flow equal to the magnitude of flow f.
+The final step involves validating that the constructed flow f` satisfies all conditions to qualify as a saturating flow in G`.
+
+\subsection*{f is Valid}
+Flow f on edge E meets demand, hence f-prime (f - demand) is non-negative.
+Since f doesn`t exceed capacity, f-prime is at most capacity minus demand, aligning with G-prime network`s capacity definition.
+New flow f-prime is thus non-negative and adheres to capacity restrictions.
+Must verify if f-prime also fulfills the flow conservation law (inflow equals outflow).
+
+\subsection*{f Constraints}
+To ensure flow conservation at each vertex (excluding S` and T`) under flow F`, it`s checked against the original flow F, where inflow equals outflow at any vertex V\@.
+F` is defined by setting the flow from S` to meet V`s demand and adjusting other inflows (U to V) by subtracting the demand on that edge.
+Both adjustments negate the effect of V`s total demand, equating the total inflow under F and F`.
+A similar process confirms that outflow under F` equals outflow under F at V\@.
+Consequently, as inflow equals outflow for vertex V under F and these conditions hold under F`, flow F` is validated as a feasible flow.
+
+\subsection*{Max Feasible Flow}
+Lemma proved: G has a feasible flow iff G` has a saturating flow.
+To find a feasible flow in G, construct G`, run max-flow, check if max-flow equals D for saturation.
+If saturated, convert the flow f` in G` to a feasible flow f in G\@.
+For maximum size feasible flow in G, start with feasible flow f, not zero flow as in Ford-Fulkerson or Edmonds-Karp methods.
+In residual graph, augment f if possible.
+Continue until no s-t path in residual.
+Residual graph capacities: forward edges are capacity minus current flow, reverse edges are flow minus demand (if flow exceeds demand).
+To find max feasible flow, start with feasible f, adjust residual capacities for reverse edges to flow exceeding demand, not just flow.
+

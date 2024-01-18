@@ -1,0 +1,46 @@
+\section*{Halting Problem}
+
+\subsection*{Undecidability}
+NP-complete problems are the most challenging within the NP class, implying if one such problem is solved in polynomial time, all NP class problems could be solved similarly.
+However, it`s improbable to find such a solution since if P  NP, no algorithm can solve NP-complete problems in polynomial time for every input.
+Undecidable problems, a separate class, lack a solution on all inputs regardless of the algorithm`s runtime.
+Alan Turing`s 1936 work established the halting problem as undecidable, using what is now known as a Turing Machine, which models the capabilities of conventional computers--excluding quantum computers.
+Turing`s proof was foundational, leading the way to identifying further undecidable problems.
+
+\subsection*{Halting Problem}
+The Halting Problem involves determining if a given program P, with an input I, terminates or loops infinitely.
+P can be presented in any programming language.
+The problem`s output is true if P terminates on input I, and false if it never stops, indicating an infinite loop.
+The focus is solely on whether P halts with input I, not on the correctness or output of the program.
+
+\subsection*{HP  Example}
+The program P in C uses a single input X, with a while loop checking if X is odd (X mod two equals one).
+If X is odd, it adds six to X and repeats indefinitely.
+With the initial value of X equal to five, the program enters an infinite loop because X remains odd (5, 11, 17, 23, \ldots), thus never halting.
+Assuming infinite memory prevents overflow, halting of P with X equals five is false, as P on this input does not terminate.
+
+\subsection*{HP  Undecidable}
+Halting problem undecidable due to inherent contradiction.
+Hypothetical algorithm `Terminator` asserts resolution of halting problem for all programs/input pairs.
+Constructing a specific program Q with input J, we demonstrate that Terminator fails, thus invalidating the assumption of its infallibility.
+Utilization of Terminator as a subroutine within Q forms a paradox, leading to contradiction, proving undecidability.
+Proof employs contradiction methodology, assuming algorithmic solution, then showing inevitable failure for some input, hence no such algorithm exists.
+
+\subsection*{HP  Paradox}
+Developed a new program called `Harmful` which challenges the hypothetical `Terminator` algorithm, purportedly able to solve the halting problem.
+Harmful accepts an input J\@.
+It uses the Terminator to evaluate if the pair (J, J) will halt.
+Terminator`s true outcome induces a loop in Harmful (directly referencing Dijkstra`s critique on the GoTo statement), whereas a false result terminates Harmful.
+This construction aims to illustrate that if such a universal halting-problem solver (Terminator) existed, Harmful would lead to a contradiction, thus demonstrating the failure of Terminator.
+
+\subsection*{HP  Whats Harmful}
+Running Terminator on input J, J decides if program J terminates when run with the same input.
+If J terminates (true), Harmful of J enters an infinite loop; if J doesn`t terminate (false), Harmful of J ends immediately.
+Thus, Terminator`s output determines Harmful of J`s behavior--either looping infinitely or terminating.
+
+\subsection*{HP  Paradox derived}
+Program harmful either terminates or loops infinitely when given its own code as input.
+If harmful terminates when receiving itself, it should also loop infinitely (contradiction).
+Conversely, if it loops infinitely with itself as input, it should terminate (another contradiction).
+As both scenarios are impossible and lead to contradictions, it proves no program (a `terminator`) can universally solve the halting problem, confirming the theorem that such a universal solution doesn`t exist.
+

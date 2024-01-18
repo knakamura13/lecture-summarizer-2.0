@@ -1,0 +1,196 @@
+\section*{Definitions}
+
+\subsection*{NP  Overview}
+To establish computational difficulty, we define a problem as NP-complete, indicating it lacks an efficient algorithm for all inputs.
+This involves demonstrating that a given problem is as hard as the hardest problems in NP, through reductions, a process we`ve encountered with the two-set and strongly connected components problems.
+We`ll further clarify what reductions are and how they`re used to prove NP-completeness.
+This discussion includes examples like 3SAT, graph problems such as independent sets, clique, and vertex cover, as well as the Knapsack problem.
+We`ll also address Alan Turing`s demonstration that the halting problem isn`t just difficult, but undecidable--it cannot be solved in general.
+
+\subsection*{NP1  Lecture Outline}
+Exploring computational complexity, specifically NP completeness, its meaning, and how to prove a problem is NP complete.
+Addressing P vs.
+NP question, unpacking its significance, and examining problem intractability - efficiently solvable problems implying polynomial time relation to input size versus intractable ones.
+Methodology includes proving NP completeness to demonstrate intractability.
+Further investigation into P and NP definitions follows.
+
+\subsection*{Complexity Classes}
+NP is defined using search problems, differing from the traditional approach of using decision problems.
+Search problems can have solutions efficiently verified in polynomial time, regardless of how long it takes to generate a solution.
+In contrast, the class P consists of problems solvable in polynomial time.
+Since verifying a solution (as required by NP) is easier than finding one (as required by P), every problem in class P is also in NP, making P a subset of NP\@.
+The course will focus on search problems, not decision problems, aligning with the textbook used and simplifying the concept by eliminating the need for a witness in verifying solutions.
+
+\subsection*{Comparing P and NP}
+Search problems involve confirming a proposed solution in polynomial time relative to input size.
+Class P problems can be both solved and verified within polynomial time.
+The P vs.
+NP question explores whether problem-solving is inherently more difficult than solution verification.
+P equals NP suggests generating solutions (proofs) is as easy as verifying them.
+This paradigm shift would mean if one could verify, one could also solve problems within the same complexity bounds.
+However, the general consensus leans toward P not equaling NP, implying that verification--like checking a proof line by line--is simpler than problem-solving or proof creation, which seems intuitively more challenging.
+The discussion mostly centers around search problems not formally defined but understood in computational complexity.
+
+\subsection*{Search Problems}
+A search problem requires an instance (I) as input and either produces a solution (S) if one exists or outputs `NO` if no solutions exist.
+The definition of a search problem includes a condition that any given solution must be verifiable in polynomial time to ensure that S truly addresses I\@.
+Verification only applies to positive instances where a solution can exist; no verification is needed for instances where there are no solutions.
+To demonstrate that a problem is a search problem, an algorithm must be provided that can verify proposed solutions (S) given an instance (I) efficiently in polynomial time relative to the size of I\@.
+This involves presenting an algorithm as proof, which typically is straightforward to do.
+The text implies that this concept has been applied to various example problems covered in a course.
+
+\subsection*{SAT Problem}
+The satisfiability (SAT) problem, a seminal NP-complete problem, involves determining if a Boolean formula in conjunctive normal form (CNF) can be satisfied.
+Given a formula with n variables and m clauses, the task is to find an assignment of truth values to the variables that makes the formula true.
+If no such assignment exists, the answer is no.
+An example provided includes a SAT problem with three variables and four clauses, marked as n=3, m=4.
+
+\subsection*{SAT Example Question}
+SAT problem notation entails assigning values to variables X1, X2, X3 to make a formula true.
+If no assignment achieves this, the response should be `no`.
+
+\subsection*{SAT Example Solution}
+Assigned x1 = true, x2 = false, x3 = false satisfies all clauses in a logic input: Clause 1 - x2 being false satisfies; Clause 2 - Not(x2) or x2 being true satisfies; Clause 3 \& 4 - x3 being false satisfies.
+Each clause contains at least one true literal.
+
+\subsection*{SAT in NP Question}
+Evaluated a given assignment of true/false values for an input formula f to confirm it satisfied the formula.
+Seeking running time for verification as function of n (variables) and m (clauses/parameters).
+Instructed to denote running time in big O notation.
+
+\subsection*{SAT in NP Solution}
+Understanding the verification time of solutions is vital for demonstrating SAT (satisfiability problem) resides in the complexity class NP (nondeterministic polynomial time).
+To establish SAT`s membership in NP, one must first confirm the solution framework fits the criteria of outputting a viable solution if one exists or rejecting when none is available.
+The more nuanced part of the proof involves proving that solution verification can be performed within polynomial time.
+Concretely, for a given formula f and a Boolean assignment to variables, the time to verify that the formula is satisfied by the assignment is calculated as the product of the number of variables n and the number of clauses m, thus yielding order n*m, which is polynomial.
+This verification process underlines that SAT is a search problem, reaffirming its place in NP, as problems in this class can have their solutions verified in polynomial time.
+Typically, confirming a problem`s membership in NP involves a succinct algorithmic explanation that the solution can be verified efficiently.
+
+\subsection*{Colorings in NP}
+The k-colorings problem involves assigning colors to vertices in an undirected graph G so adjacent vertices have different colors, with a palette of k colors available.
+Solution involves either outputting a valid color assignment or returning `no` if none exists.
+The problem belongs to the NP class because solutions can be verified quickly: given a k-coloring, one can check each edge to ensure endpoints have different colors in linear time relative to the number of edges.
+This satisfies the condition for NP, which requires a polynomial-time verification algorithm.
+
+\subsection*{MST Question}
+MST (Minimum Spanning Tree) problem involves finding a tree with the min weight in an undirected graph G with positive edge lengths.
+Question 1 asks if MST is in NP (decision problems verifiable in polynomial time), and question 2 queries if MST is in P (problems solvable in polynomial time).
+
+\subsection*{MST Solution}
+Minimum Spanning Tree (MST) problem classified as NP (nondeterministic polynomial time) and also in P (polynomial time).
+
+\subsection*{MST in NP}
+The Minimum Spanning Tree (MST) problem is in the complexity class NP because a given solution--a tree T--can be verified efficiently.
+The problem inherently has a solution since there must always be a minimum weight spanning tree for any given graph G\@.
+To confirm T is a solution to the MST problem, we check two things: T is a tree using Breadth-First Search (BFS) or Depth-First Search (DFS), ensuring it connects the graph G without cycles.
+Then we verify that T is of minimum weight by comparing it with the output of Kruskal`s or Prim`s algorithm.
+Since both BFS/DFS and Kruskal`s/Prim`s can be executed in polynomial time, specifically O(N+M) and O(MlogN) respectively, the verification process for T as an MST takes O(MlogN) time overall.
+This quick verification confirms the MST problem`s placement in NP\@.
+
+\subsection*{MST in P}
+The MST (Minimum Spanning Tree) problem, initially stated as NP (nondeterministic polynomial time), is also confirmed to be in P (deterministic polynomial time).
+This conclusion comes via two steps: first, establishing MST as a search problem, and second, demonstrating that a solution can be found in polynomial time, specifically by applying Kruskal`s or Prim`s algorithm.
+This bifurcated approach successfully proves that MST is in P\@.
+
+\subsection*{Knapsack Problem}
+Examined SAT, colorings, and MST problems, all NP-class.
+Focusing on knapsack problem: involves selecting n objects each with integer weight (W) and value (V) to maximize total value within weight capacity (B).
+Two knapsack variants considered: with and without repetition of objects.
+Goal is to find subset (S) where sum of weights \textless{}= B and sum of values is maximized.
+Discussion applies to both knapsack variants.
+
+\subsection*{Knapsack Complexity Question}
+Knapsack problem: class NP - true; class P - false.
+Need to determine validity of statements.
+
+\subsection*{Solution  Knapsack Complexity}
+The knapsack problem`s NP classification is unclear due to the challenge in verifying solutions efficiently.
+To confirm a solution`s correctness, one must ensure the total weight doesn`t exceed capacity (B), which is doable in order n time, and that the value sum is maximal.
+Unlike the MST problem, where optimality is checkable via algorithms like Kruskal`s or Prim`s, no such polynomial-time method exists for knapsack since the dynamic programming approach takes order n times B time, which is exponential relative to the input size.
+The inability to confirm solution optimality prevents us from definitively placing knapsack in the NP class.
+It`s also not established that the knapsack problem is in the class P, as no polynomial-time algorithm is known.
+However, a variant of knapsack that includes a goal total value as an additional input parameter and drops the requirement for optimization does fit in NP, since checking if the value sum meets the goal is feasible, allowing for binary search on that parameter to find a solution.
+
+\subsection*{Knapsack  Search}
+Exploring a variation of the knapsack problem as a search issue, input parameters include item weights (W1-Wn), values (V1-Vn), and total capacity (B), mirroring the original problem.
+A new parameter, goal value (g), modifies the objective from maximizing total value to determining if a subset exists that at least meets this goal without exceeding capacity B\@.
+If no such subset exists, output `NO,` defining the search problem`s solution.
+If the knapsack search version is solvable in polynomial time, so is the original optimization problem.
+This is achieved through binary search on g within the sum of all values (V), with the number of binary search rounds capped by log V, implying a polynomial time complexity in solving the optimization counterpart to the search problem.
+The input size, determined by log V, ensures the binary search`s polynomial efficiency.
+
+\subsection*{Knapsack Search in NP}
+The new version of the Knapsack problem falls into the NP class, as checking a proposed solution is a process that can be performed in polynomial time.
+Verification involves ensuring the total weight does not exceed the given capacity (B) and that the total value meets or surpasses a specified goal (g).
+These validations require summing a series of numbers up to n, which can be computed in O(n) time.
+However, accounting for the actual magnitude of the weights and values, the computational time to sum these numbers depends on the number of bits--specifically, O(nlogW), where W is the sum of weights.
+Since the input size is determined by the logarithm of the total weights and values, the computational process is confirmed to be polynomial in the input size.
+Thus, the Knapsack-search version is correctly classified in NP, as a solution can indeed be verified efficiently.
+
+\subsection*{NP acronym for}
+P class represents problems solvable in polynomial time.
+NP stands for non-deterministic polynomial time; NP problems are solvable in polynomial time by a non-deterministic machine, which can `guess` a path to an accepting state.
+A key misconception clarified: NP does not mean `not polynomial time.` Whether P equals NP remains an open question.
+Non-deterministic machines can follow various paths to reach acceptance without a specific rule, unlike deterministic machines with set transitions.
+Understanding of non-determinism is limited but vital in distinguishing P from NP\@.
+
+\subsection*{P vs NP}
+P vs NP relates to problem-solving within computer science, where NP encompasses all search problems and P includes only those solvable in polynomial time, implying P is a subset of NP\@.
+Problems like the Minimum Spanning Tree (MST) are in both P and NP, as are Knapsack, Satisfiability, and Coloring problems.
+The key unresolved question is whether problems exist in NP that are not in P, which would mean P  NP\@.
+If all NP problems are also found in P, then it would imply P = NP, suggesting all NP problems can be solved in polynomial time, but this is not yet determined.
+
+\subsection*{NP-Completeness}
+P is hypothesized to not equal NP, indicating that a set of problems exists outside the class P (solvable in polynomial time), which are termed intractable or NP-complete.
+These NP-complete problems are the hardest within class NP and cannot be solved in polynomial time if P  NP\@.
+If it`s shown that even one NP-complete problem can be solved in polynomial time, it would imply that P = NP, meaning all NP problems could be solved in polynomial time.
+Demonstrating this equivalence requires showing that a polynomial time solution for one NP-complete problem (like `set`) could be used to solve all other problems in NP efficiently.
+This entails proving that all problems in NP can be reduced to the NP-complete problem `set`, and solving it in polynomial time would enable solving all NP problems similarly.
+More precise details will be elaborated in subsequent slides.
+
+\subsection*{SAT is NP-Complete}
+SAT is NP-complete because it fulfills two criteria: first, solutions can be verified efficiently, placing it within the class NP, and second, it`s considered the most difficult problem in NP, as an efficient solution to SAT would translate to efficient solutions for all NP problems.
+This latter aspect is due to the possibility of transforming any NP problem into a SAT problem, which means solving SAT in polynomial time implies the same for the entire NP class.
+If P  NP, which many believe, then no polynomial time algorithm exists for SAT, because such an algorithm would resolve all NP problems efficiently, thus proving P = NP and garnering significant recognition and awards for the solver.
+To establish SAT`s NP-completeness, reductions from other NP problems like MST and coloring problems to SAT need to be formalized, demonstrating how these can be transformed and solved using an efficient SAT algorithm, if one exists.
+
+\subsection*{Reductions}
+Discussing reduction from problem A (colorings) to B (satisfiability), using notation from Dasgupta`s textbook.
+Reduction indicates B is at least as challenging as A because solving B also solves A\@.
+Reduction defined as: an algorithm solving B in polynomial time can solve A in the same manner.
+Focus on how to demonstrate such a reduction from colorings to satisfiability.
+
+\subsection*{How to do a Reduction}
+To demonstrate a reduction from coloring problems to SAT, the procedure involves using a theoretical polynomial time SAT algorithm as a black box subroutine, employing it to create a polynomial time algorithm for coloring.
+Input for the coloring problem consists of a graph and a number of colors, which is transformed via a function f into a Boolean formula representing the SAT problem.
+The SAT solver processes this input and returns either a satisfying assignment or indicates there is no solution.
+A second transformation, function h, then converts the SAT solution back into a solution for the original coloring problem, establishing that a solution to the transformed SAT input corresponds to a solution for the initial coloring input and vice versa regarding the lack of a solution.
+
+\subsection*{More on Reductions}
+To effectively reduce the colorings problem to SAT, two key functions, f and h, must be established.
+Function f translates a colorings problem input (graph G and color count k) into a SAT problem input.
+Conversely, function h converts SAT solutions back to colorings solutions for G and k.
+Proving the reduction`s validity requires demonstrating a bidirectional equivalence: if S satisfies the SAT input generated by f, then h(S) must be a valid coloring of G using k colors; similarly, the absence of a SAT solution should indicate no possible k-coloring for G\@.
+This ensures a one-to-one correspondence between colorings problem solutions and their SAT equivalents.
+
+\subsection*{NP-Completeness Proof}
+To demonstrate the NP-completeness of the Independent Sets (IS) problem, two criteria must be met.
+First, we must establish that IS is within NP by showing solutions can be verified in polynomial time.
+Second, we need to prove that solving IS in polynomial time would allow all problems in NP to be solved in polynomial time.
+This involves demonstrating a polynomial time reduction from any problem A in NP to IS, using an algorithm for IS to solve A efficiently.
+Achieving this for each problem in NP affirms if IS has a polynomial time solution, then all problems in NP do as well.
+
+\subsection*{Simpler Proof Approach}
+The SAT (satisfiability) problem is NP-complete, meaning it`s in NP and all NP problems can be reduced to it.
+Proving another problem, like the independent sets problem, as NP-complete requires two steps: showing it`s in NP, and demonstrating a reduction from a known NP-complete problem, SAT in this case, to it.
+Composing reductions ensures that if SAT reduces to the independent sets problem, then all NP problems can reduce to it, proving the latter`s NP-completeness.
+Errors often occur when students attempt reductions in the reverse direction, which doesn`t establish NP-completeness.
+To prove the independent sets problem`s NP-completeness, verify solutions in polynomial time, and then reduce the SAT problem to it.
+This process confirms that the new problem has comparable computational difficulty to other NP-complete problems.
+
+\subsection*{Practice Problems}
+Understand P, NP classes and reductions concept.
+Upcoming examples will demonstrate proofs that a problem is NP-complete; expected unfamiliarity with the process.
+Suggested practice includes the first two problems in Chapter 8, Dasgupta et al\. textbook, focusing on reductions between optimization and search problems, and between search and decision problems.
+Next lecture plans to prove three set is NP-complete using set NP proof.
+

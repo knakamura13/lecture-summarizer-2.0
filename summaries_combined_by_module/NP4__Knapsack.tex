@@ -1,0 +1,112 @@
+\section*{Knapsack}
+
+\subsection*{Lecture Outline}
+SAT acknowledged as NP-complete; all NP problems reducible to SAT, thus solvable in polynomial time if SAT is.
+3SAT also NP-complete, reduced from SAT\@.
+Independent Set problem declared NP-complete through reduction from 3SAT\@.
+Reduction notable: logic (3SAT) to graph (Independent Set) problem conversion.
+NP-completeness of Clique and Vertex cover problems established via simpler reductions from Independent Set.
+Aim to now prove NP-completeness of Knapsack problem, starting with proving Subset-sum problem NP-complete by reduction from 3SAT, marking a complex logic (3SAT) to optimization (Subset-sum) problem transformation.
+Following Subset-sum NP-completeness, Knapsack`s NP-completeness proof deemed straightforward, set as homework.
+Prior study revealed a non-polynomial time Dynamic Programming Algorithm for Knapsack due to its dependency on N and B factors, the latter exponential relative to 3SAT input size, hence not polynomial.
+The clever reduction from 3SAT to Subset-sum (and Knapsack) highlights this complexity.
+Next, focus on defining and proving Subset-sum NP-completeness.
+
+\subsection*{Subset Sum}
+The subset sum problem involves determining whether a subset of n positive integers sums to a specific target value t.
+If such a subset exists, it is outputted; if not, the output is NO\@.
+This problem serves as a useful exercise for dynamic programming techniques, which can solve it with a time complexity of O(nt), where n is the number of integers and t is the target sum.
+Dynamic programming is recommended for practice with this type of algorithmic challenge.
+
+\subsection*{Subset-Sum in P Question}
+The statement posits subset-sum problem solvable in nt time, suggesting it`s in P class.
+This is true; if a problem has a polynomial-time solution (here, n * t), it`s in P\@.
+
+\subsection*{Subset-Sum in P Solution}
+Running time for the problem must be N times poly(log t) to be polynomial in the input size, similar to the knapsack problem.
+Current belief that it is polynomial is incorrect.
+
+\subsection*{Subset-Sum NP-Complete}
+Proved subset-sum problem NP-complete.
+First, est\. it`s in NP by verifying proposed solution S in poly-time: summing elems takes O(n log t) which is polynomial.
+Second, showed it`s as hard as any NP problem by reducing 3SAT problem to subset-sum.
+This indicates even O(n*t) time algorithm inefficient for subset-sum, underlying its complexity.
+
+\subsection*{3SAT Subset-Sum  Input}
+Subset sum problem setup with 2n + 2m + 1 numbers: n variables (X\_1 to X\_n), 2n literals (V\_1, V\_1`, \ldots, V\_n, V\_n`), 2 numbers per m clauses, and desired sum.
+Each number has n + m digits max, working in base 10 to avoid carries in sums.
+Numbers are extremely large, e.g., t is \textasciitilde{}10\textasciicircum{}(n+m), hence, an n*t algorithm is inefficient.
+
+\subsection*{3SAT Subset-Sum  Variables}
+Specifying input for subset sum prob using number correlation to n literals.
+Vi - Xi true, Vi` - Xi false.
+Require exactly one of Vi or Vi` in subset S to reflect true/false assignment of Xi.
+Ensure no inclusion of both/no Vi or Vi` for clear Xi setting.
+Use base 10 to prevent digit carryover for independent digit behavior.
+T, as desired sum, must have one in Ith digit, achieved only by including Vi or Vi` (not both/neither) in S\@.
+This aligns subset sum solution to a definitive assignment of literals, satisfaction aside.
+
+\subsection*{3SAT Subset-Sum  Example}
+Reduction of 3SAT problem to subset-sum problem using a formula with three variables (X1, X2, X3) and four clauses.
+Each variable is assigned a pair of numbers (V1/V1`, V2/V2`, V3/V3`) and each clause a pair (S1/S1`, up to S4/S4`), totaling 15 numbers to define subset-sum input.
+Numbers are seven digits, representing variables and clauses.
+Digits 1--3 correspond to variables, 4--7 to clauses.
+To ensure subset-sum solution reflects a variable`s Boolean value (true/false), digit one is `1` for V1/V1` and t, and similarly for others.
+This forces the solution to include exactly one from V1/V1`, ensuring a sum of `1` and mapping correctly to variable assignments.
+The structure guarantees that any subset-sum solution corresponds to a potential satisfying assignment by reflecting the truth assignment of variables within the subset.
+
+\subsection*{3SAT Subset-Sum  Clauses}
+Encoding 3SAT clauses into subset-sum problem using binary numbers where first n digits rep clauses, following m digits for vars.
+Literal Xi in Cj leads to 1 in n+j position of number Vi.
+Xi bar gives 1 in n+j position of Vi prime.
+Numbers Vi, Vi prime track clauses.
+In example: X1 bar, X2 bar, X3 in first clause, correlate with 1s in V1 prime, V2 prime, V3 prime.
+For clause satisfiability, need at least one of V1 prime, V2 prime, V3 prime present - place a 3 in corresponding position in target sum t.
+Buffer numbers S1, S1 prime, etc., used to achieve necessary sum if only one literal in clause is true.
+Full satisfiability means at least one literal in each clause must be true; can augment with buffers to match sum t.
+Example: V1 is 1000011, V1 prime is 1001100; t is 1113333.
+Reduction from 3SAT to subset-sum formulated.
+
+\subsection*{3SAT Subset-Sum  Buffers}
+For clause satisfaction encoding, each literal is represented by V\_i or V\_i`.
+A literal`s presence in a clause is noted by a 3 in the nth+j digit of a total (t).
+S\_j and S\_j` serve as buffers, marked with a 1 in the same digit.
+Other numbers get a 0 in this digit, ensuring a sum of 3 if one, two, or all three literals are true.
+If no literals are true, the sum cannot reach 3, indicating unsatisfied clause.
+This process allows for the verification of clause satisfaction within a larger computational framework.
+
+\subsection*{3SAT Subset-Sum  Correctness}
+Constructed subset sum instance solution proves 3SAT problem satisfiability, confirming value reduction.
+Solution S sums to target T\@.
+N initial digits match N 3SAT variables X1-Xn.
+One must choose Vi or Vi` (representing true or false) for each i to achieve T`s required one per digit, as choosing both sums to two, none to zero.
+This subset sum solution translates to a true/false variable assignment, which must be further examined to confirm it satisfies the original 3SAT problem.
+
+\subsection*{Proof  Satisfying Assignment}
+Solving specific subset sum instances equates to satisfying assignments for Boolean variables \textbackslash{}(X\_1\textbackslash{}) to \textbackslash{}(X\_n\textbackslash{}) in an input formula \textbackslash{}(f\textbackslash{}).
+The first n digits in these instances indicate true/false for \textbackslash{}(X\_1\textbackslash{}) to \textbackslash{}(X\_n\textbackslash{}), and subsequent digits are tied to clauses \textbackslash{}(C\_j\textbackslash{}).
+A digit 3 in position \textbackslash{}(n+j\textbackslash{}) indicates clause \textbackslash{}(C\_j\textbackslash{}) must be satisfied by including at least one corresponding number from literals in \textbackslash{}(C\_j\textbackslash{}).
+Various scenarios: satisfying one literal uses two buffer numbers (\textbackslash{}(S\_j\textbackslash{}) and \textbackslash{}(S\_j`\textbackslash{})) to sum to 3, two literals require one buffer number, and three satisfied literals need no buffer, automatically summing to 3.
+No satisfied literals mean no sum of 3, thus no solution.
+Hence, a solution to the subset sums assures satisfaction of all clauses, providing a satisfying \textbackslash{}(f\textbackslash{}) assignment.
+Moreover, satisfying a 3SAT formula guarantees a corresponding solution to the subset sum, confirming a bidirectional implication between the two problem instances.
+
+\subsection*{Reverse Implication}
+Prove reverse imp.: satisfying 3SAT assigns -\textgreater{} solution to subset-sum.
+Given satisfying assigns\. for f, construct solution S: if X\_ith true, add V\_ith to S; if X\_ith false, add V\_ith prime to S\@.
+Only one of V\_ith or V\_ith prime added to S, ensuring correct ith digit in T\@.
+For jth clause (since at least one lit\. satisfied), corresponding nums\. ensure sum of 1, 2, or 3 in digit n+j of T, which is 3.
+Can use S\_j and/or S\_j prime to reach sum of 3.
+Thus, all digits of T correct, providing solution to subset-sum.
+Reduction proven correct.
+
+\subsection*{Knapsack is NP-complete}
+Proved subset sum problem (SSP) NP-complete.
+Now show knapsack problem (KP) NP-complete.
+Correct NP version of KP needed.
+For NP-completeness: 1) prove KP in NP, 2) reduce known NP-complete problem to KP\@.
+Use SSP as it`s similar to KP for reduction.
+It`s about direction: take SSP input, transform to KP input, then transform KP solution back to SSP solution.
+Avoid common mistake of wrong direction in reduction.
+Essential: properly reduce from known NP-complete problem to target problem.
+

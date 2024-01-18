@@ -1,0 +1,48 @@
+\section*{Geometry}
+
+\subsection*{LP Geometry}
+Linear programs in standard form involve a vector X of N variables and M constraints shaping a convex feasible region - a convex polyhedron in N dimensions formed by the intersection of M half-spaces.
+The simplex algorithm operates by traversing the vertices of this polyhedron, because the optimum of the objective function is found at these vertices due to the convexity of the feasible region.
+However, this is not universally applicable, prompting further exploration of the conditions under which this holds true.
+
+\subsection*{LP Optimum}
+Optimum of algos solving linear progs (LPs) typically achieved at a vertex of the feasible region, except when LP is infeasible (empty feasible region, no point meets all constraints) or unbounded.
+Example LP with variables x, y aims to maximize 5x - 7y, constrained by x + y \textless{}= 1, 3x + 2y \textgreater{}= 6, with x, y \textgreater{}= 0, demonstrating an infeasible LP by its feasible region visualization.
+
+\subsection*{Infeasible Example}
+Feasible region illus\. demonstrates non-existence due to non-negative constraints (x, y \textgreater{}= 0).
+Constraint 1 (x + y \textless{}= 1) and constraint 2 (3x + 2y \textgreater{}= 6) yield non-intersecting half spaces.
+Resulting feasible region is therefore empty, making the LP (linear program) undefined.
+Infeasibility is independent of LP`s objective function; LP remains infeasible for any objective function given these constraints.
+
+\subsection*{Unbounded Example}
+Unbounded linear programming (LP) implies infinite optimal value of the objective function.
+Consider an LP with variables x, y, maximizing x + y, subject to x - y \textless{}= 1, x + 5y \textgreater{}= 3, and non-negativity constraints.
+The feasible region lies in the upper right quadrant and is unbounded, extending beyond the y = 5 boundary shown.
+This region meets the half spaces defined by the constraints.
+The objective function`s heat map and level sets, where x + y equals a constant value c, indicate that the function`s value increases with higher y levels.
+As the y-value ascends, it demonstrates unbounded growth potential for the objective function within the feasible region, implying that for higher and unlimited values of c, the values of x and y can also be unbounded.
+The unbounded nature is specific to the objective function; different functions could reach optimum values at fixed points like vertices within the feasible region.
+
+\subsection*{Unbounded to Bounded}
+Evaluating a linear programming (LP) scenario, changed objective function to maximize 2x-3y.
+Analyzed level sets within LP`s feasible region using a heat map.
+Observed that the level set equation 2x-3y=c indicates increasing c values moving downwards.
+Optimal LP value identified at a specific feasible region vertex; thus, maximum is well-defined for this objective function.
+Noted that LP feasibility depends on constraints, whereas boundedness relates to the objective function.
+
+\subsection*{LP Optimum - Part 2}
+An LP`s feasibility determined first, later addressing its boundedness.
+Feasibility detection requires certain methods, while boundedness review entails examining the dual LP\@.
+Discussion of duality to precede the evaluation of LP boundedness.
+Detailed approaches to assessing LP feasibility to be clarified.
+
+\subsection*{Infeasible}
+To determine if an LP`s feasible region is empty, introduced variable z with x vector of size n.
+Adding z to the constraint equation on the LHS, while x`s remain non-negative but z unrestricted (can be pos/neg), results in an equation that is always solvable by setting z to a sufficiently negative number.
+Need to establish if the revised equation solves with z being non-negative.
+Form new LP with objective to maximize z, where Ax + z \textless{}= b, x \textgreater{}= 0, z unrestricted.
+New LP is inherently feasible because z can be set large enough in the negative direction.
+Running this LP will show if a non-negative optimal z exists, demonstrating feasibility of original LP by ignoring z, providing a starting point for simplex algorithm.
+Conversely, if LP optimizes with z negative, the original LP is infeasible.
+

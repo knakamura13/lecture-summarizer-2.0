@@ -1,0 +1,178 @@
+\section*{Bloom Filters}
+
+\subsection*{Hashing Outline}
+Hashing, specifically bloom filters, discussed.
+Starts with `balls into bins` example for hashing intuition.
+Analyses probabilistic aspects, revealing the `power of two choices` concept guiding advanced hashing designs.
+Post-toy problem, explores chain hashing, then delves into sophisticated bloom filters.
+
+\subsection*{Balls Into Bins}
+Investigating a toy problem with n identical balls thrown independently into n bins labeled B1 to Bn, focusing on the distribution of balls per bin, denoted as load\_of\_i for bin i.
+Chief interest lies in the maximum load--highest num of balls in any bin (max load = max\_over\_i(load of bin i)).
+In an extreme case, all balls could end up in one bin, with probability one\_over\_n\_to\_the\_n, which is highly improbable.
+Hence, max load could be n, but typically much less.
+Aim to determine the likely max load under usual conditions, potentially expressed as square root n, log n, or order one.
+
+\subsection*{Probability Quiz Question}
+Probability quiz focus: determining probability of first log and balls being allocated to a specific bin (bi).
+Required: calculate and note this probability.
+
+\subsection*{Probability Quiz Solution}
+Soln for assigning log\_n balls to bin Bi is one\_over\_n\textasciicircum{}log\_n, because each ball has one\_over\_n chance of going to Bi, thus for log\_n balls, it`s the prod of individual probs: one\_over\_n\textasciicircum{}log\_n.
+
+\subsection*{Analysis Setup}
+Analyzing max load on Bin Bi, discovered that load probability exceeds LogN is low.
+Calculating exact load of LogN for Bin Bi involves choosing specific LogN balls from N (N choose LogN ways).
+Probability of these LogN balls being in Bin Bi is (1/N)\textasciicircum{}LogN\@.
+Probability for other balls irrelevant to calculating load \textgreater{} LogN, hence upper bound includes all other balls in any bin, yielding an overestimate.
+To bound N choose LogN, approximated by (N/K)\textasciicircum{}K, using Stirling`s formula for an upper bound of (N*e/K)\textasciicircum{}K\@.
+Substituting K=LogN gives an upper bound for the probability of Bin Bi having load \textgreater{}= LogN as (E/LogN)\textasciicircum{}(LogN).
+As N increases, this upper bound decreases; setting it to (1/4)\textasciicircum{}(LogN) for large N, specifically when N \textgreater{} 2\textasciicircum{}11 (as LogN \textgreater{} 4E).
+Assuming a log base of two, this equates to a max probability of load \textgreater{}= LogN of 1/N\textasciicircum{}2, which is small for large N, indicating a low likelihood of any bin Bi receiving a load \textgreater{}= LogN\@.
+
+\subsection*{Max Load Quiz Question}
+Prob\. that bin Bi receives load \textgreater{}= log n \textless{}= 1/n2.
+Can this stat assist in bounding max load prob\. being \textgreater{}= log n?
+Further exploration needed to confirm.
+
+\subsection*{Max Load Quiz Solution}
+Max load probability \textgreater{}= Log n is \textless{}= 1/N; detailed reasoning confirms this.
+
+\subsection*{Max Load Analysis}
+Max load \textgreater{}= log n probability bounded, with at least one bin loaded \textgreater{}= log n necessary.
+Prob of a specific bin loaded \textgreater{}= log n \textless{}= 1/N2.
+Summing over N bins, prob max load \textgreater{}= log n \textless{}= 1/N\@.
+Complementary event, max load \textless{} log n happens with prob \textgreater{}= 1-1/N\@.
+More detailed analysis suggests max load is Th(log n / log log n).
+Prob can be improved to 1/N2, 1/N10 by adjusting the constant, qualifying as high prob event (\textgreater{}= 1-1/poly(N)), with adjustable poly(N) for tighter bounds.
+
+\subsection*{Best of Two Scheme}
+Revised the balls and bins problem to decrease max bin load.
+Previously, balls were assigned to bins randomly and independently -- either in parallel or sequentially.
+Now, assign balls sequentially, choosing two bins randomly per ball and assigning to the one with the lesser load.
+This adjustment aims for a more balanced distribution of ball to bin assignments by choosing bins with the least load for each ball, potentially reducing the maximum load any single bin carries.
+
+\subsection*{Power of Two Choices}
+A new `best of two` method for bin assignment involves choosing the least loaded of two random bins for each ball.
+This reduces max load drastically from log n to log log n, significantly diminishing load as n grows.
+While considering more bins (d bins) offers further reductions in max load (to log log n / log d), gains beyond two bins are marginal.
+This concept of choosing the best option from multiples will later be applied to enhance hashing and inform the design of Bloom filters.
+
+\subsection*{Hashing Setup}
+Hashing is being used to manage a database of unacceptable passwords, which are to be screened from user submissions quickly.
+The universe of all possible passwords (U) is vast; considering passwords of length `A`, there are 52\textasciicircum{}A possibilities.
+Storing all potential passwords is unfeasible, therefore only a subset (S) containing the unacceptable passwords is maintained.
+The required data structure must swiftly determine whether a user`s proposed password (X) is in the unacceptable set S\@.
+Chain hashing employs a hash table (H) with an array of linked lists and a hash function (h) that maps each password to one of the N bins in H\@.
+Insertions involve calculating the hash of the element and linking it in the corresponding bin; queries require searching the linked list in the bin determined by the hash of the queried password.
+The hash function is assumed to distribute passwords randomly and independently across the bins, akin to placing balls in random bins.
+Notation is defined with the universe size as capital N, table size as little n, and size of the unacceptable password subset as little m.
+Capital N is exponentially larger than little n, and it is ideal if the hash table isn`t much larger than the size of S, implying little n should be at least little m.
+The ultimate objective is to answer queries whether a password is acceptable or not by efficiently maintaining this dataset with a hash table`s size managed just above little M\@.
+
+\subsection*{Chain Hashing}
+Chain hashing uses a hash table H with N-sized array of linked lists.
+Each list in H\[i\] contains elements from a set S that hash to index i, particularly tracking unacceptable passwords.
+Query time to find an element X in S depends on the linked list`s length at H\[X\], essentially the load or number of elements at that hash bin.
+Notation: M is the set S size of forbidden passwords, n is the hash table size (bins).
+When M equals n, max load is log n with high probability, but worst case is n.
+Query time thus is log n with high probability, meaning a high n would result in slower queries.
+To achieve constant query time, the hash table size would need to increase from M to M2, a significant resource cost.
+Instead, adopting a `two choice scheme` from the balls and bins analogy, where each element has a choice of two bins and selects the lesser loaded one, reduces max load to log log n, thus potentially speeding up queries without substantial resource increases.
+
+\subsection*{Power of Two Hashing Question}
+Implementing a dictionary for unacceptable passwords utilizing dual hash functions, H1 and H2, which map elements into an n-sized hash table from a set U\@.
+These functions produce independent and random mappings.
+Insertion within this dual-hash system differs from a single hash function`s straightforward approach, where an element is added to a linked list at a calculated hash value.
+The process of inserting with two hash functions H1 and H2 requires a new strategy, prompting a discussion on potential methods for efficient dictionary entry.
+
+\subsection*{Power of Two Hashing Solution}
+Inserting an element X into a dictionary of unacceptable passwords involves computing two hash values, H1(X) and H2(X).
+The element is then added to the less loaded of the two corresponding linked lists, with loads denoting list sizes, and the chosen list`s size is incremented.
+An insertion operates in constant O(1) time.
+To query if an element Y, a proposed password, is unacceptable, the same hash functions determine its potential locations.
+Both linked lists for H1(Y) and H2(Y) are checked; if Y is present in either, it is in the dictionary.
+Query time depends on the load of these bins and is bound by twice the maximum load.
+With equal dictionary and hash table sizes (M = N), query times reduce significantly from O(log N) to O(log log N) when using two hash functions.
+Although in practice, pseudo-random hash functions from libraries replace truly random ones, theoretical analysis assumes truly random for simplicity, leading to an O(log log N) maximum load with two-choice insertion.
+This method improves efficiency with no additional space cost but does leave unanswered questions about maintaining truly random hash functions in practice.
+
+\subsection*{Lecture Outline}
+Traditional hashing description complete, focus shifts to bloom filters.
+
+\subsection*{Bloom Filters  Motivation}
+Bloom filters are introduced as a new data structure with guaranteed constant query time (order one), unlike traditional hashing schemes where query times are probabilistic.
+They are simpler, occupy less space, and do not require linked lists--just a binary array.
+The trade-off for their simplicity and speed is the occurrence of false positives, meaning the filter might incorrectly indicate an element is in the set when it isn`t; in the example given, it`s an acceptable password wrongly flagged as unacceptable.
+However, the setting allows for this error because false positives (denying a good password) are preferable over false negatives (accepting a bad password).
+While this is reasonable and the occurrence rate of false positives is to be analyzed and minimized, Bloom filters are not universally applicable.
+Suitability depends on whether the benefits of speed and simplicity outweigh the risks of false positives in a given application.
+
+\subsection*{Operations}
+The data structure supports two operations: inserting a potential password (X) to a dictionary of unacceptable passwords, and querying if X is within this dictionary.
+If X is found to be unacceptable, a `YES` response is consistently correct.
+The issue arises when X is acceptable and should receive a `NO` response; however, there`s a small rate of false positives where an acceptable password is incorrectly identified as unacceptable.
+The rate of these false positives needs to be defined and managed.
+
+\subsection*{Bloom Filters}
+Bloom filter is a binary array of size n, initialized with all zeros.
+To insert an element, compute its hash and set the corresponding array bit to one.
+Bits transition only from zero to one, preventing easy deletions and enabling only insertions.
+To query if an element is in the set, check if its hash-indexed bit is one; if so, it might be in the set, leading to possible false positives when distinct elements share a hash value.
+Improvement can be made by using multiple hash functions; initially two, but later generalizing to k hash functions to optimize performance.
+The optimal number of hash functions, k, will be determined to enhance the structure`s robustness.
+
+\subsection*{Robust Scheme}
+Using k hash funcs (h1,\ldots,hk) to build a hash tbl H init`d with all 0s.
+Insert element X by computing k hash vals \& setting corresponding k bits in H to 1.
+For a query, check if all k bits are 1--if so, X likely in S; if any bit is 0, X definitely not in S\@.
+Guarantee only provided when a bit is 0.
+
+\subsection*{Correctness}
+Algorithm`s correctness for database queries examined.
+If an element (x) inserted into the db, k bits set to 1.
+Queries on x will always return `Yes` because bits go only from 0 to 1.
+For x not in db, falsely positive results can occur if all k bits for x are already set to 1 by other insertions.
+This happens when each bit of x, upon query, matches a bit set to 1 by another element`s insertion.
+Robustness increases because false positives only happen when all k bits align by chance, unlike previous methods with one bit checked.
+However, there`s an optimal k value.
+Too high, and too many bits are set to 1, increasing false positives.
+Too low, not enough bits are checked.
+The challenge is to determine this optimal k to minimize false positive rate and assess if the data structure is effective for use.
+
+\subsection*{Analysis Setup}
+Analyzing false positive rate in hashing schemes, database size M and hash table size N are key variables with ratio C (N/M) being critical, aiming for smallest C where C \textgreater{}= 1.
+In considering a non-database element X and likelihood of a false positive, denote the chance all K bits set to 1 despite no insertion of X into the database.
+Calculate single-bit set-to-one probability by the probability of a bit remaining 0 after M insertions.
+Each insertion equals tossing K balls into N bins, equating to MK ball tosses.
+A single bit B staying zero requires all MK balls to miss bin B, with each ball having a 1/N chance of hitting a given bin, so (1 - 1/N) chance of missing.
+The probability that a particular bit is set to one is one minus the probability it stayed at zero after all insertions (MK).
+Simplifying this expression is valuable for practical use.
+
+\subsection*{False Positive Probability}
+Evaluated probability of a specific bit being zero in a database scenario: (1 - 1/N)\textasciicircum{}(MK).
+Replaced this with an exponential for small A where A approximated as (1 - A) using Taylor series, applicable for large N\@.
+Exponential approximation yields: e\textasciicircum{}(-MK/N) or e\textasciicircum{}(-K/C), simplifying analysis of false positive rate.
+C is the hash table size to database size ratio.
+False positive definition: probability that element X not in database is falsely reported present due to K corresponding bits being set to one by other insertions.
+Calculated false positive probability as (1 - e\textasciicircum{}(-K/C))\textasciicircum{}K\@.
+Objective: optimize K to minimize false positives, considering trade-offs of small or large K values.
+Plan: derive optimal K by differentiating the false positive probability function and setting it to zero.
+
+\subsection*{Optimal k}
+Optimal choice of K hash functions minimizes false positive probability (FPP) in a hash table.
+FPP expressed as 1 - e\textasciicircum{}(-K/C)\textasciicircum{}K\@.
+Deriving optimal K yields K = C * ln(2).
+Upon substituting K back into FPP expression, result simplifies to .6185\textasciicircum{}C, where C is size of hash table relative to database size.
+This final expression allows calculation of FPP based on given hash table size.
+Additionally, optimal K ensures binary string H appears random, with bits set to zero or one with equal probability after M insertions.
+This balance in H`s composition makes it resemble a randomly generated binary string.
+
+\subsection*{Looking at False Positive Rate}
+In a database of size M with a hash table size of CM, where C \textgreater{} 1, the false positive probability in a Bloom filter is approximately .6185\textasciicircum{}C\@.
+This figure is based on an optimal number of hash functions K; however, examples show varying false positive rates when deviating from this optimum.
+With K=1 and C=10, the false positive rate is .095, and with C=100, it drops significantly to .00995.
+Optimal K choices yield even lower rates: .0082 for C=10 and an extremely low 1.3 x 10\textasciicircum{}-21 for C=100, demonstrating an exponential decrease in false positives as C increases.
+Bloom filters have the advantage of simple maintenance and fast query times but suffer from occasional false positives and challenges with deletion handling, which can be somewhat mitigated by Counting Bloom Filters.
+The effectiveness of these theoretical approximations will be tested in practical Bloom filter implementations.
+

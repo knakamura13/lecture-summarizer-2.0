@@ -1,0 +1,1 @@
+3SAT problem involves a boolean formula f in conjunctive normal form. Number of variables n, clauses m. 3SAT's specific constraint: each clause ≤ 3 literals. Task: find a satisfying assignment of true/false to variables so f evaluates to true. If no such assignment exists, no output.

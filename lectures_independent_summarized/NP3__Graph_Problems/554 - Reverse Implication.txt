@@ -1,0 +1,1 @@
+Proving reverse implication that if S-bar is an independent set, then S is a vertex cover. Since no edge lies entirely within independent set S-bar, at least one endpoint of each edge must be outside S-bar, meaning it's in S. Hence, S covers all edges, proving it's a vertex cover. Claim proven, ready for reduction.

@@ -1,0 +1,1 @@
+Nth roots of unity key for divide & conquer strategy due to two main properties. For even n, nth root has a plus-minus property where first half of nth roots are opposites of the last half, e.g., omega_n^0 = -omega_n^(n/2) and omega_n^j = -omega_n^(n/2 + j). This makes nth roots ideal for the approach due to the symmetric distribution of their values.

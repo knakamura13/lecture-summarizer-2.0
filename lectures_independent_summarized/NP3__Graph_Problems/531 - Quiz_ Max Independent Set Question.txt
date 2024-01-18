@@ -1,0 +1,1 @@
+Max independent set problem confirmed to be in class NP. P=NP scenario could alter this classification. Standard for true/false questions adjusted to include "known to be" for clarity on such matters.

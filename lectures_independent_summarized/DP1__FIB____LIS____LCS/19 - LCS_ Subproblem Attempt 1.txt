@@ -1,0 +1,1 @@
+Design dynamic programming algorithms: 1. Define subproblem: Choose a prefix of input, set L(i) as length of the longest common subsequence (LCS) in first i chars of X and Y. 2. Define recurrence: Express L(i) using L(1) to L(i-1), determining LCS by breaking problem down into smaller instances.

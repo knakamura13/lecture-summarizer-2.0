@@ -1,0 +1,1 @@
+Running Terminator on input J, J decides if program J terminates when run with the same input. If J terminates (true), Harmful of J enters an infinite loop; if J doesn't terminate (false), Harmful of J ends immediately. Thus, Terminator's output determines Harmful of J's behavior—either looping infinitely or terminating.

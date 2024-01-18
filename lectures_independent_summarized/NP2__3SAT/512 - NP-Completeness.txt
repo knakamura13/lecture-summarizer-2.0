@@ -1,0 +1,1 @@
+Proving 3SAT NP-complete, leveraging SAT's known NP-completeness from Cook-Levin-Theorem (1971: Cook, Levin). Importance of NP-completeness underscored by Karp's 1972 paper, identifying 21 additional NP-complete problems. Upcoming lectures to explore some of these 21, starting with 3SAT.

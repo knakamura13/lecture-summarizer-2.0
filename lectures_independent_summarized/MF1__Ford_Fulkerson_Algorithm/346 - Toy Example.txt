@@ -1,0 +1,1 @@
+Created a toy network with four vertices to test max flow algorithms, identified a max flow of size 17 which matches the network's capacities from source (s) to sink (t), and will use this simple example throughout the development of algorithms.

@@ -1,0 +1,1 @@
+Edge deletion and reinsertion in a residual network leads to at least a two-level increase for the originating vertex. Vertex levels range from 0 for source S to n. Thus, an edge can be deleted and readded to the residual network a maximum of n/2 times. With m edges in the graph, this establishes a limit of nm rounds for the Edmonds-Karp algorithm, concluding its analysis.

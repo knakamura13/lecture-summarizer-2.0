@@ -1,0 +1,1 @@
+Optimum of algos solving linear progs (LPs) typically achieved at a vertex of the feasible region, except when LP is infeasible (empty feasible region, no point meets all constraints) or unbounded. Example LP with variables x, y aims to maximize 5x - 7y, constrained by x + y ≤ 1, 3x + 2y ≥ 6, with x, y ≥ 0, demonstrating an infeasible LP by its feasible region visualization.

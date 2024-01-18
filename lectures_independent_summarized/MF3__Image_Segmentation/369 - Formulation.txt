@@ -1,0 +1,1 @@
+Examining pixelated images using graphs, with pixels represented as vertices. Example given with a small magnified image structured by undirected graph G. It has nine vertices, edges connect neighboring pixels.

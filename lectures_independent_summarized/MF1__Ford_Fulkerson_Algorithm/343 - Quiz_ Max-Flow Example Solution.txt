@@ -1,0 +1,1 @@
+Max flow specified by green numbers on edges with red capacity numbers. Flows in and out of vertices equal (c=7, e=2, d=7). Flows don't exceed edge capacities. Total flow size 12 units from source s to sink t, equals total incoming edge capacity to t—hence, max flow achieved.

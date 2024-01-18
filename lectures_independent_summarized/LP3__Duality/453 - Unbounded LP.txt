@@ -1,0 +1,1 @@
+Weak duality theorem implies if primal linear program (LP) is unbounded, dual LP is infeasible and if dual is unbounded, primal is infeasible. Not a bidirectional relationship, both primal and dual can be infeasible. Exercise to create example where both are infeasible. Key takeaway: unbounded primal means infeasible dual.

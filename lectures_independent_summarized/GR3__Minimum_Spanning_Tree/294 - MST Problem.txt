@@ -1,0 +1,1 @@
+Minimum spanning tree (MST) problem involves finding a subgraph of an undirected graph G, which is a tree that covers all vertices with the least possible sum of edge weights. The goal is to pinpoint the lightest connected subgraph (not a forest) wherein the total weight is the aggregate of its constituent edges' weights.

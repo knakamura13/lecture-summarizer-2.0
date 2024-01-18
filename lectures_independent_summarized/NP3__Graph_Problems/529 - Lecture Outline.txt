@@ -1,0 +1,1 @@
+Demonstrated 3SAT as NP-complete, explored graph theory's Independent sets, clique problem, and vertex cover problem, and established their NP-completeness. Definitions provided for unfamiliar combinatorial issues.

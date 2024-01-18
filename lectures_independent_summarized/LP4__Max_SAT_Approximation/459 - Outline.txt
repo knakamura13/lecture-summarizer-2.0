@@ -1,0 +1,1 @@
+Examined a simple randomized algo for Max-SAT, resulting in 1/2 approximation. Proceeded to an LP-based algo achieving 1-1/e approximation, a slight improve over the first algo. Combined both algos to reach a 3/4 approximation for Max-SAT.

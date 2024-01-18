@@ -1,0 +1,1 @@
+Proved subset-sum problem NP-complete. First, est. it's in NP by verifying proposed solution S in poly-time: summing elems takes O(n log t) which is polynomial. Second, showed it's as hard as any NP problem by reducing 3SAT problem to subset-sum. This indicates even O(n*t) time algorithm inefficient for subset-sum, underlying its complexity.

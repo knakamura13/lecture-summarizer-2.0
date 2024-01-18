@@ -1,0 +1,1 @@
+Examining an example to clarify terminology involving two strings of length seven. Task entails identifying the longest common subsequence within these strings, marking it, and noting its length.

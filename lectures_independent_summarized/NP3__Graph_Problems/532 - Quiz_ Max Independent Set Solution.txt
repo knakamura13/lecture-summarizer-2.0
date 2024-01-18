@@ -1,0 +1,1 @@
+The max independence set problem isn't in the NP class because, unless P=NP, there's no polytime method to verify a claimed max size solution's validity. Similarly, the max value knapsack problem isn't in NP, but its search version can be fixed to be in NP.

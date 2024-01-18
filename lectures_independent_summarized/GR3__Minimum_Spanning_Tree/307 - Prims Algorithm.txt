@@ -1,0 +1,1 @@
+Prim's algorithm addresses Minimum Spanning Tree (MST) problem, akin to Dijkstra's algo for shortest path. Importance of understanding the cut property is emphasized to prove Prim's algorithm's correctness. Understanding Prim's correctness entails using the cut property.

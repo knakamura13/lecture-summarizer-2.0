@@ -1,0 +1,1 @@
+The Halting Problem involves determining if a given program P, with an input I, terminates or loops infinitely. P can be presented in any programming language. The problem's output is true if P terminates on input I, and false if it never stops, indicating an infinite loop. The focus is solely on whether P halts with input I, not on the correctness or output of the program.

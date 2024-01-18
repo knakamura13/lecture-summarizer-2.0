@@ -1,0 +1,1 @@
+Demonstrated clique as NP-complete; aim to establish vertex cover also as NP-complete.

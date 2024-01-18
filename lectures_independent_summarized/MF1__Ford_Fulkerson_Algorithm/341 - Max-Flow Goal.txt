@@ -1,0 +1,1 @@
+Max flow problem aims to identify a valid flow that adheres to capacity and conservation constraints, and maximizes the total flow sent. "Maximum size" refers to this total, measured by the flow out of the source (s) or into the sink (t).

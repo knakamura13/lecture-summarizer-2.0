@@ -1,0 +1,1 @@
+Solved prob: 2,3,8,5,12. For x^3 coeff 5: -3x^2 * -x = -3x^3, 2x * 4x^2 = 8x^3, sum = 5x^3.

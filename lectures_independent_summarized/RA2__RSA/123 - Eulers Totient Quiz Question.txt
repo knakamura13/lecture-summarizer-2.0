@@ -1,0 +1,1 @@
+Euler's theorem examined for N = P * Q, with P and Q as prime numbers. Focus on determining phi of N (Euler's totient function value) when N is the product of these primes. Objective: calculate quantity of numbers between 1 and P * Q that are relatively prime to PQ. Euler's theorem here is an extension of Fermat's little theorem when involving two primes.

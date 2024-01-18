@@ -1,0 +1,1 @@
+Adding vertex S to represent foreground pixels in a directed graph. Shrink vertices for clarity. Introduce vertices S (source) and t (sink) for max-flow problem: S for foreground, t for background. Connect S to each pixel vertex with edge capacity fi to encode foreground likelihoods.

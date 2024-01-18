@@ -1,0 +1,1 @@
+Max flow problem defined as optimizing flow within a flow network, comprised of a directed graph G with source (s) and sink (t) vertices. Each edge has a set capacity, a positive value. Objective: maximize flow originating at s and terminating at t by determining optimal flow (f_sub_e) along each edge.

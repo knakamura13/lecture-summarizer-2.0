@@ -1,0 +1,1 @@
+An LP's feasibility determined first, later addressing its boundedness. Feasibility detection requires certain methods, while boundedness review entails examining the dual LP. Discussion of duality to precede the evaluation of LP boundedness. Detailed approaches to assessing LP feasibility to be clarified.

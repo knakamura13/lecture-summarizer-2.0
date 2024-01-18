@@ -1,0 +1,1 @@
+First NP completeness proof observed: 3-SAT is NP-complete. Relevant practice problems: 8.3 involves Stingy SAT—objective to prove NP completeness. 8.8 deals with Exact 4-SAT—each clause contains exactly four literals; aim to prove NP completeness.

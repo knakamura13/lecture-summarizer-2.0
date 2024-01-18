@@ -1,0 +1,1 @@
+Focused on solving the max flow prob. Started with Ford-Fulkerson (FF) algo, progressed to Edmonds-Karp (EK) algo; EK runtime analysis more complex. Introduced the max flow = min-cut theorem, foundational for algo correctness and applications, including image segmentation prob where an image is divided into foreground and background using max flow and the aforementioned theorem.

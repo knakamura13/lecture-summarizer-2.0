@@ -1,0 +1,1 @@
+Evaluating web page X's In neighbors, pages linking to X. Old method: count In neighbors. New method: scale by Y's outgoing links. If Y has many out-links, gives less weight (1/1000). If Y has one out-link, gives full weight (1). Sum 1/out-links from each Y linking to X.

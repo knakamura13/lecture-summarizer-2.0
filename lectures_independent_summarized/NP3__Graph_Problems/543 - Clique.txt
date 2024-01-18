@@ -1,0 +1,1 @@
+Clique defined as fully conn. subgraph in undir. graphs. Any vertex pair (X, Y) in subset S must share edge to form clique. Given graph has largest clique of size 5, all poss. vertex pairs connected. Finding large cliques is hard since small ones (empty set, single vertex, any two connected vertices) are easy to identify. The real challenge is in identifying the max. size clique.

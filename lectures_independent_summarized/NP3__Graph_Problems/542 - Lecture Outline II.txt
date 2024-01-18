@@ -1,0 +1,1 @@
+Demonstrated that the independent set problem is NP-complete through reduction from SAT, a logic problem. Proceeding to establish NP-completeness for Clique and Vertex Cover problems, leveraging the transformation from graph-based independent sets, simplifying the process.

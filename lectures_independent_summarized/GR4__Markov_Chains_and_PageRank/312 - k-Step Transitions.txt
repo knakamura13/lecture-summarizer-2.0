@@ -1,0 +1,1 @@
+Matrix P serves as a transition matrix, mirroring an adjacency matrix with entries (i,j) indicating the probability of transitioning from state I to state J in one step. The square of matrix P calculates the probability for a two-step transition. Extending this, P raised to any non-negative integer K gives the probability of a transition occurring in K steps.

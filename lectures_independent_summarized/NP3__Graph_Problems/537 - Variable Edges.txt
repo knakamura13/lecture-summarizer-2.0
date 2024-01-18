@@ -1,0 +1,1 @@
+Variable edges concept introduced to prevent including contradictory vertices (representing X_i and X_i-bar) in an independent set. This ensures valid assignments in independent sets. Clause edges guarantee that these assignments satisfy all clauses. A specific example demonstrates this approach.

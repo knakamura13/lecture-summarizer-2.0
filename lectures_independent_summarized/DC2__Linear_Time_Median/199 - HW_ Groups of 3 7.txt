@@ -1,0 +1,1 @@
+To understand the algorithm, break array A into subgroups of different sizes, specifically three and seven, and analyze the recurrence relations for these cases. Determine if these relations still resolve to order n, as they do with subgroups of five, which would explain why groups of five elements are commonly used.

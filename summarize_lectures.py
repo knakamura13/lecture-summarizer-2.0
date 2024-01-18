@@ -207,10 +207,9 @@ def summarize_with_gpt(_input_txt: str, _model: str = "gpt-3") -> str:
                 match = re.search(r"Please try again in (\d+)m(\d+)s", str(e))
                 if match:
                     minutes, seconds = match.groups()
-                    print(
-                        f"Waiting recommended time: {minutes} minutes, {seconds} seconds..."
-                    )
-                    wait_time = int(minutes) * 60 + int(seconds) + extra_wait
+                    minutes, seconds = int(minutes) + 1, int(seconds) + extra_wait
+                    print(f"Waiting for {minutes} minutes, {seconds} seconds...")
+                    wait_time = minutes * 60 + seconds
                     sleep(wait_time)
                 else:
                     print(f"Waiting 1 minute before trying again...")

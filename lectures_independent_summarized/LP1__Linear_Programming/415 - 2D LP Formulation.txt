@@ -1,0 +1,1 @@
+Max profit by determining units of Products A & B to produce daily; x1 = units of A, x2 = units of B. Profit: $1/unit A ($x1), $6/unit B ($6x2). Constraints: x1 ≤ 300, x2 ≤ 200; x1, x2 ≥ 0 (no negatives). Supply constraint: 700 man hours available. Time: 1hr/unit A (x1) + 3hrs/unit B (x2) ≤ 700 hrs. Aim to maximize profit within these parameters.

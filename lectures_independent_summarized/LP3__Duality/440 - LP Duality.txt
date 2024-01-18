@@ -1,0 +1,1 @@
+Exploring LP duality theory. Begins with a motivating example followed by the general formulation of the dual LP. Examines the weak duality theorem and its implications. Concludes with the strong duality theorem.

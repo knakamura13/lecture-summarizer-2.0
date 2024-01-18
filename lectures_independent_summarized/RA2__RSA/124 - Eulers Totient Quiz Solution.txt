@@ -1,0 +1,1 @@
+Phi_of_n, when n=p*q (p and q are prime), is derived by counting the numbers between 1 and pq that are co-prime to pq. p multiples from p to pq, and q multiples from q to pq, have a gcd of p or q with pq. Once removed, p*q original count minus the q multiples of p and p multiples of q, with pq double-counted and thus corrected by adding 1, results in phi_of_n=(p-1)*(q-1).

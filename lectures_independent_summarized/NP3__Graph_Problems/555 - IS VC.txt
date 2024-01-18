@@ -1,0 +1,1 @@
+Reduced Indep. Set prob. to Vertex Cover prob. by setting budget b=n-g in graph G. Correctness rests on claim: If G has a Vertex Cover (VC) size ≤ N-g=b, then comp. set S̅ is an ind. set of size ≥ g. So, find VC in G with size b ensures Ind. Set size g. No VC of size b implies no Ind. Set of size g.

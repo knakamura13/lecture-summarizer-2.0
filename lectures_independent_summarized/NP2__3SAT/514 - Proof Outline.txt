@@ -1,0 +1,1 @@
+3SAT problem NP-completeness to be proven. Firstly, show 3SAT in NP class, considered straightforward. Main task: reduce SAT to 3SAT as SAT is NP-complete. Reduction implies any problem in NP reduces to SAT, and then to 3SAT. Hence, a poly-time algorithm for 3SAT would solve all NP problems, due to transitive reductions. Proof of 3SAT's place in NP class begins first.

@@ -1,0 +1,1 @@
+Maximizing supply transfer from start vertex s to end vertex t in a directed graph, ensuring not to surpass edge capacities, whether dealing with data like internet traffic where capacity equates to bandwidth, or physical goods like oil where capacity reflects pipeline limits.

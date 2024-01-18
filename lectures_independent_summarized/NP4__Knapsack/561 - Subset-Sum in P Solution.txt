@@ -1,0 +1,1 @@
+Running time for the problem must be N times poly(log t) to be polynomial in the input size, similar to the knapsack problem. Current belief that it is polynomial is incorrect.

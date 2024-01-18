@@ -1,0 +1,1 @@
+SAT problem input: formula f in conjunctive normal form with n variables (x1-xn) and m clauses. Need output: a satisfying assignment (true/false for each variable) making formula true. If none exists, output 'no'.

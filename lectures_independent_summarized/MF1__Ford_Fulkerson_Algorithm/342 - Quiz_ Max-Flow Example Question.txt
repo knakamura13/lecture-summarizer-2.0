@@ -1,0 +1,1 @@
+Understand max-flow problem formulation by reviewing a flow network example with defined start/end vertices and edge capacities. Determine a max-sized, valid flow conforming to two constraints: edge capacity limits and conservation of flow at vertices, barring the start (S) and end (T).

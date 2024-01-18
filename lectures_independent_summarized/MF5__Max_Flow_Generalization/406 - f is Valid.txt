@@ -1,0 +1,1 @@
+Flow f on edge E meets demand, hence f-prime (f - demand) is non-negative. Since f doesn’t exceed capacity, f-prime is at most capacity minus demand, aligning with G-prime network’s capacity definition. New flow f-prime is thus non-negative and adheres to capacity restrictions. Must verify if f-prime also fulfills the flow conservation law (inflow equals outflow).

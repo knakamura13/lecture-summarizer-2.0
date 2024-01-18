@@ -1,0 +1,1 @@
+Proved an s-t cut exists corresponding to flow f* with no augmenting path in residual network. L is the set of vertices reachable from vertex s; since t is unreachable from s, it resides in the complementary set R. Thus, (L, R) forms an s-t cut with capacity equal to flow f* size. Verified s in L and t in R, confirming separation and cut's validity.

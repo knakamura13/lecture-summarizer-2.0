@@ -1,0 +1,1 @@
+LP-based algos apply general approach for hard probs, often reducible to ILPs. ILPs, powerful & general, relaxed to LPs by dropping integrality constraints, solvable in poly time, commonly w/ simplex algos. LP solutions then randomized, rounded to get feasible ILP solutions that serve as heuristics for ILP optimal value.

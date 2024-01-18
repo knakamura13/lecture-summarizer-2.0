@@ -1,0 +1,1 @@
+Examining a directed graph with start and end vertex for feasible flow, marking edges with demand (green numbers) and capacity (red numbers). Some edges have specific demand constraints (e.g., at least 2 units, max 8 units), others have none (min 0 units, max 3 units). Question posed: Is there a feasible flow for this example?

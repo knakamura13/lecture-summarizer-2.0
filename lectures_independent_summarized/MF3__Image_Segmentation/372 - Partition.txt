@@ -1,0 +1,1 @@
+Aim to segregate pixel vertices into sets F (foreground) and B (background). Assign weight to partitions: FB score for foreground pixels, BJ score for background. Separation penalties subtracted for edges between F and B pixels, with penalty value CIJ. Objective: identify pixel assignment to F and B with the highest cumulative weight.

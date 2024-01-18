@@ -1,0 +1,1 @@
+Algorithm runs in O(n^2) time due to nested for loops iterating over an order n seq. Base cases, with O(1) steps within an O(n) loop, contribute less to total time. Solving the longest comm subseq problem w/ dynamic programming req a 2D tbl to handle prefixes of x & y of diff lengths.

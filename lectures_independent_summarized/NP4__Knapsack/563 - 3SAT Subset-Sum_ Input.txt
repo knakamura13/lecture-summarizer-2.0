@@ -1,0 +1,1 @@
+Subset sum problem setup with 2n + 2m + 1 numbers: n variables (X_1 to X_n), 2n literals (V_1, V_1', ..., V_n, V_n'), 2 numbers per m clauses, and desired sum. Each number has n + m digits max, working in base 10 to avoid carries in sums. Numbers are extremely large, e.g., t is ~10^(n+m), hence, an n*t algorithm is inefficient.

@@ -1,0 +1,1 @@
+LCS (Longest Common Subsequence) dynamic programming example to find longest string length appearing as subsequence in 2 equal length strings X and Y. Focus on subsequence, not substring, with end goal to determine string length, later leading to identifying the actual subsequence.

@@ -1,0 +1,1 @@
+Lecture explores max flow use in computer vision for Image Segmentation, aiming to divide an image into objects, specifically separating the foreground from the background, using a given image example to distinguish a triangle from its surroundings.

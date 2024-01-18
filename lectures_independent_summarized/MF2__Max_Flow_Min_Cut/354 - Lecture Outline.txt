@@ -1,0 +1,1 @@
+Proving the max-flow min-cut theorem and its application to image segmentation is the initial focus. Subsequently, establishing the accuracy of the Ford Fulkerson and Edmonds-Karp algorithms, deriving their correctness implicitly from the aforementioned theorem. Prior discussion of the Ford Fulkerson algorithm provides groundwork for these proofs.

@@ -1,0 +1,1 @@
+Found substring "BCBA" (len 4) illustrating dynamic programming (DP) for Unix diff utility. DP solves longest common subsequence prob essential for file comparisons in Unix diff, showcasing practical application and relevance in computing tasks.

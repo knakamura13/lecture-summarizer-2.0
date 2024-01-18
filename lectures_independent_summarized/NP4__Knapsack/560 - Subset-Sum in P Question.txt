@@ -1,0 +1,1 @@
+The statement posits subset-sum problem solvable in nt time, suggesting it's in P class. This is true; if a problem has a polynomial-time solution (here, n * t), it's in P.

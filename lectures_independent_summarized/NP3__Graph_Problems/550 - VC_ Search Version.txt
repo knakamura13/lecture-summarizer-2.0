@@ -1,0 +1,1 @@
+Vertex cover problem involves an undirected graph G and aims to find the minimum size vertex cover S within a budget b. If a vertex cover smaller or equal to b exists, it's identified, otherwise, the output is NO. This problem is proven to be NP-complete.

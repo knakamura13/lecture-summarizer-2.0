@@ -90,6 +90,9 @@ class DraftSpan:
             raise ValueError("invalid draft span range")
         if not self.text or not _SHA256.fullmatch(self.content_hash):
             raise ValueError("invalid draft span content")
+        expected_hash = hashlib.sha256(self.text.encode("utf-8")).hexdigest()
+        if self.content_hash != expected_hash:
+            raise ValueError("content_hash must match draft span text")
 
 
 @dataclass(frozen=True)
@@ -151,6 +154,8 @@ class BatchFinding:
                 raise ValueError("verdict requires evidence")
         if len(self.evidence_ids) != len(self.exact_quotes):
             raise ValueError("each evidence item requires one exact quote")
+        if len(set(self.evidence_ids)) != len(self.evidence_ids):
+            raise ValueError("evidence identifiers must be unique")
 
 
 @dataclass(frozen=True)
@@ -164,8 +169,13 @@ class ClaimAssessment:
     prompt_version: str
 
     def __post_init__(self) -> None:
-        if not _CLAIM_ID.fullmatch(self.claim_id) or self.pass_index <= 0:
+        claim_match = _CLAIM_ID.fullmatch(self.claim_id)
+        if not claim_match:
             raise ValueError("invalid claim assessment identity")
+        if self.pass_index <= 0 or self.pass_index > 99:
+            raise ValueError("invalid assessment pass")
+        if int(claim_match["pass"]) != self.pass_index:
+            raise ValueError("assessment pass must match claim pass")
         if not self.findings or any(
             finding.claim_id != self.claim_id for finding in self.findings
         ):
@@ -183,14 +193,19 @@ class RepairEvent:
     action: RepairAction
 
     def __post_init__(self) -> None:
-        if not _SPAN_ID.fullmatch(self.span_id) or not _SHA256.fullmatch(
+        span_match = _SPAN_ID.fullmatch(self.span_id)
+        if not span_match or not _SHA256.fullmatch(
             self.original_hash
         ):
             raise ValueError("invalid repair target")
         if not self.triggering_claim_ids:
             raise ValueError("repair requires a triggering claim")
-        if any(not _CLAIM_ID.fullmatch(item) for item in self.triggering_claim_ids):
-            raise ValueError("invalid triggering claim")
+        for item in self.triggering_claim_ids:
+            claim_match = _CLAIM_ID.fullmatch(item)
+            if not claim_match:
+                raise ValueError("invalid triggering claim")
+            if claim_match["pass"] != span_match["pass"]:
+                raise ValueError("repair trigger pass must match span pass")
 
 
 @dataclass(frozen=True)
@@ -323,8 +338,9 @@ def parse_claim_anchors(
         raise VerificationResponseError("claim-decomposition: unknown span result")
 
     claims: list[Claim] = []
-    for group in response.spans:
-        span = legal[group.span_id]
+    groups = {group.span_id: group for group in response.spans}
+    for span in spans:
+        group = groups[span.span_id]
         claimable_text = span.text.rstrip()
         if len(set(group.anchors)) != len(group.anchors):
             raise VerificationResponseError("claim-decomposition: duplicate anchor")
@@ -373,10 +389,12 @@ def parse_claim_findings(
         evidence_ids: list[str] = []
         quotes: list[str] = []
         for evidence in finding.evidence:
+            if evidence.segment_id in evidence_ids:
+                raise VerificationResponseError("claim-verification: duplicate evidence")
             passage = legal_evidence.get(evidence.segment_id)
             if passage is None:
                 raise VerificationResponseError("claim-verification: unselected evidence")
-            if not evidence.exact_quote or evidence.exact_quote not in passage:
+            if not evidence.exact_quote.strip() or evidence.exact_quote not in passage:
                 raise VerificationResponseError("claim-verification: quote not in evidence")
             evidence_ids.append(evidence.segment_id)
             quotes.append(evidence.exact_quote)

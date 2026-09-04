@@ -57,6 +57,25 @@ def test_claim_parser_adds_a_local_fallback_and_allows_overlapping_anchors() -> 
     assert claims[-1].is_fallback
 
 
+def test_claim_ids_follow_local_span_order_not_response_order() -> None:
+    spans = split_draft_spans("First. Second.", pass_index=1)
+    response = json.dumps(
+        {
+            "spans": [
+                {"span_id": "V01S000002", "anchors": []},
+                {"span_id": "V01S000001", "anchors": []},
+            ]
+        }
+    )
+
+    claims = parse_claim_anchors(response, spans=spans, pass_index=1)
+
+    assert [(claim.claim_id, claim.span_id) for claim in claims] == [
+        ("V01C000001", "V01S000001"),
+        ("V01C000002", "V01S000002"),
+    ]
+
+
 @pytest.mark.parametrize(
     "payload",
     (
@@ -155,4 +174,41 @@ def test_finding_parser_rejects_unselected_evidence_and_quote_mismatch() -> None
             response,
             claims=claims,
             selected={claims[0].claim_id: {"S000001": "Fact."}},
+        )
+
+
+@pytest.mark.parametrize(
+    "evidence",
+    (
+        [{"segment_id": "S000001", "exact_quote": " "}],
+        [
+            {"segment_id": "S000001", "exact_quote": "Fact"},
+            {"segment_id": "S000001", "exact_quote": "Fact"},
+        ],
+    ),
+)
+def test_finding_parser_rejects_blank_quotes_and_duplicate_evidence(evidence) -> None:
+    spans = split_draft_spans("Claim.", pass_index=1)
+    claims = parse_claim_anchors(
+        '{"spans":[{"span_id":"V01S000001","anchors":[]}]}',
+        spans=spans,
+        pass_index=1,
+    )
+    response = json.dumps(
+        {
+            "findings": [
+                {
+                    "claim_id": claims[0].claim_id,
+                    "verdict": "supported",
+                    "evidence": evidence,
+                }
+            ]
+        }
+    )
+
+    with pytest.raises(VerificationResponseError):
+        parse_claim_findings(
+            response,
+            claims=claims,
+            selected={claims[0].claim_id: {"S000001": "irrelevant source passage Fact"}},
         )

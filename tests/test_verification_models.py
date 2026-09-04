@@ -1,3 +1,4 @@
+import hashlib
 from dataclasses import FrozenInstanceError
 
 import pytest
@@ -109,7 +110,7 @@ def test_domain_records_enforce_links_and_verdict_evidence() -> None:
         start=0,
         end=5,
         text="Fact.",
-        content_hash="a" * 64,
+        content_hash=hashlib.sha256(b"Fact.").hexdigest(),
     )
     claim = Claim(
         claim_id="V01C000001",
@@ -169,4 +170,47 @@ def test_supported_and_contradicted_findings_require_evidence() -> None:
             verdict=ClaimVerdict.CONTRADICTED,
             evidence_ids=(),
             exact_quotes=(),
+        )
+
+
+def test_draft_span_hash_must_match_its_exact_text() -> None:
+    with pytest.raises(ValueError, match="hash"):
+        DraftSpan(
+            span_id="V01S000001",
+            ordinal=1,
+            start=0,
+            end=5,
+            text="Fact.",
+            content_hash="a" * 64,
+        )
+
+
+@pytest.mark.parametrize("pass_index", (2, 100))
+def test_claim_assessment_must_match_a_valid_claim_pass(pass_index: int) -> None:
+    finding = BatchFinding(
+        claim_id="V01C000001",
+        verdict=ClaimVerdict.INSUFFICIENTLY_SUPPORTED,
+        evidence_ids=(),
+        exact_quotes=(),
+    )
+
+    with pytest.raises(ValueError, match="pass"):
+        ClaimAssessment(
+            claim_id=finding.claim_id,
+            verdict=finding.verdict,
+            findings=(finding,),
+            pass_index=pass_index,
+            verifier_provider="fake",
+            verifier_model="model",
+            prompt_version="verification/1",
+        )
+
+
+def test_repair_triggers_must_share_the_target_span_pass() -> None:
+    with pytest.raises(ValueError, match="pass"):
+        RepairEvent(
+            span_id="V01S000001",
+            original_hash="a" * 64,
+            triggering_claim_ids=("V02C000001",),
+            action=RepairAction.REMOVE,
         )

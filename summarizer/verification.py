@@ -5,14 +5,17 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import unicodedata
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
+from typing import Callable, TypeVar
 
 from nltk.tokenize.punkt import PunktSentenceTokenizer
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 
 from summarizer.leaf import _describe, _extract_json_object, _sanitize
+from summarizer.grounding import SourcePassage, serialize_source_passage
 from summarizer.providers.base import GenerationResult, ModelProvider
 from summarizer.tokenization import TokenCounter
 
@@ -20,6 +23,8 @@ from summarizer.tokenization import TokenCounter
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 _SPAN_ID = re.compile(r"^V(?P<pass>\d{2})S\d{6}$")
 _CLAIM_ID = re.compile(r"^V(?P<pass>\d{2})C\d{6}$")
+_TERM = re.compile(r"[^\W_]+", re.UNICODE)
+_WorkItem = TypeVar("_WorkItem")
 
 
 class VerificationResponseError(ValueError):
@@ -140,6 +145,31 @@ class EvidenceSelection:
 
 
 @dataclass(frozen=True)
+class EvidenceBundle:
+    selection: EvidenceSelection
+    passages: tuple[SourcePassage, ...]
+
+
+@dataclass(frozen=True)
+class SourceLexicalEntry:
+    segment_id: str
+    text: str
+    source_order: int
+    terms: frozenset[str]
+
+
+@dataclass(frozen=True)
+class SourceLexicalIndex:
+    entries: tuple[SourceLexicalEntry, ...]
+
+    def __post_init__(self) -> None:
+        if not self.entries:
+            raise ValueError("source lexical index requires entries")
+        if len({entry.segment_id for entry in self.entries}) != len(self.entries):
+            raise ValueError("source lexical index identifiers must be unique")
+
+
+@dataclass(frozen=True)
 class BatchFinding:
     claim_id: str
     verdict: ClaimVerdict
@@ -255,6 +285,121 @@ def split_draft_spans(text: str, *, pass_index: int) -> tuple[DraftSpan, ...]:
             )
         )
     return tuple(spans)
+
+
+def _terms(text: str) -> frozenset[str]:
+    normalized = unicodedata.normalize("NFC", text).casefold()
+    return frozenset(match.group() for match in _TERM.finditer(normalized))
+
+
+def build_source_lexical_index(
+    *,
+    provenance_ids: Sequence[str],
+    source: Mapping[str, str],
+) -> SourceLexicalIndex:
+    """Resolve legal source cores and precompute their lexical terms once."""
+    identifiers = tuple(dict.fromkeys(provenance_ids))
+    if not identifiers:
+        raise ValueError("claim evidence requires provenance")
+    entries: list[SourceLexicalEntry] = []
+    for source_order, identifier in enumerate(identifiers):
+        try:
+            text = source[identifier]
+        except KeyError as error:
+            raise ValueError(f"source text is missing for segment {identifier}") from error
+        entries.append(
+            SourceLexicalEntry(
+                segment_id=identifier,
+                text=text,
+                source_order=source_order,
+                terms=_terms(text),
+            )
+        )
+    return SourceLexicalIndex(entries=tuple(entries))
+
+
+def select_claim_evidence(
+    claim: Claim,
+    *,
+    source_index: SourceLexicalIndex,
+    counter: TokenCounter,
+    max_tokens: int,
+) -> EvidenceBundle:
+    """Rank legal source cores and greedily pack complete passages."""
+    if max_tokens <= 0:
+        raise ValueError("evidence max_tokens must be positive")
+    claim_terms = _terms(claim.anchor)
+    ranked = sorted(
+        source_index.entries,
+        key=lambda entry: (
+            -len(claim_terms & entry.terms),
+            entry.source_order,
+        ),
+    )
+    passages: list[SourcePassage] = []
+    for entry in ranked:
+        candidate = SourcePassage(entry.segment_id, entry.text)
+        tentative = (*passages, candidate)
+        serialized = "\n".join(serialize_source_passage(item) for item in tentative)
+        if counter.count(serialized) <= max_tokens:
+            passages.append(candidate)
+
+    if not passages:
+        raise ValueError("evidence budget cannot hold a source passage")
+    selected_ids = tuple(passage.segment_id for passage in passages)
+    selected_id_set = set(selected_ids)
+    omitted_ids = tuple(
+        entry.segment_id for entry in ranked if entry.segment_id not in selected_id_set
+    )
+    token_cost = counter.count(
+        "\n".join(serialize_source_passage(item) for item in passages)
+    )
+    return EvidenceBundle(
+        selection=EvidenceSelection(
+            claim_id=claim.claim_id,
+            selected_ids=selected_ids,
+            examined_ids=selected_ids,
+            omitted_ids=omitted_ids,
+            token_cost=token_cost,
+            retrieval_method="lexical-overlap/1",
+            retrieval_complete=not omitted_ids,
+        ),
+        passages=tuple(passages),
+    )
+
+
+def pack_work_items(
+    items: Sequence[_WorkItem],
+    *,
+    render_request: Callable[[tuple[_WorkItem, ...]], str],
+    runtime: VerificationRuntime,
+    config: VerificationConfig,
+) -> tuple[tuple[_WorkItem, ...], ...]:
+    """Pack indivisible work items under both configured and runtime limits."""
+    capacity = min(
+        config.request_tokens,
+        runtime.context_window_tokens
+        - config.output_reserve_tokens
+        - config.safety_margin_tokens,
+    )
+    if capacity <= 0:
+        raise ValueError("verification runtime has no usable input capacity")
+    batches: list[tuple[_WorkItem, ...]] = []
+    current: tuple[_WorkItem, ...] = ()
+    for item in items:
+        candidate = (*current, item)
+        if runtime.counter.count(render_request(candidate)) <= capacity:
+            current = candidate
+            continue
+        if not current:
+            raise ValueError("single work item exceeds verification request capacity")
+        batches.append(current)
+        current = (item,)
+        if runtime.counter.count(render_request(current)) > capacity:
+            raise ValueError("single work item exceeds verification request capacity")
+    if current:
+        batches.append(current)
+    return tuple(batches)
 
 
 class _AnchorGroup(BaseModel):

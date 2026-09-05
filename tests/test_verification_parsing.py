@@ -34,6 +34,26 @@ def test_claim_parser_assigns_ids_and_reuses_full_span_fallback() -> None:
     assert [claim.is_fallback for claim in claims] == [False, True]
 
 
+def test_claim_parser_reuses_full_span_fallback_with_trailing_whitespace() -> None:
+    spans = split_draft_spans("A fact. ", pass_index=1)
+    response = json.dumps(
+        {
+            "spans": [
+                {
+                    "span_id": "V01S000001",
+                    "anchors": ["A fact. "],
+                }
+            ]
+        }
+    )
+
+    claims = parse_claim_anchors(response, spans=spans, pass_index=1)
+
+    assert [(claim.anchor, claim.is_fallback) for claim in claims] == [
+        ("A fact. ", True)
+    ]
+
+
 def test_claim_parser_adds_a_local_fallback_and_allows_overlapping_anchors() -> None:
     spans = split_draft_spans("Alice bought and sold shares.", pass_index=2)
     response = json.dumps(

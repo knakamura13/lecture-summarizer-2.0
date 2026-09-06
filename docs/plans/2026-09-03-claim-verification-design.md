@@ -11,6 +11,22 @@ Verification is disabled by default. The default reader-facing result remains
 plain summary text. This feature is a library boundary until issue #12 replaces
 the transitional legacy CLI workflow.
 
+## Delivered boundary
+
+Tasks 1–6 are implemented. `PipelineConfig` carries a disabled-by-default
+`VerificationConfig`; `finalize_summary` invokes verification immediately after
+editorial writing and before citation rendering or successful audit
+materialization. The pipeline constructs the default runtime from the original
+summarization provider, model, counter, timeout, and selected context window.
+A caller may replace all of those dependencies with one complete
+`VerificationRuntime`. A model-only override is deliberately absent.
+
+Verification is a best-effort, evidence-scoped safeguard. A `supported` verdict
+means that the selected source evidence supported a validated claim under this
+bounded process; it is not a statement of factual perfection. Conversely,
+`insufficiently_supported` records a bounded-retrieval limitation rather than a
+finding that the source lacks support.
+
 ## Runtime decision
 
 Verification uses the summarization provider, model, counter, and timeout by
@@ -22,7 +38,10 @@ changing the verification domain.
 
 This avoids premature configuration while preserving a clean high-assurance
 path for model diversity. A second model may reduce correlated mistakes, but its
-judgments still remain fallible assessments rather than proof.
+judgments still remain fallible assessments rather than proof. A runtime whose
+reserve and safety margin leave no usable request capacity becomes a terminal
+verification failure; when an audit path is configured, that failure is
+recorded before finalization withholds reader-facing output.
 
 ## Pipeline
 
@@ -170,9 +189,9 @@ restored. The repair call never certifies these conditions itself.
 ## Audit schema
 
 Verification advances every newly written artifact to `audit/2`, including
-runs where verification is disabled. Disabled operation preserves summary text
-and provider call count but is represented explicitly in the new schema. The
-audit verification record contains:
+runs where verification is disabled. Disabled operation preserves summary text,
+provider call count, and citation behavior but is represented explicitly in the
+new schema. The audit verification record contains:
 
 - whether verification ran;
 - verifier provider, model, and prompt versions;
@@ -202,8 +221,10 @@ verification failures with bounded, redacted codes. `verify_and_repair` returns
 a terminal failed result with all metadata instead of raising before it can be
 recorded. When an audit path is configured, finalization validates and writes
 the failure audit atomically, then withholds the summary and raises a focused
-error. Malformed output and unresolved material contradictions therefore never
-return a summary labeled as verified. Pass exhaustion is explicit and finite.
+error. Citations are not resolved or rendered on that terminal path. Malformed
+output, capacity failures, and unresolved material contradictions therefore
+never return a summary labeled as verified. Pass exhaustion is explicit and
+finite.
 
 Insufficiently supported claims may return the unchanged or repaired summary
 only with audit-visible warnings and limitations. This preserves signal without

@@ -5,9 +5,9 @@ This project is being rebuilt as a generalized, source-grounded hierarchical sum
 Canonical ingestion, token-aware segmentation, structured leaf summarization, token-budget arithmetic, whole-document direct summarization, and multi-level hierarchical merging are now available as library components in `summarizer.ingestion`, `summarizer.tokenization`, `summarizer.segmentation`, `summarizer.summaries`, `summarizer.leaf`, `summarizer.budget`, `summarizer.direct`, `summarizer.merge`, and `summarizer.hierarchy`. The command-line workflow still runs the legacy flat, sentence-chunked path and does not consume them yet.
 
 Source grounding across merge levels and the library-level final editorial,
-citation, and audit stages are available. Claim verification, concurrency,
-quality evaluation, and command-line integration of the new pipeline remain
-future work.
+citation, audit, and optional claim-verification stages are available.
+Concurrency, quality evaluation, and command-line integration of the new
+pipeline remain future work.
 
 ## Requirements
 
@@ -184,12 +184,43 @@ by the final writer: they are a deterministic, source-ordered rendering of the
 root's already validated provenance, and each identifier resolves to recorded
 segment metadata. The default output has neither citations nor audit data.
 
-An optional `audit/1` artifact records safe run configuration, strategy,
+An optional `audit/2` artifact records safe run configuration, strategy,
 source-segment metadata, tree/evidence links, warnings or failures, available
-usage metadata, and citation mappings. It does not copy raw source text,
-generated prose, quotations, provider request IDs, or provider authentication
-data. Values matching common credential forms are redacted; JSON is canonical,
-validated after serialization, and atomically written only after validation.
+usage metadata, citation mappings, and an explicit verification record. It does
+not copy raw source text, generated prose, quotations, provider request IDs, or
+provider authentication data. Values matching common credential forms are
+redacted; JSON is canonical, validated after serialization, and atomically
+written only after validation.
+
+## Optional claim verification
+
+`PipelineConfig.verification` is disabled by default, so existing library
+callers keep the same readable final text, provider calls, and citation behavior.
+Verification is currently a library option; issue #12 owns CLI exposure when it
+replaces the transitional legacy workflow.
+
+When enabled, finalization verifies the editorial draft before citations are
+rendered. By default it uses the same provider, model, token counter, timeout,
+and context window as summarization. A caller may instead inject a complete
+dedicated `VerificationRuntime`; supplying only a model is intentionally not a
+configuration path.
+
+Verification decomposes locally derived sentence spans, retrieves only bounded
+complete source cores from the root's recorded provenance, and classifies each
+claim with validated structured results. A contradicted eligible span can be
+qualified, replaced, or removed once within the default repair budget; the
+complete repaired draft is then decomposed and verified again. Retrieval is
+bounded: `insufficiently_supported` means the selected evidence did not settle
+the claim, not that the source lacks support. Likewise, `supported` is an
+evidence-scoped verifier assessment, not proof of factual perfection.
+
+Malformed verification, a capacity failure, or an unresolved material
+contradiction fails closed. If auditing is configured, finalization writes a
+validated terminal `audit/2` record before withholding the reader-facing
+summary; citations are rendered only after successful verification. Audit
+metadata keeps pass identifiers, hashes, verdicts, evidence links, repairs,
+usage, and closed limitation/failure codes, while excluding claim, draft,
+replacement, quote, and source prose.
 
 Historical scripts under `omscs-ml-lectures/` remain available but are not part of the modern application entry point.
 

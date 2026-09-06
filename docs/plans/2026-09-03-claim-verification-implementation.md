@@ -1,6 +1,8 @@
 # Claim Verification and Bounded Repair Implementation Plan
 
-> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+> **Status:** Tasks 1–6 are complete and committed. Task 7 records the final
+> local documentation and acceptance evidence; issue #10 remains open until
+> its pull request is merged.
 
 **Goal:** Add optional, source-grounded claim verification and finite repair between editorial drafting and final audit materialization.
 
@@ -9,6 +11,22 @@
 **Tech Stack:** Python 3, frozen dataclasses, Pydantic, NLTK Punkt spans, existing provider and token-counter protocols, pytest
 
 ---
+
+## Completed implementation record
+
+| Task | Delivered commit(s) |
+| --- | --- |
+| 1. Local spans and strict parsing | `22d894a`, `0863d24`, `613b10b` |
+| 2. Deterministic bounded evidence | `869803c` |
+| 3. Bounded decomposition and classification | `4e040de` |
+| 4. Finite repair and reverification | `2387c01` |
+| 5. `audit/2` verification metadata | `6854e0a` |
+| 6. Finalization and pipeline integration | `ee7c361` |
+
+The final implementation retains claim, source, draft, replacement, and quote
+prose only in transient verification work. `audit/2` projects identifiers,
+hashes, closed codes, safe runtime metadata, and phase usage instead. The
+library path is opt-in; issue #12 owns CLI exposure.
 
 ### Task 1: Model local spans, claims, and strict structured responses
 
@@ -136,7 +154,7 @@ because tokenization is not additive.
 
 **Step 6: Run focused and full tests, review, and commit**
 
-Use a read-only 5.6 Sol reviewer because retrieval and packing affect both
+Use a read-only Terra reviewer because retrieval and packing affect both
 faithfulness and long-artifact performance. Commit only after findings are
 addressed:
 
@@ -189,7 +207,7 @@ generations, warnings, and limitations. Do not repair or loop in this task.
 
 **Step 5: Run focused and full tests, review, and commit**
 
-Use a read-only 5.6 Sol reviewer for prompt trust boundaries, batching, failure
+Use a read-only Terra reviewer for prompt trust boundaries, batching, failure
 semantics, simplification, and comment length:
 
 ```bash
@@ -243,7 +261,7 @@ its own verification.
 
 **Step 5: Run focused and full tests, review, and commit**
 
-Use a read-only 5.6 Sol reviewer for termination, state replacement, source
+Use a read-only Terra reviewer for termination, state replacement, source
 grounding, signal preservation, complexity, and comment length:
 
 ```bash
@@ -287,7 +305,7 @@ replacement unchanged.
 
 **Step 4: Run focused and full tests, review, and commit**
 
-Use a read-only 5.6 Sol reviewer for durable secret/source leakage, schema
+Use a read-only Terra reviewer for durable secret/source leakage, schema
 compatibility, referential integrity, simplification, and comments:
 
 ```bash
@@ -329,7 +347,7 @@ successful final text. Keep the transitional CLI unchanged for issue #12.
 
 **Step 4: Run focused and full tests, review, and commit**
 
-Use a read-only 5.6 Sol reviewer for call ordering, default compatibility,
+Use a read-only Terra reviewer for call ordering, default compatibility,
 budget/runtime mismatches, error propagation, simplification, and comments:
 
 ```bash
@@ -377,3 +395,27 @@ git commit -m "chore: document claim verification and repair"
 
 Post final test counts and map every acceptance criterion to implementation and
 test paths. Do not close issue #10 until its PR is merged.
+
+## Local acceptance evidence matrix
+
+The following is local evidence for issue #10's acceptance criteria. It does
+not claim a live-provider factual-quality result: the offline suite uses
+deterministic fakes and verifies contracts, boundaries, and fail-closed paths.
+
+| Issue #10 criterion | Implementation | Offline evidence |
+| --- | --- | --- |
+| Library opt-in preserves default readability; CLI remains #12 | `summarizer.pipeline.PipelineConfig`, `summarizer.finalization.finalize_summary` | `tests/test_pipeline.py`, `tests/test_verification_integration.py::test_pipeline_verification_is_explicitly_disabled_by_default` |
+| Local claim decomposition, including non-verifiable statements | `summarizer.verification.split_draft_spans`, `parse_claim_anchors`, `verify_draft_once` | `tests/test_verification_models.py`, `tests/test_verification_parsing.py`, `tests/test_verification_stage.py` |
+| Provenance-scoped deterministic bounded evidence | `build_source_lexical_index`, `select_claim_evidence` | `tests/test_verification_evidence.py` |
+| Four validated verdict classes | `ClaimVerdict`, `parse_claim_findings`, `reduce_batch_findings` | `tests/test_verification_parsing.py`, `tests/test_verification_stage.py` |
+| Bounded qualify/replace/remove repair without unsupported additions | `build_repair_request`, `apply_repairs`, `verify_and_repair` | `tests/test_verification_repair.py` |
+| Full repaired-draft decomposition and reverification | `verify_and_repair` | `tests/test_verification_repair.py::test_verify_and_repair_reverifies_the_complete_repaired_draft` |
+| Finite configurable repair and clear exhaustion | `VerificationConfig.max_repair_passes`, `verify_and_repair` | `tests/test_verification_repair.py`, `tests/test_verification_integration.py::test_exhausted_contradiction_writes_terminal_audit_before_raising` |
+| Versioned no-prose audit record with findings, omissions, repairs, usage, and limits | `summarizer.audit.AuditArtifact`, `_audit_verification` | `tests/test_audit.py`, `tests/test_verification_audit.py` |
+| Documentation/output never equates verifier approval with factual perfection | `README.md`, `docs/plans/2026-09-03-claim-verification-design.md` | Documentation review; `tests/test_verification_audit.py` verifies no reader/source prose enters audit output |
+| Offline coverage of classifications, mixed evidence, malformed output, repair success/failure, stale spans, and exhaustion | `summarizer.verification` | `tests/test_verification_stage.py`, `tests/test_verification_repair.py`, `tests/test_verification_audit.py`, `tests/test_verification_integration.py` |
+
+Latest local verification (2026-09-06): `compileall` succeeded; both complete
+offline pytest modes passed with **509 passed, 2 skipped**. The final issue
+comment should reproduce this matrix and those exact command results after the
+documentation commit is reviewed.

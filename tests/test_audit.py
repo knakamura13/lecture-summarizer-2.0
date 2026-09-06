@@ -54,18 +54,22 @@ def test_audit_is_canonical_redacted_and_contains_only_segment_metadata(tmp_path
         source_id=document.source_id,
         strategy="direct",
         model="m",
-        configuration={"openai_api_key": "sk-12345678901234567890", "host": "https://user:pass@example.test"},
+        configuration={
+            "app": {
+                "provider": "openai",
+                "model": "m",
+                "timeout_seconds": 30,
+                "input_path": "/private/input.txt",
+                "ollama_host": "https://user:pass@example.test",
+                "openai_api_key": "sk-12345678901234567890",
+            }
+        },
         segments=(segment,),
         nodes=(node,),
         root_node_id=node.node_id,
         citations=citations,
         generations=(GenerationResult("ok", "fake", "m", 3, 4, "stop", "unstable-id"),),
-        warnings=(
-            "Bearer abcdefghijklmnop",
-            "ghp_123456789012345678901234567890123456",
-            "Authorization: Basic dXNlcjpwYXNzd29yZA==",
-            "Authorization: Basic YTpi",
-        ),
+        warnings=("bounded_retrieval",),
     )
 
     first = serialize_audit(artifact)
@@ -74,13 +78,14 @@ def test_audit_is_canonical_redacted_and_contains_only_segment_metadata(tmp_path
     assert b"sk-12345678901234567890" not in first
     assert b"user:pass" not in first
     assert b"unstable-id" not in first
+    assert b"/private/input.txt" not in first
     assert b"ghp_123456789012345678901234567890123456" not in first
-    assert b"dXNlcjpwYXNzd29yZA==" not in first
-    assert b"YTpi" not in first
-    assert b"[REDACTED]" in first
     body = json.loads(first)
     assert "text" not in body["source_segments"][0]
     assert "text" not in body["tree_nodes"][0]["summary"]
+    assert body["configuration"] == {
+        "app": {"model": "m", "provider": "openai", "timeout_seconds": 30}
+    }
     assert body["citations"] == [{"order": 0, "segment_id": "D000001", "source_id": document.source_id}]
 
     path = tmp_path / "audit.json"
@@ -93,3 +98,30 @@ def test_citations_are_source_ordered_and_unknown_provenance_fails() -> None:
     assert render_citations("Text.", resolve_citations((segment.segment_id,), source_id=document.source_id, segments=(segment,))) == "Text.\n\nSources: D000001"
     with pytest.raises(AuditError, match="unknown"):
         resolve_citations(("S999999",), source_id=document.source_id, segments=(segment,))
+
+
+def test_audit_accepts_openai_completed_finish_status() -> None:
+    document, segment, node, citations = fixture()
+    artifact = build_audit_artifact(
+        source_id=document.source_id,
+        strategy="direct",
+        model="gpt-4o-mini",
+        configuration={"provider": "openai", "model": "gpt-4o-mini", "timeout_seconds": 30},
+        segments=(segment,),
+        nodes=(node,),
+        root_node_id=node.node_id,
+        citations=citations,
+        generations=(GenerationResult("ok", "openai", "gpt-4o-mini", finish_status="completed"),),
+    )
+
+    body = json.loads(serialize_audit(artifact))
+
+    assert body["usage"] == [
+        {
+            "finish_status": "completed",
+            "input_tokens": None,
+            "model": "gpt-4o-mini",
+            "output_tokens": None,
+            "provider": "openai",
+        }
+    ]

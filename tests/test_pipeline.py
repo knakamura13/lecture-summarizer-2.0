@@ -6,6 +6,7 @@ from summarizer.ingestion import ingest_text
 from summarizer.pipeline import PipelineConfig, run_pipeline
 from summarizer.providers.base import GenerationRequest, GenerationResult
 from summarizer.segmentation import SegmentationConfig
+from summarizer.verification import VerificationConfig
 
 
 class CharacterCounter:
@@ -69,7 +70,12 @@ def test_direct_pipeline_runs_a_final_call_and_keeps_default_output_plain(tmp_pa
     assert "Sources:" not in result.final.text
     assert result.final.citations[0].segment_id == "D000001"
     assert result.final.audit is not None
+    assert result.final.audit.verification.enabled is False
     assert [request.operation_id for request in provider.requests] == ["D000001", "editorial-final"]
+
+
+def test_pipeline_verification_is_explicitly_disabled_by_default() -> None:
+    assert PipelineConfig().verification == VerificationConfig()
 
 
 def test_hierarchical_pipeline_forces_multiple_levels_then_edits_and_cites(tmp_path) -> None:

@@ -23,6 +23,7 @@ from summarizer.providers.base import GenerationRequest, GenerationResult, Model
 from summarizer.segmentation import SegmentationConfig, segment_document
 from summarizer.ingestion import SourceDocument
 from summarizer.tokenization import TokenCounter
+from summarizer.verification import VerificationConfig, VerificationRuntime
 
 
 @dataclass(frozen=True)
@@ -32,10 +33,15 @@ class PipelineConfig:
     max_merge_children: int | None = None
     include_citations: bool = False
     audit_path: Path | None = None
+    verification: VerificationConfig = VerificationConfig()
+    verification_runtime: VerificationRuntime | None = None
 
     def __post_init__(self) -> None:
         if self.target_words <= 0:
             raise ValueError("target_words must be positive")
+        if self.verification_runtime is not None:
+            if not self.verification.enabled:
+                raise ValueError("verification runtime requires enabled verification")
 
 
 @dataclass(frozen=True)
@@ -149,6 +155,15 @@ def run_pipeline(
         )
 
     completed_before_editorial = tuple(recording.generations)
+    verifier_runtime = config.verification_runtime
+    if config.verification.enabled and verifier_runtime is None:
+        verifier_runtime = VerificationRuntime(
+            provider=provider,
+            counter=counter,
+            model=app.model,
+            timeout_seconds=app.timeout_seconds,
+            context_window_tokens=report.context_window_tokens,
+        )
     final = finalize_summary(
         root.summary,
         recording,
@@ -164,10 +179,23 @@ def run_pipeline(
         audit_configuration={
             "app": asdict(app),
             "strategy": asdict(strategy),
-            "pipeline": asdict(config),
+            "pipeline": {
+                "target_words": config.target_words,
+                "max_merge_children": config.max_merge_children,
+                "include_citations": config.include_citations,
+            },
+            "verification": asdict(config.verification),
             "budget": asdict(report),
         },
         audit_path=config.audit_path,
         generations=completed_before_editorial,
+        counter=counter,
+        source_cores={
+            segment.segment_id: document.text[segment.core_start:segment.core_end]
+            for segment in segments
+        },
+        verification=config.verification,
+        verification_runtime=verifier_runtime,
+        verification_context_window_tokens=report.context_window_tokens,
     )
     return PipelineResult(final=final, strategy=report, root=root, nodes=nodes)

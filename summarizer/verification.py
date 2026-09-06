@@ -8,7 +8,7 @@ import re
 import unicodedata
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
-from enum import StrEnum
+from enum import Enum
 from typing import Callable, TypeVar
 
 from nltk.tokenize.punkt import PunktSentenceTokenizer
@@ -40,14 +40,14 @@ class VerificationCapacityError(ValueError):
     """A verified request cannot fit within an explicitly bounded budget."""
 
 
-class ClaimVerdict(StrEnum):
+class ClaimVerdict(str, Enum):
     SUPPORTED = "supported"
     CONTRADICTED = "contradicted"
     INSUFFICIENTLY_SUPPORTED = "insufficiently_supported"
     NOT_MEANINGFULLY_VERIFIABLE = "not_meaningfully_verifiable"
 
 
-class RepairAction(StrEnum):
+class RepairAction(str, Enum):
     QUALIFY = "qualify"
     REPLACE = "replace"
     REMOVE = "remove"
@@ -293,7 +293,7 @@ class RepairWorkItem:
             raise ValueError("preserved repair anchor must be an exact span substring")
 
 
-class GenerationPhase(StrEnum):
+class GenerationPhase(str, Enum):
     DECOMPOSITION = "decomposition"
     CLASSIFICATION = "classification"
     REPAIR = "repair"

@@ -1,4 +1,6 @@
 import hashlib
+import inspect
+import json
 from dataclasses import FrozenInstanceError
 
 import pytest
@@ -11,6 +13,7 @@ from summarizer.verification import (
     ClaimVerdict,
     DraftSpan,
     EvidenceSelection,
+    GenerationPhase,
     RepairAction,
     RepairEvent,
     VerificationConfig,
@@ -18,11 +21,26 @@ from summarizer.verification import (
     VerificationRuntime,
     split_draft_spans,
 )
+import summarizer.verification as verification
 
 
 class Provider:
     def generate(self, request):  # pragma: no cover - protocol fixture
         raise AssertionError("not called")
+
+
+def test_verification_enums_remain_json_strings_without_python311_strenum() -> None:
+    values = (
+        ClaimVerdict.SUPPORTED,
+        RepairAction.QUALIFY,
+        GenerationPhase.DECOMPOSITION,
+    )
+
+    assert values == ("supported", "qualify", "decomposition")
+    assert json.dumps({"values": values}) == (
+        '{"values": ["supported", "qualify", "decomposition"]}'
+    )
+    assert "StrEnum" not in inspect.getsource(verification)
 
 
 def test_sentence_spans_preserve_the_draft_exactly() -> None:

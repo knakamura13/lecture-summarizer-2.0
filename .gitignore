@@ -7,3 +7,4 @@ gpt_logs/*
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.summarizer-cache/

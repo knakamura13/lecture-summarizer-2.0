@@ -4,11 +4,12 @@ from pathlib import Path
 
 import pytest
 
-from summarizer.config import AppConfig, LegacyWorkflowConfig, RetryPolicy
+from summarizer.config import AppConfig, CacheConfig, LegacyWorkflowConfig, RetryPolicy
 
 
 def test_configuration_defaults_are_legacy_compatible() -> None:
     app = AppConfig()
+    cache = CacheConfig()
     retry = RetryPolicy()
     workflow = LegacyWorkflowConfig()
 
@@ -18,6 +19,8 @@ def test_configuration_defaults_are_legacy_compatible() -> None:
     assert app.provider == "openai"
     assert app.ollama_host == "http://localhost:11434"
     assert app.timeout_seconds == 180
+    assert cache.enabled is False
+    assert cache.root == Path(".summarizer-cache")
     assert retry.max_attempts == 5
     assert retry.initial_delay_seconds == 1
     assert retry.backoff_multiplier == 2
@@ -30,6 +33,7 @@ def test_configuration_defaults_are_legacy_compatible() -> None:
     ("configuration", "field_name"),
     [
         (AppConfig(), "model"),
+        (CacheConfig(), "enabled"),
         (RetryPolicy(), "max_attempts"),
         (LegacyWorkflowConfig(), "chunk_size"),
     ],
@@ -40,6 +44,16 @@ def test_configuration_is_immutable(
 ) -> None:
     with pytest.raises(FrozenInstanceError):
         setattr(configuration, field_name, "changed")
+
+
+def test_cache_configuration_rejects_a_symlinked_final_root(tmp_path: Path) -> None:
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    root = tmp_path / "cache"
+    root.symlink_to(outside, target_is_directory=True)
+
+    with pytest.raises(ValueError, match="root"):
+        CacheConfig(root=root)
 
 
 @pytest.mark.parametrize(
@@ -60,6 +74,8 @@ def test_configuration_is_immutable(
         (lambda: AppConfig(timeout_seconds=0), "timeout_seconds"),
         (lambda: AppConfig(timeout_seconds=float("nan")), "timeout_seconds"),
         (lambda: AppConfig(timeout_seconds=float("inf")), "timeout_seconds"),
+        (lambda: CacheConfig(root=Path("/")), "root"),
+        (lambda: CacheConfig(root=Path("..")), "root"),
         (lambda: RetryPolicy(max_attempts=0), "max_attempts"),
         (
             lambda: RetryPolicy(initial_delay_seconds=0),

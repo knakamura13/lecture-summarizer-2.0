@@ -10,6 +10,23 @@ ProviderName = Literal["openai", "ollama"]
 
 
 @dataclass(frozen=True)
+class CacheConfig:
+    """Opt-in local cache configuration for library callers."""
+
+    enabled: bool = False
+    root: Path = Path(".summarizer-cache")
+
+    def __post_init__(self) -> None:
+        if (
+            self.root == Path(".")
+            or self.root == Path(self.root.anchor)
+            or ".." in self.root.parts
+            or self.root.is_symlink()
+        ):
+            raise ValueError("root must name a contained cache directory")
+
+
+@dataclass(frozen=True)
 class AppConfig:
     input_path: Path = Path("input.txt")
     output_path: Path = Path("output.txt")

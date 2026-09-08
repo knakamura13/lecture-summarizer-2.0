@@ -11,6 +11,8 @@ from summarizer.checkpoint import (
     CheckpointReason,
     CheckpointStore,
     CompletedRef,
+    NonReusableReason,
+    NonReusableRef,
     PublicationState,
     ReuseReason,
     RunPlan,
@@ -84,9 +86,12 @@ def test_new_run_persists_a_private_versioned_manifest(tmp_path: Path) -> None:
         "descriptor_sha256": _plan().descriptor_sha256,
         "format_version": "run/1",
         "metadata": {"cache_hits": 1, "retry_exhausted": False},
+        "non_reusable": [],
         "publication": "audit_staged",
         "run_id": "run-20260907",
         "source_sha256": _plan().source_sha256,
+        "terminal_failure": False,
+        "terminal_failure_work_id": None,
         "work_ids": ["segmentation", "S000001", "editorial-final"],
     }
     assert os.stat(path).st_mode & 0o777 == 0o600
@@ -276,3 +281,35 @@ def test_resume_marks_corrupt_cache_reference_non_reusable(tmp_path: Path) -> No
 
     assert results[0].payload is None
     assert results[0].reason is ReuseReason.CORRUPT
+
+
+def test_checkpoint_records_closed_non_reusable_scheduler_state(tmp_path: Path) -> None:
+    store = CheckpointStore(tmp_path / "cache")
+
+    with store.open(_plan(), resume=False) as session:
+        session.checkpoint_scheduler_state(
+            non_reusable=(
+                NonReusableRef(
+                    work_id="segmentation", reason=NonReusableReason.CANCELLED
+                ),
+                NonReusableRef(
+                    work_id="S000001", reason=NonReusableReason.UNOBSERVABLE
+                ),
+                NonReusableRef(
+                    work_id="editorial-final", reason=NonReusableReason.UNKNOWN
+                ),
+            ),
+            terminal_failure=True,
+            terminal_failure_work_id="S000001",
+        )
+
+    manifest = json.loads(
+        (tmp_path / "cache" / "runs" / "run-20260907.json").read_text()
+    )
+    assert manifest["non_reusable"] == [
+        {"reason": "cancelled", "work_id": "segmentation"},
+        {"reason": "unobservable", "work_id": "S000001"},
+        {"reason": "unknown", "work_id": "editorial-final"},
+    ]
+    assert manifest["terminal_failure_work_id"] == "S000001"
+    assert manifest["terminal_failure"] is True

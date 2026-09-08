@@ -22,7 +22,6 @@ from summarizer.cache import (
     _UnsafeCachePath,
 )
 
-
 CHECKPOINT_FORMAT_VERSION = "run/1"
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 _RUN_ID = re.compile(r"^[a-z][a-z0-9-]{0,63}$")
@@ -34,9 +33,12 @@ _MANIFEST_FIELDS = frozenset(
         "descriptor_sha256",
         "format_version",
         "metadata",
+        "non_reusable",
         "publication",
         "run_id",
         "source_sha256",
+        "terminal_failure",
+        "terminal_failure_work_id",
         "work_ids",
     }
 )
@@ -60,6 +62,13 @@ class ReuseReason(str, Enum):
     MISSING = "missing"
     CORRUPT = "corrupt"
     INCOMPATIBLE = "incompatible"
+
+
+class NonReusableReason(str, Enum):
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+    UNOBSERVABLE = "unobservable"
+    UNKNOWN = "unknown"
 
 
 class CheckpointError(ValueError):
@@ -115,6 +124,19 @@ class CompletedRef(BaseModel):
         return value
 
 
+class NonReusableRef(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    work_id: str
+    reason: NonReusableReason
+
+    @field_validator("work_id")
+    @classmethod
+    def _stable_work_id(cls, value: str) -> str:
+        _require_work_id(value)
+        return value
+
+
 class RunManifest(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -124,6 +146,9 @@ class RunManifest(BaseModel):
     source_sha256: str
     work_ids: tuple[str, ...]
     completed: tuple[CompletedRef, ...] = ()
+    non_reusable: tuple[NonReusableRef, ...] = ()
+    terminal_failure: bool = False
+    terminal_failure_work_id: str | None = None
     metadata: dict[str, bool | int] = Field(default_factory=dict)
     publication: PublicationState = PublicationState.INCOMPLETE
 
@@ -156,6 +181,13 @@ class RunManifest(BaseModel):
             _require_work_id(value)
         return values
 
+    @field_validator("terminal_failure_work_id")
+    @classmethod
+    def _terminal_failure_work_id(cls, value: str | None) -> str | None:
+        if value is not None:
+            _require_work_id(value)
+        return value
+
     @field_validator("metadata", mode="before")
     @classmethod
     def _safe_metadata(cls, value: object) -> object:
@@ -180,6 +212,25 @@ class RunManifest(BaseModel):
             raise ValueError("completed reference is not planned")
         if tuple(sorted(completed_ids, key=positions.__getitem__)) != completed_ids:
             raise ValueError("completed references must follow planned work order")
+        non_reusable_ids = tuple(reference.work_id for reference in self.non_reusable)
+        if len(set(non_reusable_ids)) != len(non_reusable_ids):
+            raise ValueError("non-reusable references must be unique")
+        if any(work_id not in positions for work_id in non_reusable_ids):
+            raise ValueError("non-reusable reference is not planned")
+        if set(completed_ids) & set(non_reusable_ids):
+            raise ValueError("completed reference cannot be non-reusable")
+        if (
+            tuple(sorted(non_reusable_ids, key=positions.__getitem__))
+            != non_reusable_ids
+        ):
+            raise ValueError("non-reusable references must follow planned work order")
+        if (
+            self.terminal_failure_work_id is not None
+            and self.terminal_failure_work_id not in positions
+        ):
+            raise ValueError("terminal failure is not planned")
+        if not self.terminal_failure and self.terminal_failure_work_id is not None:
+            raise ValueError("terminal failure work requires a terminal failure")
         return self
 
 
@@ -238,6 +289,64 @@ class CheckpointSession:
                 or descriptor.source_id != self.manifest.source_sha256
             ):
                 raise CheckpointError(CheckpointReason.INCOMPATIBLE)
+
+    def checkpoint_scheduler_state(
+        self,
+        *,
+        completed: tuple[CompletedRef, ...] = (),
+        descriptors: Mapping[str, CacheDescriptor] | None = None,
+        non_reusable: tuple[NonReusableRef, ...] = (),
+        terminal_failure: bool | None = None,
+        terminal_failure_work_id: str | None = None,
+        clear_terminal_failure: bool = False,
+    ) -> None:
+        if completed:
+            self._validate_completed_references(completed, descriptors)
+        completed_ids = {reference.work_id for reference in self.manifest.completed}
+        new_completed_ids = {reference.work_id for reference in completed}
+        new_non_reusable_ids = {reference.work_id for reference in non_reusable}
+        if (
+            len(new_completed_ids) != len(completed)
+            or len(new_non_reusable_ids) != len(non_reusable)
+            or completed_ids & new_completed_ids
+            or (completed_ids | new_completed_ids) & new_non_reusable_ids
+        ):
+            raise CheckpointError(CheckpointReason.INCOMPATIBLE)
+        completed_by_id = {
+            reference.work_id: reference for reference in self.manifest.completed
+        }
+        completed_by_id.update(
+            {reference.work_id: reference for reference in completed}
+        )
+        non_reusable_by_id = {
+            reference.work_id: reference for reference in self.manifest.non_reusable
+        }
+        for work_id in new_completed_ids:
+            non_reusable_by_id.pop(work_id, None)
+        non_reusable_by_id.update(
+            {reference.work_id: reference for reference in non_reusable}
+        )
+        values = self.manifest.model_dump(mode="python")
+        positions = {
+            work_id: index for index, work_id in enumerate(self.manifest.work_ids)
+        }
+        values["completed"] = tuple(
+            completed_by_id[work_id]
+            for work_id in sorted(completed_by_id, key=positions.__getitem__)
+        )
+        values["non_reusable"] = tuple(
+            non_reusable_by_id[work_id]
+            for work_id in sorted(non_reusable_by_id, key=positions.__getitem__)
+        )
+        if terminal_failure is not None:
+            values["terminal_failure"] = terminal_failure
+        if terminal_failure_work_id is not None:
+            values["terminal_failure_work_id"] = terminal_failure_work_id
+        elif clear_terminal_failure:
+            values["terminal_failure_work_id"] = None
+        manifest = RunManifest.model_validate(values)
+        self._write_manifest(manifest)
+        self.manifest = manifest
 
     def reusable(
         self,

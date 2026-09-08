@@ -10,6 +10,25 @@ ProviderName = Literal["openai", "ollama"]
 
 
 @dataclass(frozen=True)
+class ReliabilityConfig:
+    """Conservative library defaults for opt-in cache/resume execution."""
+
+    max_in_flight: int = 1
+    run_mode: Literal["new", "resume"] = "new"
+    run_id: str | None = None
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.max_in_flight, int) or isinstance(
+            self.max_in_flight, bool
+        ) or self.max_in_flight <= 0:
+            raise ValueError("max_in_flight must be positive")
+        if self.run_mode not in ("new", "resume"):
+            raise ValueError("run_mode must be new or resume")
+        if self.run_mode == "resume" and not (self.run_id or "").strip():
+            raise ValueError("resume requires run_id")
+
+
+@dataclass(frozen=True)
 class CacheConfig:
     """Opt-in local cache configuration for library callers."""
 

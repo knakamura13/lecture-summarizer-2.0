@@ -4,12 +4,19 @@ from pathlib import Path
 
 import pytest
 
-from summarizer.config import AppConfig, CacheConfig, LegacyWorkflowConfig, RetryPolicy
+from summarizer.config import (
+    AppConfig,
+    CacheConfig,
+    LegacyWorkflowConfig,
+    ReliabilityConfig,
+    RetryPolicy,
+)
 
 
 def test_configuration_defaults_are_legacy_compatible() -> None:
     app = AppConfig()
     cache = CacheConfig()
+    reliability = ReliabilityConfig()
     retry = RetryPolicy()
     workflow = LegacyWorkflowConfig()
 
@@ -21,6 +28,9 @@ def test_configuration_defaults_are_legacy_compatible() -> None:
     assert app.timeout_seconds == 180
     assert cache.enabled is False
     assert cache.root == Path(".summarizer-cache")
+    assert reliability.max_in_flight == 1
+    assert reliability.run_mode == "new"
+    assert reliability.run_id is None
     assert retry.max_attempts == 5
     assert retry.initial_delay_seconds == 1
     assert retry.backoff_multiplier == 2
@@ -34,6 +44,7 @@ def test_configuration_defaults_are_legacy_compatible() -> None:
     [
         (AppConfig(), "model"),
         (CacheConfig(), "enabled"),
+        (ReliabilityConfig(), "max_in_flight"),
         (RetryPolicy(), "max_attempts"),
         (LegacyWorkflowConfig(), "chunk_size"),
     ],
@@ -76,6 +87,9 @@ def test_cache_configuration_rejects_a_symlinked_final_root(tmp_path: Path) -> N
         (lambda: AppConfig(timeout_seconds=float("inf")), "timeout_seconds"),
         (lambda: CacheConfig(root=Path("/")), "root"),
         (lambda: CacheConfig(root=Path("..")), "root"),
+        (lambda: ReliabilityConfig(max_in_flight=0), "max_in_flight"),
+        (lambda: ReliabilityConfig(run_mode="other"), "run_mode"),  # type: ignore[arg-type]
+        (lambda: ReliabilityConfig(run_mode="resume"), "resume"),
         (lambda: RetryPolicy(max_attempts=0), "max_attempts"),
         (
             lambda: RetryPolicy(initial_delay_seconds=0),

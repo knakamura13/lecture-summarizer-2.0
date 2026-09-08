@@ -5,7 +5,6 @@ from math import isfinite
 from pathlib import Path
 from typing import Literal
 
-
 ProviderName = Literal["openai", "ollama"]
 
 
@@ -78,6 +77,8 @@ class RetryPolicy:
     max_attempts: int = 5
     initial_delay_seconds: float = 1
     backoff_multiplier: float = 2
+    max_delay_seconds: float = 60
+    jitter_fraction: float = 0
 
     def __post_init__(self) -> None:
         if self.max_attempts <= 0:
@@ -92,6 +93,10 @@ class RetryPolicy:
             or self.backoff_multiplier <= 0
         ):
             raise ValueError("backoff_multiplier must be positive")
+        if not isfinite(self.max_delay_seconds) or self.max_delay_seconds <= 0:
+            raise ValueError("max_delay_seconds must be positive")
+        if not isfinite(self.jitter_fraction) or not 0 <= self.jitter_fraction <= 1:
+            raise ValueError("jitter_fraction must be between 0 and 1")
 
 
 @dataclass(frozen=True)

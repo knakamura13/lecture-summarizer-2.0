@@ -34,6 +34,8 @@ def test_configuration_defaults_are_legacy_compatible() -> None:
     assert retry.max_attempts == 5
     assert retry.initial_delay_seconds == 1
     assert retry.backoff_multiplier == 2
+    assert retry.max_delay_seconds == 60
+    assert retry.jitter_fraction == 0
     assert workflow.chunk_size == 1000
     assert workflow.max_chunks == -1
     assert workflow.dry_run is False
@@ -103,6 +105,22 @@ def test_cache_configuration_rejects_a_symlinked_final_root(tmp_path: Path) -> N
         (
             lambda: RetryPolicy(backoff_multiplier=float("inf")),
             "backoff_multiplier",
+        ),
+        (lambda: RetryPolicy(max_delay_seconds=0), "max_delay_seconds"),
+        (
+            lambda: RetryPolicy(max_delay_seconds=float("nan")),
+            "max_delay_seconds",
+        ),
+        (
+            lambda: RetryPolicy(max_delay_seconds=float("inf")),
+            "max_delay_seconds",
+        ),
+        (lambda: RetryPolicy(jitter_fraction=-0.01), "jitter_fraction"),
+        (lambda: RetryPolicy(jitter_fraction=1.01), "jitter_fraction"),
+        (lambda: RetryPolicy(jitter_fraction=float("nan")), "jitter_fraction"),
+        (
+            lambda: RetryPolicy(jitter_fraction=float("inf")),
+            "jitter_fraction",
         ),
         (lambda: LegacyWorkflowConfig(chunk_size=0), "chunk_size"),
         (lambda: LegacyWorkflowConfig(max_chunks=0), "max_chunks"),

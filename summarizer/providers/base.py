@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass
+from enum import Enum
 from typing import Protocol, runtime_checkable
 
 
@@ -40,6 +41,7 @@ class GenerationResult:
     output_tokens: int | None = None
     finish_status: str | None = None
     request_id: str | None = None
+    retry_attempts: tuple[RetryAttempt, ...] = ()
 
     def __post_init__(self) -> None:
         for field_name in ("text", "provider", "model"):
@@ -49,6 +51,10 @@ class GenerationResult:
             value = getattr(self, field_name)
             if value is not None and value < 0:
                 raise ValueError(f"{field_name} must not be negative")
+        retry_attempts = tuple(self.retry_attempts)
+        if not all(isinstance(attempt, RetryAttempt) for attempt in retry_attempts):
+            raise ValueError("retry_attempts must contain RetryAttempt values")
+        object.__setattr__(self, "retry_attempts", retry_attempts)
 
 
 def normalize_output_text(text: str, request: GenerationRequest) -> str:
@@ -105,9 +111,36 @@ class ProviderResponseError(ProviderError):
     pass
 
 
+class RetryErrorCategory(str, Enum):
+    """Safe, closed categories for retry diagnostics."""
+
+    TIMEOUT = "timeout"
+    RATE_LIMIT = "rate_limit"
+    CONNECTION = "connection"
+    SERVER = "server"
+    TRANSIENT = "transient"
+
+
+@dataclass(frozen=True, slots=True)
+class RetryAttempt:
+    """Sanitized metadata for one transient provider failure."""
+
+    attempt: int
+    error_category: RetryErrorCategory
+    planned_delay_seconds: float | None
+    exhausted: bool
+    recorded_at_seconds: float
+
+
 class ProviderRetriesExhaustedError(ProviderError):
-    def __init__(self, attempts: int, detail: str | None = None) -> None:
+    def __init__(
+        self,
+        attempts: int,
+        detail: str | None = None,
+        retry_attempts: tuple[RetryAttempt, ...] = (),
+    ) -> None:
         self.attempts = attempts
+        self.retry_attempts = tuple(retry_attempts)
         message = f"Provider request failed after {attempts} attempts"
         if detail:
             message = f"{message}: {detail}"

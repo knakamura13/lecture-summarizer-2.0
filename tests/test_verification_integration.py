@@ -17,6 +17,8 @@ from summarizer.pipeline import PipelineConfig, run_pipeline
 from summarizer.providers.base import GenerationRequest, GenerationResult
 from summarizer.segmentation import CacheCoordinator, SegmentationConfig
 from summarizer.verification import (
+    SourceLexicalEntry,
+    SourceLexicalIndex,
     VerificationConfig,
     VerificationRuntime,
     build_source_lexical_index,
@@ -127,6 +129,38 @@ class VerificationPipelineProvider:
             "provenance": [identifier],
             "level": level,
         }
+
+
+def _verify_with_global_cache(
+    *,
+    cache_root,
+    source_id: str,
+    provider: VerificationPipelineProvider,
+    source_index: SourceLexicalIndex,
+) -> None:
+    verify_and_repair(
+        "42.",
+        source_id=source_id,
+        source_index=source_index,
+        runtime=VerificationRuntime(
+            provider=provider,
+            counter=CharacterCounter(),
+            model="verifier-model",
+            timeout_seconds=10,
+            context_window_tokens=100_000,
+        ),
+        config=VerificationConfig(enabled=True),
+        coordinator=CacheCoordinator(
+            store=CacheStore(cache_root),
+            source_id=source_id,
+            provider="openai",
+            model="verifier-model",
+            counter_identity="test:characters",
+            counter_exact=True,
+            context_window_tokens=100_000,
+            behavior={},
+        ),
+    )
 
 
 def app() -> AppConfig:
@@ -332,6 +366,113 @@ def test_provider_cache_coordinator_attribute_cannot_enable_verification_caching
 
         assert reused_result == explicit_result
         assert reused_provider.requests == []
+
+
+def test_global_verification_cache_recomputes_when_injected_terms_change(tmp_path) -> None:
+    source_id = "a" * 64
+    cache_root = tmp_path / "cache"
+
+    original = SourceLexicalIndex(
+        entries=(
+            SourceLexicalEntry(
+                segment_id="S000001",
+                text="The source confirms the value is 41.",
+                source_order=0,
+                terms=frozenset({"42"}),
+            ),
+        )
+    )
+    changed_terms = SourceLexicalIndex(
+        entries=(
+            SourceLexicalEntry(
+                segment_id="S000001",
+                text="The source confirms the value is 41.",
+                source_order=0,
+                terms=frozenset({"unrelated"}),
+            ),
+        )
+    )
+
+    first = VerificationPipelineProvider(verification="supported")
+    _verify_with_global_cache(
+        cache_root=cache_root, source_id=source_id, provider=first, source_index=original
+    )
+    changed = VerificationPipelineProvider(verification="supported")
+    _verify_with_global_cache(
+        cache_root=cache_root,
+        source_id=source_id,
+        provider=changed,
+        source_index=changed_terms,
+    )
+    identical = VerificationPipelineProvider(verification="supported")
+    _verify_with_global_cache(
+        cache_root=cache_root,
+        source_id=source_id,
+        provider=identical,
+        source_index=changed_terms,
+    )
+
+    assert [request.operation_id for request in first.requests] == [
+        "verification-decompose:V01",
+        "verification-classify:V01",
+    ]
+    assert [request.operation_id for request in changed.requests] == [
+        "verification-decompose:V01",
+        "verification-classify:V01",
+    ]
+    assert identical.requests == []
+
+
+def test_global_verification_cache_recomputes_when_source_order_changes(tmp_path) -> None:
+    source_id = "a" * 64
+    cache_root = tmp_path / "cache"
+
+    def index(*, first_order: int, second_order: int) -> SourceLexicalIndex:
+        return SourceLexicalIndex(
+            entries=(
+                SourceLexicalEntry(
+                    segment_id="S000001",
+                    text="The source confirms the value is 41.",
+                    source_order=first_order,
+                    terms=frozenset({"42"}),
+                ),
+                SourceLexicalEntry(
+                    segment_id="S000002",
+                    text="The source confirms the value is 41.",
+                    source_order=second_order,
+                    terms=frozenset({"42"}),
+                ),
+            )
+        )
+
+    first = VerificationPipelineProvider(verification="supported")
+    _verify_with_global_cache(
+        cache_root=cache_root,
+        source_id=source_id,
+        provider=first,
+        source_index=index(first_order=0, second_order=1),
+    )
+    reordered = VerificationPipelineProvider(verification="supported")
+    _verify_with_global_cache(
+        cache_root=cache_root,
+        source_id=source_id,
+        provider=reordered,
+        source_index=index(first_order=1, second_order=0),
+    )
+
+    assert [request.operation_id for request in first.requests] == [
+        "verification-decompose:V01",
+        "verification-classify:V01",
+    ]
+    assert [request.operation_id for request in reordered.requests] == [
+        "verification-decompose:V01",
+        "verification-classify:V01",
+    ]
+    first_evidence_id = re.search(
+        r'"segment_id":"(S\d+)"', reordered.requests[1].input_text
+    )
+    assert first_evidence_id is not None
+    assert first_evidence_id.group(1) == "S000002"
 
 
 def test_global_verification_cache_binds_the_validated_provenance_index(tmp_path) -> None:

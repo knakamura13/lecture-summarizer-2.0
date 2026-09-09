@@ -1560,22 +1560,26 @@ def verify_and_repair(
 
 
 def _source_index_cache_identity(source_index: SourceLexicalIndex) -> dict[str, object]:
-    """Bind cache reuse to the exact ordered cores available for retrieval."""
-    if tuple(entry.source_order for entry in source_index.entries) != tuple(
-        range(len(source_index.entries))
-    ):
-        raise ValueError("source lexical index order is not canonical")
+    """Bind cache reuse to every effective input to lexical evidence retrieval."""
     return {
-        "format_version": "source-index/1",
+        "format_version": "source-index/2",
         "provenance": [
             {
                 "segment_id": entry.segment_id,
                 "core_sha256": hashlib.sha256(entry.text.encode("utf-8")).hexdigest(),
+                "source_order": entry.source_order,
+                "terms_sha256": hashlib.sha256(
+                    json.dumps(
+                        sorted(entry.terms),
+                        ensure_ascii=False,
+                        separators=(",", ":"),
+                    ).encode("utf-8")
+                ).hexdigest(),
             }
             for entry in source_index.entries
         ],
         "retrieval": {
-            "algorithm": "lexical/1",
+            "algorithm": "lexical-overlap-source-order/1",
             "term_normalization": "unicode-nfc-casefold/1",
             "passage_unit": "source-core/1",
         },

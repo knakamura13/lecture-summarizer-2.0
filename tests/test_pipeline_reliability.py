@@ -29,7 +29,7 @@ from summarizer.providers.base import (
 )
 from summarizer.providers.retrying import RetryingProvider
 from summarizer.segmentation import SegmentationConfig
-from summarizer.verification import VerificationConfig
+from summarizer.verification import VerificationConfig, VerificationRuntime
 
 
 class Counter:
@@ -130,6 +130,11 @@ class MalformedVerificationProvider(CountingProvider):
             self.requests.append(request)
             return GenerationResult("not json", "fake", request.model)
         return super().generate(request)
+
+
+class AlwaysTimeoutProvider:
+    def generate(self, request: GenerationRequest) -> GenerationResult:
+        raise ProviderTimeoutError("credential-like secret detail")
 
 
 def test_published_audit_records_real_cache_outcomes_reuse_and_retry(tmp_path) -> None:
@@ -308,6 +313,67 @@ def test_failed_verification_audit_keeps_observability_safe_and_no_summary(
         "V01",
     ]
     assert "not json" not in encoded_audit
+
+
+def test_exhausted_injected_verifier_attempts_are_audited_without_detail(
+    tmp_path,
+) -> None:
+    audit_path = tmp_path / "audit.json"
+    summary_path = tmp_path / "summary.txt"
+    verifier = RetryingProvider(
+        AlwaysTimeoutProvider(),
+        RetryPolicy(
+            max_attempts=2,
+            initial_delay_seconds=0.001,
+            max_delay_seconds=0.001,
+            jitter_fraction=0,
+        ),
+        sleeper=lambda _: None,
+    )
+
+    with pytest.raises(FinalizationVerificationError):
+        run_pipeline(
+            ingest_text("The source confirms the value is 41."),
+            CountingProvider(),
+            Counter(),
+            app=AppConfig(
+                output_path=summary_path,
+                model="gpt-4o-mini",
+                timeout_seconds=30,
+            ),
+            strategy=_direct_strategy(),
+            config=PipelineConfig(
+                target_words=40,
+                audit_path=audit_path,
+                verification=VerificationConfig(enabled=True),
+                verification_runtime=VerificationRuntime(
+                    provider=verifier,
+                    counter=Counter(),
+                    model="gpt-4o-mini",
+                    timeout_seconds=30,
+                    context_window_tokens=100_000,
+                ),
+                cache=CacheConfig(enabled=True, root=tmp_path / "cache"),
+                reliability=ReliabilityConfig(run_id="exhausted-verifier-run"),
+            ),
+        )
+
+    encoded_audit = audit_path.read_text()
+    audit = json.loads(encoded_audit)
+    verifier_attempt = next(
+        item
+        for item in audit["reliability"]["attempts"]
+        if item["work_id"] == "V01"
+    )
+    assert verifier_attempt == {
+        "work_id": "V01",
+        "attempt_count": 2,
+        "failure_reasons": ["timeout"],
+    }
+    assert audit["verification"]["failed"] is True
+    assert audit["citations"] == []
+    assert not summary_path.exists()
+    assert "credential-like secret detail" not in encoded_audit
 
 
 def test_compatible_hierarchical_pipeline_reuses_segment_leaf_merge_and_editorial(

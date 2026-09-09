@@ -28,7 +28,12 @@ from summarizer.finalization import (
 from summarizer.hierarchy import TreeNode, build_hierarchy
 from summarizer.ingestion import SourceDocument
 from summarizer.leaf import summarize_segments
-from summarizer.providers.base import GenerationRequest, GenerationResult, ModelProvider
+from summarizer.providers.base import (
+    GenerationRequest,
+    GenerationResult,
+    ModelProvider,
+    ProviderRetriesExhaustedError,
+)
 from summarizer.reliability import ReliabilityTracker
 from summarizer.segmentation import (
     CacheCoordinator,
@@ -85,7 +90,16 @@ class _RecordingProvider:
         self._lock = Lock()
 
     def generate(self, request: GenerationRequest) -> GenerationResult:
-        result = self._delegate.generate(request)
+        try:
+            result = self._delegate.generate(request)
+        except ProviderRetriesExhaustedError as error:
+            if self._reliability_tracker is not None:
+                self._reliability_tracker.record_retry_exhaustion(
+                    request,
+                    attempt_count=error.attempts,
+                    retry_attempts=error.retry_attempts,
+                )
+            raise
         with self._lock:
             self._generations.append(result)
         if self._reliability_tracker is not None:

@@ -2,12 +2,18 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
+import re
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from enum import Enum
-import re
+from typing import TypeVar
 
 from nltk.tokenize import PunktSentenceTokenizer
 
+from summarizer.cache import CacheDescriptor, CacheStore
+from summarizer.checkpoint import CheckpointSession, CompletedRef
 from summarizer.ingestion import SourceDocument
 from summarizer.tokenization import (
     PrefixTokenCounter,
@@ -31,6 +37,136 @@ class BoundaryKind(str, Enum):
 
 class SegmentationError(ValueError):
     """Raised when segmentation cannot make budget-compliant progress."""
+
+
+_Cached = TypeVar("_Cached")
+SEGMENTATION_CACHE_VERSION = "segmentation/1"
+
+
+@dataclass(frozen=True)
+class CacheCoordinator:
+    """Keep cache mechanics out of prompt and provider boundaries."""
+
+    store: CacheStore
+    source_id: str
+    provider: str
+    model: str
+    counter_identity: str
+    counter_exact: bool
+    context_window_tokens: int
+    behavior: Mapping[str, object]
+    session: CheckpointSession | None = None
+    allow_unreferenced_cache: bool = True
+    max_in_flight: int = 1
+
+    def descriptor_for(
+        self, *, stage: str, work_id: str, prompt_version: str, schema_version: str,
+        input_value: object, behavior: Mapping[str, object],
+    ) -> CacheDescriptor:
+        encoded_input = json.dumps(input_value, ensure_ascii=False, separators=(",", ":"), sort_keys=True).encode("utf-8")
+        return CacheDescriptor(
+            source_id=self.source_id, input_hash=hashlib.sha256(encoded_input).hexdigest(),
+            stage=stage, work_id=work_id, prompt_version=prompt_version,
+            schema_version=schema_version, provider=self.provider, model=self.model,
+            counter_identity=self.counter_identity, counter_exact=self.counter_exact,
+            context_window_tokens=self.context_window_tokens,
+            behavior={**self.behavior, **behavior},
+        )
+
+    def resolve(
+        self,
+        *,
+        stage: str,
+        work_id: str,
+        prompt_version: str,
+        schema_version: str,
+        input_value: object,
+        behavior: Mapping[str, object],
+        decode: Callable[[object], _Cached],
+        encode: Callable[[_Cached], object],
+        compute: Callable[[], _Cached],
+        cache_if: Callable[[_Cached], bool] = lambda _: True,
+    ) -> _Cached:
+        descriptor = self.descriptor_for(stage=stage, work_id=work_id, prompt_version=prompt_version, schema_version=schema_version, input_value=input_value, behavior=behavior)
+
+        def validate(payload: object) -> object:
+            return encode(decode(payload))
+
+        if self.session is not None:
+            reusable = self.session.reusable_for(
+                work_ids=(work_id,),
+                descriptors={work_id: descriptor},
+                validators={work_id: validate},
+            )[0]
+            if reusable.payload is not None:
+                return decode(reusable.payload)
+        if self.allow_unreferenced_cache:
+            cached = self.store.load(descriptor, validate)
+            if cached.hit:
+                result = decode(cached.payload)
+                self._checkpoint(descriptor)
+                return result
+        result = compute()
+        if cache_if(result):
+            self.store.store(descriptor, encode(result), validate)
+            self._checkpoint(descriptor)
+        return result
+
+    def reusable_batch(
+        self,
+        *,
+        work_ids: tuple[str, ...],
+        descriptors: Mapping[str, CacheDescriptor],
+        validators: Mapping[str, Callable[[object], object]],
+    ) -> dict[str, object]:
+        """Return validated batch hits and make new-run hits resumable first.
+
+        A run manifest is the only reuse authority while resuming.  A new run
+        may additionally adopt compatible cache objects, but adopts them into
+        its manifest before any sibling request is submitted.
+        """
+        hits: dict[str, object] = {}
+        if self.session is not None:
+            for reusable in self.session.reusable_for(
+                work_ids=work_ids,
+                descriptors=descriptors,
+                validators=validators,
+            ):
+                if reusable.reference is not None and reusable.payload is not None:
+                    hits[reusable.reference.work_id] = reusable.payload
+
+        if not self.allow_unreferenced_cache:
+            return hits
+
+        adopted: list[CompletedRef] = []
+        for work_id in work_ids:
+            if work_id in hits:
+                continue
+            descriptor = descriptors[work_id]
+            cached = self.store.load(descriptor, validators[work_id])
+            if cached.hit:
+                hits[work_id] = cached.payload
+                adopted.append(
+                    CompletedRef(work_id=work_id, cache_key=descriptor.key)
+                )
+
+        if adopted and self.session is not None:
+            self.session.checkpoint_scheduler_state(
+                completed=tuple(adopted),
+                descriptors=descriptors,
+                clear_terminal_failure=True,
+            )
+        return hits
+
+    def _checkpoint(self, descriptor: CacheDescriptor) -> None:
+        if self.session is not None:
+            self.session.checkpoint_scheduler_state(
+                completed=(
+                    CompletedRef(work_id=descriptor.work_id, cache_key=descriptor.key),
+                ),
+                descriptors={descriptor.work_id: descriptor},
+                clear_terminal_failure=True,
+            )
 
 
 @dataclass(frozen=True)
@@ -487,17 +623,40 @@ def _validate_segments(
     segments: list[SourceSegment],
     counter: TokenCounter,
     max_tokens: int,
+    *,
+    strict_cached: bool = False,
 ) -> None:
     expected_start = 0
     for order, segment in enumerate(segments):
         if segment.segment_id != f"S{order + 1:06d}" or segment.order != order:
             raise SegmentationError("segment identifiers or order are unstable")
+        if segment.source_id != document.source_id:
+            raise SegmentationError("segment source identity does not match document")
         if segment.core_start != expected_start:
             raise SegmentationError("segment core ranges are not contiguous")
         if document.text[segment.context_start : segment.context_end] != segment.text:
             raise SegmentationError("segment text does not match its source range")
+        if strict_cached and segment.core_token_count != _count_tokens(
+            counter, document.text[segment.core_start : segment.core_end]
+        ):
+            raise SegmentationError("segment core token count does not match its source")
         if _count_tokens(counter, segment.text) != segment.token_count:
             raise SegmentationError("segment token count does not match its text")
+        if strict_cached and (
+            segment.leading_overlap_tokens
+            != _count_tokens(counter, document.text[segment.context_start : segment.core_start])
+            or segment.trailing_overlap_tokens
+            != _count_tokens(counter, document.text[segment.core_end : segment.context_end])
+        ):
+            raise SegmentationError("segment overlap token counts do not match context")
+        previous_start = segments[order - 1].core_start if order else segment.core_start
+        next_end = (
+            segments[order + 1].core_end
+            if order + 1 < len(segments)
+            else segment.core_end
+        )
+        if segment.context_start < previous_start or segment.context_end > next_end:
+            raise SegmentationError("segment context reaches beyond neighbouring cores")
         if segment.token_count > max_tokens:
             raise SegmentationError("segment exceeds the configured token budget")
         expected_start = segment.core_end
@@ -575,3 +734,72 @@ def segment_document(
         )
     _validate_segments(document, segments, counter, config.max_tokens)
     return segments
+
+
+def cached_segment_document(
+    document: SourceDocument,
+    counter: TokenCounter,
+    config: SegmentationConfig,
+    *,
+    coordinator: CacheCoordinator | None = None,
+) -> list[SourceSegment]:
+    """Segment normally, or reuse a fully revalidated segment sequence."""
+    if coordinator is None:
+        return segment_document(document, counter, config)
+
+    def decode(payload: object) -> list[SourceSegment]:
+        if not isinstance(payload, list):
+            raise SegmentationError("cached segments must be a list")
+        try:
+            segments = [
+                SourceSegment(
+                    **{
+                        **item,
+                        "boundary_kind": BoundaryKind(item["boundary_kind"]),
+                    }
+                )
+                for item in payload
+                if isinstance(item, dict)
+            ]
+        except (KeyError, TypeError, ValueError) as error:
+            raise SegmentationError("cached segments are malformed") from error
+        if len(segments) != len(payload) or any(
+            segment.source_id != document.source_id for segment in segments
+        ):
+            raise SegmentationError("cached segments identify another source")
+        _validate_segments(
+            document, segments, counter, config.max_tokens, strict_cached=True
+        )
+        return segments
+
+    def encode(segments: list[SourceSegment]) -> object:
+        return [
+            {
+                "segment_id": segment.segment_id,
+                "source_id": segment.source_id,
+                "order": segment.order,
+                "text": segment.text,
+                "core_start": segment.core_start,
+                "core_end": segment.core_end,
+                "context_start": segment.context_start,
+                "context_end": segment.context_end,
+                "core_token_count": segment.core_token_count,
+                "token_count": segment.token_count,
+                "leading_overlap_tokens": segment.leading_overlap_tokens,
+                "trailing_overlap_tokens": segment.trailing_overlap_tokens,
+                "boundary_kind": segment.boundary_kind.value,
+            }
+            for segment in segments
+        ]
+
+    return coordinator.resolve(
+        stage="segmentation",
+        work_id="segmentation",
+        prompt_version=SEGMENTATION_CACHE_VERSION,
+        schema_version=SEGMENTATION_CACHE_VERSION,
+        input_value={"source_id": document.source_id, "config": {"max_tokens": config.max_tokens, "overlap_tokens": config.overlap_tokens}},
+        behavior={"segmentation": {"max_tokens": config.max_tokens, "overlap_tokens": config.overlap_tokens}},
+        decode=decode,
+        encode=encode,
+        compute=lambda: segment_document(document, counter, config),
+    )

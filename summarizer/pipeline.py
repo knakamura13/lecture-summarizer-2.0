@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
-from dataclasses import asdict, dataclass
+import hashlib
+import json
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from summarizer.budget import (
@@ -14,14 +15,20 @@ from summarizer.budget import (
     select_strategy,
     usable_input_capacity,
 )
-from summarizer.config import AppConfig, StrategyConfig
+from summarizer.cache import CacheStore
+from summarizer.checkpoint import CheckpointStore, RunPlan
+from summarizer.config import AppConfig, CacheConfig, ReliabilityConfig, StrategyConfig
 from summarizer.direct import summarize_direct, whole_document_segment
 from summarizer.finalization import FinalizationResult, finalize_summary
 from summarizer.hierarchy import TreeNode, build_hierarchy
+from summarizer.ingestion import SourceDocument
 from summarizer.leaf import summarize_segments
 from summarizer.providers.base import GenerationRequest, GenerationResult, ModelProvider
-from summarizer.segmentation import SegmentationConfig, segment_document
-from summarizer.ingestion import SourceDocument
+from summarizer.segmentation import (
+    CacheCoordinator,
+    SegmentationConfig,
+    cached_segment_document,
+)
 from summarizer.tokenization import TokenCounter
 from summarizer.verification import VerificationConfig, VerificationRuntime
 
@@ -33,15 +40,16 @@ class PipelineConfig:
     max_merge_children: int | None = None
     include_citations: bool = False
     audit_path: Path | None = None
-    verification: VerificationConfig = VerificationConfig()
+    verification: VerificationConfig = field(default_factory=VerificationConfig)
     verification_runtime: VerificationRuntime | None = None
+    cache: CacheConfig = field(default_factory=CacheConfig)
+    reliability: ReliabilityConfig = field(default_factory=ReliabilityConfig)
 
     def __post_init__(self) -> None:
         if self.target_words <= 0:
             raise ValueError("target_words must be positive")
-        if self.verification_runtime is not None:
-            if not self.verification.enabled:
-                raise ValueError("verification runtime requires enabled verification")
+        if self.verification_runtime is not None and not self.verification.enabled:
+            raise ValueError("verification runtime requires enabled verification")
 
 
 @dataclass(frozen=True)
@@ -52,11 +60,17 @@ class PipelineResult:
     nodes: tuple[TreeNode, ...]
 
 
+_DEFAULT_PIPELINE_CONFIG = PipelineConfig()
+
+
 class _RecordingProvider:
     """Capture completed logical calls without exposing request prompts to audit."""
 
-    def __init__(self, delegate: ModelProvider) -> None:
+    def __init__(
+        self, delegate: ModelProvider, coordinator: CacheCoordinator | None = None
+    ) -> None:
         self._delegate = delegate
+        self.cache_coordinator = coordinator
         self.generations: list[GenerationResult] = []
 
     def generate(self, request: GenerationRequest) -> GenerationResult:
@@ -92,7 +106,100 @@ def run_pipeline(
     *,
     app: AppConfig,
     strategy: StrategyConfig,
-    config: PipelineConfig = PipelineConfig(),
+    config: PipelineConfig = _DEFAULT_PIPELINE_CONFIG,
+) -> PipelineResult:
+    report = select_strategy(
+        document, counter, provider=app.provider, model=app.model, config=strategy
+    )
+    if not config.cache.enabled:
+        return _run_pipeline(
+            document, provider, counter, app=app, strategy=strategy, config=config,
+            report=report, coordinator=None,
+        )
+    if not config.reliability.run_id:
+        raise ValueError("enabled cache requires a reliability run_id")
+    seed = ("D000001",) if report.strategy == "direct" else ("segmentation",)
+    effective_segmentation = config.segmentation or SegmentationConfig(
+        max_tokens=report.usable_input_capacity
+    )
+    verification_runtime_descriptor: dict[str, object] | None = None
+    if config.verification.enabled:
+        runtime = config.verification_runtime
+        if runtime is None:
+            verification_runtime_descriptor = {
+                "provider": app.provider,
+                "model": app.model,
+                "counter_identity": counter.identity,
+                "counter_exact": counter.exact,
+                "context_window_tokens": report.context_window_tokens,
+                "timeout_seconds": app.timeout_seconds,
+            }
+        else:
+            verification_runtime_descriptor = {
+                "provider": runtime.provider_identity,
+                "model": runtime.model,
+                "counter_identity": runtime.counter.identity,
+                "counter_exact": runtime.counter.exact,
+                "context_window_tokens": runtime.context_window_tokens,
+                "timeout_seconds": runtime.timeout_seconds,
+            }
+    descriptor = hashlib.sha256(
+        json.dumps(
+            {
+                "app": {
+                    "provider": app.provider,
+                    "model": app.model,
+                    "timeout_seconds": app.timeout_seconds,
+                },
+                "counter": {"identity": counter.identity, "exact": counter.exact},
+                "strategy": asdict(strategy),
+                "budget": asdict(report),
+                "segmentation": asdict(effective_segmentation),
+                "pipeline": {
+                    "target_words": config.target_words,
+                    "max_merge_children": config.max_merge_children,
+                    "include_citations": config.include_citations,
+                    "verification": asdict(config.verification),
+                    "max_in_flight": config.reliability.max_in_flight,
+                },
+                "verification_runtime": verification_runtime_descriptor,
+            },
+            default=str, sort_keys=True, separators=(",", ":"),
+        ).encode()
+    ).hexdigest()
+    plan = RunPlan(
+        run_id=config.reliability.run_id,
+        descriptor_sha256=descriptor,
+        source_sha256=document.source_id,
+        work_ids=seed,
+    )
+    with CheckpointStore(config.cache.root).open(
+        plan, resume=config.reliability.run_mode == "resume"
+    ) as session:
+        coordinator = CacheCoordinator(
+            store=CacheStore(config.cache.root), source_id=document.source_id,
+            provider=app.provider, model=app.model, counter_identity=counter.identity,
+            counter_exact=counter.exact, context_window_tokens=report.context_window_tokens,
+            behavior={
+                "strategy_config": {"strategy": strategy.strategy, "context_window": report.context_window_tokens, "max_direct_tokens": strategy.max_direct_tokens, "max_output_tokens": strategy.max_output_tokens, "safety_margin_tokens": strategy.safety_margin_tokens},
+                "budget": {"context_window": report.context_window_tokens, "max_output_tokens": strategy.max_output_tokens, "safety_margin_tokens": strategy.safety_margin_tokens, "safety_margin_fraction": strategy.safety_margin_fraction},
+            }, session=session,
+            allow_unreferenced_cache=config.reliability.run_mode == "new",
+            max_in_flight=config.reliability.max_in_flight,
+        )
+        return _run_pipeline(document, provider, counter, app=app, strategy=strategy, config=config, report=report, coordinator=coordinator)
+
+
+def _run_pipeline(
+    document: SourceDocument,
+    provider: ModelProvider,
+    counter: TokenCounter,
+    *,
+    app: AppConfig,
+    strategy: StrategyConfig,
+    config: PipelineConfig,
+    report: BudgetReport,
+    coordinator: CacheCoordinator | None,
 ) -> PipelineResult:
     """Execute direct or hierarchical library stages, then final editorial writing.
 
@@ -100,18 +207,12 @@ def run_pipeline(
     complete library seam now while #12 remains responsible for replacing the
     transitional legacy CLI path.
     """
-    report = select_strategy(
-        document,
-        counter,
-        provider=app.provider,
-        model=app.model,
-        config=strategy,
-    )
-    recording = _RecordingProvider(provider)
+    recording = _RecordingProvider(provider, coordinator)
     if report.strategy == "direct":
         segment = whole_document_segment(document, counter)
         summary = summarize_direct(
-            document, recording, counter, model=app.model, timeout_seconds=app.timeout_seconds
+            document, recording, counter, model=app.model, timeout_seconds=app.timeout_seconds,
+            coordinator=coordinator,
         )
         root = TreeNode(
             node_id="L0N0001",
@@ -134,9 +235,18 @@ def run_pipeline(
             raise BudgetError(
                 "segmentation max_tokens exceeds the safely measured leaf capacity"
             )
-        segments = tuple(segment_document(document, counter, requested_segmentation))
+        segments = tuple(
+            cached_segment_document(
+                document, counter, requested_segmentation, coordinator=coordinator
+            )
+        )
+        if coordinator is not None and coordinator.session is not None:
+            coordinator.session.ensure_work_prefix(
+                ("segmentation", *(segment.segment_id for segment in segments))
+            )
         leaves = summarize_segments(
-            segments, recording, model=app.model, timeout_seconds=app.timeout_seconds
+            segments, recording, model=app.model, timeout_seconds=app.timeout_seconds,
+            coordinator=coordinator,
         )
         root, nodes, _ = build_hierarchy(
             leaves,
@@ -152,17 +262,47 @@ def run_pipeline(
             model=app.model,
             timeout_seconds=app.timeout_seconds,
             max_merge_children=config.max_merge_children,
+            coordinator=coordinator,
         )
 
     completed_before_editorial = tuple(recording.generations)
+    if coordinator is not None and coordinator.session is not None:
+        coordinator.session.ensure_work_prefix(
+            (*coordinator.session.manifest.work_ids[: next((index for index, work_id in enumerate(coordinator.session.manifest.work_ids) if work_id == "editorial-final"), len(coordinator.session.manifest.work_ids))], "editorial-final")
+        )
     verifier_runtime = config.verification_runtime
     if config.verification.enabled and verifier_runtime is None:
         verifier_runtime = VerificationRuntime(
-            provider=provider,
+            provider=recording,
             counter=counter,
             model=app.model,
             timeout_seconds=app.timeout_seconds,
             context_window_tokens=report.context_window_tokens,
+            provider_identity=app.provider,
+        )
+    verification_coordinator = None
+    if config.verification.enabled and coordinator is not None:
+        assert verifier_runtime is not None
+        verification_coordinator = CacheCoordinator(
+            store=coordinator.store,
+            source_id=coordinator.source_id,
+            provider=verifier_runtime.provider_identity,
+            model=verifier_runtime.model,
+            counter_identity=verifier_runtime.counter.identity,
+            counter_exact=verifier_runtime.counter.exact,
+            context_window_tokens=verifier_runtime.context_window_tokens,
+            behavior={},
+            session=coordinator.session,
+            allow_unreferenced_cache=coordinator.allow_unreferenced_cache,
+            max_in_flight=coordinator.max_in_flight,
+        )
+    if (
+        config.verification.enabled
+        and coordinator is not None
+        and coordinator.session is not None
+    ):
+        coordinator.session.ensure_work_prefix(
+            (*coordinator.session.manifest.work_ids[: next((index for index, work_id in enumerate(coordinator.session.manifest.work_ids) if work_id == "V01"), len(coordinator.session.manifest.work_ids))], "V01")
         )
     final = finalize_summary(
         root.summary,
@@ -197,5 +337,6 @@ def run_pipeline(
         verification=config.verification,
         verification_runtime=verifier_runtime,
         verification_context_window_tokens=report.context_window_tokens,
+        verification_coordinator=verification_coordinator,
     )
     return PipelineResult(final=final, strategy=report, root=root, nodes=nodes)

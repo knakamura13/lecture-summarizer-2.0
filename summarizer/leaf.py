@@ -7,8 +7,9 @@ from collections.abc import Mapping, Sequence
 from pydantic import ValidationError
 
 from summarizer.providers.base import GenerationRequest, ModelProvider
-from summarizer.segmentation import BoundaryKind, SourceSegment
-from summarizer.summaries import SummaryNode, leaf_summary_schema
+from summarizer.scheduler import BoundedScheduler, ScheduledWork
+from summarizer.segmentation import BoundaryKind, CacheCoordinator, SourceSegment
+from summarizer.summaries import LEAF_SCHEMA_VERSION, SummaryNode, leaf_summary_schema
 
 
 class LeafSummaryError(ValueError):
@@ -84,9 +85,7 @@ def _fence(segment: SourceSegment, label: str) -> str:
     rather than a boundary on its own.
     """
     digest = hashlib.sha256(
-        f"{LEAF_PROMPT_VERSION}:{segment.source_id}:{segment.segment_id}:{label}".encode(
-            "utf-8"
-        )
+        f"{LEAF_PROMPT_VERSION}:{segment.source_id}:{segment.segment_id}:{label}".encode()
     ).hexdigest()
     return f"-----{label} {digest[:16]}-----"
 
@@ -193,12 +192,11 @@ def _top_level_objects(text: str) -> list[str]:
             if depth == 0:
                 start = index
             depth += 1
-        elif character == "}":
-            if depth:
-                depth -= 1
-                if depth == 0 and start is not None:
-                    objects.append(text[start : index + 1])
-                    start = None
+        elif character == "}" and depth:
+            depth -= 1
+            if depth == 0 and start is not None:
+                objects.append(text[start : index + 1])
+                start = None
     return objects
 
 
@@ -373,6 +371,7 @@ def summarize_segments(
     *,
     model: str,
     timeout_seconds: float,
+    coordinator: CacheCoordinator | None = None,
 ) -> tuple[SummaryNode, ...]:
     """Summarize every segment into a validated leaf record, in source order.
 
@@ -392,10 +391,64 @@ def summarize_segments(
         raise ValueError("summarization requires at least one segment")
 
     nodes = []
+    if coordinator is not None and coordinator.session is not None:
+        prepared = []
+        for segment in sorted(segments, key=lambda candidate: candidate.order):
+            request = build_leaf_request(segment, model=model, timeout_seconds=timeout_seconds)
+            def decode(payload: object, segment: SourceSegment = segment) -> SummaryNode:
+                node = SummaryNode.model_validate(payload)
+                validate_provenance(node, legal={segment.segment_id: core_text(segment)}, subject=segment.segment_id)
+                return node
+            descriptor = coordinator.descriptor_for(stage="leaf", work_id=segment.segment_id, prompt_version=LEAF_PROMPT_VERSION, schema_version=LEAF_SCHEMA_VERSION, input_value={"instructions": request.instructions, "input_text": request.input_text, "schema": request.response_schema}, behavior={})
+            prepared.append((segment, request, descriptor, decode))
+        hit_by_id = coordinator.reusable_batch(
+            work_ids=tuple(item[0].segment_id for item in prepared),
+            descriptors={item[0].segment_id: item[2] for item in prepared},
+            validators={
+                item[0].segment_id: (
+                    lambda payload, decode=item[3]: decode(payload).model_dump(
+                        mode="json"
+                    )
+                )
+                for item in prepared
+            },
+        )
+        work = tuple(ScheduledWork(item[2], lambda request=item[1], segment=item[0]: parse_leaf_summary(provider.generate(request).text, segment=segment).model_dump(mode="json"), lambda payload, decode=item[3]: decode(payload).model_dump(mode="json")) for item in prepared if item[0].segment_id not in hit_by_id)
+        scheduled = BoundedScheduler(max_in_flight=coordinator.max_in_flight, cache=coordinator.store).run(work, coordinator.session)
+        values = {result.work_id: result.payload for result in scheduled} | hit_by_id
+        return tuple(item[3](values[item[0].segment_id]) for item in prepared)
     for segment in sorted(segments, key=lambda candidate: candidate.order):
         request = build_leaf_request(
             segment, model=model, timeout_seconds=timeout_seconds
         )
-        result = provider.generate(request)
-        nodes.append(parse_leaf_summary(result.text, segment=segment))
+        def decode(payload: object, segment: SourceSegment = segment) -> SummaryNode:
+            node = SummaryNode.model_validate(payload)
+            validate_provenance(
+                node, legal={segment.segment_id: core_text(segment)}, subject=segment.segment_id
+            )
+            return node
+
+        if coordinator is None:
+            result = provider.generate(request)
+            nodes.append(parse_leaf_summary(result.text, segment=segment))
+        else:
+            nodes.append(
+                coordinator.resolve(
+                    stage="leaf",
+                    work_id=segment.segment_id,
+                    prompt_version=LEAF_PROMPT_VERSION,
+                    schema_version=LEAF_SCHEMA_VERSION,
+                    input_value={
+                        "instructions": request.instructions,
+                        "input_text": request.input_text,
+                        "schema": request.response_schema,
+                    },
+                    behavior={},
+                    decode=decode,
+                    encode=lambda node: node.model_dump(mode="json"),
+                    compute=lambda request=request, segment=segment: parse_leaf_summary(
+                        provider.generate(request).text, segment=segment
+                    ),
+                )
+            )
     return tuple(nodes)

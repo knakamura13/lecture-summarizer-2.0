@@ -24,6 +24,7 @@ if TYPE_CHECKING:
 
 
 AUDIT_SCHEMA_VERSION = "audit/2"
+AUDIT_SCHEMA_VERSION_V3 = "audit/3"
 
 
 class AuditError(ValueError):
@@ -265,6 +266,68 @@ class AuditVerification(_AuditRecord):
     failure_codes: tuple[str, ...]
 
 
+class AuditCacheMetadata(_AuditRecord):
+    """Cache hit/miss/invalidation work item tracking for audit/3."""
+
+    cache_hits: tuple[str, ...] = ()
+    cache_misses: tuple[str, ...] = ()
+    invalidation_reasons: tuple[str, ...] = ()
+
+    @field_validator("invalidation_reasons", mode="before")
+    @classmethod
+    def _validate_invalidation_reasons(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        for code in value:
+            if not _CLOSED_CODE.fullmatch(code):
+                raise ValueError("invalidation reasons must be closed identifiers")
+        return value
+
+
+class AuditResumeMetadata(_AuditRecord):
+    """Resume state for audit/3."""
+
+    resumed: bool
+    reused_count: int = 0
+    recomputed_count: int = 0
+
+    @field_validator("reused_count", "recomputed_count")
+    @classmethod
+    def _validate_nonnegative(cls, value: int) -> int:
+        if value < 0:
+            raise ValueError("resume counts must be nonnegative")
+        return value
+
+
+class AuditRetryAttempt(_AuditRecord):
+    """Attempt metadata for a single work item in audit/3."""
+
+    work_id: str
+    attempt_count: int
+    failure_reasons: tuple[str, ...] = ()
+
+    @field_validator("attempt_count")
+    @classmethod
+    def _validate_positive_count(cls, value: int) -> int:
+        if value < 1:
+            raise ValueError("attempt_count must be positive")
+        return value
+
+    @field_validator("failure_reasons", mode="before")
+    @classmethod
+    def _validate_failure_reasons(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        for reason in value:
+            if not _CLOSED_CODE.fullmatch(reason):
+                raise ValueError("failure reasons must be closed identifiers")
+        return value
+
+
+class AuditReliability(_AuditRecord):
+    """Aggregate reliability metadata for audit/3."""
+
+    cache: AuditCacheMetadata | None = None
+    resume: AuditResumeMetadata | None = None
+    attempts: tuple[AuditRetryAttempt, ...] = ()
+
+
 class AuditEvidence(_AuditRecord):
     """A traceable evidence edge without copying a possibly sensitive quote."""
 
@@ -318,7 +381,7 @@ class AuditNode(_AuditRecord):
 
 
 class AuditArtifact(_AuditRecord):
-    schema_version: Literal["audit/2"]
+    schema_version: Literal["audit/2", "audit/3"]
     source_id: str
     strategy: Literal["auto", "direct", "hierarchical"]
     model: str
@@ -331,6 +394,7 @@ class AuditArtifact(_AuditRecord):
     warnings: tuple[str, ...]
     failures: tuple[str, ...]
     verification: AuditVerification
+    reliability: AuditReliability | None = None
 
     @field_validator("configuration", mode="before")
     @classmethod
@@ -347,6 +411,11 @@ class AuditArtifact(_AuditRecord):
 
     @model_validator(mode="after")
     def _links_resolve(self) -> "AuditArtifact":
+        if self.reliability is not None and self.schema_version != "audit/3":
+            raise ValueError("audit artifact with reliability metadata must use schema_version audit/3")
+        if self.reliability is None and self.schema_version != "audit/2":
+            raise ValueError("audit artifact without reliability metadata must use schema_version audit/2")
+
         segments = {segment.segment_id: segment for segment in self.source_segments}
         if len(segments) != len(self.source_segments):
             raise ValueError("source segment identifiers must be unique")
@@ -1042,10 +1111,54 @@ def build_audit_artifact(
     failures: Sequence[str] = (),
     verification: "VerificationResult | None" = None,
     verification_enabled: bool = False,
+    reliability_cache: Mapping[str, Sequence[str]] | None = None,
+    reliability_resume: Mapping[str, object] | None = None,
+    reliability_attempts: Sequence[Mapping[str, object]] | None = None,
 ) -> AuditArtifact:
     """Build a validated artifact without retaining source text or request data."""
+    # Determine if we have reliability metadata
+    has_reliability = (
+        reliability_cache is not None
+        or reliability_resume is not None
+        or reliability_attempts
+    )
+
+    # Build reliability object if present
+    reliability_obj = None
+    if has_reliability:
+        cache_obj = None
+        if reliability_cache is not None:
+            cache_obj = AuditCacheMetadata(
+                cache_hits=tuple(reliability_cache.get("cache_hits", ())),
+                cache_misses=tuple(reliability_cache.get("cache_misses", ())),
+                invalidation_reasons=tuple(reliability_cache.get("invalidation_reasons", ())),
+            )
+
+        resume_obj = None
+        if reliability_resume is not None:
+            resume_obj = AuditResumeMetadata(
+                resumed=bool(reliability_resume.get("resumed", False)),
+                reused_count=int(reliability_resume.get("reused_count", 0)),
+                recomputed_count=int(reliability_resume.get("recomputed_count", 0)),
+            )
+
+        attempts = ()
+        if reliability_attempts:
+            attempts = tuple(
+                AuditRetryAttempt(
+                    work_id=str(attempt["work_id"]),
+                    attempt_count=int(attempt["attempt_count"]),
+                    failure_reasons=tuple(attempt.get("failure_reasons", ())),
+                )
+                for attempt in reliability_attempts
+            )
+
+        reliability_obj = AuditReliability(
+            cache=cache_obj, resume=resume_obj, attempts=attempts
+        )
+
     return AuditArtifact(
-        schema_version=AUDIT_SCHEMA_VERSION,
+        schema_version=AUDIT_SCHEMA_VERSION_V3 if has_reliability else AUDIT_SCHEMA_VERSION,
         source_id=source_id,
         strategy=strategy,
         model=redact_text(model),
@@ -1077,6 +1190,7 @@ def build_audit_artifact(
                 )
             ),
         ),
+        reliability=reliability_obj,
     )
 
 

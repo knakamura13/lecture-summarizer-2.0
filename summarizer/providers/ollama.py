@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable
+from threading import Lock
 from typing import Any
 
 import httpx
@@ -34,6 +35,7 @@ class OllamaProvider:
         self._host = host
         self._client_factory = client_factory
         self._clients: dict[float, Any] = {}
+        self._clients_lock = Lock()
 
     def generate(self, request: GenerationRequest) -> GenerationResult:
         arguments: dict[str, Any] = {
@@ -121,9 +123,15 @@ class OllamaProvider:
             ) from error
 
     def _get_client(self, timeout_seconds: float) -> Any:
-        if timeout_seconds not in self._clients:
-            self._clients[timeout_seconds] = self._client_factory(
-                host=self._host,
-                timeout=timeout_seconds,
-            )
-        return self._clients[timeout_seconds]
+        client = self._clients.get(timeout_seconds)
+        if client is not None:
+            return client
+        with self._clients_lock:
+            client = self._clients.get(timeout_seconds)
+            if client is None:
+                client = self._client_factory(
+                    host=self._host,
+                    timeout=timeout_seconds,
+                )
+                self._clients[timeout_seconds] = client
+            return client

@@ -236,7 +236,7 @@ class RunManifest(BaseModel):
 
 @dataclass(frozen=True)
 class ReuseResult:
-    reference: CompletedRef
+    reference: CompletedRef | None
     payload: object | None
     reason: ReuseReason | None
 
@@ -251,6 +251,33 @@ class CheckpointSession:
         self.manifest = manifest
         self._cache = cache
         self._write_manifest = write_manifest
+
+    def ensure_work_prefix(self, full_current_prefix: tuple[str, ...]) -> None:
+        """Atomically extend, but never rewrite, this run's ordered work plan."""
+        if (
+            not full_current_prefix
+            or len(set(full_current_prefix)) != len(full_current_prefix)
+        ):
+            raise CheckpointError(CheckpointReason.INCOMPATIBLE)
+        try:
+            for work_id in full_current_prefix:
+                _require_work_id(work_id)
+        except ValueError as error:
+            raise CheckpointError(CheckpointReason.INCOMPATIBLE) from error
+
+        current = self.manifest.work_ids
+        if full_current_prefix[: len(current)] == current:
+            if len(full_current_prefix) == len(current):
+                return
+            values = self.manifest.model_dump(mode="python")
+            values["work_ids"] = full_current_prefix
+            manifest = RunManifest.model_validate(values)
+            self._write_manifest(manifest)
+            self.manifest = manifest
+            return
+        if current[: len(full_current_prefix)] == full_current_prefix:
+            return
+        raise CheckpointError(CheckpointReason.INCOMPATIBLE)
 
     def checkpoint(
         self,
@@ -374,6 +401,60 @@ class CheckpointSession:
             results.append(
                 ReuseResult(reference, None, _reuse_reason(lookup.miss_reason))
             )
+        return tuple(results)
+
+    def reusable_for(
+        self,
+        *,
+        work_ids: tuple[str, ...],
+        descriptors: Mapping[str, CacheDescriptor],
+        validators: Mapping[str, Callable[[object], object]],
+    ) -> tuple[ReuseResult, ...]:
+        """Load only this frozen stage and prune its stale completed references."""
+        if (
+            not work_ids
+            or len(set(work_ids)) != len(work_ids)
+            or not set(work_ids).issubset(self.manifest.work_ids)
+        ):
+            raise CheckpointError(CheckpointReason.INCOMPATIBLE)
+        references = {reference.work_id: reference for reference in self.manifest.completed}
+        results: list[ReuseResult] = []
+        stale: set[str] = set()
+        for work_id in work_ids:
+            reference = references.get(work_id)
+            if reference is None:
+                results.append(ReuseResult(None, None, ReuseReason.MISSING))
+                continue
+            descriptor = descriptors.get(work_id)
+            validator = validators.get(work_id)
+            if (
+                descriptor is None
+                or validator is None
+                or descriptor.work_id != work_id
+                or descriptor.key != reference.cache_key
+                or descriptor.source_id != self.manifest.source_sha256
+            ):
+                results.append(ReuseResult(reference, None, ReuseReason.INCOMPATIBLE))
+                stale.add(work_id)
+                continue
+            lookup = self._cache.load(descriptor, validator)
+            if lookup.hit:
+                results.append(ReuseResult(reference, lookup.payload, None))
+                continue
+            results.append(
+                ReuseResult(reference, None, _reuse_reason(lookup.miss_reason))
+            )
+            stale.add(work_id)
+        if stale:
+            values = self.manifest.model_dump(mode="python")
+            values["completed"] = tuple(
+                reference
+                for reference in self.manifest.completed
+                if reference.work_id not in stale
+            )
+            manifest = RunManifest.model_validate(values)
+            self._write_manifest(manifest)
+            self.manifest = manifest
         return tuple(results)
 
 
@@ -503,5 +584,6 @@ def _compatible(manifest: RunManifest, plan: RunPlan) -> bool:
         manifest.run_id == plan.run_id
         and manifest.descriptor_sha256 == plan.descriptor_sha256
         and manifest.source_sha256 == plan.source_sha256
-        and manifest.work_ids == plan.work_ids
+        and len(manifest.work_ids) >= len(plan.work_ids)
+        and manifest.work_ids[: len(plan.work_ids)] == plan.work_ids
     )

@@ -17,7 +17,7 @@ from summarizer.audit import (
 from summarizer.editorial import write_editorial
 from summarizer.hierarchy import TreeNode
 from summarizer.providers.base import GenerationResult, ModelProvider
-from summarizer.segmentation import SourceSegment
+from summarizer.segmentation import CacheCoordinator, SourceSegment
 from summarizer.summaries import SummaryNode
 from summarizer.tokenization import TokenCounter
 from summarizer.verification import (
@@ -27,6 +27,8 @@ from summarizer.verification import (
     build_source_lexical_index,
     verify_and_repair,
 )
+
+_DEFAULT_VERIFICATION_CONFIG = VerificationConfig()
 
 
 @dataclass(frozen=True)
@@ -125,9 +127,10 @@ def finalize_summary(
     failures: Sequence[str] = (),
     counter: TokenCounter | None = None,
     source_cores: Mapping[str, str] | None = None,
-    verification: VerificationConfig = VerificationConfig(),
+    verification: VerificationConfig = _DEFAULT_VERIFICATION_CONFIG,
     verification_runtime: VerificationRuntime | None = None,
     verification_context_window_tokens: int | None = None,
+    verification_coordinator: CacheCoordinator | None = None,
 ) -> FinalizationResult:
     """Run the final editor and materialize optional safe output views.
 
@@ -164,6 +167,7 @@ def finalize_summary(
             ),
             runtime=runtime,
             config=verification,
+            coordinator=verification_coordinator,
         )
         if verification_result.failed:
             _write_audit(

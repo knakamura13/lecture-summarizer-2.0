@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from collections.abc import Callable
+from threading import Lock
 from typing import Any
 
 import openai
@@ -33,6 +34,7 @@ class OpenAIProvider:
     ) -> None:
         self._client_factory = client_factory
         self._client: Any | None = None
+        self._client_lock = Lock()
 
     def generate(self, request: GenerationRequest) -> GenerationResult:
         arguments: dict[str, Any] = {
@@ -102,6 +104,10 @@ class OpenAIProvider:
         )
 
     def _get_client(self) -> Any:
-        if self._client is None:
-            self._client = self._client_factory(max_retries=0)
-        return self._client
+        client = self._client
+        if client is not None:
+            return client
+        with self._client_lock:
+            if self._client is None:
+                self._client = self._client_factory(max_retries=0)
+            return self._client

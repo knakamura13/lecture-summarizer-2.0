@@ -213,6 +213,33 @@ def test_resume_reuses_only_descriptor_compatible_validated_references(
     assert incompatible[0].reason is ReuseReason.INCOMPATIBLE
 
 
+def test_resume_accepts_an_extended_manifest_with_the_same_seed_prefix(
+    tmp_path: Path,
+) -> None:
+    store = CheckpointStore(tmp_path / "cache")
+    seed = _plan(work_ids=("segmentation",))
+    full = ("segmentation", "S000001", "editorial-final")
+
+    with store.open(seed, resume=False) as session:
+        session.ensure_work_prefix(full)
+
+    with store.open(seed, resume=True) as session:
+        assert session.manifest.work_ids == full
+
+
+def test_resume_rejects_a_divergent_extended_manifest_prefix(tmp_path: Path) -> None:
+    store = CheckpointStore(tmp_path / "cache")
+    seed = _plan(work_ids=("segmentation",))
+    with store.open(seed, resume=False) as session:
+        session.ensure_work_prefix(("segmentation", "S000001"))
+
+    with pytest.raises(CheckpointError) as raised:
+        with store.open(_plan(work_ids=("segmentation", "S000002")), resume=True):
+            pass
+
+    assert raised.value.reason is CheckpointReason.INCOMPATIBLE
+
+
 def test_resume_does_not_reuse_a_reference_to_another_source(tmp_path: Path) -> None:
     root = tmp_path / "cache"
     other_source = _digest(b"other source")

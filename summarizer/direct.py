@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import json
+
 from summarizer.ingestion import SourceDocument
-from summarizer.leaf import build_leaf_request, parse_leaf_summary
+from summarizer.leaf import LEAF_PROMPT_VERSION, build_leaf_request, parse_leaf_summary
 from summarizer.providers.base import ModelProvider
-from summarizer.segmentation import BoundaryKind, SourceSegment
-from summarizer.summaries import SummaryNode
+from summarizer.segmentation import BoundaryKind, CacheCoordinator, SourceSegment
+from summarizer.summaries import LEAF_SCHEMA_VERSION, SummaryNode
 from summarizer.tokenization import TokenCounter
 
 # Deliberately distinct from segmentation's identifiers, which are
@@ -58,6 +60,7 @@ def summarize_direct(
     *,
     model: str,
     timeout_seconds: float,
+    coordinator: CacheCoordinator | None = None,
 ) -> SummaryNode:
     """Summarize a whole document in a single call.
 
@@ -70,5 +73,26 @@ def summarize_direct(
     request = build_leaf_request(
         segment, model=model, timeout_seconds=timeout_seconds
     )
-    result = provider.generate(request)
-    return parse_leaf_summary(result.text, segment=segment)
+    if coordinator is None:
+        result = provider.generate(request)
+        return parse_leaf_summary(result.text, segment=segment)
+
+    def decode(payload: object) -> SummaryNode:
+        node = SummaryNode.model_validate(payload)
+        return parse_leaf_summary(json.dumps(node.model_dump(mode="json")), segment=segment)
+
+    return coordinator.resolve(
+        stage="direct",
+        work_id=DOCUMENT_SEGMENT_ID,
+        prompt_version=LEAF_PROMPT_VERSION,
+        schema_version=LEAF_SCHEMA_VERSION,
+        input_value={
+            "instructions": request.instructions,
+            "input_text": request.input_text,
+            "schema": request.response_schema,
+        },
+        behavior={},
+        decode=decode,
+        encode=lambda node: node.model_dump(mode="json"),
+        compute=lambda: parse_leaf_summary(provider.generate(request).text, segment=segment),
+    )

@@ -1,4 +1,6 @@
 import json
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
 
 import httpx
@@ -16,7 +18,6 @@ from summarizer.providers.base import (
     ProviderTimeoutError,
 )
 from summarizer.providers.ollama import OllamaProvider
-
 
 REQUEST = GenerationRequest(
     model="gemma3:4b",
@@ -118,6 +119,41 @@ def test_uses_a_client_with_each_distinct_request_timeout() -> None:
         {"host": "http://localhost:11434", "timeout": 42},
         {"host": "http://localhost:11434", "timeout": 90},
     ]
+
+
+def test_concurrent_first_calls_construct_one_client_per_timeout_without_deadlock() -> None:
+    constructions: list[dict[str, object]] = []
+    factory_barrier = threading.Barrier(2)
+    start = threading.Barrier(3)
+
+    def client_factory(**kwargs: object) -> FakeClient:
+        constructions.append(kwargs)
+        try:
+            factory_barrier.wait(timeout=0.1)
+        except threading.BrokenBarrierError:
+            pass
+        return FakeClient(response())
+
+    provider = OllamaProvider(client_factory=client_factory)
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        futures = [executor.submit(lambda: (start.wait(), provider.generate(REQUEST))[1]) for _ in range(2)]
+        start.wait()
+        results = [future.result(timeout=2) for future in futures]
+
+    provider.generate(
+        GenerationRequest(
+            model=REQUEST.model,
+            instructions=REQUEST.instructions,
+            input_text=REQUEST.input_text,
+            timeout_seconds=90,
+        )
+    )
+
+    assert constructions == [
+        {"host": "http://localhost:11434", "timeout": 42},
+        {"host": "http://localhost:11434", "timeout": 90},
+    ]
+    assert [result.text for result in results] == ["local summary", "local summary"]
 
 
 @pytest.mark.parametrize(

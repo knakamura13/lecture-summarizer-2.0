@@ -3,13 +3,25 @@ import re
 
 import pytest
 
-from summarizer.config import AppConfig, StrategyConfig
+from summarizer.cache import CacheStore
+from summarizer.checkpoint import (
+    CheckpointError,
+    CheckpointReason,
+    CheckpointStore,
+    RunPlan,
+)
+from summarizer.config import AppConfig, CacheConfig, ReliabilityConfig, StrategyConfig
 from summarizer.finalization import FinalizationVerificationError
 from summarizer.ingestion import ingest_text
 from summarizer.pipeline import PipelineConfig, run_pipeline
 from summarizer.providers.base import GenerationRequest, GenerationResult
-from summarizer.segmentation import SegmentationConfig
-from summarizer.verification import VerificationConfig, VerificationRuntime
+from summarizer.segmentation import CacheCoordinator, SegmentationConfig
+from summarizer.verification import (
+    VerificationConfig,
+    VerificationRuntime,
+    build_source_lexical_index,
+    verify_and_repair,
+)
 
 
 class CharacterCounter:
@@ -19,6 +31,11 @@ class CharacterCounter:
 
     def count(self, text: str) -> int:
         return len(text)
+
+
+class VerifierCounter(CharacterCounter):
+    identity = "test:verifier-characters"
+    exact = False
 
 
 class VerificationPipelineProvider:
@@ -230,6 +247,274 @@ def test_pipeline_uses_an_injected_complete_verifier_runtime() -> None:
     assert result.final.audit is None
 
 
+def test_provider_cache_coordinator_attribute_cannot_enable_verification_caching(
+    tmp_path,
+) -> None:
+    source_id = "a" * 64
+    cache_root = tmp_path / "cache"
+    plan = RunPlan(
+        run_id="explicit-verification",
+        descriptor_sha256="b" * 64,
+        source_sha256=source_id,
+        work_ids=("V01",),
+    )
+    source_index = build_source_lexical_index(
+        provenance_ids=("S000001",),
+        source={"S000001": "The source confirms the value is 41."},
+    )
+    with CheckpointStore(cache_root).open(plan, resume=False) as session:
+        coordinator = CacheCoordinator(
+            store=CacheStore(cache_root),
+            source_id=source_id,
+            provider="openai",
+            model="verifier-model",
+            counter_identity="test:characters",
+            counter_exact=True,
+            context_window_tokens=100_000,
+            behavior={},
+            session=session,
+        )
+        implicit_provider = VerificationPipelineProvider(verification="supported")
+        implicit_provider.cache_coordinator = coordinator
+        implicit_result = verify_and_repair(
+            "42.",
+            source_id=source_id,
+            source_index=source_index,
+            runtime=VerificationRuntime(
+                provider=implicit_provider,
+                counter=CharacterCounter(),
+                model="verifier-model",
+                timeout_seconds=10,
+                context_window_tokens=100_000,
+            ),
+            config=VerificationConfig(enabled=True),
+        )
+
+        assert not implicit_result.failed
+        assert session.manifest.completed == ()
+        assert not list((cache_root / "objects").rglob("*.json"))
+
+        explicit_provider = VerificationPipelineProvider(verification="supported")
+        explicit_result = verify_and_repair(
+            "42.",
+            source_id=source_id,
+            source_index=source_index,
+            runtime=VerificationRuntime(
+                provider=explicit_provider,
+                counter=CharacterCounter(),
+                model="verifier-model",
+                timeout_seconds=10,
+                context_window_tokens=100_000,
+            ),
+            config=VerificationConfig(enabled=True),
+            coordinator=coordinator,
+        )
+
+        assert not explicit_result.failed
+        assert [ref.work_id for ref in session.manifest.completed] == ["V01"]
+        assert list((cache_root / "objects").rglob("*.json"))
+
+        reused_provider = VerificationPipelineProvider(verification="supported")
+        reused_result = verify_and_repair(
+            "42.",
+            source_id=source_id,
+            source_index=source_index,
+            runtime=VerificationRuntime(
+                provider=reused_provider,
+                counter=CharacterCounter(),
+                model="verifier-model",
+                timeout_seconds=10,
+                context_window_tokens=100_000,
+            ),
+            config=VerificationConfig(enabled=True),
+            coordinator=coordinator,
+        )
+
+        assert reused_result == explicit_result
+        assert reused_provider.requests == []
+
+
+def test_global_verification_cache_binds_the_validated_provenance_index(tmp_path) -> None:
+    cache_root = tmp_path / "cache"
+    document = ingest_text("The source confirms the value is 41. " * 12)
+    direct_config = PipelineConfig(
+        target_words=40,
+        cache=CacheConfig(enabled=True, root=cache_root),
+        reliability=ReliabilityConfig(run_id="verification-direct"),
+        verification=VerificationConfig(enabled=True),
+    )
+    run_pipeline(
+        document,
+        VerificationPipelineProvider(verification="supported"),
+        CharacterCounter(),
+        app=app(),
+        strategy=strategy(),
+        config=direct_config,
+    )
+
+    hierarchical = VerificationPipelineProvider(verification="supported")
+    run_pipeline(
+        document,
+        hierarchical,
+        CharacterCounter(),
+        app=app(),
+        strategy=strategy(hierarchical=True),
+        config=PipelineConfig(
+            **{
+                **direct_config.__dict__,
+                "segmentation": SegmentationConfig(max_tokens=35),
+                "max_merge_children": 2,
+                "reliability": ReliabilityConfig(run_id="verification-hierarchical"),
+            }
+        ),
+    )
+
+    assert [
+        request.operation_id
+        for request in hierarchical.requests
+        if (request.operation_id or "").startswith("verification-")
+    ] == ["verification-decompose:V01", "verification-classify:V01"]
+
+    compatible = VerificationPipelineProvider(verification="supported")
+    run_pipeline(
+        document,
+        compatible,
+        CharacterCounter(),
+        app=app(),
+        strategy=strategy(),
+        config=PipelineConfig(
+            **{
+                **direct_config.__dict__,
+                "reliability": ReliabilityConfig(run_id="verification-direct-copy"),
+            }
+        ),
+    )
+
+    assert compatible.requests == []
+
+
+def test_injected_verifier_runtime_reuses_its_own_cached_terminal_result(tmp_path) -> None:
+    cache_root = tmp_path / "cache"
+    document = ingest_text("The source confirms the value is 41.")
+    config = PipelineConfig(
+        target_words=40,
+        cache=CacheConfig(enabled=True, root=cache_root),
+        reliability=ReliabilityConfig(run_id="injected-verifier"),
+        verification=VerificationConfig(enabled=True),
+    )
+    first_summary = VerificationPipelineProvider(verification="supported")
+    first_verifier = VerificationPipelineProvider(verification="supported")
+    runtime = VerificationRuntime(
+        provider=first_verifier,
+        counter=VerifierCounter(),
+        model="verifier-model",
+        timeout_seconds=10,
+        context_window_tokens=100_000,
+        provider_identity="ollama",
+    )
+
+    run_pipeline(
+        document,
+        first_summary,
+        CharacterCounter(),
+        app=app(),
+        strategy=strategy(),
+        config=PipelineConfig(**{**config.__dict__, "verification_runtime": runtime}),
+    )
+    manifest = json.loads((cache_root / "runs" / "injected-verifier.json").read_text())
+    verification_ref = next(
+        ref for ref in manifest["completed"] if ref["work_id"] == "V01"
+    )
+    envelope = json.loads(
+        (
+            cache_root
+            / "objects"
+            / verification_ref["cache_key"][:2]
+            / f'{verification_ref["cache_key"]}.json'
+        ).read_text()
+    )
+    assert envelope["descriptor"]["provider"] == "ollama"
+    assert envelope["descriptor"]["model"] == "verifier-model"
+    assert envelope["descriptor"]["counter_identity"] == "test:verifier-characters"
+    assert envelope["descriptor"]["counter_exact"] is False
+    assert envelope["descriptor"]["context_window_tokens"] == 100_000
+    assert envelope["descriptor"]["behavior"]["verification"] == {
+        "evidence_tokens": 4096,
+        "request_tokens": 8192,
+        "output_reserve_tokens": 1024,
+        "safety_margin_tokens": 256,
+        "max_repair_passes": 1,
+        "verification_enabled": True,
+    }
+
+    resumed_summary = VerificationPipelineProvider(verification="supported")
+    resumed_verifier = VerificationPipelineProvider(verification="supported")
+    resumed_runtime = VerificationRuntime(
+        provider=resumed_verifier,
+        counter=VerifierCounter(),
+        model="verifier-model",
+        timeout_seconds=10,
+        context_window_tokens=100_000,
+        provider_identity="ollama",
+    )
+    resumed = run_pipeline(
+        document,
+        resumed_summary,
+        CharacterCounter(),
+        app=app(),
+        strategy=strategy(),
+        config=PipelineConfig(
+            **{
+                **config.__dict__,
+                "verification_runtime": resumed_runtime,
+                "reliability": ReliabilityConfig(
+                    run_id="injected-verifier", run_mode="resume"
+                ),
+            }
+        ),
+    )
+
+    assert resumed.final.text == "42."
+    assert resumed_summary.requests == []
+    assert resumed_verifier.requests == []
+
+    for changed_runtime, changed_verification in (
+        (
+            VerificationRuntime(
+                provider=VerificationPipelineProvider(verification="supported"),
+                counter=VerifierCounter(),
+                model="verifier-model",
+                timeout_seconds=10,
+                context_window_tokens=100_000,
+                provider_identity="openai",
+            ),
+            config.verification,
+        ),
+        (resumed_runtime, VerificationConfig(enabled=True, evidence_tokens=128)),
+    ):
+        attempted_summary = VerificationPipelineProvider(verification="supported")
+        with pytest.raises(CheckpointError) as raised:
+            run_pipeline(
+                document,
+                attempted_summary,
+                CharacterCounter(),
+                app=app(),
+                strategy=strategy(),
+                config=PipelineConfig(
+                    **{
+                        **config.__dict__,
+                        "verification_runtime": changed_runtime,
+                        "verification": changed_verification,
+                        "reliability": ReliabilityConfig(
+                            run_id="injected-verifier", run_mode="resume"
+                        ),
+                    }
+                ),
+            )
+        assert raised.value.reason is CheckpointReason.INCOMPATIBLE
+        assert attempted_summary.requests == []
+
+
 def test_pipeline_rejects_an_injected_runtime_when_verification_is_disabled() -> None:
     runtime = VerificationRuntime(
         provider=VerificationPipelineProvider(verification="supported"),
@@ -292,6 +577,112 @@ def test_exhausted_contradiction_writes_terminal_audit_before_raising(tmp_path) 
     assert body["verification"]["exhausted"] is True
     assert body["verification"]["failure_codes"] == ["material_contradiction"]
     assert body["citations"] == []
+
+
+def test_terminal_verification_failure_is_not_cached_and_retries_on_resume(tmp_path) -> None:
+    config = PipelineConfig(
+        target_words=40,
+        cache=CacheConfig(enabled=True, root=tmp_path / "cache"),
+        reliability=ReliabilityConfig(run_id="verification-failure"),
+        verification=VerificationConfig(enabled=True, max_repair_passes=0),
+    )
+    document = ingest_text("The source confirms the value is 41.")
+    first = VerificationPipelineProvider(verification="repair")
+    second = VerificationPipelineProvider(verification="repair")
+
+    with pytest.raises(FinalizationVerificationError):
+        run_pipeline(document, first, CharacterCounter(), app=app(), strategy=strategy(), config=config)
+    objects_after_first_failure = sorted(
+        (tmp_path / "cache" / "objects").rglob("*.json")
+    )
+    manifest = json.loads(
+        (tmp_path / "cache" / "runs" / "verification-failure.json").read_text()
+    )
+    assert all(ref["work_id"] != "V01" for ref in manifest["completed"])
+    assert all(
+        json.loads(path.read_text())["descriptor"]["stage"] != "verification"
+        for path in objects_after_first_failure
+    )
+    with pytest.raises(FinalizationVerificationError):
+        run_pipeline(document, second, CharacterCounter(), app=app(), strategy=strategy(), config=PipelineConfig(**{**config.__dict__, "reliability": ReliabilityConfig(run_id="verification-failure", run_mode="resume")}))
+
+    assert [request.operation_id for request in second.requests] == [
+        "verification-decompose:V01", "verification-classify:V01"
+    ]
+    assert sorted((tmp_path / "cache" / "objects").rglob("*.json")) == objects_after_first_failure
+
+
+def test_successful_frozen_verification_reuses_its_terminal_result(tmp_path) -> None:
+    config = PipelineConfig(
+        target_words=40,
+        cache=CacheConfig(enabled=True, root=tmp_path / "cache"),
+        reliability=ReliabilityConfig(run_id="verification-success"),
+        verification=VerificationConfig(enabled=True),
+    )
+    document = ingest_text("The source confirms the value is 41.")
+    first = VerificationPipelineProvider(verification="supported")
+    second = VerificationPipelineProvider(verification="supported")
+
+    run_pipeline(document, first, CharacterCounter(), app=app(), strategy=strategy(), config=config)
+    result = run_pipeline(document, second, CharacterCounter(), app=app(), strategy=strategy(), config=PipelineConfig(**{**config.__dict__, "reliability": ReliabilityConfig(run_id="verification-success", run_mode="resume")}))
+
+    assert result.final.text == "42."
+    assert second.requests == []
+
+
+def test_successfully_repaired_verification_reuses_its_terminal_result(tmp_path) -> None:
+    cache_root = tmp_path / "cache"
+    config = PipelineConfig(
+        target_words=40,
+        cache=CacheConfig(enabled=True, root=cache_root),
+        reliability=ReliabilityConfig(run_id="verification-repaired"),
+        verification=VerificationConfig(enabled=True),
+    )
+    document = ingest_text("The source confirms the value is 41.")
+    first = VerificationPipelineProvider(verification="repair")
+    second = VerificationPipelineProvider(verification="repair")
+
+    first_result = run_pipeline(
+        document, first, CharacterCounter(), app=app(), strategy=strategy(), config=config
+    )
+    manifest = json.loads(
+        (cache_root / "runs" / "verification-repaired.json").read_text()
+    )
+    verification_ref = next(
+        ref for ref in manifest["completed"] if ref["work_id"] == "V01"
+    )
+    assert (
+        cache_root
+        / "objects"
+        / verification_ref["cache_key"][:2]
+        / f'{verification_ref["cache_key"]}.json'
+    ).is_file()
+
+    resumed = run_pipeline(
+        document,
+        second,
+        CharacterCounter(),
+        app=app(),
+        strategy=strategy(),
+        config=PipelineConfig(
+            **{
+                **config.__dict__,
+                "reliability": ReliabilityConfig(
+                    run_id="verification-repaired", run_mode="resume"
+                ),
+            }
+        ),
+    )
+
+    assert [request.operation_id for request in first.requests][-5:] == [
+        "verification-decompose:V01",
+        "verification-classify:V01",
+        "verification-repair:V01",
+        "verification-decompose:V02",
+        "verification-classify:V02",
+    ]
+    assert resumed.final.text == first_result.final.text == "41."
+    assert second.requests == []
 
 
 def test_runtime_budget_exhaustion_writes_terminal_audit_before_raising(tmp_path) -> None:

@@ -72,6 +72,13 @@ def normalize_output_text(text: str, request: GenerationRequest) -> str:
 
 @runtime_checkable
 class ModelProvider(Protocol):
+    """Generate model output.
+
+    `BoundedScheduler` may call `generate` concurrently when `max_in_flight`
+    exceeds one. First-party providers support that usage; custom providers
+    are responsible for making their own implementation thread-safe.
+    """
+
     def generate(self, request: GenerationRequest) -> GenerationResult: ...
 
 

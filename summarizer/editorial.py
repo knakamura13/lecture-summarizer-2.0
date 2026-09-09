@@ -11,8 +11,8 @@ from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from summarizer.leaf import _describe, _extract_json_object, _sanitize
 from summarizer.providers.base import GenerationRequest, GenerationResult, ModelProvider
 from summarizer.safety import redact_text
+from summarizer.segmentation import CacheCoordinator
 from summarizer.summaries import SummaryNode
-
 
 EDITORIAL_PROMPT_VERSION = "editorial-prompt/1"
 EDITORIAL_SCHEMA_NAME = "final_editorial_draft"
@@ -71,7 +71,7 @@ def final_draft_schema() -> dict[str, object]:
 
 def _fence(source_id: str, label: str) -> str:
     digest = hashlib.sha256(
-        f"{EDITORIAL_PROMPT_VERSION}:{source_id}:{label}".encode("utf-8")
+        f"{EDITORIAL_PROMPT_VERSION}:{source_id}:{label}".encode()
     ).hexdigest()
     return f"-----{label} {digest[:16]}-----"
 
@@ -135,6 +135,39 @@ def write_editorial(
         timeout_seconds=timeout_seconds,
         target_words=target_words,
     )
+    coordinator = getattr(provider, "cache_coordinator", None)
+    if coordinator is not None and not isinstance(coordinator, CacheCoordinator):
+        raise TypeError("cache_coordinator must be a CacheCoordinator")
+
+    def decode(payload: object) -> str:
+        return redact_text(FinalDraft.model_validate(payload).text).strip()
+
+    def compute() -> str:
+        generation = provider.generate(request)
+        return redact_text(parse_final_draft(generation.text).text).strip()
+
+    if coordinator is not None:
+        text = coordinator.resolve(
+            stage="editorial",
+            work_id="editorial-final",
+            prompt_version=EDITORIAL_PROMPT_VERSION,
+            schema_version="editorial/1",
+            input_value={
+                "instructions": request.instructions,
+                "input_text": request.input_text,
+                "schema": request.response_schema,
+            },
+            behavior={"editorial_version": EDITORIAL_PROMPT_VERSION, "target_words": target_words},
+            decode=decode,
+            encode=lambda value: {"text": value},
+            compute=compute,
+        )
+        return EditorialResult(
+            text=text,
+            generation=GenerationResult(
+                text="[cached editorial result]", provider="cache", model=model
+            ),
+        )
     generation = provider.generate(request)
     draft = parse_final_draft(generation.text)
     return EditorialResult(text=redact_text(draft.text).strip(), generation=generation)

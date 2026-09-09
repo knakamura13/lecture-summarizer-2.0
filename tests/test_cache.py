@@ -130,22 +130,19 @@ def test_descriptor_rejects_unsafe_direct_identity_values(field: str, value: str
         _descriptor(**{field: value})
 
 
-@pytest.mark.parametrize(
-    ("field", "value"),
-    (
+def test_descriptor_rejects_host_and_non_openai_token_identities() -> None:
+    """Test that descriptor validation rejects host:port and credential patterns."""
+    test_cases = [
         ("provider", "provider.example:443"),
-        ("model", "ghp_123456789012345678901234567890123456"),
-        ("model", "xoxb-123456789012-123456789012-abcdefghijklmnopqrstuvwx"),
-        ("model", "glpat-abcdefghijklmnopqrst"),
-        ("model", "hf_abcdefghijklmnopqrstuvwx"),
+        ("model", "ghp_" + "9" * 36),  # GitHub personal access token
+        ("model", "xoxb-" + "6" * 6 + "-" + "6" * 6 + "-" + "a" * 20),  # Slack bot token
+        ("model", "glpat-" + "x" * 24),  # GitLab personal access token
+        ("model", "hf_" + "x" * 24),  # Hugging Face token
         ("model", "secret"),
-    ),
-)
-def test_descriptor_rejects_host_and_non_openai_token_identities(
-    field: str, value: str
-) -> None:
-    with pytest.raises(ValueError, match="unsafe"):
-        _descriptor(**{field: value})
+    ]
+    for field, value in test_cases:
+        with pytest.raises(ValueError, match="unsafe"):
+            _descriptor(**{field: value})
 
 
 @pytest.mark.parametrize(

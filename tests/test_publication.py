@@ -1,18 +1,24 @@
-"""Tests for audit-first, summary-last publication protocol with completion witness."""
+"""Tests for audit-first, summary-last publication with a completion witness."""
 
+import hashlib
 import json
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 import pytest
 
-from summarizer.audit import AuditArtifact, build_audit_artifact, serialize_audit
-from summarizer.checkpoint import CheckpointStore, RunPlan
-from summarizer.config import CacheConfig, ReliabilityConfig
+from summarizer.audit import build_audit_artifact
+from summarizer.checkpoint import CheckpointStore, PublicationState, RunPlan
 from summarizer.direct import whole_document_segment
+from summarizer.finalization import (
+    FinalizationResult,
+    PublicationError,
+    publish_final_output,
+    read_published_summary,
+)
 from summarizer.hierarchy import TreeNode
 from summarizer.ingestion import ingest_text
-from summarizer.providers.base import GenerationResult
 from summarizer.summaries import SummaryNode
 
 
@@ -25,7 +31,17 @@ class CharacterCounter:
         return len(text)
 
 
-def _fixture():
+def _digest(value: bytes) -> str:
+    return hashlib.sha256(value).hexdigest()
+
+
+def _plan(run_id: str) -> RunPlan:
+    return RunPlan(
+        run_id, _digest(b"descriptor"), _digest(b"source"), ("segmentation",)
+    )
+
+
+def _result(text: str = "Final summary text.") -> FinalizationResult:
     document = ingest_text("Publication test content.")
     segment = whole_document_segment(document, CharacterCounter())
     summary = SummaryNode.model_validate(
@@ -41,186 +57,266 @@ def _fixture():
         }
     )
     node = TreeNode("L0N0001", 0, 0, summary, (), (segment.segment_id,))
-    return document, segment, node
-
-
-def test_publication_writes_audit_first_before_summary(tmp_path) -> None:
-    """Audit must be staged before summary is written."""
-    document, segment, node = _fixture()
-
     artifact = build_audit_artifact(
         source_id=document.source_id,
         strategy="direct",
         model="test-model",
-        configuration={"provider": "test", "model": "test-model", "timeout_seconds": 30},
+        configuration={
+            "provider": "openai",
+            "model": "test-model",
+            "timeout_seconds": 30,
+        },
         segments=(segment,),
         nodes=(node,),
         root_node_id=node.node_id,
         citations=(),
-        generations=(),
+        reliability_resume={"resumed": False, "reused_count": 0, "recomputed_count": 1},
+    )
+    return FinalizationResult(text, (), artifact)
+
+
+def _manifest(cache_root: Path, run_id: str) -> dict[str, object]:
+    return json.loads((cache_root / "runs" / f"{run_id}.json").read_text())
+
+
+def test_publication_writes_audit_first_before_summary(tmp_path: Path) -> None:
+    order: list[str] = []
+    audit_path, summary_path = tmp_path / "audit.json", tmp_path / "summary.txt"
+
+    def replace(path: Path, payload: bytes) -> None:
+        order.append(path.name)
+        path.write_bytes(payload)
+
+    with CheckpointStore(tmp_path / "cache").open(
+        _plan("ordered-publication"), resume=False
+    ) as session:
+        publish_final_output(
+            _result(),
+            summary_path=summary_path,
+            audit_path=audit_path,
+            session=session,
+            atomic_replace=replace,
+        )
+    assert order == ["audit.json", "summary.txt"]
+    assert (
+        read_published_summary(summary_path, audit_path, session.manifest)
+        == "Final summary text."
     )
 
-    audit_path = tmp_path / "audit.json"
+
+def test_audit_failure_never_writes_summary(tmp_path: Path) -> None:
     summary_path = tmp_path / "summary.txt"
 
-    # Simulate the publication protocol
-    # 1. Write audit
-    serialized = serialize_audit(artifact)
-    audit_path.parent.mkdir(parents=True, exist_ok=True)
-    audit_path.write_bytes(serialized)
+    def fail_audit(path: Path, payload: bytes) -> None:
+        raise OSError("audit unavailable")
 
-    # At this point, summary should NOT exist yet
-    assert not summary_path.exists(), "Summary must not be written before audit"
+    with CheckpointStore(tmp_path / "cache").open(
+        _plan("audit-failure"), resume=False
+    ) as session:
+        with pytest.raises(OSError, match="audit unavailable"):
+            publish_final_output(
+                _result(),
+                summary_path=summary_path,
+                audit_path=tmp_path / "audit.json",
+                session=session,
+                atomic_replace=fail_audit,
+            )
+        assert session.manifest.publication is PublicationState.INCOMPLETE
+    assert not summary_path.exists()
 
-    # 2. Write summary
-    summary_path.write_text("Final summary text.")
-    assert audit_path.exists() and summary_path.exists()
+
+def test_publication_rejects_one_path_for_both_outputs(tmp_path: Path) -> None:
+    output_path = tmp_path / "output"
+    with (
+        CheckpointStore(tmp_path / "cache").open(
+            _plan("same-path"), resume=False
+        ) as session,
+        pytest.raises(PublicationError, match="must differ"),
+    ):
+        publish_final_output(
+            _result(),
+            summary_path=output_path,
+            audit_path=output_path,
+            session=session,
+        )
+    assert not output_path.exists()
 
 
-def test_publication_incomplete_manifest_if_summary_write_fails(tmp_path) -> None:
-    """Incomplete manifest when summary replacement fails."""
+def test_summary_failure_leaves_audit_staged_with_both_digests(tmp_path: Path) -> None:
+    audit_path, summary_path = tmp_path / "audit.json", tmp_path / "summary.txt"
+
+    def fail_summary(path: Path, payload: bytes) -> None:
+        if path == summary_path:
+            raise OSError("summary unavailable")
+        path.write_bytes(payload)
+
     cache_root = tmp_path / "cache"
-    run_id = "incomplete-summary"
-    plan = RunPlan(
-        run_id=run_id,
-        descriptor_sha256="test_descriptor_hash",
-        source_sha256="test_source_hash",
-        work_ids=("segmentation",),
-    )
-
-    # Create checkpoint with audit_staged marker
-    with CheckpointStore(cache_root).open(plan, resume=False) as session:
-        session.checkpoint(completed=(), descriptors={})
-        session.manifest.publication = "audit_staged"
-
-    # Verify the manifest shows audit_staged
-    manifest_path = cache_root / "runs" / f"{run_id}.json"
-    manifest = json.loads(manifest_path.read_text())
-    assert manifest.get("publication") == "audit_staged"
-
-    # After failed summary write, publication should still be audit_staged
-    # (not changed to complete or written to final summary path)
-    # This test verifies the protocol: don't mark complete until both files succeed
+    with CheckpointStore(cache_root).open(
+        _plan("summary-failure"), resume=False
+    ) as session:
+        with pytest.raises(OSError, match="summary unavailable"):
+            publish_final_output(
+                _result(),
+                summary_path=summary_path,
+                audit_path=audit_path,
+                session=session,
+                atomic_replace=fail_summary,
+            )
+    manifest = _manifest(cache_root, "summary-failure")
+    assert manifest["publication"] == "audit_staged"
+    assert len(str(manifest["audit_sha256"])) == 64
+    assert len(str(manifest["summary_sha256"])) == 64
+    assert audit_path.exists() and not summary_path.exists()
 
 
-def test_publication_digest_checked_recovery_after_marker_failure(tmp_path) -> None:
-    """Resume verifies summary digest and completes marker or republishes safely."""
+def test_resume_completes_marker_when_digest_matched_files_exist(
+    tmp_path: Path,
+) -> None:
     cache_root = tmp_path / "cache"
-    run_id = "marker-recovery"
-    summary_path = tmp_path / "summary.txt"
-
-    # First run: write summary, then try to mark complete (fails)
-    plan = RunPlan(
-        run_id=run_id,
-        descriptor_sha256="test_descriptor",
-        source_sha256="test_source",
-        work_ids=("segmentation",),
-    )
-
+    audit_path, summary_path = tmp_path / "audit.json", tmp_path / "summary.txt"
+    plan = _plan("marker-recovery")
     with CheckpointStore(cache_root).open(plan, resume=False) as session:
-        session.checkpoint(completed=(), descriptors={})
-        session.manifest.publication = "audit_staged"
+        original_write = session._write_manifest
 
-    summary_path.write_text("Recovery test summary.")
-    summary_digest = "test_digest_hash"
+        def fail_complete(manifest) -> None:
+            if manifest.publication is PublicationState.COMPLETE:
+                raise OSError("marker unavailable")
+            original_write(manifest)
 
-    # On resume, verify the summary still exists and has matching digest
-    manifest_path = cache_root / "runs" / f"{run_id}.json"
-    manifest = json.loads(manifest_path.read_text())
+        session._write_manifest = fail_complete
+        with pytest.raises(OSError, match="marker unavailable"):
+            publish_final_output(
+                _result(),
+                summary_path=summary_path,
+                audit_path=audit_path,
+                session=session,
+            )
 
-    # Resume would:
-    # 1. Verify summary_digest matches current file
-    # 2. Complete the marker or republish
-    # For testing: verify the manifest can be updated with completion
+    writes: list[Path] = []
+    with CheckpointStore(cache_root).open(plan, resume=True) as resumed:
+        publish_final_output(
+            _result(),
+            summary_path=summary_path,
+            audit_path=audit_path,
+            session=resumed,
+            atomic_replace=lambda path, payload: writes.append(path),
+        )
+        assert resumed.manifest.publication is PublicationState.COMPLETE
+    assert writes == []
+
+
+def test_reader_rejects_incomplete_or_digest_mismatched_publication(
+    tmp_path: Path,
+) -> None:
+    audit_path, summary_path = tmp_path / "audit.json", tmp_path / "summary.txt"
+    with CheckpointStore(tmp_path / "cache").open(
+        _plan("reader-check"), resume=False
+    ) as session:
+        with pytest.raises(PublicationError, match="incomplete"):
+            read_published_summary(summary_path, audit_path, session.manifest)
+        publish_final_output(
+            _result(), summary_path=summary_path, audit_path=audit_path, session=session
+        )
+        summary_path.write_text("tampered", encoding="utf-8")
+        with pytest.raises(PublicationError, match="incomplete"):
+            read_published_summary(summary_path, audit_path, session.manifest)
+
+
+@pytest.mark.parametrize("damage", ["missing", "tampered"])
+def test_resume_republishes_when_audit_is_missing_or_tampered(
+    tmp_path: Path, damage: str
+) -> None:
+    cache_root = tmp_path / "cache"
+    audit_path, summary_path = tmp_path / "audit.json", tmp_path / "summary.txt"
+    plan = _plan(f"audit-{damage}")
+    with CheckpointStore(cache_root).open(plan, resume=False) as session:
+        publish_final_output(
+            _result(),
+            summary_path=summary_path,
+            audit_path=audit_path,
+            session=session,
+        )
+    if damage == "missing":
+        audit_path.unlink()
+    else:
+        audit_path.write_text("tampered", encoding="utf-8")
+
+    writes: list[str] = []
+
+    def replace(path: Path, payload: bytes) -> None:
+        writes.append(path.name)
+        path.write_bytes(payload)
+
     with CheckpointStore(cache_root).open(plan, resume=True) as session:
-        session.manifest.publication = "complete"
-        session.checkpoint(completed=(), descriptors={})
-
-    resumed_manifest = json.loads(manifest_path.read_text())
-    assert resumed_manifest.get("publication") == "complete"
-
-
-def test_publication_reader_rejects_summary_without_completion_marker(tmp_path) -> None:
-    """Reader must not accept summary without matching completion marker."""
-    cache_root = tmp_path / "cache"
-    run_id = "incomplete-reader"
-    summary_path = tmp_path / "summary.txt"
-
-    # Simulate: summary written but marker not complete
-    summary_path.write_text("Incomplete summary.")
-
-    # Create manifest that shows only audit_staged
-    plan = RunPlan(
-        run_id=run_id,
-        descriptor_sha256="test_desc",
-        source_sha256="test_source",
-        work_ids=("segmentation",),
-    )
-
-    with CheckpointStore(cache_root).open(plan, resume=False) as session:
-        session.checkpoint(completed=(), descriptors={})
-        session.manifest.publication = "audit_staged"
-
-    manifest_path = cache_root / "runs" / f"{run_id}.json"
-    manifest = json.loads(manifest_path.read_text())
-
-    # Reader should verify: publication == "complete" before accepting summary
-    assert manifest.get("publication") != "complete"
-    # Reader would reject this summary
+        publish_final_output(
+            _result(),
+            summary_path=summary_path,
+            audit_path=audit_path,
+            session=session,
+            atomic_replace=replace,
+        )
+        assert (
+            read_published_summary(summary_path, audit_path, session.manifest)
+            == "Final summary text."
+        )
+    assert writes == ["audit.json", "summary.txt"]
 
 
-def test_publication_normal_flow_produces_complete_marker(tmp_path) -> None:
-    """Normal publication flow: audit -> summary -> complete marker."""
-    cache_root = tmp_path / "cache"
-    run_id = "normal-flow"
-    plan = RunPlan(
-        run_id=run_id,
-        descriptor_sha256="normal_desc",
-        source_sha256="normal_source",
-        work_ids=("segmentation",),
-    )
+def test_runs_sharing_output_paths_cannot_interleave_publication(
+    tmp_path: Path,
+) -> None:
+    audit_path, summary_path = tmp_path / "audit.json", tmp_path / "summary.txt"
+    first_audit_written = threading.Event()
+    release_first = threading.Event()
+    second_replace_entered = threading.Event()
+    second_started = threading.Event()
+    order: list[str] = []
+    order_guard = threading.Lock()
 
-    # Step 1: Begin run
-    with CheckpointStore(cache_root).open(plan, resume=False) as session:
-        session.checkpoint(completed=(), descriptors={})
+    def publisher(run_id: str, text: str) -> None:
+        with CheckpointStore(tmp_path / run_id).open(
+            _plan(run_id), resume=False
+        ) as session:
 
-    # Step 2: Mark audit_staged
-    with CheckpointStore(cache_root).open(plan, resume=True) as session:
-        session.manifest.publication = "audit_staged"
-        session.checkpoint(completed=(), descriptors={})
+            def replace(path: Path, payload: bytes) -> None:
+                with order_guard:
+                    order.append(f"{run_id}:{path.name}")
+                if run_id == "first-run" and path == audit_path:
+                    path.write_bytes(payload)
+                    first_audit_written.set()
+                    assert release_first.wait(2)
+                    return
+                if run_id == "second-run":
+                    second_replace_entered.set()
+                path.write_bytes(payload)
 
-    manifest_path = cache_root / "runs" / f"{run_id}.json"
-    manifest = json.loads(manifest_path.read_text())
-    assert manifest.get("publication") == "audit_staged"
+            if run_id == "second-run":
+                second_started.set()
+            publish_final_output(
+                _result(text),
+                summary_path=summary_path,
+                audit_path=audit_path,
+                session=session,
+                atomic_replace=replace,
+            )
 
-    # Step 3: Mark complete after summary write succeeds
-    with CheckpointStore(cache_root).open(plan, resume=True) as session:
-        session.manifest.publication = "complete"
-        session.checkpoint(completed=(), descriptors={})
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        first = executor.submit(publisher, "first-run", "first")
+        assert first_audit_written.wait(2)
+        second = executor.submit(publisher, "second-run", "second")
+        assert second_started.wait(2)
+        assert not second_replace_entered.wait(0.1)
+        release_first.set()
+        first.result(timeout=2)
+        second.result(timeout=2)
 
-    final_manifest = json.loads(manifest_path.read_text())
-    assert final_manifest.get("publication") == "complete"
+    assert order == [
+        "first-run:audit.json",
+        "first-run:summary.txt",
+        "second-run:audit.json",
+        "second-run:summary.txt",
+    ]
 
 
-def test_audit_path_none_skips_publication_protocol(tmp_path) -> None:
-    """When audit_path is None, publication protocol is skipped."""
-    # This test verifies that without audit_path configured,
-    # we don't need to follow the publication protocol
-    document, segment, node = _fixture()
-
-    artifact = build_audit_artifact(
-        source_id=document.source_id,
-        strategy="direct",
-        model="test-model",
-        configuration={"provider": "test", "model": "test-model", "timeout_seconds": 30},
-        segments=(segment,),
-        nodes=(node,),
-        root_node_id=node.node_id,
-        citations=(),
-        generations=(),
-    )
-
-    # With audit_path=None, finalization should return summary without going
-    # through the multi-step publication protocol
-    # This is handled in finalization.py, but we verify the artifact is valid
-    assert artifact is not None
+def test_audit_path_none_needs_no_publication_protocol() -> None:
+    assert _result().audit is not None

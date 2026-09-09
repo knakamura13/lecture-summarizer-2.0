@@ -2,16 +2,16 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterator, Mapping
-from contextlib import contextmanager
-from dataclasses import dataclass
-from enum import Enum
 import errno
 import fcntl
 import json
 import os
-from pathlib import Path
 import re
+from collections.abc import Callable, Iterator, Mapping
+from contextlib import contextmanager
+from dataclasses import dataclass
+from enum import Enum
+from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -35,6 +35,8 @@ _MANIFEST_FIELDS = frozenset(
         "metadata",
         "non_reusable",
         "publication",
+        "audit_sha256",
+        "summary_sha256",
         "run_id",
         "source_sha256",
         "terminal_failure",
@@ -151,6 +153,8 @@ class RunManifest(BaseModel):
     terminal_failure_work_id: str | None = None
     metadata: dict[str, bool | int] = Field(default_factory=dict)
     publication: PublicationState = PublicationState.INCOMPLETE
+    audit_sha256: str | None = None
+    summary_sha256: str | None = None
 
     @field_validator("format_version")
     @classmethod
@@ -170,6 +174,13 @@ class RunManifest(BaseModel):
     @classmethod
     def _digest(cls, value: str) -> str:
         _require_sha256(value, name="manifest digest")
+        return value
+
+    @field_validator("audit_sha256", "summary_sha256")
+    @classmethod
+    def _publication_digest(cls, value: str | None) -> str | None:
+        if value is not None:
+            _require_sha256(value, name="publication digest")
         return value
 
     @field_validator("work_ids")
@@ -231,6 +242,16 @@ class RunManifest(BaseModel):
             raise ValueError("terminal failure is not planned")
         if not self.terminal_failure and self.terminal_failure_work_id is not None:
             raise ValueError("terminal failure work requires a terminal failure")
+        if (self.audit_sha256 is None) != (self.summary_sha256 is None):
+            raise ValueError("publication digests must be recorded together")
+        has_publication_digests = self.audit_sha256 is not None
+        if self.publication is PublicationState.INCOMPLETE and has_publication_digests:
+            raise ValueError("incomplete publication cannot retain digests")
+        if (
+            self.publication is not PublicationState.INCOMPLETE
+            and not has_publication_digests
+        ):
+            raise ValueError("staged or complete publication requires both digests")
         return self
 
 
@@ -254,9 +275,8 @@ class CheckpointSession:
 
     def ensure_work_prefix(self, full_current_prefix: tuple[str, ...]) -> None:
         """Atomically extend, but never rewrite, this run's ordered work plan."""
-        if (
-            not full_current_prefix
-            or len(set(full_current_prefix)) != len(full_current_prefix)
+        if not full_current_prefix or len(set(full_current_prefix)) != len(
+            full_current_prefix
         ):
             raise CheckpointError(CheckpointReason.INCOMPATIBLE)
         try:
@@ -285,7 +305,6 @@ class CheckpointSession:
         completed: tuple[CompletedRef, ...] | None = None,
         descriptors: Mapping[str, CacheDescriptor] | None = None,
         metadata: Mapping[str, bool | int] | None = None,
-        publication: PublicationState | None = None,
     ) -> None:
         if completed is not None:
             self._validate_completed_references(completed, descriptors)
@@ -294,8 +313,32 @@ class CheckpointSession:
             values["completed"] = completed
         if metadata is not None:
             values["metadata"] = dict(metadata)
-        if publication is not None:
-            values["publication"] = publication
+        manifest = RunManifest.model_validate(values)
+        self._write_manifest(manifest)
+        self.manifest = manifest
+
+    def stage_publication(self, *, audit_sha256: str, summary_sha256: str) -> None:
+        """Record validated output candidates after the audit is durable."""
+        values = self.manifest.model_dump(mode="python")
+        values.update(
+            publication=PublicationState.AUDIT_STAGED,
+            audit_sha256=audit_sha256,
+            summary_sha256=summary_sha256,
+        )
+        manifest = RunManifest.model_validate(values)
+        self._write_manifest(manifest)
+        self.manifest = manifest
+
+    def complete_publication(self) -> None:
+        """Commit a staged publication after both files match their digests."""
+        if (
+            self.manifest.publication is not PublicationState.AUDIT_STAGED
+            or self.manifest.audit_sha256 is None
+            or self.manifest.summary_sha256 is None
+        ):
+            raise CheckpointError(CheckpointReason.INCOMPATIBLE)
+        values = self.manifest.model_dump(mode="python")
+        values["publication"] = PublicationState.COMPLETE
         manifest = RunManifest.model_validate(values)
         self._write_manifest(manifest)
         self.manifest = manifest
@@ -417,7 +460,9 @@ class CheckpointSession:
             or not set(work_ids).issubset(self.manifest.work_ids)
         ):
             raise CheckpointError(CheckpointReason.INCOMPATIBLE)
-        references = {reference.work_id: reference for reference in self.manifest.completed}
+        references = {
+            reference.work_id: reference for reference in self.manifest.completed
+        }
         results: list[ReuseResult] = []
         stale: set[str] = set()
         for work_id in work_ids:
@@ -566,15 +611,26 @@ class CheckpointStore:
         try:
             with os.fdopen(manifest_fd, "rb") as handle:
                 payload = json.loads(handle.read())
-            if not isinstance(payload, dict) or set(payload) != _MANIFEST_FIELDS:
+            required = _MANIFEST_FIELDS - {"audit_sha256", "summary_sha256"}
+            if (
+                not isinstance(payload, dict)
+                or not required <= set(payload)
+                or not set(payload) <= _MANIFEST_FIELDS
+            ):
                 raise ValueError("invalid checkpoint manifest shape")
             return RunManifest.model_validate(payload)
         except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError):
             raise CheckpointError(CheckpointReason.CORRUPT) from None
 
     def _write_manifest(self, runs_fd: int, manifest: RunManifest) -> None:
+        payload = manifest.model_dump(mode="json")
+        if manifest.audit_sha256 is None:
+            payload.pop("audit_sha256")
+            payload.pop("summary_sha256")
         encoded = json.dumps(
-            manifest.model_dump(mode="json"), separators=(",", ":"), sort_keys=True
+            payload,
+            separators=(",", ":"),
+            sort_keys=True,
         ).encode("utf-8")
         self._cache._atomic_write(runs_fd, f"{manifest.run_id}.json", encoded)
 

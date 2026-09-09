@@ -10,6 +10,7 @@ from summarizer.checkpoint import (
     RunPlan,
 )
 from summarizer.config import AppConfig, CacheConfig, ReliabilityConfig, StrategyConfig
+from summarizer.finalization import read_published_summary
 from summarizer.ingestion import ingest_text
 from summarizer.pipeline import PipelineConfig, run_pipeline
 from summarizer.providers.base import GenerationRequest, GenerationResult
@@ -35,15 +36,27 @@ class CountingProvider:
             payload = {"text": "A cached final draft."}
         elif (request.operation_id or "").startswith(("S", "D")):
             payload = {
-                "summary": "A grounded leaf.", "content_units": [], "entities": [],
-                "qualifications": [], "contradictions": [], "quotations": [],
-                "provenance": [request.operation_id], "level": 0,
+                "summary": "A grounded leaf.",
+                "content_units": [],
+                "entities": [],
+                "qualifications": [],
+                "contradictions": [],
+                "quotations": [],
+                "provenance": [request.operation_id],
+                "level": 0,
             }
         else:
             payload = {
-                "summary": "A grounded merge.", "content_units": [], "entities": [],
-                "qualifications": [], "contradictions": [], "quotations": [],
-                "provenance": [re.findall(r'"segment_id":"(S\d+)"', request.input_text)[-1]], "level": int((request.operation_id or "merge-L1").rsplit("L", 1)[1]),
+                "summary": "A grounded merge.",
+                "content_units": [],
+                "entities": [],
+                "qualifications": [],
+                "contradictions": [],
+                "quotations": [],
+                "provenance": [
+                    re.findall(r'"segment_id":"(S\d+)"', request.input_text)[-1]
+                ],
+                "level": int((request.operation_id or "merge-L1").rsplit("L", 1)[1]),
             }
         return GenerationResult(json.dumps(payload), "fake", request.model)
 
@@ -54,8 +67,11 @@ def _app() -> AppConfig:
 
 def _strategy() -> StrategyConfig:
     return StrategyConfig(
-        strategy="hierarchical", context_window=100_000, max_output_tokens=1,
-        safety_margin_tokens=0, safety_margin_fraction=0,
+        strategy="hierarchical",
+        context_window=100_000,
+        max_output_tokens=1,
+        safety_margin_tokens=0,
+        safety_margin_fraction=0,
     )
 
 
@@ -71,7 +87,9 @@ def test_compatible_hierarchical_pipeline_reuses_segment_leaf_merge_and_editoria
         reliability=ReliabilityConfig(run_id="reliable-run"),
     )
     first = CountingProvider()
-    run_pipeline(document, first, Counter(), app=_app(), strategy=_strategy(), config=config)
+    run_pipeline(
+        document, first, Counter(), app=_app(), strategy=_strategy(), config=config
+    )
 
     second = CountingProvider()
     result = run_pipeline(
@@ -81,7 +99,12 @@ def test_compatible_hierarchical_pipeline_reuses_segment_leaf_merge_and_editoria
         app=_app(),
         strategy=_strategy(),
         config=PipelineConfig(
-            **{**config.__dict__, "reliability": ReliabilityConfig(run_id="reliable-run", run_mode="resume")}
+            **{
+                **config.__dict__,
+                "reliability": ReliabilityConfig(
+                    run_id="reliable-run", run_mode="resume"
+                ),
+            }
         ),
     )
 
@@ -100,7 +123,12 @@ def test_new_run_reuses_compatible_global_leaf_and_merge_objects(tmp_path) -> No
         reliability=ReliabilityConfig(run_id="global-source"),
     )
     run_pipeline(
-        document, CountingProvider(), Counter(), app=_app(), strategy=_strategy(), config=config
+        document,
+        CountingProvider(),
+        Counter(),
+        app=_app(),
+        strategy=_strategy(),
+        config=config,
     )
     source_manifest = json.loads(
         (cache_root / "runs" / "global-source.json").read_text()
@@ -141,7 +169,12 @@ def test_resume_rejects_an_overlap_only_segmentation_change_before_provider_call
         reliability=ReliabilityConfig(run_id="overlap-change"),
     )
     run_pipeline(
-        document, CountingProvider(), Counter(), app=_app(), strategy=_strategy(), config=config
+        document,
+        CountingProvider(),
+        Counter(),
+        app=_app(),
+        strategy=_strategy(),
+        config=config,
     )
 
     resumed = CountingProvider()
@@ -155,9 +188,7 @@ def test_resume_rejects_an_overlap_only_segmentation_change_before_provider_call
             config=PipelineConfig(
                 **{
                     **config.__dict__,
-                    "segmentation": SegmentationConfig(
-                        max_tokens=35, overlap_tokens=1
-                    ),
+                    "segmentation": SegmentationConfig(max_tokens=35, overlap_tokens=1),
                     "reliability": ReliabilityConfig(
                         run_id="overlap-change", run_mode="resume"
                     ),
@@ -179,7 +210,14 @@ def test_resume_never_uses_unreferenced_global_leaf_or_merge_objects(tmp_path) -
         cache=CacheConfig(enabled=True, root=cache_root),
         reliability=ReliabilityConfig(run_id="global-source"),
     )
-    run_pipeline(document, CountingProvider(), Counter(), app=_app(), strategy=_strategy(), config=config)
+    run_pipeline(
+        document,
+        CountingProvider(),
+        Counter(),
+        app=_app(),
+        strategy=_strategy(),
+        config=config,
+    )
 
     empty_run = PipelineConfig(
         **{
@@ -188,7 +226,12 @@ def test_resume_never_uses_unreferenced_global_leaf_or_merge_objects(tmp_path) -
         }
     )
     run_pipeline(
-        document, CountingProvider(), Counter(), app=_app(), strategy=_strategy(), config=empty_run
+        document,
+        CountingProvider(),
+        Counter(),
+        app=_app(),
+        strategy=_strategy(),
+        config=empty_run,
     )
     manifest_path = cache_root / "runs" / "resume-no-global.json"
     manifest = json.loads(manifest_path.read_text())
@@ -221,3 +264,91 @@ def test_resume_never_uses_unreferenced_global_leaf_or_merge_objects(tmp_path) -
     operation_ids = [request.operation_id or "" for request in resumed.requests]
     assert any(operation_id.startswith("S") for operation_id in operation_ids)
     assert any(operation_id.startswith("merge-L") for operation_id in operation_ids)
+
+
+def test_pipeline_publishes_witnessed_pair_and_resume_repairs_tampering(
+    tmp_path,
+) -> None:
+    document = ingest_text("one two three four five six seven eight nine ten " * 12)
+    cache_root = tmp_path / "cache"
+    audit_path = tmp_path / "audit.json"
+    summary_path = tmp_path / "summary.txt"
+    app = AppConfig(output_path=summary_path, model="gpt-4o-mini", timeout_seconds=30)
+    config = PipelineConfig(
+        target_words=40,
+        segmentation=SegmentationConfig(max_tokens=35),
+        max_merge_children=2,
+        audit_path=audit_path,
+        cache=CacheConfig(enabled=True, root=cache_root),
+        reliability=ReliabilityConfig(run_id="published-run"),
+    )
+    run_pipeline(
+        document,
+        CountingProvider(),
+        Counter(),
+        app=app,
+        strategy=_strategy(),
+        config=config,
+    )
+    plan_manifest = json.loads((cache_root / "runs" / "published-run.json").read_text())
+    plan = RunPlan(
+        run_id="published-run",
+        descriptor_sha256=plan_manifest["descriptor_sha256"],
+        source_sha256=document.source_id,
+        work_ids=("segmentation",),
+    )
+    with CheckpointStore(cache_root).open(plan, resume=True) as session:
+        assert (
+            read_published_summary(summary_path, audit_path, session.manifest)
+            == "A cached final draft."
+        )
+
+    summary_path.write_text("tampered", encoding="utf-8")
+    resumed_provider = CountingProvider()
+    run_pipeline(
+        document,
+        resumed_provider,
+        Counter(),
+        app=app,
+        strategy=_strategy(),
+        config=PipelineConfig(
+            **{
+                **config.__dict__,
+                "reliability": ReliabilityConfig(
+                    run_id="published-run", run_mode="resume"
+                ),
+            }
+        ),
+    )
+    assert resumed_provider.requests == []
+    final_manifest = json.loads(
+        (cache_root / "runs" / "published-run.json").read_text()
+    )
+    assert final_manifest["publication"] == "complete"
+    assert summary_path.read_text() == "A cached final draft."
+
+
+def test_pipeline_without_audit_path_returns_text_without_publishing(
+    tmp_path,
+) -> None:
+    document = ingest_text("one two three four five six seven eight nine ten " * 12)
+    summary_path = tmp_path / "summary.txt"
+    result = run_pipeline(
+        document,
+        CountingProvider(),
+        Counter(),
+        app=AppConfig(
+            output_path=summary_path, model="gpt-4o-mini", timeout_seconds=30
+        ),
+        strategy=_strategy(),
+        config=PipelineConfig(
+            target_words=40,
+            segmentation=SegmentationConfig(max_tokens=35),
+            max_merge_children=2,
+            cache=CacheConfig(enabled=True, root=tmp_path / "cache"),
+            reliability=ReliabilityConfig(run_id="no-audit"),
+        ),
+    )
+    assert result.final.text == "A cached final draft."
+    assert result.final.audit is None
+    assert not summary_path.exists()

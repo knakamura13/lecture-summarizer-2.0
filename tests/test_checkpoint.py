@@ -13,7 +13,6 @@ from summarizer.checkpoint import (
     CompletedRef,
     NonReusableReason,
     NonReusableRef,
-    PublicationState,
     ReuseReason,
     RunPlan,
 )
@@ -70,12 +69,12 @@ def test_new_run_persists_a_private_versioned_manifest(tmp_path: Path) -> None:
 
     with store.open(_plan(), resume=False) as session:
         session.checkpoint(
-            completed=(
-                CompletedRef(work_id="S000001", cache_key=_descriptor().key),
-            ),
+            completed=(CompletedRef(work_id="S000001", cache_key=_descriptor().key),),
             descriptors={"S000001": _descriptor()},
             metadata={"cache_hits": 1, "retry_exhausted": False},
-            publication=PublicationState.AUDIT_STAGED,
+        )
+        session.stage_publication(
+            audit_sha256=_digest(b"audit"), summary_sha256=_digest(b"summary")
         )
 
     path = tmp_path / "cache" / "runs" / "run-20260907.json"
@@ -88,6 +87,8 @@ def test_new_run_persists_a_private_versioned_manifest(tmp_path: Path) -> None:
         "metadata": {"cache_hits": 1, "retry_exhausted": False},
         "non_reusable": [],
         "publication": "audit_staged",
+        "audit_sha256": _digest(b"audit"),
+        "summary_sha256": _digest(b"summary"),
         "run_id": "run-20260907",
         "source_sha256": _plan().source_sha256,
         "terminal_failure": False,
@@ -96,6 +97,41 @@ def test_new_run_persists_a_private_versioned_manifest(tmp_path: Path) -> None:
     }
     assert os.stat(path).st_mode & 0o777 == 0o600
     assert os.stat(path.parent).st_mode & 0o777 == 0o700
+
+
+@pytest.mark.parametrize("publication", ["audit_staged", "complete"])
+def test_manifest_rejects_published_state_without_digests(
+    tmp_path: Path, publication: str
+) -> None:
+    store = CheckpointStore(tmp_path / "cache")
+    with store.open(_plan(), resume=False):
+        pass
+    path = tmp_path / "cache" / "runs" / "run-20260907.json"
+    manifest = json.loads(path.read_text())
+    manifest["publication"] = publication
+    path.write_text(json.dumps(manifest))
+
+    with pytest.raises(CheckpointError) as raised:
+        with store.open(_plan(), resume=True):
+            pass
+    assert raised.value.reason is CheckpointReason.CORRUPT
+
+
+def test_manifest_rejects_incomplete_state_with_publication_digests(
+    tmp_path: Path,
+) -> None:
+    store = CheckpointStore(tmp_path / "cache")
+    with store.open(_plan(), resume=False):
+        pass
+    path = tmp_path / "cache" / "runs" / "run-20260907.json"
+    manifest = json.loads(path.read_text())
+    manifest.update(audit_sha256=_digest(b"audit"), summary_sha256=_digest(b"summary"))
+    path.write_text(json.dumps(manifest))
+
+    with pytest.raises(CheckpointError) as raised:
+        with store.open(_plan(), resume=True):
+            pass
+    assert raised.value.reason is CheckpointReason.CORRUPT
 
 
 def test_resume_rejects_a_descriptor_or_source_mismatch(tmp_path: Path) -> None:
@@ -189,9 +225,7 @@ def test_resume_reuses_only_descriptor_compatible_validated_references(
     store = CheckpointStore(root)
     with store.open(_plan(), resume=False) as session:
         session.checkpoint(
-            completed=(
-                CompletedRef(work_id="S000001", cache_key=descriptor.key),
-            ),
+            completed=(CompletedRef(work_id="S000001", cache_key=descriptor.key),),
             descriptors={"S000001": descriptor},
         )
 
@@ -201,9 +235,7 @@ def test_resume_reuses_only_descriptor_compatible_validated_references(
             validators={"S000001": _validate_summary},
         )
         incompatible = session.reusable(
-            descriptors={
-                "S000001": _descriptor(behavior={"max_output_tokens": 2048})
-            },
+            descriptors={"S000001": _descriptor(behavior={"max_output_tokens": 2048})},
             validators={"S000001": _validate_summary},
         )
 
@@ -248,9 +280,7 @@ def test_resume_does_not_reuse_a_reference_to_another_source(tmp_path: Path) -> 
     store = CheckpointStore(root)
     with store.open(_plan(source_sha256=other_source), resume=False) as session:
         session.checkpoint(
-            completed=(
-                CompletedRef(work_id="S000001", cache_key=descriptor.key),
-            ),
+            completed=(CompletedRef(work_id="S000001", cache_key=descriptor.key),),
             descriptors={"S000001": descriptor},
         )
     path = root / "runs" / "run-20260907.json"
@@ -275,9 +305,7 @@ def test_checkpoint_rejects_a_reference_to_another_source(tmp_path: Path) -> Non
     with store.open(_plan(), resume=False) as session:
         with pytest.raises(CheckpointError) as raised:
             session.checkpoint(
-                completed=(
-                    CompletedRef(work_id="S000001", cache_key=descriptor.key),
-                ),
+                completed=(CompletedRef(work_id="S000001", cache_key=descriptor.key),),
                 descriptors={"S000001": descriptor},
             )
 
@@ -287,15 +315,11 @@ def test_checkpoint_rejects_a_reference_to_another_source(tmp_path: Path) -> Non
 def test_resume_marks_corrupt_cache_reference_non_reusable(tmp_path: Path) -> None:
     root = tmp_path / "cache"
     descriptor = _descriptor()
-    path = CacheStore(root).store(
-        descriptor, {"summary": "cached"}, _validate_summary
-    )
+    path = CacheStore(root).store(descriptor, {"summary": "cached"}, _validate_summary)
     store = CheckpointStore(root)
     with store.open(_plan(), resume=False) as session:
         session.checkpoint(
-            completed=(
-                CompletedRef(work_id="S000001", cache_key=descriptor.key),
-            ),
+            completed=(CompletedRef(work_id="S000001", cache_key=descriptor.key),),
             descriptors={"S000001": descriptor},
         )
     path.write_text("not json")

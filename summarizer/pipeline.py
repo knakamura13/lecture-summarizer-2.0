@@ -19,7 +19,11 @@ from summarizer.cache import CacheStore
 from summarizer.checkpoint import CheckpointStore, RunPlan
 from summarizer.config import AppConfig, CacheConfig, ReliabilityConfig, StrategyConfig
 from summarizer.direct import summarize_direct, whole_document_segment
-from summarizer.finalization import FinalizationResult, finalize_summary
+from summarizer.finalization import (
+    FinalizationResult,
+    _finalize_summary,
+    publish_final_output,
+)
 from summarizer.hierarchy import TreeNode, build_hierarchy
 from summarizer.ingestion import SourceDocument
 from summarizer.leaf import summarize_segments
@@ -113,8 +117,14 @@ def run_pipeline(
     )
     if not config.cache.enabled:
         return _run_pipeline(
-            document, provider, counter, app=app, strategy=strategy, config=config,
-            report=report, coordinator=None,
+            document,
+            provider,
+            counter,
+            app=app,
+            strategy=strategy,
+            config=config,
+            report=report,
+            coordinator=None,
         )
     if not config.reliability.run_id:
         raise ValueError("enabled cache requires a reliability run_id")
@@ -164,7 +174,9 @@ def run_pipeline(
                 },
                 "verification_runtime": verification_runtime_descriptor,
             },
-            default=str, sort_keys=True, separators=(",", ":"),
+            default=str,
+            sort_keys=True,
+            separators=(",", ":"),
         ).encode()
     ).hexdigest()
     plan = RunPlan(
@@ -177,17 +189,42 @@ def run_pipeline(
         plan, resume=config.reliability.run_mode == "resume"
     ) as session:
         coordinator = CacheCoordinator(
-            store=CacheStore(config.cache.root), source_id=document.source_id,
-            provider=app.provider, model=app.model, counter_identity=counter.identity,
-            counter_exact=counter.exact, context_window_tokens=report.context_window_tokens,
+            store=CacheStore(config.cache.root),
+            source_id=document.source_id,
+            provider=app.provider,
+            model=app.model,
+            counter_identity=counter.identity,
+            counter_exact=counter.exact,
+            context_window_tokens=report.context_window_tokens,
             behavior={
-                "strategy_config": {"strategy": strategy.strategy, "context_window": report.context_window_tokens, "max_direct_tokens": strategy.max_direct_tokens, "max_output_tokens": strategy.max_output_tokens, "safety_margin_tokens": strategy.safety_margin_tokens},
-                "budget": {"context_window": report.context_window_tokens, "max_output_tokens": strategy.max_output_tokens, "safety_margin_tokens": strategy.safety_margin_tokens, "safety_margin_fraction": strategy.safety_margin_fraction},
-            }, session=session,
+                "strategy_config": {
+                    "strategy": strategy.strategy,
+                    "context_window": report.context_window_tokens,
+                    "max_direct_tokens": strategy.max_direct_tokens,
+                    "max_output_tokens": strategy.max_output_tokens,
+                    "safety_margin_tokens": strategy.safety_margin_tokens,
+                },
+                "budget": {
+                    "context_window": report.context_window_tokens,
+                    "max_output_tokens": strategy.max_output_tokens,
+                    "safety_margin_tokens": strategy.safety_margin_tokens,
+                    "safety_margin_fraction": strategy.safety_margin_fraction,
+                },
+            },
+            session=session,
             allow_unreferenced_cache=config.reliability.run_mode == "new",
             max_in_flight=config.reliability.max_in_flight,
         )
-        return _run_pipeline(document, provider, counter, app=app, strategy=strategy, config=config, report=report, coordinator=coordinator)
+        return _run_pipeline(
+            document,
+            provider,
+            counter,
+            app=app,
+            strategy=strategy,
+            config=config,
+            report=report,
+            coordinator=coordinator,
+        )
 
 
 def _run_pipeline(
@@ -211,7 +248,11 @@ def _run_pipeline(
     if report.strategy == "direct":
         segment = whole_document_segment(document, counter)
         summary = summarize_direct(
-            document, recording, counter, model=app.model, timeout_seconds=app.timeout_seconds,
+            document,
+            recording,
+            counter,
+            model=app.model,
+            timeout_seconds=app.timeout_seconds,
             coordinator=coordinator,
         )
         root = TreeNode(
@@ -245,7 +286,10 @@ def _run_pipeline(
                 ("segmentation", *(segment.segment_id for segment in segments))
             )
         leaves = summarize_segments(
-            segments, recording, model=app.model, timeout_seconds=app.timeout_seconds,
+            segments,
+            recording,
+            model=app.model,
+            timeout_seconds=app.timeout_seconds,
             coordinator=coordinator,
         )
         root, nodes, _ = build_hierarchy(
@@ -255,7 +299,7 @@ def _run_pipeline(
             source_id=document.source_id,
             covered=[(segment.segment_id,) for segment in segments],
             attributable={
-                segment.segment_id: document.text[segment.core_start:segment.core_end]
+                segment.segment_id: document.text[segment.core_start : segment.core_end]
                 for segment in segments
             },
             usable_tokens=capacity,
@@ -268,7 +312,21 @@ def _run_pipeline(
     completed_before_editorial = tuple(recording.generations)
     if coordinator is not None and coordinator.session is not None:
         coordinator.session.ensure_work_prefix(
-            (*coordinator.session.manifest.work_ids[: next((index for index, work_id in enumerate(coordinator.session.manifest.work_ids) if work_id == "editorial-final"), len(coordinator.session.manifest.work_ids))], "editorial-final")
+            (
+                *coordinator.session.manifest.work_ids[
+                    : next(
+                        (
+                            index
+                            for index, work_id in enumerate(
+                                coordinator.session.manifest.work_ids
+                            )
+                            if work_id == "editorial-final"
+                        ),
+                        len(coordinator.session.manifest.work_ids),
+                    )
+                ],
+                "editorial-final",
+            )
         )
     verifier_runtime = config.verification_runtime
     if config.verification.enabled and verifier_runtime is None:
@@ -302,9 +360,23 @@ def _run_pipeline(
         and coordinator.session is not None
     ):
         coordinator.session.ensure_work_prefix(
-            (*coordinator.session.manifest.work_ids[: next((index for index, work_id in enumerate(coordinator.session.manifest.work_ids) if work_id == "V01"), len(coordinator.session.manifest.work_ids))], "V01")
+            (
+                *coordinator.session.manifest.work_ids[
+                    : next(
+                        (
+                            index
+                            for index, work_id in enumerate(
+                                coordinator.session.manifest.work_ids
+                            )
+                            if work_id == "V01"
+                        ),
+                        len(coordinator.session.manifest.work_ids),
+                    )
+                ],
+                "V01",
+            )
         )
-    final = finalize_summary(
+    final = _finalize_summary(
         root.summary,
         recording,
         source_id=document.source_id,
@@ -331,12 +403,41 @@ def _run_pipeline(
         generations=completed_before_editorial,
         counter=counter,
         source_cores={
-            segment.segment_id: document.text[segment.core_start:segment.core_end]
+            segment.segment_id: document.text[segment.core_start : segment.core_end]
             for segment in segments
         },
         verification=config.verification,
         verification_runtime=verifier_runtime,
         verification_context_window_tokens=report.context_window_tokens,
         verification_coordinator=verification_coordinator,
+        reliability_resume=(
+            {
+                "resumed": config.reliability.run_mode == "resume",
+                "reused_count": max(
+                    0,
+                    len(coordinator.session.manifest.completed)
+                    - len(recording.generations),
+                ),
+                "recomputed_count": len(recording.generations),
+            }
+            if coordinator is not None and coordinator.session is not None
+            else None
+        ),
+        materialize_audit=not (
+            config.audit_path is not None
+            and coordinator is not None
+            and coordinator.session is not None
+        ),
     )
+    if (
+        config.audit_path is not None
+        and coordinator is not None
+        and coordinator.session is not None
+    ):
+        publish_final_output(
+            final,
+            summary_path=app.output_path,
+            audit_path=config.audit_path,
+            session=coordinator.session,
+        )
     return PipelineResult(final=final, strategy=report, root=root, nodes=nodes)

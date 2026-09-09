@@ -4,10 +4,10 @@ This project is being rebuilt as a generalized, source-grounded hierarchical sum
 
 Canonical ingestion, token-aware segmentation, structured leaf summarization, token-budget arithmetic, whole-document direct summarization, and multi-level hierarchical merging are now available as library components in `summarizer.ingestion`, `summarizer.tokenization`, `summarizer.segmentation`, `summarizer.summaries`, `summarizer.leaf`, `summarizer.budget`, `summarizer.direct`, `summarizer.merge`, and `summarizer.hierarchy`. The command-line workflow still runs the legacy flat, sentence-chunked path and does not consume them yet.
 
-Source grounding across merge levels and the library-level final editorial,
-citation, audit, and optional claim-verification stages are available.
-Concurrency, quality evaluation, and command-line integration of the new
-pipeline remain future work.
+Source grounding, claim verification, audit/2 and audit/3 with reliability
+metadata, and opt-in caching with resumable execution are available. Bounded
+concurrency, cache/checkpoint publication protocol, quality evaluation, and
+command-line integration of the new pipeline remain in development.
 
 ## Requirements
 

@@ -10,9 +10,16 @@ from enum import Enum
 from math import isfinite
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import TYPE_CHECKING, Any, Literal
+from typing import TYPE_CHECKING, Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    TypeAdapter,
+    field_validator,
+    model_validator,
+)
 
 from summarizer.hierarchy import TreeNode
 from summarizer.providers.base import GenerationResult
@@ -32,6 +39,10 @@ class AuditError(ValueError):
 
 
 _CLOSED_CODE = re.compile(r"^[a-z][a-z0-9_]*$")
+_AUDIT_WORK_ID = re.compile(
+    r"^(?:[DS]\d{6}|L\d+N\d{4}|M(?:\d{6}|\d+N\d{4})|V\d{2}(?:[CS]\d{6})?|"
+    r"editorial-final|segmentation)$"
+)
 _VERIFICATION_SPAN_ID = re.compile(r"^V\d{2}S\d{6}$")
 _VERIFICATION_CLAIM_ID = re.compile(r"^V\d{2}C\d{6}$")
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
@@ -59,6 +70,20 @@ _FINISH_STATUSES = frozenset(
         "error",
         "unknown",
     }
+)
+_CACHE_HIT_CODES = frozenset({"hit"})
+_CACHE_MISS_CODES = frozenset({"missing", "corrupt", "wrong_version", "incompatible"})
+_CACHE_INVALIDATION_CODES = frozenset(
+    {
+        "source_changed",
+        "prompt_changed",
+        "schema_changed",
+        "model_changed",
+        "behavior_changed",
+    }
+)
+_RETRY_FAILURE_CODES = frozenset(
+    {"timeout", "rate_limit", "connection", "server", "transient"}
 )
 
 
@@ -120,6 +145,28 @@ def _audit_node_ids(values: tuple[str, ...]) -> tuple[str, ...]:
     return tuple(_audit_node_id(value) for value in values)
 
 
+def _audit_closed_codes(
+    values: object, *, allowed: frozenset[str], label: str
+) -> tuple[str, ...]:
+    if not isinstance(values, (list, tuple)) or any(
+        not isinstance(value, str) or value not in allowed for value in values
+    ):
+        raise ValueError(f"{label} must contain supported closed codes")
+    return tuple(values)
+
+
+def _audit_work_id(value: str) -> str:
+    if _AUDIT_WORK_ID.fullmatch(value):
+        return value
+    raise ValueError("audit work_id must be a safe stable identifier")
+
+
+def _audit_integer(value: object, *, minimum: int, label: str) -> int:
+    if type(value) is not int or value < minimum:
+        raise ValueError(f"{label} must be a non-boolean integer of at least {minimum}")
+    return value
+
+
 class _AuditRecord(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -136,7 +183,9 @@ class AuditSegment(_AuditRecord):
     token_count: int
     leading_overlap_tokens: int
     trailing_overlap_tokens: int
-    boundary_kind: Literal["heading", "paragraph", "list", "sentence", "hard", "document"]
+    boundary_kind: Literal[
+        "heading", "paragraph", "list", "sentence", "hard", "document"
+    ]
 
     _valid_segment_id = field_validator("segment_id")(_audit_segment_id)
     _valid_source_id = field_validator("source_id")(_audit_source_id)
@@ -267,34 +316,32 @@ class AuditVerification(_AuditRecord):
 
 
 class AuditCacheMetadata(_AuditRecord):
-    """Cache hit/miss/invalidation work item tracking for audit/3."""
+    """Closed cache outcome and descriptor-invalidation codes for audit/3."""
 
     cache_hits: tuple[str, ...] = ()
     cache_misses: tuple[str, ...] = ()
     invalidation_reasons: tuple[str, ...] = ()
 
+    @field_validator("cache_hits", mode="before")
+    @classmethod
+    def _validate_cache_hits(cls, value: object) -> tuple[str, ...]:
+        return _audit_closed_codes(value, allowed=_CACHE_HIT_CODES, label="cache hits")
+
+    @field_validator("cache_misses", mode="before")
+    @classmethod
+    def _validate_cache_misses(cls, value: object) -> tuple[str, ...]:
+        return _audit_closed_codes(
+            value, allowed=_CACHE_MISS_CODES, label="cache misses"
+        )
+
     @field_validator("invalidation_reasons", mode="before")
     @classmethod
-    def _validate_invalidation_reasons(cls, value: tuple[str, ...]) -> tuple[str, ...]:
-        for code in value:
-            if not _CLOSED_CODE.fullmatch(code):
-                raise ValueError("invalidation reasons must be closed identifiers")
-        return value
-
-
-class AuditResumeMetadata(_AuditRecord):
-    """Resume state for audit/3."""
-
-    resumed: bool
-    reused_count: int = 0
-    recomputed_count: int = 0
-
-    @field_validator("reused_count", "recomputed_count")
-    @classmethod
-    def _validate_nonnegative(cls, value: int) -> int:
-        if value < 0:
-            raise ValueError("resume counts must be nonnegative")
-        return value
+    def _validate_invalidation_reasons(cls, value: object) -> tuple[str, ...]:
+        return _audit_closed_codes(
+            value,
+            allowed=_CACHE_INVALIDATION_CODES,
+            label="cache invalidation reasons",
+        )
 
 
 class AuditRetryAttempt(_AuditRecord):
@@ -304,28 +351,45 @@ class AuditRetryAttempt(_AuditRecord):
     attempt_count: int
     failure_reasons: tuple[str, ...] = ()
 
-    @field_validator("attempt_count")
+    _valid_work_id = field_validator("work_id")(_audit_work_id)
+
+    @field_validator("attempt_count", mode="before")
     @classmethod
-    def _validate_positive_count(cls, value: int) -> int:
-        if value < 1:
-            raise ValueError("attempt_count must be positive")
-        return value
+    def _validate_positive_count(cls, value: object) -> int:
+        return _audit_integer(value, minimum=1, label="attempt_count")
 
     @field_validator("failure_reasons", mode="before")
     @classmethod
-    def _validate_failure_reasons(cls, value: tuple[str, ...]) -> tuple[str, ...]:
-        for reason in value:
-            if not _CLOSED_CODE.fullmatch(reason):
-                raise ValueError("failure reasons must be closed identifiers")
-        return value
+    def _validate_failure_reasons(cls, value: object) -> tuple[str, ...]:
+        return _audit_closed_codes(
+            value, allowed=_RETRY_FAILURE_CODES, label="retry failure reasons"
+        )
 
 
 class AuditReliability(_AuditRecord):
     """Aggregate reliability metadata for audit/3."""
 
     cache: AuditCacheMetadata | None = None
-    resume: AuditResumeMetadata | None = None
+    resumed: bool | None = None
+    reused_count: int | None = None
+    recomputed_count: int | None = None
     attempts: tuple[AuditRetryAttempt, ...] = ()
+
+    @field_validator("reused_count", "recomputed_count", mode="before")
+    @classmethod
+    def _validate_resume_counts(cls, value: object) -> int | None:
+        if value is None:
+            return None
+        return _audit_integer(value, minimum=0, label="resume counts")
+
+    @model_validator(mode="after")
+    def _resume_fields_are_complete(self) -> AuditReliability:
+        resume_fields = (self.resumed, self.reused_count, self.recomputed_count)
+        if any(value is not None for value in resume_fields) and any(
+            value is None for value in resume_fields
+        ):
+            raise ValueError("resume state must include resumed and both counts")
+        return self
 
 
 class AuditEvidence(_AuditRecord):
@@ -380,8 +444,7 @@ class AuditNode(_AuditRecord):
     _valid_covered_segments = field_validator("covered_segments")(_audit_segment_ids)
 
 
-class AuditArtifact(_AuditRecord):
-    schema_version: Literal["audit/2", "audit/3"]
+class _AuditArtifactBase(_AuditRecord):
     source_id: str
     strategy: Literal["auto", "direct", "hierarchical"]
     model: str
@@ -394,7 +457,6 @@ class AuditArtifact(_AuditRecord):
     warnings: tuple[str, ...]
     failures: tuple[str, ...]
     verification: AuditVerification
-    reliability: AuditReliability | None = None
 
     @field_validator("configuration", mode="before")
     @classmethod
@@ -410,12 +472,7 @@ class AuditArtifact(_AuditRecord):
     _valid_root_node_id = field_validator("root_node_id")(_audit_node_id)
 
     @model_validator(mode="after")
-    def _links_resolve(self) -> "AuditArtifact":
-        if self.reliability is not None and self.schema_version != "audit/3":
-            raise ValueError("audit artifact with reliability metadata must use schema_version audit/3")
-        if self.reliability is None and self.schema_version != "audit/2":
-            raise ValueError("audit artifact without reliability metadata must use schema_version audit/2")
-
+    def _links_resolve(self) -> _AuditArtifactBase:
         segments = {segment.segment_id: segment for segment in self.source_segments}
         if len(segments) != len(self.source_segments):
             raise ValueError("source segment identifiers must be unique")
@@ -461,13 +518,52 @@ class AuditArtifact(_AuditRecord):
         for citation in self.citations:
             segment = segments.get(citation.segment_id)
             if segment is None or (
-                citation.source_id != segment.source_id or citation.order != segment.order
+                citation.source_id != segment.source_id
+                or citation.order != segment.order
             ):
                 raise ValueError("citation mappings must resolve to segment metadata")
-        if any(not _CLOSED_CODE.fullmatch(code) for code in (*self.warnings, *self.failures)):
+        if any(
+            not _CLOSED_CODE.fullmatch(code)
+            for code in (*self.warnings, *self.failures)
+        ):
             raise ValueError("audit diagnostics must be closed identifiers")
         _verification_links_resolve(self.verification, set(segments))
         return self
+
+
+class AuditArtifactV2(_AuditArtifactBase):
+    """The unchanged audit/2 wire contract."""
+
+    schema_version: Literal["audit/2"]
+
+
+class AuditArtifactV3(_AuditArtifactBase):
+    """The audit/3 contract with reliability-only metadata."""
+
+    schema_version: Literal["audit/3"]
+    reliability: AuditReliability
+
+
+_AuditArtifactRecord = Annotated[
+    AuditArtifactV2 | AuditArtifactV3,
+    Field(discriminator="schema_version"),
+]
+_AUDIT_ARTIFACT_ADAPTER = TypeAdapter(_AuditArtifactRecord)
+
+
+class AuditArtifact:
+    """Version-discriminated audit artifact reader compatibility facade."""
+
+    def __new__(cls, **value: object) -> AuditArtifactV2 | AuditArtifactV3:
+        return _AUDIT_ARTIFACT_ADAPTER.validate_python(value)
+
+    @staticmethod
+    def model_validate(value: object) -> AuditArtifactV2 | AuditArtifactV3:
+        return _AUDIT_ARTIFACT_ADAPTER.validate_python(value)
+
+    @staticmethod
+    def model_validate_json(value: str | bytes) -> AuditArtifactV2 | AuditArtifactV3:
+        return _AUDIT_ARTIFACT_ADAPTER.validate_json(value)
 
 
 def _verification_links_resolve(
@@ -495,11 +591,15 @@ def _verification_links_resolve(
         sorted(pass_indexes)
     ):
         raise ValueError("verification passes must be uniquely ordered")
-    if any(not _CLOSED_CODE.fullmatch(code) for codes in (
-        verification.warning_codes,
-        verification.limitation_codes,
-        verification.failure_codes,
-    ) for code in codes):
+    if any(
+        not _CLOSED_CODE.fullmatch(code)
+        for codes in (
+            verification.warning_codes,
+            verification.limitation_codes,
+            verification.failure_codes,
+        )
+        for code in codes
+    ):
         raise ValueError("verification diagnostic codes must be closed identifiers")
 
     spans_by_id: dict[str, AuditVerificationSpan] = {}
@@ -511,7 +611,9 @@ def _verification_links_resolve(
         spans = {span.span_id: span for span in record.spans}
         claims = {claim.claim_id: claim for claim in record.claims}
         selections = {selection.claim_id: selection for selection in record.selections}
-        assessments = {assessment.claim_id: assessment for assessment in record.assessments}
+        assessments = {
+            assessment.claim_id: assessment for assessment in record.assessments
+        }
         if len(spans) != len(record.spans) or len(claims) != len(record.claims):
             raise ValueError("verification pass identifiers must be unique")
         if any(
@@ -545,23 +647,27 @@ def _verification_links_resolve(
             for index, span in enumerate(record.spans)
         ):
             raise ValueError("verification span ranges must be ordered and nonempty")
-        if (
-            not set(selections) <= set(claims)
-            or len(selections) != len(record.selections)
+        if not set(selections) <= set(claims) or len(selections) != len(
+            record.selections
         ):
             raise ValueError("verification selections must resolve pass claims")
-        if (
-            not set(assessments) <= set(claims)
-            or len(assessments) != len(record.assessments)
+        if not set(assessments) <= set(claims) or len(assessments) != len(
+            record.assessments
         ):
             raise ValueError("verification assessments must resolve pass claims")
-        coverage_complete = set(selections) == set(claims) and set(assessments) == set(claims)
+        coverage_complete = set(selections) == set(claims) and set(assessments) == set(
+            claims
+        )
         if record.complete and not coverage_complete:
-            raise ValueError("verification pass completion must match recorded coverage")
+            raise ValueError(
+                "verification pass completion must match recorded coverage"
+            )
         if not record.complete and (
             not verification.failed or record_position != len(verification.passes) - 1
         ):
-            raise ValueError("only a terminal failed verification may have a partial pass")
+            raise ValueError(
+                "only a terminal failed verification may have a partial pass"
+            )
         for claim in record.claims:
             if claim.span_id not in spans:
                 raise ValueError("verification claim must resolve to a pass span")
@@ -574,13 +680,21 @@ def _verification_links_resolve(
             ) != len(selection.examined_ids) + len(selection.omitted_ids):
                 raise ValueError("verification evidence identifiers must be unique")
             if not selected <= examined or not (examined | omitted) <= segment_ids:
-                raise ValueError("verification evidence must resolve to source segments")
+                raise ValueError(
+                    "verification evidence must resolve to source segments"
+                )
             if selection.retrieval_complete != (not omitted):
-                raise ValueError("verification retrieval completeness must match omissions")
+                raise ValueError(
+                    "verification retrieval completeness must match omissions"
+                )
         for assessment in record.assessments:
             finding_ids = [finding.claim_id for finding in assessment.findings]
-            if not assessment.findings or any(item != assessment.claim_id for item in finding_ids):
-                raise ValueError("verification findings must resolve to their assessment")
+            if not assessment.findings or any(
+                item != assessment.claim_id for item in finding_ids
+            ):
+                raise ValueError(
+                    "verification findings must resolve to their assessment"
+                )
             selection = selections[assessment.claim_id]
             for finding in assessment.findings:
                 if not set(finding.evidence_ids) <= set(selection.examined_ids):
@@ -593,13 +707,17 @@ def _verification_links_resolve(
     for repair in verification.repairs:
         span = spans_by_id.get(repair.span_id)
         if span is None or repair.original_hash != span.content_hash:
-            raise ValueError("verification repair must resolve to its original pass span")
+            raise ValueError(
+                "verification repair must resolve to its original pass span"
+            )
         if not repair.triggering_claim_ids or any(
             claim_id not in claims_by_id
             or claims_by_id[claim_id].span_id != repair.span_id
             for claim_id in repair.triggering_claim_ids
         ):
-            raise ValueError("verification repair triggers must resolve to its pass span")
+            raise ValueError(
+                "verification repair triggers must resolve to its pass span"
+            )
     if any(usage.pass_index not in pass_indexes for usage in verification.usage):
         raise ValueError("verification usage must resolve to a pass")
 
@@ -799,7 +917,12 @@ _CONFIG_POSITIVE_INTEGER_FIELDS = frozenset(
     }
 )
 _CONFIG_NONNEGATIVE_INTEGER_FIELDS = frozenset(
-    {"safety_margin_tokens", "max_repair_passes", "reserved_output_tokens", "document_tokens"}
+    {
+        "safety_margin_tokens",
+        "max_repair_passes",
+        "reserved_output_tokens",
+        "document_tokens",
+    }
 )
 _CONFIG_NULLABLE_POSITIVE_INTEGER_FIELDS = frozenset(
     {"context_window", "max_direct_tokens", "max_merge_children"}
@@ -810,7 +933,9 @@ def _configuration_error(message: str) -> ValueError:
     return ValueError(f"audit configuration {message}")
 
 
-def _safe_configuration_value(key: str, value: object) -> str | int | float | bool | None:
+def _safe_configuration_value(
+    key: str, value: object
+) -> str | int | float | bool | None:
     if isinstance(value, Enum):
         value = value.value
     if key in _CONFIG_BOOLEAN_FIELDS:
@@ -862,14 +987,20 @@ def _safe_configuration_value(key: str, value: object) -> str | int | float | bo
             return value
         raise _configuration_error(f"{key} must be a positive integer")
     if key in _CONFIG_NONNEGATIVE_INTEGER_FIELDS:
-        if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
-            if key != "max_repair_passes" or value <= 49:
-                return value
+        if (
+            isinstance(value, int)
+            and not isinstance(value, bool)
+            and value >= 0
+            and (key != "max_repair_passes" or value <= 49)
+        ):
+            return value
         raise _configuration_error(f"{key} must be a permitted nonnegative integer")
     raise _configuration_error(f"contains unsupported field {key!r}")
 
 
-def _validate_configuration_entries(configuration: Mapping[object, object]) -> dict[str, object]:
+def _validate_configuration_entries(
+    configuration: Mapping[object, object],
+) -> dict[str, object]:
     unknown = set(configuration) - _SAFE_CONFIGURATION
     if unknown:
         raise _configuration_error("contains unsupported fields")
@@ -896,28 +1027,36 @@ def _validate_audit_configuration(value: object) -> dict[str, object]:
     return validated
 
 
-def _allowlisted_configuration(configuration: Mapping[str, object]) -> dict[str, object]:
+def _allowlisted_configuration(
+    configuration: Mapping[str, object],
+) -> dict[str, object]:
     """Retain only declared safe runtime metadata; never redact-and-keep paths."""
     if not isinstance(configuration, Mapping):
         raise AuditError("audit configuration must be a mapping")
     sections = set(configuration) & _SAFE_CONFIGURATION_SECTIONS
     if not sections:
         return _validate_audit_configuration(
-            {key: value for key, value in configuration.items() if key in _SAFE_CONFIGURATION}
+            {
+                key: value
+                for key, value in configuration.items()
+                if key in _SAFE_CONFIGURATION
+            }
         )
     allowed: dict[str, object] = {}
     for section in sorted(sections):
         value = configuration[section]
         if not isinstance(value, Mapping):
             raise AuditError("audit configuration section must be a mapping")
-        retained = {key: item for key, item in value.items() if key in _SAFE_CONFIGURATION}
+        retained = {
+            key: item for key, item in value.items() if key in _SAFE_CONFIGURATION
+        }
         if retained:
             allowed[section] = retained
     return _validate_audit_configuration(allowed)
 
 
 def _audit_verification(
-    verification: "VerificationResult | None", *, enabled: bool
+    verification: VerificationResult | None, *, enabled: bool
 ) -> AuditVerification:
     """Project rich verification runtime data without copying any prose fields."""
     if verification is None:
@@ -979,8 +1118,7 @@ def _audit_verification(
                 pass_index=pass_index,
                 complete=(
                     not item.failed
-                    and
-                    {selection.claim_id for selection in item.selections}
+                    and {selection.claim_id for selection in item.selections}
                     == {claim.claim_id for claim in item.claims}
                     and {assessment.claim_id for assessment in item.assessments}
                     == {claim.claim_id for claim in item.claims}
@@ -1109,18 +1247,18 @@ def build_audit_artifact(
     generations: Sequence[GenerationResult] = (),
     warnings: Sequence[str] = (),
     failures: Sequence[str] = (),
-    verification: "VerificationResult | None" = None,
+    verification: VerificationResult | None = None,
     verification_enabled: bool = False,
     reliability_cache: Mapping[str, Sequence[str]] | None = None,
     reliability_resume: Mapping[str, object] | None = None,
     reliability_attempts: Sequence[Mapping[str, object]] | None = None,
-) -> AuditArtifact:
+) -> AuditArtifactV2 | AuditArtifactV3:
     """Build a validated artifact without retaining source text or request data."""
     # Determine if we have reliability metadata
     has_reliability = (
         reliability_cache is not None
         or reliability_resume is not None
-        or reliability_attempts
+        or reliability_attempts is not None
     )
 
     # Build reliability object if present
@@ -1131,42 +1269,43 @@ def build_audit_artifact(
             cache_obj = AuditCacheMetadata(
                 cache_hits=tuple(reliability_cache.get("cache_hits", ())),
                 cache_misses=tuple(reliability_cache.get("cache_misses", ())),
-                invalidation_reasons=tuple(reliability_cache.get("invalidation_reasons", ())),
+                invalidation_reasons=tuple(
+                    reliability_cache.get("invalidation_reasons", ())
+                ),
             )
 
-        resume_obj = None
+        resume_values: dict[str, object] = {}
         if reliability_resume is not None:
-            resume_obj = AuditResumeMetadata(
-                resumed=bool(reliability_resume.get("resumed", False)),
-                reused_count=int(reliability_resume.get("reused_count", 0)),
-                recomputed_count=int(reliability_resume.get("recomputed_count", 0)),
-            )
+            resume_values = {
+                "resumed": reliability_resume.get("resumed", False),
+                "reused_count": reliability_resume.get("reused_count", 0),
+                "recomputed_count": reliability_resume.get("recomputed_count", 0),
+            }
 
         attempts = ()
-        if reliability_attempts:
+        if reliability_attempts is not None:
             attempts = tuple(
                 AuditRetryAttempt(
-                    work_id=str(attempt["work_id"]),
-                    attempt_count=int(attempt["attempt_count"]),
-                    failure_reasons=tuple(attempt.get("failure_reasons", ())),
+                    work_id=attempt["work_id"],
+                    attempt_count=attempt["attempt_count"],
+                    failure_reasons=attempt.get("failure_reasons", ()),
                 )
                 for attempt in reliability_attempts
             )
 
         reliability_obj = AuditReliability(
-            cache=cache_obj, resume=resume_obj, attempts=attempts
+            cache=cache_obj, attempts=attempts, **resume_values
         )
 
-    return AuditArtifact(
-        schema_version=AUDIT_SCHEMA_VERSION_V3 if has_reliability else AUDIT_SCHEMA_VERSION,
-        source_id=source_id,
-        strategy=strategy,
-        model=redact_text(model),
-        configuration=_allowlisted_configuration(configuration),
-        source_segments=tuple(_audit_segment(segment) for segment in segments),
-        tree_nodes=tuple(_audit_node(node) for node in nodes),
-        root_node_id=root_node_id,
-        citations=tuple(
+    common = {
+        "source_id": source_id,
+        "strategy": strategy,
+        "model": redact_text(model),
+        "configuration": _allowlisted_configuration(configuration),
+        "source_segments": tuple(_audit_segment(segment) for segment in segments),
+        "tree_nodes": tuple(_audit_node(node) for node in nodes),
+        "root_node_id": root_node_id,
+        "citations": tuple(
             AuditCitation(
                 segment_id=citation.segment_id,
                 source_id=citation.source_id,
@@ -1174,10 +1313,10 @@ def build_audit_artifact(
             )
             for citation in citations
         ),
-        usage=tuple(_usage(generation) for generation in generations),
-        warnings=tuple(warnings),
-        failures=tuple(failures),
-        verification=_audit_verification(
+        "usage": tuple(_usage(generation) for generation in generations),
+        "warnings": tuple(warnings),
+        "failures": tuple(failures),
+        "verification": _audit_verification(
             verification,
             enabled=verification_enabled
             or bool(
@@ -1190,14 +1329,23 @@ def build_audit_artifact(
                 )
             ),
         ),
+    }
+    if reliability_obj is None:
+        return AuditArtifactV2(schema_version=AUDIT_SCHEMA_VERSION, **common)
+    return AuditArtifactV3(
+        schema_version=AUDIT_SCHEMA_VERSION_V3,
         reliability=reliability_obj,
+        **common,
     )
 
 
-def serialize_audit(artifact: AuditArtifact) -> bytes:
+def serialize_audit(artifact: AuditArtifactV2 | AuditArtifactV3) -> bytes:
     """Serialize canonically and prove the written representation is valid."""
     encoded = json.dumps(
-        artifact.model_dump(mode="json"), ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        artifact.model_dump(mode="json"),
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
     ).encode("utf-8")
     try:
         AuditArtifact.model_validate_json(encoded)
@@ -1210,7 +1358,9 @@ def write_audit(path: Path, artifact: AuditArtifact) -> None:
     """Atomically replace an artifact only after canonical validation succeeds."""
     payload = serialize_audit(artifact)
     path.parent.mkdir(parents=True, exist_ok=True)
-    with NamedTemporaryFile(dir=path.parent, prefix=f".{path.name}.", delete=False) as handle:
+    with NamedTemporaryFile(
+        dir=path.parent, prefix=f".{path.name}.", delete=False
+    ) as handle:
         temporary = Path(handle.name)
         try:
             handle.write(payload)

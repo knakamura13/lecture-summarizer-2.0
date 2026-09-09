@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from summarizer.budget import BudgetError
 from summarizer.cache import CacheDescriptor
@@ -481,6 +481,7 @@ def _prepare_merge(
         model=model,
         timeout_seconds=timeout_seconds,
     )
+    request = replace(request, audit_work_id=node_id)
     request_tokens = measure_merge_request_tokens(request, counter)
     if request_tokens > usable_tokens:
         raise BudgetError(

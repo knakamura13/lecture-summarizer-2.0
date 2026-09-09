@@ -14,6 +14,9 @@ class GenerationRequest:
     input_text: str
     timeout_seconds: float
     operation_id: str | None = None
+    # Stable internal work identity for ordered diagnostics. Provider adapters
+    # do not transmit it or include it in model input.
+    audit_work_id: str | None = None
     # A JSON Schema the response should conform to, or None for prose. This is
     # the one representation both supported clients accept natively, so it
     # keeps structured output from coupling orchestration to a single SDK.

@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
+from threading import Lock
 
 from summarizer.budget import (
     BudgetError,
@@ -28,6 +29,7 @@ from summarizer.hierarchy import TreeNode, build_hierarchy
 from summarizer.ingestion import SourceDocument
 from summarizer.leaf import summarize_segments
 from summarizer.providers.base import GenerationRequest, GenerationResult, ModelProvider
+from summarizer.reliability import ReliabilityTracker
 from summarizer.segmentation import (
     CacheCoordinator,
     SegmentationConfig,
@@ -71,16 +73,29 @@ class _RecordingProvider:
     """Capture completed logical calls without exposing request prompts to audit."""
 
     def __init__(
-        self, delegate: ModelProvider, coordinator: CacheCoordinator | None = None
+        self,
+        delegate: ModelProvider,
+        coordinator: CacheCoordinator | None = None,
+        reliability_tracker: ReliabilityTracker | None = None,
     ) -> None:
         self._delegate = delegate
         self.cache_coordinator = coordinator
-        self.generations: list[GenerationResult] = []
+        self._reliability_tracker = reliability_tracker
+        self._generations: list[GenerationResult] = []
+        self._lock = Lock()
 
     def generate(self, request: GenerationRequest) -> GenerationResult:
         result = self._delegate.generate(request)
-        self.generations.append(result)
+        with self._lock:
+            self._generations.append(result)
+        if self._reliability_tracker is not None:
+            self._reliability_tracker.record_generation(request, result)
         return result
+
+    @property
+    def generations(self) -> tuple[GenerationResult, ...]:
+        with self._lock:
+            return tuple(self._generations)
 
 
 def _hierarchical_capacity(
@@ -188,6 +203,10 @@ def run_pipeline(
     with CheckpointStore(config.cache.root).open(
         plan, resume=config.reliability.run_mode == "resume"
     ) as session:
+        reliability_tracker = ReliabilityTracker(
+            lambda: session.manifest.work_ids,
+            resumed=config.reliability.run_mode == "resume",
+        )
         coordinator = CacheCoordinator(
             store=CacheStore(config.cache.root),
             source_id=document.source_id,
@@ -214,6 +233,7 @@ def run_pipeline(
             session=session,
             allow_unreferenced_cache=config.reliability.run_mode == "new",
             max_in_flight=config.reliability.max_in_flight,
+            reliability_tracker=reliability_tracker,
         )
         return _run_pipeline(
             document,
@@ -244,7 +264,10 @@ def _run_pipeline(
     complete library seam now while #12 remains responsible for replacing the
     transitional legacy CLI path.
     """
-    recording = _RecordingProvider(provider, coordinator)
+    reliability_tracker = (
+        coordinator.reliability_tracker if coordinator is not None else None
+    )
+    recording = _RecordingProvider(provider, coordinator, reliability_tracker)
     if report.strategy == "direct":
         segment = whole_document_segment(document, counter)
         summary = summarize_direct(
@@ -338,6 +361,14 @@ def _run_pipeline(
             context_window_tokens=report.context_window_tokens,
             provider_identity=app.provider,
         )
+    elif verifier_runtime is not None and reliability_tracker is not None:
+        verifier_runtime = replace(
+            verifier_runtime,
+            provider=_RecordingProvider(
+                verifier_runtime.provider,
+                reliability_tracker=reliability_tracker,
+            ),
+        )
     verification_coordinator = None
     if config.verification.enabled and coordinator is not None:
         assert verifier_runtime is not None
@@ -353,6 +384,7 @@ def _run_pipeline(
             session=coordinator.session,
             allow_unreferenced_cache=coordinator.allow_unreferenced_cache,
             max_in_flight=coordinator.max_in_flight,
+            reliability_tracker=reliability_tracker,
         )
     if (
         config.verification.enabled
@@ -410,19 +442,7 @@ def _run_pipeline(
         verification_runtime=verifier_runtime,
         verification_context_window_tokens=report.context_window_tokens,
         verification_coordinator=verification_coordinator,
-        reliability_resume=(
-            {
-                "resumed": config.reliability.run_mode == "resume",
-                "reused_count": max(
-                    0,
-                    len(coordinator.session.manifest.completed)
-                    - len(recording.generations),
-                ),
-                "recomputed_count": len(recording.generations),
-            }
-            if coordinator is not None and coordinator.session is not None
-            else None
-        ),
+        reliability_tracker=reliability_tracker,
         materialize_audit=not (
             config.audit_path is not None
             and coordinator is not None

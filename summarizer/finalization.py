@@ -29,6 +29,7 @@ from summarizer.checkpoint import (
 from summarizer.editorial import write_editorial
 from summarizer.hierarchy import TreeNode
 from summarizer.providers.base import GenerationResult, ModelProvider
+from summarizer.reliability import ReliabilityTracker
 from summarizer.segmentation import CacheCoordinator, SourceSegment
 from summarizer.summaries import SummaryNode
 from summarizer.tokenization import TokenCounter
@@ -235,10 +236,18 @@ def _build_audit(
     verification: VerificationResult | None,
     verification_enabled: bool,
     reliability_resume: Mapping[str, object] | None = None,
+    reliability_tracker: ReliabilityTracker | None = None,
     materialize: bool,
 ) -> AuditArtifact | None:
     if audit_path is None:
         return None
+    snapshot = reliability_tracker.snapshot() if reliability_tracker else None
+    if snapshot is not None:
+        reliability_resume = {
+            "resumed": snapshot.resumed,
+            "reused_count": snapshot.reused_count,
+            "recomputed_count": snapshot.recomputed_count,
+        }
     artifact = build_audit_artifact(
         source_id=source_id,
         strategy=strategy,
@@ -254,6 +263,8 @@ def _build_audit(
         verification=verification,
         verification_enabled=verification_enabled,
         reliability_resume=reliability_resume,
+        reliability_cache=snapshot.cache if snapshot is not None else None,
+        reliability_attempts=snapshot.attempts if snapshot is not None else None,
     )
     if materialize:
         write_audit(audit_path, artifact)
@@ -285,6 +296,7 @@ def _finalize_summary(
     verification_context_window_tokens: int | None = None,
     verification_coordinator: CacheCoordinator | None = None,
     reliability_resume: Mapping[str, object] | None = None,
+    reliability_tracker: ReliabilityTracker | None = None,
     materialize_audit: bool,
 ) -> FinalizationResult:
     """Run the final editor and materialize optional safe output views.
@@ -343,6 +355,7 @@ def _finalize_summary(
                 verification=verification_result,
                 verification_enabled=True,
                 reliability_resume=reliability_resume,
+                reliability_tracker=reliability_tracker,
                 materialize=True,
             )
             raise FinalizationVerificationError(
@@ -371,6 +384,7 @@ def _finalize_summary(
         verification=verification_result,
         verification_enabled=verification.enabled,
         reliability_resume=reliability_resume,
+        reliability_tracker=reliability_tracker,
         materialize=materialize_audit,
     )
     return FinalizationResult(text=text, citations=citations, audit=artifact)
@@ -401,6 +415,7 @@ def finalize_summary(
     verification_context_window_tokens: int | None = None,
     verification_coordinator: CacheCoordinator | None = None,
     reliability_resume: Mapping[str, object] | None = None,
+    reliability_tracker: ReliabilityTracker | None = None,
 ) -> FinalizationResult:
     """Run finalization and materialize its requested audit output."""
     return _finalize_summary(
@@ -427,5 +442,6 @@ def finalize_summary(
         verification_context_window_tokens=verification_context_window_tokens,
         verification_coordinator=verification_coordinator,
         reliability_resume=reliability_resume,
+        reliability_tracker=reliability_tracker,
         materialize_audit=True,
     )

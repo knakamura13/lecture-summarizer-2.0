@@ -392,6 +392,24 @@ git add README.md docs/plans/2026-09-06-reliability-cache-resume-design.md docs/
 git commit -m "chore: document reliable pipeline behavior"
 ```
 
+### Acceptance evidence
+
+| Contract | Executable evidence |
+| --- | --- |
+| Canonical descriptors, JSON sharding, restrictive modes, immutable writes, and typed safe misses | `tests/test_cache.py` |
+| Compatible manifests, stable work prefixes, run locking, and referenced-only resume | `tests/test_checkpoint.py` |
+| Transient-only bounded retry, deterministic jitter, safe attempt records, and immediate terminal errors | `tests/providers/test_retrying.py`, `tests/providers/test_base.py` |
+| Bounded in-flight work, stable result order, drained-success checkpoints, and failure latching | `tests/test_scheduler.py` |
+| Validated segmentation/direct/leaf/merge/editorial reuse, new-run adoption, resume call counts, and failed-verification exclusion | `tests/test_pipeline_reliability.py`, `tests/test_verification_integration.py` |
+| Strict audit/2 compatibility, version-discriminated audit/3, and safe closed reliability metadata | `tests/test_audit.py`, `tests/test_audit_reliability.py`, `tests/test_verification_audit.py` |
+| Audit-first and summary-last publication, digest witness recovery, reader rejection, and same-process output-pair serialization | `tests/test_publication.py`, `tests/test_pipeline_reliability.py` |
+
+The implementation retains the scope boundaries in the design: JSON rather
+than SQL, local filesystem storage, no eviction or encryption, no distributed
+coordination, and no cache/resume CLI flags. Publication locking for a shared
+summary/audit path pair is process-local; the manifest remains the durable
+digest witness and recovery mechanism.
+
 ## Final verification
 
 After the individually reviewed task commits:

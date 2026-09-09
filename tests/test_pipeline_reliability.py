@@ -9,12 +9,27 @@ from summarizer.checkpoint import (
     CheckpointStore,
     RunPlan,
 )
-from summarizer.config import AppConfig, CacheConfig, ReliabilityConfig, StrategyConfig
-from summarizer.finalization import read_published_summary
+from summarizer.config import (
+    AppConfig,
+    CacheConfig,
+    ReliabilityConfig,
+    RetryPolicy,
+    StrategyConfig,
+)
+from summarizer.finalization import (
+    FinalizationVerificationError,
+    read_published_summary,
+)
 from summarizer.ingestion import ingest_text
 from summarizer.pipeline import PipelineConfig, run_pipeline
-from summarizer.providers.base import GenerationRequest, GenerationResult
+from summarizer.providers.base import (
+    GenerationRequest,
+    GenerationResult,
+    ProviderTimeoutError,
+)
+from summarizer.providers.retrying import RetryingProvider
 from summarizer.segmentation import SegmentationConfig
+from summarizer.verification import VerificationConfig
 
 
 class Counter:
@@ -73,6 +88,226 @@ def _strategy() -> StrategyConfig:
         safety_margin_tokens=0,
         safety_margin_fraction=0,
     )
+
+
+def _direct_strategy() -> StrategyConfig:
+    return StrategyConfig(
+        strategy="direct",
+        context_window=100_000,
+        max_output_tokens=1,
+        safety_margin_tokens=0,
+        safety_margin_fraction=0,
+    )
+
+
+class TimeoutOnceProvider(CountingProvider):
+    def __init__(self) -> None:
+        super().__init__()
+        self._timed_out = False
+
+    def generate(self, request: GenerationRequest) -> GenerationResult:
+        if request.operation_id == "D000001" and not self._timed_out:
+            self._timed_out = True
+            raise ProviderTimeoutError("sensitive provider detail")
+        return super().generate(request)
+
+
+class MergeTimeoutOnceProvider(CountingProvider):
+    def __init__(self) -> None:
+        super().__init__()
+        self._timed_out = False
+
+    def generate(self, request: GenerationRequest) -> GenerationResult:
+        if (request.audit_work_id or "").startswith("L") and not self._timed_out:
+            self._timed_out = True
+            raise ProviderTimeoutError("merge timeout detail")
+        return super().generate(request)
+
+
+class MalformedVerificationProvider(CountingProvider):
+    def generate(self, request: GenerationRequest) -> GenerationResult:
+        if (request.operation_id or "").startswith("verification-"):
+            self.requests.append(request)
+            return GenerationResult("not json", "fake", request.model)
+        return super().generate(request)
+
+
+def test_published_audit_records_real_cache_outcomes_reuse_and_retry(tmp_path) -> None:
+    document = ingest_text("A short source for the direct pipeline.")
+    cache_root = tmp_path / "cache"
+    audit_path = tmp_path / "audit.json"
+    app = AppConfig(
+        output_path=tmp_path / "summary.txt",
+        model="gpt-4o-mini",
+        timeout_seconds=30,
+    )
+    config = PipelineConfig(
+        target_words=40,
+        audit_path=audit_path,
+        cache=CacheConfig(enabled=True, root=cache_root),
+        reliability=ReliabilityConfig(run_id="observed-run"),
+    )
+    provider = RetryingProvider(
+        TimeoutOnceProvider(),
+        RetryPolicy(
+            max_attempts=2,
+            initial_delay_seconds=0.001,
+            max_delay_seconds=0.001,
+            jitter_fraction=0,
+        ),
+        sleeper=lambda _: None,
+    )
+
+    run_pipeline(
+        document,
+        provider,
+        Counter(),
+        app=app,
+        strategy=_direct_strategy(),
+        config=config,
+    )
+
+    first_audit = json.loads(audit_path.read_text())
+    assert first_audit["schema_version"] == "audit/3"
+    assert first_audit["reliability"]["cache"] == {
+        "cache_hits": [],
+        "cache_misses": ["missing", "missing"],
+        "invalidation_reasons": [],
+    }
+    assert first_audit["reliability"]["attempts"] == [
+        {
+            "work_id": "D000001",
+            "attempt_count": 2,
+            "failure_reasons": ["timeout"],
+        },
+        {
+            "work_id": "editorial-final",
+            "attempt_count": 1,
+            "failure_reasons": [],
+        },
+    ]
+    assert "sensitive provider detail" not in audit_path.read_text()
+
+    resumed_provider = CountingProvider()
+    run_pipeline(
+        document,
+        resumed_provider,
+        Counter(),
+        app=app,
+        strategy=_direct_strategy(),
+        config=PipelineConfig(
+            **{
+                **config.__dict__,
+                "reliability": ReliabilityConfig(
+                    run_id="observed-run", run_mode="resume"
+                ),
+            }
+        ),
+    )
+
+    resumed_audit = json.loads(audit_path.read_text())
+    assert resumed_provider.requests == []
+    assert resumed_audit["reliability"]["cache"] == {
+        "cache_hits": ["hit", "hit"],
+        "cache_misses": [],
+        "invalidation_reasons": [],
+    }
+    assert resumed_audit["reliability"]["resumed"] is True
+    assert resumed_audit["reliability"]["reused_count"] == 2
+    assert resumed_audit["reliability"]["recomputed_count"] == 0
+    assert resumed_audit["reliability"]["attempts"] == []
+
+
+def test_concurrent_retry_audit_follows_manifest_work_order(tmp_path) -> None:
+    cache_root = tmp_path / "cache"
+    audit_path = tmp_path / "audit.json"
+    provider = RetryingProvider(
+        MergeTimeoutOnceProvider(),
+        RetryPolicy(
+            max_attempts=2,
+            initial_delay_seconds=0.001,
+            max_delay_seconds=0.001,
+            jitter_fraction=0,
+        ),
+        sleeper=lambda _: None,
+    )
+    run_pipeline(
+        ingest_text("one two three four five six seven eight nine ten " * 12),
+        provider,
+        Counter(),
+        app=AppConfig(
+            output_path=tmp_path / "summary.txt",
+            model="gpt-4o-mini",
+            timeout_seconds=30,
+        ),
+        strategy=_strategy(),
+        config=PipelineConfig(
+            target_words=40,
+            segmentation=SegmentationConfig(max_tokens=35),
+            max_merge_children=2,
+            audit_path=audit_path,
+            cache=CacheConfig(enabled=True, root=cache_root),
+            reliability=ReliabilityConfig(
+                run_id="concurrent-observed-run", max_in_flight=4
+            ),
+        ),
+    )
+
+    audit = json.loads(audit_path.read_text())
+    manifest = json.loads(
+        (cache_root / "runs" / "concurrent-observed-run.json").read_text()
+    )
+    attempts = audit["reliability"]["attempts"]
+    attempted_ids = [attempt["work_id"] for attempt in attempts]
+    assert attempted_ids == [
+        work_id
+        for work_id in manifest["work_ids"]
+        if work_id not in {"segmentation", "V01"}
+    ]
+    retried = [attempt for attempt in attempts if attempt["attempt_count"] == 2]
+    assert len(retried) == 1
+    assert retried[0]["work_id"].startswith("L")
+    assert retried[0]["failure_reasons"] == ["timeout"]
+
+
+def test_failed_verification_audit_keeps_observability_safe_and_no_summary(
+    tmp_path,
+) -> None:
+    audit_path = tmp_path / "audit.json"
+    summary_path = tmp_path / "summary.txt"
+
+    with pytest.raises(FinalizationVerificationError):
+        run_pipeline(
+            ingest_text("The source confirms the value is 41."),
+            MalformedVerificationProvider(),
+            Counter(),
+            app=AppConfig(
+                output_path=summary_path,
+                model="gpt-4o-mini",
+                timeout_seconds=30,
+            ),
+            strategy=_direct_strategy(),
+            config=PipelineConfig(
+                target_words=40,
+                audit_path=audit_path,
+                verification=VerificationConfig(enabled=True),
+                cache=CacheConfig(enabled=True, root=tmp_path / "cache"),
+                reliability=ReliabilityConfig(run_id="failed-observed-run"),
+            ),
+        )
+
+    encoded_audit = audit_path.read_text()
+    audit = json.loads(encoded_audit)
+    assert audit["schema_version"] == "audit/3"
+    assert audit["verification"]["failed"] is True
+    assert audit["citations"] == []
+    assert not summary_path.exists()
+    assert [item["work_id"] for item in audit["reliability"]["attempts"]] == [
+        "D000001",
+        "editorial-final",
+        "V01",
+    ]
+    assert "not json" not in encoded_audit
 
 
 def test_compatible_hierarchical_pipeline_reuses_segment_leaf_merge_and_editorial(

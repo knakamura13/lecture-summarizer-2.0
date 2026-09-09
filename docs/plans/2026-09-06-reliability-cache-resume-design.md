@@ -53,21 +53,24 @@ Changing any included field produces a different key rather than an ambiguous
 reuse.
 
 Objects hold only successful, locally validated intermediates: segmentation
-records, validated leaf and merge summaries, verified finalization state, and
-other records whose schemas are checked at both write and read. Failed calls,
-raw provider responses, partial batches, and reader-facing final publication
-never become cache objects.
+records; direct, leaf, and merge summaries; editorial drafts; and successful
+terminal verification results. Their schemas are checked at both write and
+read. Failed calls, raw provider responses, ambiguous or unsuccessful work
+items, failed verification, and reader-facing final publication never become
+cache objects. A successful sibling observed while a failed concurrent batch
+drains is validated and stored independently.
 
 Cached summaries and verification data can contain source-derived text. New
 object and manifest files are created with mode `0600` (directories `0700`),
-and the planned `.gitignore` entry `.summarizer-cache/` covers objects,
+and the `.gitignore` entry `.summarizer-cache/` covers objects,
 manifests, locks, and temporary files. The cache contains no credentials;
 descriptor and audit projections retain no cache root, paths, hosts, endpoints,
-or secret material.
+or secret material. The cache is not encrypted and must still be treated as
+sensitive local data.
 
 ## Validation and atomicity
 
-`summarizer.cache` will own canonical encoding, descriptor hashing, schema
+`summarizer.cache` owns canonical encoding, descriptor hashing, schema
 validation, and filesystem operations. A write creates a same-directory
 temporary file with restrictive permissions, writes the complete validated
 payload, flushes and `fsync`s the file, atomically replaces the destination,
@@ -88,7 +91,7 @@ does not delete them during a read.
 
 ## Runs and resume
 
-`summarizer.checkpoint` will own a versioned per-run manifest. It records the
+`summarizer.checkpoint` owns a versioned per-run manifest. It records the
 run descriptor, source hash, planned ordered work identifiers, completed object
 references, retry/cache metadata, and publication state. It records no raw
 source, prompt, credential, endpoint, or request data. Each checkpoint rewrite
@@ -121,9 +124,9 @@ files:
 4. At each hierarchy level, form the deterministic merge groups first, then run
    independent groups with the same cap and restore group order before building
    the next level.
-5. Reuse or compute editorial and verification work. Independent verification
-   batches may use the scheduler only when all their inputs and reduction order
-   are frozen; escalation, repair, and re-verification barriers remain ordered.
+5. Reuse or compute editorial and verification work. Verification, escalation,
+   repair, and re-verification remain ordered barriers; only a terminal
+   successful verification result is cache eligible.
 6. Build and validate the audit artifact, then execute the publication protocol.
 
 The scheduler uses a bounded local executor around the existing synchronous
@@ -148,16 +151,17 @@ so tests can make timing deterministic. Compatibility defaults preserve the
 current retry count and deterministic delay behavior unless jitter is explicitly
 enabled.
 
-Each attempt produces safe metadata: attempt number, closed error category,
-planned delay, and exhaustion state. Provider messages, request data, endpoint
-details, and credentials are not retained. The manifest may keep this metadata
-for resume diagnostics.
+Each failed attempt produces safe metadata: attempt number, closed error
+category, planned delay, observation time, and exhaustion state. Provider
+messages, request data, endpoint details, and credentials are not retained.
+Audit/3 projects retry activity into closed counts and failure codes rather than
+copying raw attempt data.
 
 ## Audit version evolution
 
 Issue #11 introduces `audit/3` for cache, resume, and retry metadata. It does
 not mutate the strict `audit/2` contract: existing `audit/2` artifacts remain
-readable and valid under their current model, while newly materialized Issue #11
+readable and valid under their current model, while reliability-enabled
 artifacts use `audit/3`. Serialization and reads select a version-discriminated
 artifact model (or equivalent union) by `schema_version`; migration never
 reinterprets an `audit/2` payload as `audit/3`.
@@ -189,6 +193,11 @@ marker or republishes safely. Protocol-aware readers accept a final summary only
 when the matching manifest completion marker and digests agree. Each individual
 file replacement is atomic; the manifest is the commit witness for the pair.
 
+A process-local lock serializes callers using the same resolved summary/audit
+path pair. The per-run manifest lock also prevents two local processes from
+advancing the same run. Neither lock coordinates different run IDs publishing
+to shared output paths across processes; callers must avoid that configuration.
+
 ## Failure semantics
 
 Cache corruption and incompatibility are safe misses with closed reasons.
@@ -200,8 +209,8 @@ but no reader-facing final summary or citations are published for that run.
 
 ## Testing and migration
 
-Tests will use temporary directories, deterministic providers, injected
-clock/RNG/sleeper, and fault-injected filesystem calls. They will cover:
+Tests use temporary directories, deterministic providers, injected
+clock/RNG/sleeper, and fault-injected filesystem calls. Coverage includes:
 
 - canonical keys, sharding, permissions, validation before write, idempotent
   concurrent object writes, and corrupt/incompatible miss reasons;
@@ -220,7 +229,9 @@ clock/RNG/sleeper, and fault-injected filesystem calls. They will cover:
 - audit-first, summary-last publication failures and completion-marker recovery.
 
 Migration is additive. Existing callers keep cache/resume off and serial work by
-default; existing `RetryPolicy` construction remains valid. The future
-implementation adds opt-in reliability configuration at the library boundary,
-keeps the legacy CLI unchanged, and documents the sensitive local cache root so
-it is never added to version control.
+default; existing `RetryPolicy` construction remains valid. Reliability is
+available through `PipelineConfig.cache` and `PipelineConfig.reliability` at the
+library boundary. Enabling the cache requires a run ID. Reliable paired
+publication additionally requires `PipelineConfig.audit_path`; it writes the
+summary to `AppConfig.output_path`. The legacy CLI does not expose these controls
+and remains unchanged for Issue #12's migration.

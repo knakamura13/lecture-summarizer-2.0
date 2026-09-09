@@ -815,6 +815,7 @@ def build_decomposition_request(
         input_text=f"{begin}\n{payload}\n{end}",
         timeout_seconds=runtime.timeout_seconds,
         operation_id=f"verification-decompose:{pass_prefix}",
+        audit_work_id=pass_prefix,
         response_schema=_AnchorResponse.model_json_schema(),
         schema_name="verification_claim_anchors",
     )
@@ -875,6 +876,7 @@ def build_classification_request(
         input_text=f"{begin}\n{payload}\n{end}",
         timeout_seconds=runtime.timeout_seconds,
         operation_id=f"verification-classify:{pass_prefix}",
+        audit_work_id=pass_prefix,
         response_schema=_FindingResponse.model_json_schema(),
         schema_name="verification_claim_findings",
     )
@@ -928,6 +930,7 @@ def build_repair_request(
         input_text=f"{begin}\n{payload}\n{end}",
         timeout_seconds=runtime.timeout_seconds,
         operation_id=f"verification-repair:{pass_prefix}",
+        audit_work_id=pass_prefix,
         response_schema=_RepairResponse.model_json_schema(),
         schema_name="verification_repairs",
     )

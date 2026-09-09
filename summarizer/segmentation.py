@@ -15,6 +15,7 @@ from nltk.tokenize import PunktSentenceTokenizer
 from summarizer.cache import CacheDescriptor, CacheStore
 from summarizer.checkpoint import CheckpointSession, CompletedRef
 from summarizer.ingestion import SourceDocument
+from summarizer.reliability import ReliabilityTracker
 from summarizer.tokenization import (
     PrefixTokenCounter,
     SuffixTokenCounter,
@@ -58,6 +59,7 @@ class CacheCoordinator:
     session: CheckpointSession | None = None
     allow_unreferenced_cache: bool = True
     max_in_flight: int = 1
+    reliability_tracker: ReliabilityTracker | None = None
 
     def descriptor_for(
         self, *, stage: str, work_id: str, prompt_version: str, schema_version: str,
@@ -99,13 +101,23 @@ class CacheCoordinator:
                 validators={work_id: validate},
             )[0]
             if reusable.payload is not None:
+                self._record_cache_hit(work_id)
                 return decode(reusable.payload)
+            miss_reason = (
+                reusable.reason.value if reusable.reason is not None else "missing"
+            )
+        else:
+            miss_reason = "missing"
         if self.allow_unreferenced_cache:
             cached = self.store.load(descriptor, validate)
             if cached.hit:
                 result = decode(cached.payload)
                 self._checkpoint(descriptor)
+                self._record_cache_hit(work_id)
                 return result
+            if cached.miss_reason is not None:
+                miss_reason = cached.miss_reason.value
+        self._record_cache_miss(work_id, miss_reason)
         result = compute()
         if cache_if(result):
             self.store.store(descriptor, encode(result), validate)
@@ -126,16 +138,24 @@ class CacheCoordinator:
         its manifest before any sibling request is submitted.
         """
         hits: dict[str, object] = {}
+        misses: dict[str, str] = {}
         if self.session is not None:
-            for reusable in self.session.reusable_for(
+            reusable_results = self.session.reusable_for(
                 work_ids=work_ids,
                 descriptors=descriptors,
                 validators=validators,
-            ):
+            )
+            for work_id, reusable in zip(work_ids, reusable_results):
                 if reusable.reference is not None and reusable.payload is not None:
                     hits[reusable.reference.work_id] = reusable.payload
+                    self._record_cache_hit(work_id)
+                elif reusable.reason is not None:
+                    misses[work_id] = reusable.reason.value
 
         if not self.allow_unreferenced_cache:
+            for work_id in work_ids:
+                if work_id not in hits:
+                    self._record_cache_miss(work_id, misses.get(work_id, "missing"))
             return hits
 
         adopted: list[CompletedRef] = []
@@ -146,9 +166,12 @@ class CacheCoordinator:
             cached = self.store.load(descriptor, validators[work_id])
             if cached.hit:
                 hits[work_id] = cached.payload
+                self._record_cache_hit(work_id)
                 adopted.append(
                     CompletedRef(work_id=work_id, cache_key=descriptor.key)
                 )
+            elif cached.miss_reason is not None:
+                misses[work_id] = cached.miss_reason.value
 
         if adopted and self.session is not None:
             self.session.checkpoint_scheduler_state(
@@ -156,7 +179,18 @@ class CacheCoordinator:
                 descriptors=descriptors,
                 clear_terminal_failure=True,
             )
+        for work_id in work_ids:
+            if work_id not in hits:
+                self._record_cache_miss(work_id, misses.get(work_id, "missing"))
         return hits
+
+    def _record_cache_hit(self, work_id: str) -> None:
+        if self.reliability_tracker is not None:
+            self.reliability_tracker.record_cache_hit(work_id)
+
+    def _record_cache_miss(self, work_id: str, reason: str) -> None:
+        if self.reliability_tracker is not None:
+            self.reliability_tracker.record_cache_miss(work_id, reason)
 
     def _checkpoint(self, descriptor: CacheDescriptor) -> None:
         if self.session is not None:

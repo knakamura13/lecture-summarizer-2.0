@@ -117,12 +117,11 @@ def _verification(segment_id: str) -> VerificationResult:
         selections=((selection,),),
         repairs=(repair,),
         generations=(generation,),
-        diagnostic_codes=(),
+        diagnostic_codes=("retrieval_bounded",),
         exhausted=False,
         failed=False,
         pass_results=(result,),
         phase_generations=(phase_generation,),
-        warning_codes=("retrieval_bounded",),
         limitation_codes=("evidence_incomplete",),
         failure_codes=(),
     )
@@ -160,7 +159,7 @@ def test_audit_v2_projects_verification_without_prose_or_unsafe_configuration() 
     verification = body["verification"]
     assert verification["enabled"] is True
     assert verification["pass_count"] == 1
-    assert verification["warning_codes"] == ["retrieval_bounded"]
+    assert verification["warning_codes"] == []
     assert verification["limitation_codes"] == ["evidence_incomplete"]
     assert verification["passes"][0]["claims"] == [
         {"claim_id": "V01C000001", "is_fallback": False, "ordinal": 1, "span_id": "V01S000001"}

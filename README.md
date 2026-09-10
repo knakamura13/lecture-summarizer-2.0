@@ -1,22 +1,18 @@
 # Recursive Text Summarizer
 
-This project is being rebuilt as a generalized, source-grounded hierarchical summarization pipeline for extremely long artifacts. The current application provides a provider-neutral foundation while preserving the legacy flat, sentence-chunked workflow.
+Recursive Text Summarizer turns a normalized UTF-8 text or Markdown document into one source-grounded summary. It is provider-neutral and makes no assumptions about the document's subject or genre. Small documents can be summarized directly; larger documents are segmented and reduced through a balanced, source-grounded hierarchy before a final editorial pass.
 
-Canonical ingestion, token-aware segmentation, structured leaf summarization, token-budget arithmetic, whole-document direct summarization, and multi-level hierarchical merging are now available as library components in `summarizer.ingestion`, `summarizer.tokenization`, `summarizer.segmentation`, `summarizer.summaries`, `summarizer.leaf`, `summarizer.budget`, `summarizer.direct`, `summarizer.merge`, and `summarizer.hierarchy`. The command-line workflow still runs the legacy flat, sentence-chunked path and does not consume them yet.
+The project supports OpenAI and locally served Ollama models through the same pipeline. The default reader-facing output is plain text. Optional citations and a validated JSON audit artifact expose the source and tree metadata without copying raw source or generated prose into the audit file.
 
-Source grounding, claim verification, audit/2 and audit/3 with reliability
-metadata, opt-in caching with resumable execution, bounded concurrency, and a
-recoverable final-output publication protocol are available at the library
-boundary. The command line still uses the transitional legacy workflow; its
-migration to the hierarchical pipeline is separate work.
+## Supported input
 
-## Requirements
+The application reads one non-empty UTF-8 text file. Markdown is supported as text; headings, paragraphs, lists, indentation, and internal blank lines remain meaningful to segmentation. Ingestion removes a leading BOM, normalizes CRLF/CR to LF, removes trailing spaces and tabs on each line, and trims blank lines at the document edges. It does not OCR images, transcribe audio, fetch external facts, or interpret a document as a lecture, textbook, or other special domain.
 
-- Python 3.10 or newer
-- An OpenAI API key for hosted generation, or a running Ollama service for
-  local generation
+Source text is treated as untrusted data. Instructions inside the source cannot replace the summarization instructions. An empty file, an invalid UTF-8 file, or an unreadable path fails before a final output is published.
 
-Create a virtual environment and install the dependencies:
+## Installation and provider configuration
+
+Requirements are Python 3.10 or newer and either an OpenAI API key or a running Ollama service.
 
 ```sh
 python -m venv .venv
@@ -24,257 +20,162 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-Set the credential through the environment. The application never accepts credentials through command-line configuration:
+For OpenAI, export the key before a run:
 
 ```sh
 export OPENAI_API_KEY="your-api-key"
 ```
 
-For local generation, install [Ollama](https://ollama.com/download), start its
-service, and pull a model. A local Ollama service does not require an API key:
+The OpenAI provider reads `OPENAI_API_KEY` when the provider is first used. The key is not accepted as a CLI value and is not written to logs, cache descriptors, audit artifacts, or output. The application does not automatically load a `.env` file; export environment variables explicitly or configure them through your process manager.
+
+For Ollama, install it from [ollama.com/download](https://ollama.com/download), start the service, and pull a model. A local Ollama provider does not require an API key:
 
 ```sh
 ollama serve
-```
-
-The Ollama desktop application normally starts the service itself. Run
-`ollama serve` in a separate terminal when operating Ollama without the desktop
-application. After the service is available, pull the model you want to use:
-
-```sh
 ollama pull gemma3:4b
 ```
 
-## Usage
+The default Ollama endpoint is `http://localhost:11434`. Use `--ollama-host` for another endpoint. The application does not pull models automatically. A missing model and an unavailable service produce actionable provider errors.
 
-The no-argument workflow reads `input.txt` and writes `output.txt` in the current directory:
+## Basic usage
+
+With no arguments, the CLI reads `input.txt` and writes `output.txt` in the current directory:
 
 ```sh
 python main.py
 ```
 
-Paths and foundational settings can be overridden:
+Choose paths and a hosted model explicitly:
 
 ```sh
-python main.py --input source.txt --output summary.txt
-python main.py --model gpt-4o-mini --timeout 180 --max-retries 5
-python main.py --chunk-size 1000 --max-chunks 10
+python main.py --input source.txt --output summary.txt --model gpt-4o-mini
 ```
 
-Select Ollama and any model tag already installed in that service:
+Use Ollama with any model tag already installed in the service:
 
 ```sh
 python main.py --provider ollama --model gemma3:4b
-python main.py --provider ollama --model qwen3.8
+python main.py --provider ollama --model qwen3.8 --ollama-host http://localhost:11434
 ```
 
-The standard Ollama host is `http://localhost:11434`. Override it when the
-service is reachable elsewhere:
+A successful run publishes one final editorial summary only after all required stages succeed. Provider failures, invalid configuration, missing input, and exhausted retries return a nonzero exit status and do not replace the final output with an error message.
 
-```sh
-python main.py --provider ollama --ollama-host http://ollama.internal:11434 --model gemma3:4b
-```
+### Dry run
 
-The application uses Ollama's native non-streaming chat API. It does not pull or
-manage models automatically, so a missing tag produces an actionable error.
-
-Run the file workflow without constructing or calling a provider:
+`--dry-run` reads and normalizes the source and reports the measured budget and selected strategy without constructing a provider, making a model request, or writing the final output:
 
 ```sh
 python main.py --dry-run
 ```
 
-Dry-run mode still reads, chunks, normalizes, and writes the source. It is intended for configuration and file-workflow checks, not summary-quality evaluation.
+An explicit-source example is:
 
-Run `python main.py --help` for the complete option reference.
-
-## Defaults and failures
-
-The default provider is `openai`, and the default model is `gpt-4o-mini`. This intentionally replaces the legacy `gpt-4-1106-preview` mapping with a currently supported, inexpensive model compatible with the OpenAI Responses API. Model selection will be evaluated separately as the hierarchical pipeline develops.
-
-Configuration errors are reported by the argument parser. Missing files, provider failures, and exhausted retries produce an actionable stderr message and a nonzero process exit. Provider errors are never written as summary text, and output is written only after all configured chunks succeed.
-
-## Architecture
-
-`main.py` is an import-safe entry point over `summarizer.cli`. The CLI constructs immutable configuration, the selected OpenAI or native Ollama adapter, a provider-independent retry decorator, and the transitional legacy workflow.
-
-The provider contract returns structured generation metadata, including the resolved model, token usage, finish status, and request ID when available. This data will support later cost, throughput, and compression evaluation without coupling pipeline orchestration to provider response objects.
-
-The current workflow still uses NLTK sentence tokenization, fixed character-size chunks, independent summaries, and newline concatenation. These are compatibility behaviors scheduled for replacement by later issues.
-
-## Ingestion and segmentation
-
-`summarizer.ingestion` reads a file into an immutable `SourceDocument` holding canonical text and a SHA-256 `source_id` derived from it. Canonicalization is narrow: it strips a leading byte order mark, converts CRLF and CR line endings to LF, removes trailing spaces and tabs from each line, and trims outer blank lines. Headings, indentation, list markers, and internal blank lines survive unchanged.
-
-Every character offset produced by segmentation resolves against that canonical text, not against the original bytes, so `document.text[segment.context_start:segment.context_end] == segment.text` always holds. Concatenating the core ranges of all segments in order reproduces the canonical document.
-
-`summarizer.segmentation` splits a document by structure first — headings, then paragraphs and lists, then sentences, then a token-safe character fallback — and packs consecutive units up to the configured token budget. Each segment owns a disjoint *core* range. Overlap is configured in tokens, defaults to zero, and only ever widens the *context* range around a core; it never moves a core boundary, changes a segment identifier, or transfers evidence ownership. When a core already fills the budget, overlap is reduced, to zero if necessary.
-
-Token accounting is injected through the `TokenCounter` protocol, and segmentation never contacts a provider:
-
-- OpenAI models recognized by `tiktoken` get exact counts for the selected encoding. Constructing that counter can download an uncached vocabulary; counting afterwards is local.
-- Arbitrary Ollama tags and otherwise unsupported models fall back to a conservative estimator that treats every UTF-8 byte as a token. It deliberately under-packs, and reports `exact` as false. Injecting an exact counter for such a model recovers that capacity.
-
-Boundary searches are verified rather than assumed: a returned boundary is always recounted against the budget. Because byte-pair encoders are not monotonic in text length — adding a character can *lower* a token count — a search is not guaranteed to find the largest boundary that would have fit. Segments may therefore be slightly smaller than the budget allows, which is safe; no segment ever exceeds it.
-
-## Structured leaf summarization
-
-`summarizer.leaf` turns each segment into a validated record rather than a paragraph of prose. A record carries a local summary, the content units it asserts, the evidence supporting each one, entities, qualifications, uncertainty, contradictions, and quotations. Qualifications and contradictions are grounded annotations: each has its own source evidence, rather than being an untraceable string. Every retained content unit and annotation must likewise record at least one supporting segment. The records live in `summarizer.summaries` and are shared with later merge levels, which is why each one carries a `level` — zero for a leaf.
-
-Evidence must resolve to a segment identifier the caller supplied. The legal set is built from the segments passed in and never from the model's response, so a citation that arrives because the source text asked for one fails validation instead of entering the hierarchy as a dangling reference. A leaf must record provenance for itself, and it may cite nothing else: text that reached it through overlap is available as context to interpret the segment, but is not attributable, and a quotation drawn only from that context is rejected.
-
-Quotations must occur character for character in the part of the segment the leaf owns — its core range, not its whole context range. Character offsets are not stored; a quotation is verified by matching, and later stages that want offsets can recover them from the core range and the quotation itself.
-
-When a provider can constrain decoding, the request carries a JSON Schema — a strict `json_schema` text format for OpenAI, and the native `format` argument for Ollama. Parsing stays defensive regardless, because constraining decoding is best effort on the Ollama side rather than a guarantee, so a response may still arrive fenced or behind a preamble. A structured response is *not* whitespace-collapsed at the provider boundary; a prose response still is, which is what keeps verbatim quotations locatable in their source.
-
-Source text is placed only in the request's input slot, never in its instructions, and the instructions state that fenced content is data rather than instructions. The stage fails on the first segment whose response cannot be validated, naming the segment and the failing field without echoing the payload or the source.
-
-The command line does not consume leaf records yet.
-
-## Strategy selection and token budgets
-
-`summarizer.budget` decides how a document should be executed before any provider is called:
-
-```
-usable input = context window − prompt and schema overhead − reserved output − safety margin
+```sh
+python main.py --input source.md --strategy auto --dry-run
 ```
 
-Every term is measured or configured, not guessed. Overhead is measured by building a real request and counting it, because a hard-coded figure would rot the moment the prompt or the record changed — it is 887 tokens for `gpt-4o-mini`, of which the schema alone is 610, and it rises to 1,007 when overlap is configured. The safety margin is the larger of a fixed floor and a fraction of the window, so a small window keeps a usable floor while a very large one is not charged thousands of tokens for nothing.
+Dry run is for configuration and budget inspection. It is not a summary-quality evaluation.
 
-A configuration that leaves no usable capacity raises an error naming every term, rather than returning a meaningless number. That case is reachable rather than theoretical: the conservative estimator charges roughly four times a real tokenizer on this project's own prompt text, which exhausts a small window on its own.
+## Strategies and token budgets
 
-`--strategy auto` selects direct only when the document provably fits, the context window is *known* rather than assumed, and any configured direct cap is respected; otherwise it selects hierarchical. `--strategy direct` fails before a provider call when the document does not fit, reporting the same arithmetic the decision used. `--strategy hierarchical` always splits.
+The strategy decision measures the real request overhead, reserved output, and safety margin before selecting a path:
 
-Context windows come from a hand-maintained table, because there is no offline source of truth and, for OpenAI, no online one either — the client exposes no window, and `tiktoken` maps model names to encodings rather than to sizes. An unrecognized model therefore resolves to an assumed window that is reported as assumed, and `auto` routes it to hierarchical rather than gambling a direct request on a guess. Pass `--context-window` to state a window explicitly and recover the direct path.
+- `auto` (default) chooses `direct` only when the complete document provably fits a known context window and any direct-size cap. Otherwise it chooses `hierarchical`.
+- `direct` sends the complete document in one structured summarization call and fails before a provider call if the budget cannot fit it.
+- `hierarchical` uses token-aware, structure-aware segments, structured leaf summaries, balanced merge levels, original-source passages for grounding, and one final editorial call.
 
-Two provider behaviours are worth knowing, because they differ in a way that matters. OpenAI rejects an oversized request outright. Ollama silently truncates the prompt and returns a plausible answer, so on the local path the budget arithmetic is the only thing standing between a too-large document and a confidently ungrounded summary.
+A model whose context window is not known uses an assumed window for reporting; `auto` does not gamble on a direct request in that case. `--context-window` supplies an explicit window. OpenAI models with a registered `tiktoken` encoding use exact counts; Ollama and non-OpenAI providers use a conservative UTF-8-byte estimator. An unknown OpenAI model reports an actionable token-accounting error rather than silently falling back. Constructing a `tiktoken` counter may download an uncached vocabulary; counting afterwards is local.
 
-The reserved output size is accounted for when sizing a request but not yet enforced on the provider, and the command line accepts strategy configuration without yet running the new pipeline — it still executes the legacy workflow.
+Segmentation prefers headings, paragraphs/lists, and sentences, then uses a token-safe character fallback for an oversized unit. A segment has a stable identifier (`S000001`, etc.), a disjoint core range, and optional overlap context. Overlap provides context only; it does not duplicate evidence ownership or move core boundaries. Merge fan-out is measured from the complete request; `--max-merge-children` can impose a smaller ceiling to force a deeper hierarchy.
 
-## Hierarchical merging
+## CLI reference
 
-`summarizer.hierarchy` reduces ordered leaf summaries to a single root, through as many merge levels as the budget requires. `summarizer.merge` owns the prompt that combines several children into one node.
+Run `python main.py --help` for parser-generated help. The complete options are:
 
-Group sizes are measured rather than fixed. Each child is serialized, its delimiters are added, and the number that fits a merge request is derived from the largest child in that level — sized from the largest rather than the average, so a group is never assembled that only fits on average. Groups are then *balanced* instead of greedily packed, because a ragged final group would compress the end of a document less than the beginning.
+| Option | Default | Purpose |
+| --- | --- | --- |
+| `--input PATH` | `input.txt` | UTF-8 source text or Markdown file. |
+| `--output PATH` | `output.txt` | Final plain-text summary path. |
+| `--provider {openai,ollama}` | `openai` | Provider adapter. |
+| `--model MODEL` | `gpt-4o-mini` | Provider model identifier. |
+| `--ollama-host URL` | `http://localhost:11434` | Ollama service endpoint. |
+| `--timeout SECONDS` | `180` | Per-provider request timeout. |
+| `--max-retries N` | `5` | Maximum attempts for retryable provider failures. |
+| `--strategy {auto,direct,hierarchical}` | `auto` | Execution strategy. |
+| `--context-window TOKENS` | unset | Explicit total context window; otherwise use the model table/assumed value. |
+| `--max-output-tokens TOKENS` | `1024` | Output tokens reserved during budget calculations. |
+| `--safety-margin-tokens TOKENS` | `256` | Fixed budget safety floor. |
+| `--safety-margin-fraction FRACTION` | `0.02` | Fractional safety margin; the larger margin applies. |
+| `--max-direct-tokens TOKENS` | unset | Optional direct-path cap used by `auto`. |
+| `--target-words N` | `300` | Target size for final editorial writing. |
+| `--chunk-tokens TOKENS` | unset | Maximum leaf segment tokens; unset uses measured hierarchical capacity. |
+| `--overlap-tokens TOKENS` | `0` | Context overlap around adjacent segment cores. |
+| `--max-merge-children N` | unset | Optional upper bound on children per merge. |
+| `--verify` | off | Verify final-draft claims against bounded source evidence. |
+| `--max-repair-passes N` | `1` | Maximum verification repair passes (`0` disables repairs while verification remains enabled). |
+| `--citations` | off | Append a deterministic, source-ordered `Sources:` list. |
+| `--audit PATH` | unset | Write validated audit JSON (`audit/2`, or `audit/3` with reliability enabled). |
+| `--cache-dir PATH` | unset | Opt into the local JSON cache and resumable run manifest. An actual cached run also requires `--run-id` and `--audit`. |
+| `--run-id ID` | unset | Stable identifier required when cache is enabled. |
+| `--resume` | off | Resume the manifest named by `--run-id`; requires `--cache-dir` and `--run-id`. |
+| `--max-concurrency N` | `1` | Maximum in-flight leaf/merge calls; values above `1` require `--cache-dir`; output order remains deterministic. |
+| `--dry-run` | off | Report budget/strategy without provider construction or final-output writes. |
 
-What makes the recursion terminate is that a merge level is never narrower than a pair: a capacity that cannot hold two children fails with the arithmetic rather than being rounded up to two, so the node count always falls. The node-count reduction is additionally asserted as a defensive invariant. The merge request's own instructions, schema, and delimiters are subtracted from the budget before children are measured, because the budget calculator measures a *leaf* request and passing that figure through would under-reserve. A fixed, token-measured part of each merge budget is also reserved for original source passages before fanout is calculated; the fully assembled request is checked against the usable budget before it reaches a provider.
+`--chunk-size` and `--max-chunks` are removed. They are not aliases: the pipeline no longer exposes the old character-chunk and prefix-truncation controls.
 
-On the default local configuration this means hierarchical execution is refused outright: with an assumed context window and the conservative estimator, a merge request's own overhead exceeds the usable capacity, so no children fit. Supplying `--context-window`, or an exact token counter, is what makes it possible.
+## Output and audit artifacts
 
-**Generated summaries and authoritative source passages are deliberately separate.** Child provenance is excluded from serialized merge children, because an ever-growing union would eventually prevent a pair of children from fitting. Instead, each merge deterministically selects complete original source cores from child evidence, prioritizing contradictions, qualifications, uncertain claims, quotations, and then ordinary claims. The source passages occupy their own fenced block and are the authority when they conflict with a generated child summary. Source text is still data, never instructions.
+The output path contains the final editorial text. Without `--citations`, it contains only that text. With citations, a source-ordered list such as `Sources: [S000001, S000004]` is appended from validated root provenance; citations are not invented by the editorial model.
 
-The tree keeps two related facts. `TreeNode.covered_segments` is the full ordered structural coverage of a branch, so the root remains traceable through its children to every original segment. `SummaryNode.provenance` is narrower: it records only the legal source references retained by that node's generated assertions, canonicalized to source order. A merge cannot introduce a reference outside the source passages it received, and every quoted string is checked against its cited core. These checks make grounding a best-effort safeguard, not a claim that a model-produced summary is factually perfect.
+`--audit PATH` writes a canonical, validated JSON artifact. The top-level audit fields are:
 
-The merge prompt requires deduplication that keeps every supporting reference, preserves qualifications and uncertainty, and records disagreements rather than reconciling them. It also states that the children arrive in document order and that order alone is not evidence one caused or preceded another — a model will otherwise read adjacency as causation. Children are themselves model-written text that may carry an instruction laundered out of the source, so each is fenced separately with a derived delimiter and the same precedence rule applies to them as to source.
+- `schema_version`: `audit/2` for ordinary audit output, or `audit/3` when cache/reliability metadata is active;
+- `source_id`, `strategy`, and `model`;
+- safe `configuration` and budget metadata;
+- `source_segments` with identifiers, source order, core/context ranges, token counts, overlap counts, and boundary kind;
+- `tree_nodes` and `root_node_id`, including levels, child links, covered segments, content-unit classifications, and evidence links;
+- source-ordered `citations` and provider `usage` metadata when available;
+- closed-code `warnings` and `failures`;
+- `verification`, including pass/claim/evidence links, verdicts, repair actions, usage, warnings, limitations, and failures;
+- `reliability` in `audit/3`, including cache outcomes, retry categories, resume state, reuse count, and recomputation count.
 
-Legal identifiers are not enumerated in the prompt. At the second level a legal set can run to thousands of identifiers and would spend a third of the request on a list, so the prompt refers to the authoritative source passages it received and the validator enforces the real set.
+Audit artifacts deliberately do not contain raw source text, generated summary prose, quotations, prompts, request bodies, provider request IDs, or authentication data. Source-derived text may still exist in cache payloads, so cache directories are sensitive local data even though descriptors and audit projections are secret-safe.
 
-Three merge levels are not reachable from document size alone at a hosted model's capacity — it would take roughly twenty million source tokens — so multi-level behaviour is exercised by configuring a narrower ceiling on children per merge. That ceiling is unset by default, leaving measurement in charge.
+## Cache, resume, retries, and concurrency
 
-## Final editorial output and audit artifacts
+Caching is opt-in. `--cache-dir` enables a JSON object store and run manifests; an actual cached run also requires `--run-id` and `--audit` for witnessed paired publication. `--resume` requires cache and run ID. Dry-run may inspect the budget without opening the cache or writing artifacts. A new run may reuse compatible, validated objects already in the cache. Missing, corrupt, wrong-version, or incompatible objects are safe misses and are recomputed.
 
-`summarizer.pipeline` is the library-level path from a canonical document to a
-direct or grounded hierarchical root and then one dedicated final editorial
-call. The editor consumes the root's structured record, preserves material
-qualifications and contradictions, and returns readable plain text by default.
-It deliberately is not connected to the legacy command line yet; that remains
-the later end-to-end integration work.
+Only parsed and locally validated terminal results are reusable. Raw provider responses, exceptions, failed work items, and failed verification do not become cache references. Cache directories are created with restrictive permissions, but the cache is not encrypted. Do not commit it.
 
-Callers may opt into a compact source list. Those citations are not generated
-by the final writer: they are a deterministic, source-ordered rendering of the
-root's already validated provenance, and each identifier resolves to recorded
-segment metadata. The default output has neither citations nor audit data.
+Retryable timeout, rate-limit, connection, and server failures use bounded exponential backoff; non-retryable authentication, request, response, and configuration errors fail immediately. `--max-retries` controls the attempt limit. Concurrent independent work is bounded by `--max-concurrency` when cache reliability is enabled, while manifest order, source order, merge-level barriers, and audit entries remain deterministic. Final paired publication (summary plus reliable audit/3) uses a manifest witness so an incomplete run is not accepted as complete; separate processes must not publish different runs to the same output pair.
 
-An optional `audit/2` artifact records safe run configuration, strategy,
-source-segment metadata, tree/evidence links, warnings or failures, available
-usage metadata, citation mappings, and an explicit verification record. It does
-not copy raw source text, generated prose, quotations, provider request IDs, or
-provider authentication data. Values matching common credential forms are
-redacted; JSON is canonical, validated after serialization, and atomically
-written only after validation.
+## Verification limitations
 
-## Optional claim verification
+`--verify` decomposes the editorial draft into claims, retrieves bounded complete source cores, classifies claims as `supported`, `contradicted`, `insufficiently_supported`, or `not_meaningfully_verifiable`, and may qualify, replace, or remove a problematic span within the repair budget. A `supported` verdict is evidence-scoped, not proof of factual perfection. Retrieval can be incomplete, and malformed verification, capacity failures, or unresolved material contradictions fail closed. Verification uses the selected provider by default and can consume additional requests and budget.
 
-`PipelineConfig.verification` is disabled by default, so existing library
-callers keep the same readable final text, provider calls, and citation behavior.
-Verification is currently a library option; issue #12 owns CLI exposure when it
-replaces the transitional legacy workflow.
+The offline evaluator uses a deterministic, source-sensitive fake provider. It tests orchestration, provenance, source mutation behavior, and rubric evidence; it does not measure live-model coherence or quality. Live OpenAI/Ollama quality must be inspected separately and is not guaranteed by this project.
 
-When enabled, finalization verifies the editorial draft before citations are
-rendered. By default it uses the same provider, model, token counter, timeout,
-and context window as summarization. A caller may instead inject a complete
-dedicated `VerificationRuntime`; supplying only a model is intentionally not a
-configuration path.
+## Migration from the original workflow
 
-Verification decomposes locally derived sentence spans, retrieves only bounded
-complete source cores from the root's recorded provenance, and classifies each
-claim with validated structured results. A contradicted eligible span can be
-qualified, replaced, or removed once within the default repair budget; the
-complete repaired draft is then decomposed and verified again. Retrieval is
-bounded: `insufficiently_supported` means the selected evidence did not settle
-the claim, not that the source lacks support. Likewise, `supported` is an
-evidence-scoped verifier assessment, not proof of factual perfection.
+The no-argument contract remains:
 
-Malformed verification, a capacity failure, or an unresolved material
-contradiction fails closed. If auditing is configured, finalization writes a
-validated terminal `audit/2` record before withholding the reader-facing
-summary; citations are rendered only after successful verification. Audit
-metadata keeps pass identifiers, hashes, verdicts, evidence links, repairs,
-usage, and closed limitation/failure codes, while excluding claim, draft,
-replacement, quote, and source prose.
+```sh
+python main.py   # reads input.txt, writes output.txt
+```
 
-## Reliability, cache, and resume
+The migration intentionally changes the internals and several controls:
 
-Reliability is opt-in for library callers. Set `PipelineConfig.cache.enabled`,
-provide a stable `ReliabilityConfig.run_id`, and select `run_mode="new"` or
-`run_mode="resume"`. The default root is `.summarizer-cache/`, which is ignored
-by Git. `max_in_flight` defaults to `1`; values above one bound concurrent leaf
-calls and independent merge groups without changing their source order or merge
-level barriers.
+- fixed character-size sentence chunks, independent summaries, and newline concatenation are replaced by token-aware segmentation, direct or hierarchical execution, and a final editorial synthesis;
+- `--chunk-size` and `--max-chunks` are removed rather than accepted as misleading aliases; use `--chunk-tokens`, `--strategy`, `--max-direct-tokens`, or `--max-merge-children` for the new controls;
+- the old sentence-tokenizer injection seam is replaced by a token-counter seam for the pipeline;
+- dry-run no longer writes the source or a final output and does not construct a provider; it reports budget/strategy only;
+- model/provider settings are runtime options, with `OPENAI_API_KEY` supplied through the environment and Ollama usable without a key;
+- failures use nonzero exit status and never become summary text or misleading partial output;
+- the historical `omscs-ml-lectures/` scripts and input data remain untouched and are not the modern entry point.
 
-The cache is JSON-only. It stores immutable, content-addressed stage objects
-under `objects/` and a versioned JSON manifest per run under `runs/`. A new run
-may adopt any compatible validated object already in the cache and immediately
-records that reference in its manifest. A resumed run trusts only its manifest's
-references. Missing, corrupt, wrong-version, or incompatible objects are safe
-misses and are recomputed.
+No `.env` file is loaded automatically. Existing automation should export its credentials and migrate removed flags before invoking the CLI.
 
-Only parsed and locally validated terminal results are reusable. That includes
-validated segmentation, grounded direct/leaf/merge records, a parsed editorial
-draft, and verification only when `VerificationResult.failed` is false. Raw
-provider responses, exceptions, ambiguous or failed work items, and failed
-verification never become cache references. A successful sibling observed while
-a failed leaf or merge batch drains is validated and checkpointed independently.
-Cache files can contain source-derived or generated
-text, so directories are created with mode `0700` and files with mode `0600`.
-Descriptors and audit projections exclude application credentials, hosts,
-paths, prompts, request bodies, and raw provider errors. Cached payloads can
-still reproduce credential-like text found in the source artifact, so the cache
-root remains sensitive local data and is not encrypted.
-
-Reliability-enabled `audit/3` records closed cache hit/miss reasons and retry
-counts without raw provider errors. Entries follow the manifest's stable work
-order even when calls finish concurrently. Verification decomposition,
-classification, repair, and later passes aggregate under the stable `V01` work
-identifier rather than exposing their provider completion order.
-
-When cache reliability and `PipelineConfig.audit_path` are both enabled,
-`run_pipeline` publishes a validated `audit/3` artifact to that path before it
-atomically replaces `AppConfig.output_path` with the readable summary. The run
-manifest records both SHA-256 digests and moves through `audit_staged` to
-`complete`; `read_published_summary` accepts the summary only when both files
-match a complete manifest. Resume can finish a missing completion marker or
-republish a damaged pair. This is a recoverable protocol, not cross-path
-atomicity. Calls sharing an output pair are serialized within one process, so
-separate processes must not publish different runs to the same output paths.
-
-Without this opt-in combination, `run_pipeline` returns its final result in
-memory and retains the existing standalone audit behavior. The CLI exposes
-neither cache/resume nor reliable paired publication yet.
-
-Historical scripts under `omscs-ml-lectures/` remain available but are not part of the modern application entry point.
-
-## Tests
+## Tests and offline evaluation
 
 Install development dependencies and run the offline suite:
 
@@ -284,10 +185,16 @@ python -m pytest -q
 python -m pytest -q --import-mode=importlib
 ```
 
-The suite blocks outbound socket connections and uses deterministic provider
-fakes. It does not require an OpenAI credential, a running Ollama service, or a
-locally installed model.
+The suite blocks outbound network access and uses deterministic provider fakes. It does not require an API key, an Ollama service, or a downloaded model. Relevant coverage includes `tests/test_ingestion.py`, `tests/test_tokenization.py`, `tests/test_segmentation.py`, `tests/test_budget.py`, `tests/test_hierarchy.py`, `tests/test_pipeline.py`, `tests/test_cli.py`, `tests/test_documented_cli.py`, the provider tests under `tests/providers/`, reliability tests (`tests/test_cache.py`, `tests/test_checkpoint.py`, `tests/test_pipeline_reliability.py`, `tests/test_scheduler.py`), audit/publication tests, and verification tests.
 
-## Contributing
+The repeatable five-genre integration evaluator is:
 
-For major changes, open an issue before submitting a pull request.
+```sh
+python -m tests.support.evaluation --output-dir <temporary-directory>
+```
+
+It writes one `evaluation.json` plus per-case audit artifacts in the requested temporary directory. `tests/test_evaluation.py` validates the deterministic fake, direct/auto paths, multi-level hierarchy, citations, provenance, audit links, and source-sensitive mutation behavior. See [docs/evaluation.md](docs/evaluation.md) for the rubric, output schema, manual inspection procedure, regression dispositions, and parent definition-of-done evidence map. Do not commit evaluator output, caches, credentials, or temporary files.
+
+## Limitations
+
+The system is an orchestration and grounding implementation, not a guarantee of model truth. Conservative token estimates can reduce packing efficiency; context-window tables are maintained metadata and may require `--context-window`; large or unusual blocks can be split at a hard fallback boundary. Ollama and OpenAI differ in transport behavior, so provider errors remain possible. Verification is best effort and bounded. OCR, audio, external research, GUI operation, and cross-process shared publication are outside the supported scope.

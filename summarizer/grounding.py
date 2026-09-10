@@ -6,6 +6,7 @@ import json
 from dataclasses import dataclass
 from collections.abc import Callable, Mapping, Sequence
 
+from summarizer.budget import BudgetError
 from summarizer.summaries import EvidenceItem, SummaryNode
 from summarizer.tokenization import TokenCounter
 
@@ -117,12 +118,12 @@ def select_source_passages(
             passages.append(passage)
             selected_ids.append(identifier)
         elif mandatory:
-            raise ValueError(
+            raise BudgetError(
                 f"grounding reserve cannot hold mandatory evidence for {identifier}"
             )
 
     if not passages:
-        raise ValueError("grounding reserve cannot hold a source passage")
+        raise BudgetError("grounding reserve cannot hold a source passage")
     omitted_ids = tuple(identifier for identifier, _ in candidates if identifier not in selected_ids)
     return GroundingSelection(
         passages=tuple(passages),

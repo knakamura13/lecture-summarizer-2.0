@@ -85,3 +85,7 @@ The offline corpus supplies five compact, fictional source genres for future eva
 - `narrative.txt` is a chronological field account whose observations do not establish a final cause.
 
 The existing `omscs-ml-lectures/` historical lecture data remains unchanged by this baseline harness.
+
+## Historical status
+
+This file is a characterization of the pre-hierarchy and transitional Issue #3 behavior. After the Issue #12 integration cutover, statements above that say the legacy workflow is “current” or “transitional” describe the historical snapshot, not the modern CLI. The final CLI keeps the no-argument `input.txt` to `output.txt` contract but uses token-aware direct/hierarchical execution, removes `--chunk-size` and `--max-chunks`, and makes dry-run a budget/strategy report with no provider construction or final-output write. The regression dispositions and final evidence map are maintained in [docs/evaluation.md](evaluation.md); the historical fixture and lecture data remain unchanged.

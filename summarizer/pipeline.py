@@ -1,4 +1,4 @@
-"""Library-only orchestration from canonical source to final editorial output."""
+"""Orchestrate canonical source ingestion through final editorial output."""
 
 from __future__ import annotations
 
@@ -301,12 +301,7 @@ def _run_pipeline(
     report: BudgetReport,
     coordinator: CacheCoordinator | None,
 ) -> PipelineResult:
-    """Execute direct or hierarchical library stages, then final editorial writing.
-
-    This is deliberately not wired into the command line. The workflow has a
-    complete library seam now while #12 remains responsible for replacing the
-    transitional legacy CLI path.
-    """
+    """Execute direct or hierarchical stages, then final editorial writing."""
     reliability_tracker = (
         coordinator.reliability_tracker if coordinator is not None else None
     )

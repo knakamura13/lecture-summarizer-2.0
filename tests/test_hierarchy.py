@@ -266,6 +266,68 @@ def test_every_grounded_merge_request_fits_the_usable_budget() -> None:
         assert measure_merge_request_tokens(request, CharacterCounter()) <= 10_000
 
 
+def test_adaptive_default_shrinks_fanout_to_fit_mandatory_grounding() -> None:
+    """A default (adaptive) reserve must not starve a group's mandatory source.
+
+    Regression: sizing fanout purely from child cost could pack every leaf
+    into one merge group, leaving no budget left for a segment's mandatory
+    evidence, and fail outright even though a smaller group's mandatory
+    source would have fit. The group must shrink instead.
+    """
+    from summarizer.merge import measure_merge_overhead
+
+    counter = CharacterCounter()
+
+    def uncertain_leaf(index: int) -> SummaryNode:
+        return SummaryNode.model_validate(
+            {
+                "summary": f"leaf {index}",
+                "content_units": [
+                    {
+                        "text": f"An uncertain claim {index}.",
+                        "kind": "claim",
+                        "evidence": [{"segment_id": f"S{index:06d}", "quote": None}],
+                        "qualification": None,
+                        "uncertain": True,
+                    }
+                ],
+                "entities": [],
+                "qualifications": [],
+                "contradictions": [],
+                "quotations": [],
+                "provenance": [f"S{index:06d}"],
+                "level": 0,
+            }
+        )
+
+    three_leaves = [uncertain_leaf(index) for index in (1, 2, 3)]
+    overhead = measure_merge_overhead(counter, level=1)
+    child_cost = measure_child_tokens(three_leaves[0], counter)
+    source_length = 500
+    # Sized so all three children fit together with room to spare, but their
+    # combined mandatory evidence (3 x source_length) does not; only a
+    # two-member group's mandatory evidence (2 x source_length) fits.
+    usable_tokens = overhead + 2 * child_cost + 2 * source_length + 300
+
+    root, nodes, report = build_hierarchy(
+        three_leaves,
+        MergingProvider(),
+        counter,
+        source_id=SOURCE_ID,
+        covered=covered_for(3),
+        attributable={
+            f"S{index:06d}": "y" * source_length for index in (1, 2, 3)
+        },
+        usable_tokens=usable_tokens,
+        model="m",
+        timeout_seconds=30,
+    )
+
+    assert root.level == report.level_count
+    assert report.leaf_count == 3
+    assert len([node for node in nodes if node.level == 0]) == 3
+
+
 def test_authoritative_source_can_correct_a_misleading_child_summary() -> None:
     class CorrectingProvider:
         def __init__(self) -> None:

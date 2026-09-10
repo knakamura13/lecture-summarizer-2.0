@@ -230,7 +230,10 @@ def build_hierarchy(
     if len(covered) != len(leaves):
         raise ValueError("each leaf needs its covered segment identifiers")
 
-    policy = grounding_policy or DEFAULT_GROUNDING_POLICY
+    configured_policy = (
+        grounding_policy if grounding_policy is not None else DEFAULT_GROUNDING_POLICY
+    )
+    adaptive_grounding = grounding_policy is None
     prepared_leaves: list[SummaryNode] = []
     prepared_covered: list[tuple[str, ...]] = []
     for index, (leaf, identifiers) in enumerate(zip(leaves, covered), start=1):
@@ -285,57 +288,83 @@ def build_hierarchy(
     while len(current) > 1:
         level += 1
         overhead = measure_merge_overhead(counter, level=level)
-        child_capacity = usable_tokens - overhead - policy.max_tokens
+        child_capacity = usable_tokens - overhead
+        if not adaptive_grounding:
+            child_capacity -= configured_policy.max_tokens
         if child_capacity <= 0:
+            reserve = (
+                configured_policy.max_tokens if not adaptive_grounding else 0
+            )
             raise BudgetError(
                 f"no room for generated children in a grounded merge request at "
                 f"level {level}: {usable_tokens} usable tokens leave no room after "
-                f"{overhead} tokens of merge overhead and {policy.max_tokens} "
+                f"{overhead} tokens of merge overhead and {reserve} "
                 "tokens reserved for source grounding"
             )
-        fanout, reason = merge_fanout(
-            [node.summary for node in current],
-            counter,
-            capacity=child_capacity,
-            ceiling=max_merge_children,
-        )
-        groups = group_children(len(current), fanout)
-        prepared: list[_PreparedMerge] = []
-        passthrough: dict[int, TreeNode] = {}
-        for order, indices in enumerate(groups):
-            members = [current[index] for index in indices]
-            if len(members) == 1:
-                # Pass a lone node upward without a call; the count still
-                # falls because other groups merged.
-                only = members[0]
-                passthrough[order] = TreeNode(
-                    node_id=f"L{level}N{order + 1:04d}",
-                    level=level,
-                    order=order,
-                    # Restamped: the merged path asserts that a node's
-                    # summary reports its own level, and this path is fed
-                    # into the next level's payload, so a stale value
-                    # would show the model children at mixed levels.
-                    summary=only.summary.model_copy(update={"level": level}),
-                    children=(only.node_id,),
-                    covered_segments=only.covered_segments,
-                )
-                continue
-            prepared.append(
-                _prepare_merge(
-                    members,
-                    attributable=attributable,
-                    level=level,
-                    order=order,
-                    source_id=source_id,
-                    model=model,
-                    timeout_seconds=timeout_seconds,
-                    counter=counter,
-                    usable_tokens=usable_tokens,
-                    grounding_policy=policy,
-                    coordinator=coordinator,
-                )
+        # An adaptive default has no fixed source reserve, so a fanout sized
+        # purely from children can leave no room for a group's mandatory
+        # source evidence. Retry with a narrower fanout when that happens;
+        # a fanout that already cannot drop below a pair propagates the
+        # failure, matching the fixed-policy path's fail-closed behavior.
+        ceiling = max_merge_children
+        while True:
+            fanout, reason = merge_fanout(
+                [node.summary for node in current],
+                counter,
+                capacity=child_capacity,
+                ceiling=ceiling,
             )
+            groups = group_children(len(current), fanout)
+            prepared: list[_PreparedMerge] = []
+            passthrough: dict[int, TreeNode] = {}
+            try:
+                for order, indices in enumerate(groups):
+                    members = [current[index] for index in indices]
+                    if len(members) == 1:
+                        # Pass a lone node upward without a call; the count
+                        # still falls because other groups merged.
+                        only = members[0]
+                        passthrough[order] = TreeNode(
+                            node_id=f"L{level}N{order + 1:04d}",
+                            level=level,
+                            order=order,
+                            # Restamped: the merged path asserts that a
+                            # node's summary reports its own level, and this
+                            # path is fed into the next level's payload, so
+                            # a stale value would show the model children
+                            # at mixed levels.
+                            summary=only.summary.model_copy(update={"level": level}),
+                            children=(only.node_id,),
+                            covered_segments=only.covered_segments,
+                        )
+                        continue
+                    prepared.append(
+                        _prepare_merge(
+                            members,
+                            attributable=attributable,
+                            level=level,
+                            order=order,
+                            source_id=source_id,
+                            model=model,
+                            timeout_seconds=timeout_seconds,
+                            counter=counter,
+                            usable_tokens=usable_tokens,
+                            grounding_policy=(
+                                GroundingPolicy(max_tokens=usable_tokens)
+                                if adaptive_grounding
+                                else configured_policy
+                            ),
+                            configured_grounding_policy=configured_policy,
+                            adaptive_grounding=adaptive_grounding,
+                            coordinator=coordinator,
+                        )
+                    )
+            except BudgetError:
+                if not adaptive_grounding or fanout <= 2:
+                    raise
+                ceiling = fanout - 1
+                continue
+            break
 
         # Every request, descriptor, and legal grounding scope is frozen before
         # a sibling can call the provider. The manifest therefore witnesses the
@@ -432,7 +461,9 @@ def _prepare_merge(
     counter: TokenCounter,
     usable_tokens: int,
     grounding_policy: GroundingPolicy,
+    configured_grounding_policy: GroundingPolicy,
     coordinator: CacheCoordinator | None,
+    adaptive_grounding: bool,
 ) -> _PreparedMerge:
     node_id = f"L{level}N{order + 1:04d}"
     # A union in document order: deduplicated, first occurrence wins. Three
@@ -455,12 +486,21 @@ def _prepare_merge(
         )
     legal = {identifier: attributable[identifier] for identifier in covered}
 
-    selection = select_source_passages(
-        [member.summary for member in members],
-        source=legal,
-        counter=counter,
-        policy=grounding_policy,
-        selection_cost=lambda passages: counter.count(
+    def selection_cost(passages: tuple[SourcePassage, ...]) -> int:
+        if adaptive_grounding:
+            candidate = replace(
+                build_merge_request(
+                    [member.summary for member in members],
+                    passages=passages,
+                    level=level,
+                    source_id=source_id,
+                    model=model,
+                    timeout_seconds=timeout_seconds,
+                ),
+                audit_work_id=node_id,
+            )
+            return measure_merge_request_tokens(candidate, counter)
+        return counter.count(
             "\n".join(
                 serialize_source_passage_block(
                     passage,
@@ -470,7 +510,14 @@ def _prepare_merge(
                 )
                 for ordinal, passage in enumerate(passages)
             )
-        ),
+        )
+
+    selection = select_source_passages(
+        [member.summary for member in members],
+        source=legal,
+        counter=counter,
+        policy=grounding_policy,
+        selection_cost=selection_cost,
     )
     grounded = {passage.segment_id: passage.text for passage in selection.passages}
     request = build_merge_request(
@@ -504,11 +551,12 @@ def _prepare_merge(
                 "instructions": request.instructions,
                 "input_text": request.input_text,
                 "schema": request.response_schema,
-                "grounding_max_tokens": grounding_policy.max_tokens,
+                "grounding_max_tokens": configured_grounding_policy.max_tokens,
+                "effective_grounding_max_tokens": grounding_policy.max_tokens,
                 "usable_tokens": usable_tokens,
             },
             behavior={
-                "grounding": {"max_tokens": grounding_policy.max_tokens},
+                "grounding": {"max_tokens": configured_grounding_policy.max_tokens},
                 "grounding_policy": "grounding/1",
             },
         )

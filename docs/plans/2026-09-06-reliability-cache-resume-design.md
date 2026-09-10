@@ -63,10 +63,11 @@ drains is validated and stored independently.
 Cached summaries and verification data can contain source-derived text. New
 object and manifest files are created with mode `0600` (directories `0700`),
 and the `.gitignore` entry `.summarizer-cache/` covers objects,
-manifests, locks, and temporary files. The cache contains no credentials;
-descriptor and audit projections retain no cache root, paths, hosts, endpoints,
-or secret material. The cache is not encrypted and must still be treated as
-sensitive local data.
+manifests, locks, and temporary files. Descriptor, manifest, and audit
+projections exclude application credentials supplied outside the source, along
+with cache roots, paths, hosts, endpoints, prompts, requests, and raw provider
+errors. Cached source-derived payloads may still contain credential-like source
+text. The cache is not encrypted and must be treated as sensitive local data.
 
 ## Validation and atomicity
 
@@ -153,9 +154,11 @@ enabled.
 
 Each failed attempt produces safe metadata: attempt number, closed error
 category, planned delay, observation time, and exhaustion state. Provider
-messages, request data, endpoint details, and credentials are not retained.
-Audit/3 projects retry activity into closed counts and failure codes rather than
-copying raw attempt data.
+messages, request data, endpoint details, and application credentials are not
+retained. Audit/3 projects successful and exhausted retry activity into attempt
+counts and closed failure codes rather than copying raw attempt data. Cache and
+retry entries follow manifest work order, independent of concurrent completion
+order; all verification phases and passes aggregate under stable work ID `V01`.
 
 ## Audit version evolution
 
@@ -166,11 +169,11 @@ artifacts use `audit/3`. Serialization and reads select a version-discriminated
 artifact model (or equivalent union) by `schema_version`; migration never
 reinterprets an `audit/2` payload as `audit/3`.
 
-`audit/3` adds only closed cache hit/miss/invalidation reasons, resume state,
-and retry attempt metadata. It excludes cache roots and other paths, source or
-generated prose, prompts, request data, hosts, endpoints, and secrets. Issue
-#12's CLI migration documentation must describe the version choice and continue
-to accept historical `audit/2` records.
+`audit/3` adds only closed cache outcome codes, resume state, and retry attempt
+metadata. It excludes cache roots and other paths, source or generated prose,
+prompts, request data, hosts, endpoints, raw errors, and application secrets.
+Issue #12's CLI migration documentation must describe the version choice and
+continue to accept historical `audit/2` records.
 
 ## Final publication protocol
 
@@ -201,11 +204,14 @@ to shared output paths across processes; callers must avoid that configuration.
 ## Failure semantics
 
 Cache corruption and incompatibility are safe misses with closed reasons.
-Transient provider exhaustion, terminal provider errors, validation failures,
-and scheduler failures are checkpointed with safe metadata and leave final
-publication incomplete. Existing claim-verification terminal failures retain
-their current fail-closed behavior: a validated failure audit may be written,
-but no reader-facing final summary or citations are published for that run.
+Scheduler-managed leaf and merge failures drain observable siblings, checkpoint
+validated successes plus safe non-reusable state, and leave final publication
+incomplete. Sequential direct, editorial, and verification computation failures
+are not recorded in the manifest's scheduler failure fields; their unsuccessful
+results remain uncached and publication remains incomplete. Existing
+claim-verification terminal failures retain their fail-closed behavior: a
+validated failure audit may be written, but no reader-facing final summary or
+citations are published for that run.
 
 ## Testing and migration
 
@@ -223,7 +229,8 @@ clock/RNG/sleeper, and fault-injected filesystem calls. Coverage includes:
   leaves where one fails and its sibling succeeds during drain; resume must not
   repeat that sibling call and must retain stable work ordering;
 - transient-only retries, deterministic bounded jitter, immediate terminal
-  errors, attempt metadata, and exhaustion;
+  errors, successful and exhausted attempt metadata, manifest-ordered audit
+  projection, and stable `V01` verification aggregation;
 - `audit/2` read/validation compatibility, `audit/3` version discrimination,
   and audit metadata redaction with closed cache/resume/retry codes; and
 - audit-first, summary-last publication failures and completion-marker recovery.

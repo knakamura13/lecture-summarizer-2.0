@@ -242,12 +242,21 @@ misses and are recomputed.
 Only parsed and locally validated terminal results are reusable. That includes
 validated segmentation, grounded direct/leaf/merge records, a parsed editorial
 draft, and verification only when `VerificationResult.failed` is false. Raw
-provider responses, exceptions, partial batches, and failed verification never
-become cache references. Cache files can contain source-derived or generated
+provider responses, exceptions, ambiguous or failed work items, and failed
+verification never become cache references. A successful sibling observed while
+a failed leaf or merge batch drains is validated and checkpointed independently.
+Cache files can contain source-derived or generated
 text, so directories are created with mode `0700` and files with mode `0600`.
-Descriptors and audit projections exclude credentials, hosts, paths, prompts,
-request bodies, and raw provider errors, but the cache root itself remains
-sensitive local data and is not encrypted.
+Descriptors and audit projections exclude application credentials, hosts,
+paths, prompts, request bodies, and raw provider errors. Cached payloads can
+still reproduce credential-like text found in the source artifact, so the cache
+root remains sensitive local data and is not encrypted.
+
+Reliability-enabled `audit/3` records closed cache hit/miss reasons and retry
+counts without raw provider errors. Entries follow the manifest's stable work
+order even when calls finish concurrently. Verification decomposition,
+classification, repair, and later passes aggregate under the stable `V01` work
+identifier rather than exposing their provider completion order.
 
 When cache reliability and `PipelineConfig.audit_path` are both enabled,
 `run_pipeline` publishes a validated `audit/3` artifact to that path before it

@@ -1,6 +1,9 @@
 # Reliability, Cache, and Resume Implementation Plan
 
-> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+**Status:** Implemented and acceptance-tested.
+
+This file preserves the TDD execution sequence. Its RED expectations describe
+the pre-implementation state, not current behavior.
 
 **Goal:** Add opt-in local cache/resume, bounded concurrency, typed retry,
 `audit/3`, and recoverable publication to the library pipeline.
@@ -398,10 +401,10 @@ git commit -m "chore: document reliable pipeline behavior"
 | --- | --- |
 | Canonical descriptors, JSON sharding, restrictive modes, immutable writes, and typed safe misses | `tests/test_cache.py` |
 | Compatible manifests, stable work prefixes, run locking, and referenced-only resume | `tests/test_checkpoint.py` |
-| Transient-only bounded retry, deterministic jitter, safe attempt records, and immediate terminal errors | `tests/providers/test_retrying.py`, `tests/providers/test_base.py` |
-| Bounded in-flight work, stable result order, drained-success checkpoints, and failure latching | `tests/test_scheduler.py` |
+| Transient-only bounded retry, deterministic jitter, successful/exhausted audit counts, stable `V01` verification aggregation, and immediate terminal errors | `tests/providers/test_retrying.py`, `tests/providers/test_base.py`, `tests/test_pipeline_reliability.py` |
+| Bounded leaf/merge work, stable result order, drained-success checkpoints, and scheduler failure latching | `tests/test_scheduler.py`, `tests/test_pipeline_reliability.py` |
 | Validated segmentation/direct/leaf/merge/editorial reuse, new-run adoption, resume call counts, and failed-verification exclusion | `tests/test_pipeline_reliability.py`, `tests/test_verification_integration.py` |
-| Strict audit/2 compatibility, version-discriminated audit/3, and safe closed reliability metadata | `tests/test_audit.py`, `tests/test_audit_reliability.py`, `tests/test_verification_audit.py` |
+| Strict audit/2 compatibility, version-discriminated audit/3, and manifest-ordered closed reliability metadata | `tests/test_audit.py`, `tests/test_audit_reliability.py`, `tests/test_verification_audit.py`, `tests/test_pipeline_reliability.py` |
 | Audit-first and summary-last publication, digest witness recovery, reader rejection, and same-process output-pair serialization | `tests/test_publication.py`, `tests/test_pipeline_reliability.py` |
 
 The implementation retains the scope boundaries in the design: JSON rather

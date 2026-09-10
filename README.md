@@ -4,10 +4,11 @@ This project is being rebuilt as a generalized, source-grounded hierarchical sum
 
 Canonical ingestion, token-aware segmentation, structured leaf summarization, token-budget arithmetic, whole-document direct summarization, and multi-level hierarchical merging are now available as library components in `summarizer.ingestion`, `summarizer.tokenization`, `summarizer.segmentation`, `summarizer.summaries`, `summarizer.leaf`, `summarizer.budget`, `summarizer.direct`, `summarizer.merge`, and `summarizer.hierarchy`. The command-line workflow still runs the legacy flat, sentence-chunked path and does not consume them yet.
 
-Source grounding across merge levels and the library-level final editorial,
-citation, audit, and optional claim-verification stages are available.
-Concurrency, quality evaluation, and command-line integration of the new
-pipeline remain future work.
+Source grounding, claim verification, audit/2 and audit/3 with reliability
+metadata, opt-in caching with resumable execution, bounded concurrency, and a
+recoverable final-output publication protocol are available at the library
+boundary. The command line still uses the transitional legacy workflow; its
+migration to the hierarchical pipeline is separate work.
 
 ## Requirements
 
@@ -221,6 +222,55 @@ summary; citations are rendered only after successful verification. Audit
 metadata keeps pass identifiers, hashes, verdicts, evidence links, repairs,
 usage, and closed limitation/failure codes, while excluding claim, draft,
 replacement, quote, and source prose.
+
+## Reliability, cache, and resume
+
+Reliability is opt-in for library callers. Set `PipelineConfig.cache.enabled`,
+provide a stable `ReliabilityConfig.run_id`, and select `run_mode="new"` or
+`run_mode="resume"`. The default root is `.summarizer-cache/`, which is ignored
+by Git. `max_in_flight` defaults to `1`; values above one bound concurrent leaf
+calls and independent merge groups without changing their source order or merge
+level barriers.
+
+The cache is JSON-only. It stores immutable, content-addressed stage objects
+under `objects/` and a versioned JSON manifest per run under `runs/`. A new run
+may adopt any compatible validated object already in the cache and immediately
+records that reference in its manifest. A resumed run trusts only its manifest's
+references. Missing, corrupt, wrong-version, or incompatible objects are safe
+misses and are recomputed.
+
+Only parsed and locally validated terminal results are reusable. That includes
+validated segmentation, grounded direct/leaf/merge records, a parsed editorial
+draft, and verification only when `VerificationResult.failed` is false. Raw
+provider responses, exceptions, ambiguous or failed work items, and failed
+verification never become cache references. A successful sibling observed while
+a failed leaf or merge batch drains is validated and checkpointed independently.
+Cache files can contain source-derived or generated
+text, so directories are created with mode `0700` and files with mode `0600`.
+Descriptors and audit projections exclude application credentials, hosts,
+paths, prompts, request bodies, and raw provider errors. Cached payloads can
+still reproduce credential-like text found in the source artifact, so the cache
+root remains sensitive local data and is not encrypted.
+
+Reliability-enabled `audit/3` records closed cache hit/miss reasons and retry
+counts without raw provider errors. Entries follow the manifest's stable work
+order even when calls finish concurrently. Verification decomposition,
+classification, repair, and later passes aggregate under the stable `V01` work
+identifier rather than exposing their provider completion order.
+
+When cache reliability and `PipelineConfig.audit_path` are both enabled,
+`run_pipeline` publishes a validated `audit/3` artifact to that path before it
+atomically replaces `AppConfig.output_path` with the readable summary. The run
+manifest records both SHA-256 digests and moves through `audit_staged` to
+`complete`; `read_published_summary` accepts the summary only when both files
+match a complete manifest. Resume can finish a missing completion marker or
+republish a damaged pair. This is a recoverable protocol, not cross-path
+atomicity. Calls sharing an output pair are serialized within one process, so
+separate processes must not publish different runs to the same output paths.
+
+Without this opt-in combination, `run_pipeline` returns its final result in
+memory and retains the existing standalone audit behavior. The CLI exposes
+neither cache/resume nor reliable paired publication yet.
 
 Historical scripts under `omscs-ml-lectures/` remain available but are not part of the modern application entry point.
 

@@ -6,24 +6,30 @@ import hashlib
 import json
 import re
 import unicodedata
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, replace
 from enum import Enum
-from typing import Callable, TypeVar
+from typing import Literal, TypeVar
 
 from nltk.tokenize.punkt import PunktSentenceTokenizer
-from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    TypeAdapter,
+    ValidationError,
+    field_validator,
+)
 
-from summarizer.leaf import _describe, _extract_json_object, _sanitize
 from summarizer.grounding import SourcePassage, serialize_source_passage
+from summarizer.leaf import _describe, _extract_json_object, _sanitize
 from summarizer.providers.base import (
     GenerationRequest,
     GenerationResult,
     ModelProvider,
     ProviderError,
 )
+from summarizer.segmentation import CacheCoordinator
 from summarizer.tokenization import TokenCounter
-
 
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 _SPAN_ID = re.compile(r"^V(?P<pass>\d{2})S\d{6}$")
@@ -79,6 +85,7 @@ class VerificationRuntime:
     model: str
     timeout_seconds: float
     context_window_tokens: int
+    provider_identity: Literal["openai", "ollama"] = "openai"
 
     def __post_init__(self) -> None:
         if not self.model.strip():
@@ -87,6 +94,8 @@ class VerificationRuntime:
             raise ValueError("timeout_seconds must be positive")
         if self.context_window_tokens <= 0:
             raise ValueError("context_window_tokens must be positive")
+        if self.provider_identity not in ("openai", "ollama"):
+            raise ValueError("provider_identity must be openai or ollama")
 
 
 @dataclass(frozen=True)
@@ -144,9 +153,8 @@ class EvidenceSelection:
             raise ValueError("invalid claim_id")
         if self.token_cost < 0 or not self.retrieval_method.strip():
             raise ValueError("invalid evidence selection metadata")
-        if len(set((*self.examined_ids, *self.omitted_ids))) != len(
-            (*self.examined_ids, *self.omitted_ids)
-        ):
+        all_ids = (*self.examined_ids, *self.omitted_ids)
+        if len(set(all_ids)) != len(all_ids):
             raise ValueError("examined and omitted evidence must be unique")
         if not set(self.selected_ids).issubset(self.examined_ids):
             raise ValueError("selected evidence must have been examined")
@@ -189,9 +197,11 @@ class BatchFinding:
     def __post_init__(self) -> None:
         if not _CLAIM_ID.fullmatch(self.claim_id):
             raise ValueError("invalid claim_id")
-        if self.verdict in {ClaimVerdict.SUPPORTED, ClaimVerdict.CONTRADICTED}:
-            if not self.evidence_ids:
-                raise ValueError("verdict requires evidence")
+        if (
+            self.verdict in {ClaimVerdict.SUPPORTED, ClaimVerdict.CONTRADICTED}
+            and not self.evidence_ids
+        ):
+            raise ValueError("verdict requires evidence")
         if len(self.evidence_ids) != len(self.exact_quotes):
             raise ValueError("each evidence item requires one exact quote")
         if len(set(self.evidence_ids)) != len(self.evidence_ids):
@@ -758,10 +768,11 @@ class _RepairResponse(BaseModel):
 DECOMPOSITION_PROMPT_VERSION = "verification-decomposition/1"
 CLASSIFICATION_PROMPT_VERSION = "verification-classification/1"
 REPAIR_PROMPT_VERSION = "verification-repair/1"
+VERIFICATION_AUDIT_WORK_ID = "V01"
 
 
 def _request_fence(*, version: str, source_id: str, label: str) -> str:
-    digest = hashlib.sha256(f"{version}:{source_id}:{label}".encode("utf-8")).hexdigest()
+    digest = hashlib.sha256(f"{version}:{source_id}:{label}".encode()).hexdigest()
     return f"-----{label} {digest[:16]}-----"
 
 
@@ -805,6 +816,7 @@ def build_decomposition_request(
         input_text=f"{begin}\n{payload}\n{end}",
         timeout_seconds=runtime.timeout_seconds,
         operation_id=f"verification-decompose:{pass_prefix}",
+        audit_work_id=VERIFICATION_AUDIT_WORK_ID,
         response_schema=_AnchorResponse.model_json_schema(),
         schema_name="verification_claim_anchors",
     )
@@ -865,6 +877,7 @@ def build_classification_request(
         input_text=f"{begin}\n{payload}\n{end}",
         timeout_seconds=runtime.timeout_seconds,
         operation_id=f"verification-classify:{pass_prefix}",
+        audit_work_id=VERIFICATION_AUDIT_WORK_ID,
         response_schema=_FindingResponse.model_json_schema(),
         schema_name="verification_claim_findings",
     )
@@ -918,6 +931,7 @@ def build_repair_request(
         input_text=f"{begin}\n{payload}\n{end}",
         timeout_seconds=runtime.timeout_seconds,
         operation_id=f"verification-repair:{pass_prefix}",
+        audit_work_id=VERIFICATION_AUDIT_WORK_ID,
         response_schema=_RepairResponse.model_json_schema(),
         schema_name="verification_repairs",
     )
@@ -1027,7 +1041,7 @@ def parse_claim_anchors(
         raise VerificationResponseError("claim-decomposition: missing span result")
     if len({group.span_id for group in response.spans}) != len(response.spans):
         raise VerificationResponseError("claim-decomposition: duplicate span result")
-    if set(group.span_id for group in response.spans) != set(legal):
+    if {group.span_id for group in response.spans} != set(legal):
         raise VerificationResponseError("claim-decomposition: unknown span result")
 
     claims: list[Claim] = []
@@ -1504,6 +1518,85 @@ def verify_and_repair(
     source_index: SourceLexicalIndex,
     runtime: VerificationRuntime,
     config: VerificationConfig,
+    coordinator: CacheCoordinator | None = None,
+) -> VerificationResult:
+    """Reuse only a fully successful terminal verification result."""
+    if coordinator is None or not config.enabled:
+        return _verify_and_repair(
+            draft,
+            source_id=source_id,
+            source_index=source_index,
+            runtime=runtime,
+            config=config,
+        )
+    adapter = TypeAdapter(VerificationResult)
+    return coordinator.resolve(
+        stage="verification",
+        work_id="V01",
+        prompt_version="verification/1",
+        schema_version="verification/1",
+        input_value={
+            "source_id": source_id,
+            "draft": draft,
+            "source_index": _source_index_cache_identity(source_index),
+        },
+        behavior={
+            "verification": {
+                "evidence_tokens": config.evidence_tokens,
+                "request_tokens": config.request_tokens,
+                "output_reserve_tokens": config.output_reserve_tokens,
+                "safety_margin_tokens": config.safety_margin_tokens,
+                "max_repair_passes": config.max_repair_passes,
+                "verification_enabled": config.enabled,
+            }
+        },
+        decode=lambda payload: adapter.validate_python(payload),
+        encode=lambda result: adapter.dump_python(result, mode="json"),
+        compute=lambda: _verify_and_repair(
+            draft,
+            source_id=source_id,
+            source_index=source_index,
+            runtime=runtime,
+            config=config,
+        ),
+        cache_if=lambda result: not result.failed,
+    )
+
+
+def _source_index_cache_identity(source_index: SourceLexicalIndex) -> dict[str, object]:
+    """Bind cache reuse to every effective input to lexical evidence retrieval."""
+    return {
+        "format_version": "source-index/2",
+        "provenance": [
+            {
+                "segment_id": entry.segment_id,
+                "core_sha256": hashlib.sha256(entry.text.encode("utf-8")).hexdigest(),
+                "source_order": entry.source_order,
+                "terms_sha256": hashlib.sha256(
+                    json.dumps(
+                        sorted(entry.terms),
+                        ensure_ascii=False,
+                        separators=(",", ":"),
+                    ).encode("utf-8")
+                ).hexdigest(),
+            }
+            for entry in source_index.entries
+        ],
+        "retrieval": {
+            "algorithm": "lexical-overlap-source-order/1",
+            "term_normalization": "unicode-nfc-casefold/1",
+            "passage_unit": "source-core/1",
+        },
+    }
+
+
+def _verify_and_repair(
+    draft: str,
+    *,
+    source_id: str,
+    source_index: SourceLexicalIndex,
+    runtime: VerificationRuntime,
+    config: VerificationConfig,
     _pass_index: int = 1,
 ) -> VerificationResult:
     """Run finite verification/repair orchestration; disabled mode is zero-call."""
@@ -1776,7 +1869,7 @@ def verify_and_repair(
         for assessment in second.assessments
     )
     if failed and not second.failed and config.max_repair_passes > 1:
-        continued = verify_and_repair(
+        continued = _verify_and_repair(
             draft,
             source_id=source_id,
             source_index=source_index,

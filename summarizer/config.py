@@ -5,8 +5,43 @@ from math import isfinite
 from pathlib import Path
 from typing import Literal
 
-
 ProviderName = Literal["openai", "ollama"]
+
+
+@dataclass(frozen=True)
+class ReliabilityConfig:
+    """Conservative library defaults for opt-in cache/resume execution."""
+
+    max_in_flight: int = 1
+    run_mode: Literal["new", "resume"] = "new"
+    run_id: str | None = None
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.max_in_flight, int) or isinstance(
+            self.max_in_flight, bool
+        ) or self.max_in_flight <= 0:
+            raise ValueError("max_in_flight must be positive")
+        if self.run_mode not in ("new", "resume"):
+            raise ValueError("run_mode must be new or resume")
+        if self.run_mode == "resume" and not (self.run_id or "").strip():
+            raise ValueError("resume requires run_id")
+
+
+@dataclass(frozen=True)
+class CacheConfig:
+    """Opt-in local cache configuration for library callers."""
+
+    enabled: bool = False
+    root: Path = Path(".summarizer-cache")
+
+    def __post_init__(self) -> None:
+        if (
+            self.root == Path(".")
+            or self.root == Path(self.root.anchor)
+            or ".." in self.root.parts
+            or self.root.is_symlink()
+        ):
+            raise ValueError("root must name a contained cache directory")
 
 
 @dataclass(frozen=True)
@@ -42,6 +77,8 @@ class RetryPolicy:
     max_attempts: int = 5
     initial_delay_seconds: float = 1
     backoff_multiplier: float = 2
+    max_delay_seconds: float = 60
+    jitter_fraction: float = 0
 
     def __post_init__(self) -> None:
         if self.max_attempts <= 0:
@@ -56,6 +93,10 @@ class RetryPolicy:
             or self.backoff_multiplier <= 0
         ):
             raise ValueError("backoff_multiplier must be positive")
+        if not isfinite(self.max_delay_seconds) or self.max_delay_seconds <= 0:
+            raise ValueError("max_delay_seconds must be positive")
+        if not isfinite(self.jitter_fraction) or not 0 <= self.jitter_fraction <= 1:
+            raise ValueError("jitter_fraction must be between 0 and 1")
 
 
 @dataclass(frozen=True)

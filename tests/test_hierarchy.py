@@ -1,9 +1,15 @@
+import hashlib
 import json
 from dataclasses import dataclass
+from pathlib import Path
+from threading import Lock
+from time import sleep
 
 import pytest
 
 from summarizer.budget import BudgetError
+from summarizer.cache import CacheStore
+from summarizer.checkpoint import CheckpointStore, RunPlan
 from summarizer.grounding import GroundingPolicy
 from summarizer.hierarchy import (
     HierarchyError,
@@ -23,6 +29,7 @@ from summarizer.providers.base import (
     GenerationResult,
     ProviderConnectionError,
 )
+from summarizer.segmentation import CacheCoordinator
 from summarizer.summaries import SummaryNode
 
 SOURCE_ID = "a" * 64
@@ -225,7 +232,7 @@ def test_reduces_leaves_to_a_single_root() -> None:
 
 def test_forces_at_least_three_levels_with_a_narrow_ceiling() -> None:
     """Three levels are unreachable at hosted capacity, so configure them."""
-    root, nodes, report, _ = build(8, ceiling=2)
+    root, _nodes, report, _ = build(8, ceiling=2)
 
     assert report.level_count >= 3
     assert root.level >= 3
@@ -445,7 +452,7 @@ def test_a_level_that_fails_to_shrink_raises_rather_than_looping(
     Grouping cannot actually produce a non-shrinking level once the fanout is
     at least two, which is why this is asserted rather than relied upon.
     """
-    import summarizer.hierarchy as hierarchy
+    from summarizer import hierarchy
 
     monkeypatch.setattr(
         hierarchy, "group_children", lambda count, fanout: tuple(
@@ -583,3 +590,135 @@ def test_child_payloads_are_compact_and_key_ordered() -> None:
         if part.count('"') >= 2 and ":" in part
     ]
     assert keys == sorted(keys) or payload == serialize_child(leaf(1))
+
+
+def test_same_level_merges_are_bounded_concurrent_and_preserve_node_order(
+    tmp_path: Path,
+) -> None:
+    """Prepared sibling merges may finish in either order, never change tree order."""
+    cache_root = tmp_path / "cache"
+    store = CheckpointStore(cache_root)
+    plan = RunPlan(
+        run_id="merge-level",
+        descriptor_sha256=hashlib.sha256(b"merge plan").hexdigest(),
+        source_sha256=SOURCE_ID,
+        work_ids=("S000001", "S000002", "S000003", "S000004"),
+    )
+    active = 0
+    maximum_active = 0
+    lock = Lock()
+
+    class ConcurrentProvider(MergingProvider):
+        def generate(self, request: GenerationRequest) -> GenerationResult:
+            nonlocal active, maximum_active
+            assert "L1N0001" in session.manifest.work_ids
+            assert "L1N0002" in session.manifest.work_ids
+            with lock:
+                active += 1
+                maximum_active = max(maximum_active, active)
+            sleep(0.03 if '"segment_id":"S000001"' in request.input_text else 0.005)
+            try:
+                return super().generate(request)
+            finally:
+                with lock:
+                    active -= 1
+
+    with store.open(plan, resume=False) as session:
+        coordinator = CacheCoordinator(
+            store=CacheStore(cache_root),
+            source_id=SOURCE_ID,
+            provider="openai",
+            model="m",
+            counter_identity="test:characters",
+            counter_exact=True,
+            context_window_tokens=100_000,
+            behavior={},
+            session=session,
+            max_in_flight=2,
+        )
+        provider = ConcurrentProvider()
+        _, nodes, _, = build_hierarchy(
+            leaves(4),
+            provider,
+            CharacterCounter(),
+            source_id=SOURCE_ID,
+            covered=covered_for(4),
+            attributable=attributable_for(4),
+            usable_tokens=100_000,
+            model="m",
+            timeout_seconds=30,
+            max_merge_children=2,
+            grounding_policy=GroundingPolicy(max_tokens=1_000),
+            coordinator=coordinator,
+        )
+
+    assert maximum_active == 2
+    assert '"segment_id":"S000003"' in provider.requests[0].input_text
+    assert '"segment_id":"S000001"' in provider.requests[1].input_text
+    assert [node.node_id for node in nodes] == [
+        "L0N0001",
+        "L0N0002",
+        "L0N0003",
+        "L0N0004",
+        "L1N0001",
+        "L1N0002",
+        "L2N0001",
+    ]
+
+
+def test_resume_reuses_compatible_sibling_merges_and_calls_only_a_cache_miss(
+    tmp_path: Path,
+) -> None:
+    cache_root = tmp_path / "cache"
+    checkpoint_store = CheckpointStore(cache_root)
+    plan = RunPlan(
+        run_id="merge-resume",
+        descriptor_sha256=hashlib.sha256(b"merge resume plan").hexdigest(),
+        source_sha256=SOURCE_ID,
+        work_ids=("S000001", "S000002", "S000003", "S000004"),
+    )
+
+    def coordinator(session) -> CacheCoordinator:
+        return CacheCoordinator(
+            store=CacheStore(cache_root),
+            source_id=SOURCE_ID,
+            provider="openai",
+            model="m",
+            counter_identity="test:characters",
+            counter_exact=True,
+            context_window_tokens=100_000,
+            behavior={},
+            session=session,
+            max_in_flight=2,
+        )
+
+    with checkpoint_store.open(plan, resume=False) as session:
+        build_hierarchy(
+            leaves(4), MergingProvider(), CharacterCounter(), source_id=SOURCE_ID,
+            covered=covered_for(4), attributable=attributable_for(4),
+            usable_tokens=100_000, model="m", timeout_seconds=30,
+            max_merge_children=2, grounding_policy=GroundingPolicy(max_tokens=1_000),
+            coordinator=coordinator(session),
+        )
+        missing_key = next(
+            reference.cache_key
+            for reference in session.manifest.completed
+            if reference.work_id == "L1N0002"
+        )
+
+    (cache_root / "objects" / missing_key[:2] / f"{missing_key}.json").unlink()
+
+    with checkpoint_store.open(plan, resume=True) as session:
+        resumed = MergingProvider()
+        _, nodes, _ = build_hierarchy(
+            leaves(4), resumed, CharacterCounter(), source_id=SOURCE_ID,
+            covered=covered_for(4), attributable=attributable_for(4),
+            usable_tokens=100_000, model="m", timeout_seconds=30,
+            max_merge_children=2, grounding_policy=GroundingPolicy(max_tokens=1_000),
+            coordinator=coordinator(session),
+        )
+
+    assert len(resumed.requests) == 1
+    assert [node.node_id for node in nodes[-3:]] == [
+        "L1N0001", "L1N0002", "L2N0001"
+    ]

@@ -44,6 +44,25 @@ def test_generation_values_are_immutable() -> None:
         result.text = "changed"
 
 
+def test_generation_request_preserves_existing_positional_schema_arguments() -> None:
+    schema = {"type": "object"}
+
+    request = GenerationRequest(
+        "model",
+        "instructions",
+        "input",
+        30,
+        "operation-1",
+        schema,
+        "summary",
+    )
+
+    assert request.operation_id == "operation-1"
+    assert request.response_schema == schema
+    assert request.schema_name == "summary"
+    assert request.audit_work_id is None
+
+
 @pytest.mark.parametrize(
     "kwargs",
     [

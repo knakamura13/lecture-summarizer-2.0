@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 import pytest
 
+from summarizer.cache import CacheStore
 from summarizer.direct import (
     DOCUMENT_SEGMENT_ID,
     summarize_direct,
@@ -15,7 +16,7 @@ from summarizer.providers.base import (
     GenerationResult,
     ProviderConnectionError,
 )
-from summarizer.segmentation import BoundaryKind
+from summarizer.segmentation import BoundaryKind, CacheCoordinator
 
 DOCUMENT = (
     "# Archive migration\n\n"
@@ -57,6 +58,16 @@ class RecordingProvider:
     def generate(self, request: GenerationRequest) -> GenerationResult:
         self.requests.append(request)
         return GenerationResult(text=self.text, provider="fake", model=request.model)
+
+
+def coordinator(tmp_path, document) -> CacheCoordinator:
+    counter = CharacterCounter()
+    return CacheCoordinator(
+        store=CacheStore(tmp_path / "cache"), source_id=document.source_id,
+        provider="openai", model="m", counter_identity=counter.identity,
+        counter_exact=counter.exact, context_window_tokens=100,
+        behavior={"strategy_config": {"strategy": "direct", "context_window": 100, "max_direct_tokens": None, "max_output_tokens": 1, "safety_margin_tokens": 0}},
+    )
 
 
 def test_whole_document_segment_spans_the_canonical_text() -> None:
@@ -126,6 +137,31 @@ def test_summarizes_a_whole_document_in_one_call() -> None:
     assert node.provenance == (DOCUMENT_SEGMENT_ID,)
     assert len(provider.requests) == 1
     assert document.text in provider.requests[0].input_text
+
+
+def test_compatible_direct_result_reuses_the_validated_summary(tmp_path) -> None:
+    document = ingest_text(DOCUMENT)
+    first, second = RecordingProvider(), RecordingProvider()
+
+    summarize_direct(document, first, CharacterCounter(), model="m", timeout_seconds=30, coordinator=coordinator(tmp_path, document))
+    summary = summarize_direct(document, second, CharacterCounter(), model="m", timeout_seconds=30, coordinator=coordinator(tmp_path, document))
+
+    assert summary.provenance == (DOCUMENT_SEGMENT_ID,)
+    assert len(first.requests) == 1
+    assert second.requests == []
+
+
+def test_malformed_direct_response_is_not_cached(tmp_path) -> None:
+    document = ingest_text(DOCUMENT)
+    first = RecordingProvider("not json")
+    second = RecordingProvider()
+
+    with pytest.raises(LeafSummaryError):
+        summarize_direct(document, first, CharacterCounter(), model="m", timeout_seconds=30, coordinator=coordinator(tmp_path, document))
+    summarize_direct(document, second, CharacterCounter(), model="m", timeout_seconds=30, coordinator=coordinator(tmp_path, document))
+
+    assert len(first.requests) == 1
+    assert len(second.requests) == 1
 
 
 def test_a_quotation_from_anywhere_in_the_document_validates() -> None:

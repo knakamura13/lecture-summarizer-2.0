@@ -1,5 +1,7 @@
-from types import SimpleNamespace
 import importlib
+import threading
+from concurrent.futures import ThreadPoolExecutor
+from types import SimpleNamespace
 
 import httpx2
 import openai
@@ -16,7 +18,6 @@ from summarizer.providers.base import (
     ProviderTimeoutError,
 )
 from summarizer.providers.openai import OpenAIProvider
-
 
 REQUEST = GenerationRequest(
     model="gpt-4o-mini",
@@ -83,6 +84,30 @@ def test_adapts_request_response_and_constructs_client_lazily() -> None:
     assert first.finish_status == "completed"
     assert first.request_id == "req_123"
     assert second == first
+
+
+def test_concurrent_first_calls_construct_one_client_without_deadlock() -> None:
+    response = SimpleNamespace(output_text="summary", model="gpt-4o-mini")
+    factory_calls: list[dict[str, object]] = []
+    factory_barrier = threading.Barrier(2)
+    start = threading.Barrier(3)
+
+    def client_factory(**kwargs: object) -> object:
+        factory_calls.append(kwargs)
+        try:
+            factory_barrier.wait(timeout=0.1)
+        except threading.BrokenBarrierError:
+            pass
+        return SimpleNamespace(responses=FakeResponses(response))
+
+    provider = OpenAIProvider(client_factory=client_factory)
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        futures = [executor.submit(lambda: (start.wait(), provider.generate(REQUEST))[1]) for _ in range(2)]
+        start.wait()
+        results = [future.result(timeout=2) for future in futures]
+
+    assert factory_calls == [{"max_retries": 0}]
+    assert [result.text for result in results] == ["summary", "summary"]
 
 
 @pytest.mark.parametrize("output_text", [None, "", "   ", 42])

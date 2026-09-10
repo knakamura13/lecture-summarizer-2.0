@@ -23,8 +23,9 @@ _MODEL_CONTEXT_WINDOWS: dict[str, int] = {
     "gpt-3.5-turbo": 16_385,
 }
 
-# Matched by longest prefix, mirroring the two-tier lookup tiktoken already
-# uses and which is what makes a dated or suffixed model name resolve at all.
+# Consulted by longest prefix after the exact table. Only model families listed
+# here accept suffixed names; an exact entry such as `gpt-4` does not implicitly
+# make every `gpt-4-*` snapshot known.
 _MODEL_PREFIX_CONTEXT_WINDOWS: dict[str, int] = {
     "gpt-4o": 128_000,
     "gpt-4o-mini": 128_000,
@@ -69,9 +70,10 @@ def resolve_context_window(
 ) -> ContextWindow:
     """Resolve a model's context window without contacting a provider.
 
-    An explicit value is authoritative. Otherwise the table is consulted by
-    exact name and then by longest matching prefix. An unresolved model yields
-    an assumed window flagged as such, so a caller can decline to rely on it.
+    An explicit value is authoritative. For OpenAI, the exact-name table is
+    consulted first and then the longest matching known family prefix. Other
+    providers skip those OpenAI tables. An unresolved model yields an assumed
+    window flagged as such, so a caller can decline to rely on it.
     """
     if explicit is not None:
         if explicit <= 0:

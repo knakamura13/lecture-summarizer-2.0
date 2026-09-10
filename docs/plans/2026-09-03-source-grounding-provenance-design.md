@@ -8,13 +8,13 @@ than changing its tree shape, CLI integration, cache policy, or final output.
 
 ## Existing seam
 
-`build_hierarchy` already receives `attributable`, an ordered mapping from a
+`build_hierarchy` receives `attributable`, an ordered mapping from a
 source-segment ID to its citable core text. That mapping is controlled by the
 application, not model output, and is therefore the only valid source for
-grounding passages. The current merge request serializes generated children
-only; its parser validates model references but replaces all provenance with
-the complete child union. This preserves reachability but cannot make a merge
-source-grounded or narrow provenance to retained claims.
+grounding passages. A merge request serializes generated children separately
+from selected authoritative source passages; its parser validates model
+references against those selected passages and narrows provenance to retained
+claims. Structural reachability remains available independently on the tree.
 
 ## Considered approaches
 
@@ -33,10 +33,18 @@ The third approach is selected.
 
 ## Data flow
 
-For each merge group, the hierarchy reserves one quarter of the merge payload
-capacity for source grounding before calculating fanout. Once a concrete group
-is known, it gives the selector every remaining token after its measured child
-payloads and fences. The selector considers IDs in source order:
+By default, the hierarchy does not reserve a fixed fraction or fixed token
+count for source grounding before calculating fanout. It measures merge
+overhead, sizes a candidate fanout against the remaining usable capacity, and
+then prepares the concrete group. The selector measures the complete merge
+request, including generated child summaries, fences, source passages, and
+schema. If the selected passages do not fit, the hierarchy retries with a
+narrower fanout before failing. A caller that supplies an explicit
+`GroundingPolicy` instead gets the fixed `max_tokens` reserve represented by
+that policy.
+
+Within a concrete group, the selector considers candidate IDs in deterministic
+priority order:
 
 1. contradiction evidence;
 2. qualification and uncertain-content evidence;
@@ -44,11 +52,12 @@ payloads and fences. The selector considers IDs in source order:
 4. other content-unit evidence; and
 5. declared provenance as a deterministic fallback.
 
-It packs complete core passages only. A request fails clearly if the reserve
-cannot hold evidence required by a contradiction, qualification, or uncertain
-claim; it may omit only low-priority fallback IDs. This is conservative: a
-later issue may replace ranking, but it cannot permit generated text to supply
-its own source or silently turn an ambiguous claim into an ungrounded one.
+It packs complete core passages only. A request fails clearly if the available
+budget cannot hold evidence required by a contradiction, qualification, or
+uncertain claim; it may omit only low-priority fallback IDs. This is
+conservative: a later issue may replace ranking, but it cannot permit
+generated text to supply its own source or silently turn an ambiguous claim
+into an ungrounded one.
 
 The merge request has separate generated-summary and authoritative-source
 blocks, each individually fenced. Its instructions say source passages are
@@ -63,10 +72,12 @@ checks every content-unit evidence item, grounded qualification,
 grounded contradiction, and quotation against those passages. It requires every
 content unit and grounded annotation to name at least one source. Merged
 responses must record provenance. The parser then canonicalizes every declared
-and direct-evidence reference to source order and stores that narrowed
-sequence; it no longer replaces it with the whole child union. The tree's
-`covered_segments` continues to preserve the full structural reachability
-independently.
+and direct-evidence reference to the selected candidate order and stores that
+narrowed sequence; it no longer replaces it with the whole child union. The
+tree's `covered_segments` continues to preserve the full structural
+reachability independently, in document order. Final citations are derived
+separately by `resolve_citations`, which sorts the cited IDs by source segment
+order before they are written to output or audit metadata.
 
 This makes the two notions explicit:
 
@@ -83,11 +94,14 @@ the original supporting material.
 
 ## Error handling and determinism
 
-All candidates, selection, source-block serialization, and stored provenance
-use source order. The selector never uses model output to retrieve text. An
-unknown reference, a quotation absent from its cited passage, empty merge
-provenance, an empty grounding selection, or a passage that cannot fit is a
-validation error rather than partial output.
+Candidate collection, selection, source-block serialization, and stored
+provenance are deterministic: candidate priority follows category, child, and
+evidence order, while structural coverage remains in document order. The
+selector never uses model output to retrieve text. An unknown reference, a
+quotation absent from its cited passage, empty merge provenance, an empty
+grounding selection, or a passage that cannot fit is a budget or validation
+error rather than partial output. Citation projection is the separate boundary
+that restores source order for rendered citations.
 
 ## Tests
 

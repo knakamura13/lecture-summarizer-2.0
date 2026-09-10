@@ -86,7 +86,7 @@ The strategy decision measures the real request overhead, reserved output, and s
 
 A model whose context window is not known uses an assumed window for reporting; `auto` does not gamble on a direct request in that case. `--context-window` supplies an explicit window. OpenAI models with a registered `tiktoken` encoding use exact counts; Ollama and non-OpenAI providers use a conservative UTF-8-byte estimator. An unknown OpenAI model reports an actionable token-accounting error rather than silently falling back. Constructing a `tiktoken` counter may download an uncached vocabulary; counting afterwards is local.
 
-Segmentation prefers headings, paragraphs/lists, and sentences, then uses a token-safe character fallback for an oversized unit. A segment has a stable identifier (`S000001`, etc.), a disjoint core range, and optional overlap context. Overlap provides context only; it does not duplicate evidence ownership or move core boundaries. Merge fan-out is measured from the complete request; `--max-merge-children` can impose a smaller ceiling to force a deeper hierarchy.
+Segmentation prefers headings, paragraphs/lists, and sentences, then uses a token-safe character fallback for an oversized unit. A segment has a stable identifier (`S000001`, etc.), a disjoint core range, and optional overlap context. Overlap provides context only; it does not duplicate evidence ownership or move core boundaries. Merge fan-out is measured from the complete request; the default hierarchy sizes child groups against that request and narrows the fan-out when selected source passages need more room. An explicit internal `GroundingPolicy` can instead provide a fixed source-token reserve. `--max-merge-children` can impose a smaller ceiling to force a deeper hierarchy.
 
 ## CLI reference
 
@@ -125,7 +125,7 @@ Run `python main.py --help` for parser-generated help. The complete options are:
 
 ## Output and audit artifacts
 
-The output path contains the final editorial text. Without `--citations`, it contains only that text. With citations, a source-ordered list such as `Sources: [S000001, S000004]` is appended from validated root provenance; citations are not invented by the editorial model.
+The output path contains the final editorial text. Without `--citations`, it contains only that text. With citations, a source-ordered list such as `Sources: [S000001, S000004]` is appended from validated root provenance; the citation projection sorts by source-segment order even when internal merged provenance follows selection priority. Citations are not invented by the editorial model.
 
 `--audit PATH` writes a canonical, validated JSON artifact. The top-level audit fields are:
 
@@ -133,7 +133,7 @@ The output path contains the final editorial text. Without `--citations`, it con
 - `source_id`, `strategy`, and `model`;
 - safe `configuration` and budget metadata;
 - `source_segments` with identifiers, source order, core/context ranges, token counts, overlap counts, and boundary kind;
-- `tree_nodes` and `root_node_id`, including levels, child links, covered segments, content-unit classifications, and evidence links;
+- `tree_nodes` and `root_node_id`, including levels, child links, structural covered segments, narrowed provenance, content-unit classifications, and evidence links;
 - source-ordered `citations` and provider `usage` metadata when available;
 - closed-code `warnings` and `failures`;
 - `verification`, including pass/claim/evidence links, verdicts, repair actions, usage, warnings, limitations, and failures;

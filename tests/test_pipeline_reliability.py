@@ -78,6 +78,30 @@ class CountingProvider:
         return GenerationResult(json.dumps(payload), "fake", request.model)
 
 
+class ModelSensitiveLeafProvider(CountingProvider):
+    def __init__(self) -> None:
+        super().__init__()
+        self.leaf_summaries: list[str] = []
+
+    def generate(self, request: GenerationRequest) -> GenerationResult:
+        if (request.operation_id or "").startswith(("S", "D")):
+            self.requests.append(request)
+            summary = f"A grounded leaf for {request.model}."
+            self.leaf_summaries.append(summary)
+            payload = {
+                "summary": summary,
+                "content_units": [],
+                "entities": [],
+                "qualifications": [],
+                "contradictions": [],
+                "quotations": [],
+                "provenance": [request.operation_id],
+                "level": 0,
+            }
+            return GenerationResult(json.dumps(payload), "fake", request.model)
+        return super().generate(request)
+
+
 def _app() -> AppConfig:
     return AppConfig(model="gpt-4o-mini", timeout_seconds=30)
 
@@ -318,6 +342,280 @@ def test_published_audit_records_real_cache_outcomes_reuse_and_retry(tmp_path) -
     assert resumed_audit["reliability"]["reused_count"] == 2
     assert resumed_audit["reliability"]["recomputed_count"] == 0
     assert resumed_audit["reliability"]["attempts"] == []
+
+
+def _run_direct_with_audit(
+    *,
+    document,
+    cache_root,
+    audit_path,
+    output_path,
+    run_id: str,
+    app: AppConfig | None = None,
+    strategy: StrategyConfig | None = None,
+) -> None:
+    run_pipeline(
+        document,
+        CountingProvider(),
+        Counter(),
+        app=app
+        or AppConfig(
+            output_path=output_path, model="gpt-4o-mini", timeout_seconds=30
+        ),
+        strategy=strategy or _direct_strategy(),
+        config=PipelineConfig(
+            target_words=40,
+            audit_path=audit_path,
+            cache=CacheConfig(enabled=True, root=cache_root),
+            reliability=ReliabilityConfig(run_id=run_id),
+        ),
+    )
+
+
+def _invalidation_reasons(audit_path) -> list[str]:
+    return json.loads(audit_path.read_text())["reliability"]["cache"][
+        "invalidation_reasons"
+    ]
+
+
+def _run_hierarchical_with_audit(
+    *,
+    document,
+    cache_root,
+    audit_path,
+    output_path,
+    run_id: str,
+) -> None:
+    run_pipeline(
+        document,
+        CountingProvider(),
+        Counter(),
+        app=AppConfig(output_path=output_path, model="gpt-4o-mini", timeout_seconds=30),
+        strategy=_strategy(),
+        config=PipelineConfig(
+            target_words=40,
+            segmentation=SegmentationConfig(max_tokens=35),
+            max_merge_children=2,
+            audit_path=audit_path,
+            cache=CacheConfig(enabled=True, root=cache_root),
+            reliability=ReliabilityConfig(run_id=run_id),
+        ),
+    )
+
+
+def test_pipeline_audit_reports_source_descriptor_invalidation(tmp_path) -> None:
+    cache_root = tmp_path / "cache"
+    output_path = tmp_path / "summary.txt"
+    _run_direct_with_audit(
+        document=ingest_text("first source"),
+        cache_root=cache_root,
+        audit_path=tmp_path / "first-audit.json",
+        output_path=output_path,
+        run_id="source-before",
+    )
+    changed_audit = tmp_path / "changed-audit.json"
+
+    _run_direct_with_audit(
+        document=ingest_text("second source"),
+        cache_root=cache_root,
+        audit_path=changed_audit,
+        output_path=output_path,
+        run_id="source-after",
+    )
+
+    assert _invalidation_reasons(changed_audit) == ["source_changed"]
+
+
+def test_pipeline_audit_reports_prompt_descriptor_invalidation(tmp_path, monkeypatch) -> None:
+    cache_root = tmp_path / "cache"
+    output_path = tmp_path / "summary.txt"
+    document = ingest_text("stable source")
+    _run_direct_with_audit(
+        document=document,
+        cache_root=cache_root,
+        audit_path=tmp_path / "first-audit.json",
+        output_path=output_path,
+        run_id="prompt-before",
+    )
+    monkeypatch.setattr("summarizer.direct.LEAF_PROMPT_VERSION", "leaf-prompt/3")
+    changed_audit = tmp_path / "changed-audit.json"
+
+    _run_direct_with_audit(
+        document=document,
+        cache_root=cache_root,
+        audit_path=changed_audit,
+        output_path=output_path,
+        run_id="prompt-after",
+    )
+
+    assert _invalidation_reasons(changed_audit) == ["prompt_changed"]
+
+
+def test_pipeline_audit_reports_schema_descriptor_invalidation(tmp_path, monkeypatch) -> None:
+    cache_root = tmp_path / "cache"
+    output_path = tmp_path / "summary.txt"
+    document = ingest_text("stable source")
+    _run_direct_with_audit(
+        document=document,
+        cache_root=cache_root,
+        audit_path=tmp_path / "first-audit.json",
+        output_path=output_path,
+        run_id="schema-before",
+    )
+    monkeypatch.setattr("summarizer.direct.LEAF_SCHEMA_VERSION", "leaf-schema/2")
+    changed_audit = tmp_path / "changed-audit.json"
+
+    _run_direct_with_audit(
+        document=document,
+        cache_root=cache_root,
+        audit_path=changed_audit,
+        output_path=output_path,
+        run_id="schema-after",
+    )
+
+    assert _invalidation_reasons(changed_audit) == ["schema_changed"]
+
+
+def test_pipeline_audit_reports_model_descriptor_invalidation(tmp_path) -> None:
+    cache_root = tmp_path / "cache"
+    output_path = tmp_path / "summary.txt"
+    document = ingest_text("stable source")
+    _run_direct_with_audit(
+        document=document,
+        cache_root=cache_root,
+        audit_path=tmp_path / "first-audit.json",
+        output_path=output_path,
+        run_id="model-before",
+    )
+    changed_audit = tmp_path / "changed-audit.json"
+
+    _run_direct_with_audit(
+        document=document,
+        cache_root=cache_root,
+        audit_path=changed_audit,
+        output_path=output_path,
+        run_id="model-after",
+        app=AppConfig(output_path=output_path, model="gpt-4o", timeout_seconds=30),
+    )
+
+    assert _invalidation_reasons(changed_audit) == ["model_changed"]
+
+
+def test_pipeline_audit_reports_behavior_descriptor_invalidation(tmp_path) -> None:
+    cache_root = tmp_path / "cache"
+    output_path = tmp_path / "summary.txt"
+    document = ingest_text("stable source")
+    _run_direct_with_audit(
+        document=document,
+        cache_root=cache_root,
+        audit_path=tmp_path / "first-audit.json",
+        output_path=output_path,
+        run_id="behavior-before",
+    )
+    changed_audit = tmp_path / "changed-audit.json"
+
+    _run_direct_with_audit(
+        document=document,
+        cache_root=cache_root,
+        audit_path=changed_audit,
+        output_path=output_path,
+        run_id="behavior-after",
+        strategy=StrategyConfig(
+            strategy="direct",
+            context_window=100_000,
+            max_output_tokens=2,
+            safety_margin_tokens=0,
+            safety_margin_fraction=0,
+        ),
+    )
+
+    assert _invalidation_reasons(changed_audit) == ["behavior_changed"]
+
+
+def test_hierarchical_leaf_batch_invalidation_uses_the_successful_next_baseline(
+    tmp_path, monkeypatch
+) -> None:
+    cache_root = tmp_path / "cache"
+    output_path = tmp_path / "summary.txt"
+    document = ingest_text("one two three four five six seven eight nine ten " * 12)
+    _run_hierarchical_with_audit(
+        document=document,
+        cache_root=cache_root,
+        audit_path=tmp_path / "initial-audit.json",
+        output_path=output_path,
+        run_id="hierarchical-initial",
+    )
+    monkeypatch.setattr("summarizer.leaf.LEAF_PROMPT_VERSION", "leaf-prompt/3")
+    prompt_audit = tmp_path / "prompt-audit.json"
+
+    _run_hierarchical_with_audit(
+        document=document,
+        cache_root=cache_root,
+        audit_path=prompt_audit,
+        output_path=output_path,
+        run_id="hierarchical-prompt",
+    )
+
+    assert _invalidation_reasons(prompt_audit) == ["prompt_changed"]
+
+    monkeypatch.setattr("summarizer.leaf.LEAF_SCHEMA_VERSION", "leaf-schema/2")
+    schema_audit = tmp_path / "schema-audit.json"
+    _run_hierarchical_with_audit(
+        document=document,
+        cache_root=cache_root,
+        audit_path=schema_audit,
+        output_path=output_path,
+        run_id="hierarchical-schema",
+    )
+
+    assert _invalidation_reasons(schema_audit) == ["schema_changed"]
+
+
+def test_hierarchical_model_change_with_changed_leaf_output_reports_only_model_invalidation(
+    tmp_path,
+) -> None:
+    cache_root = tmp_path / "cache"
+    output_path = tmp_path / "summary.txt"
+    document = ingest_text("one two three four five six seven eight nine ten " * 12)
+    initial_provider = ModelSensitiveLeafProvider()
+    run_pipeline(
+        document,
+        initial_provider,
+        Counter(),
+        app=AppConfig(output_path=output_path, model="gpt-4o-mini", timeout_seconds=30),
+        strategy=_strategy(),
+        config=PipelineConfig(
+            target_words=40,
+            segmentation=SegmentationConfig(max_tokens=35),
+            max_merge_children=2,
+            audit_path=tmp_path / "initial-audit.json",
+            cache=CacheConfig(enabled=True, root=cache_root),
+            reliability=ReliabilityConfig(run_id="hierarchical-model-initial"),
+        ),
+    )
+    changed_provider = ModelSensitiveLeafProvider()
+    changed_audit = tmp_path / "changed-audit.json"
+
+    run_pipeline(
+        document,
+        changed_provider,
+        Counter(),
+        app=AppConfig(output_path=output_path, model="gpt-4o", timeout_seconds=30),
+        strategy=_strategy(),
+        config=PipelineConfig(
+            target_words=40,
+            segmentation=SegmentationConfig(max_tokens=35),
+            max_merge_children=2,
+            audit_path=changed_audit,
+            cache=CacheConfig(enabled=True, root=cache_root),
+            reliability=ReliabilityConfig(run_id="hierarchical-model-changed"),
+        ),
+    )
+
+    assert initial_provider.leaf_summaries
+    assert changed_provider.leaf_summaries
+    assert initial_provider.leaf_summaries != changed_provider.leaf_summaries
+    assert _invalidation_reasons(changed_audit) == ["model_changed"]
 
 
 def test_concurrent_retry_audit_follows_manifest_work_order(tmp_path) -> None:

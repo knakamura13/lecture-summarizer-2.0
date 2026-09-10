@@ -90,6 +90,7 @@ class CacheCoordinator:
         cache_if: Callable[[_Cached], bool] = lambda _: True,
     ) -> _Cached:
         descriptor = self.descriptor_for(stage=stage, work_id=work_id, prompt_version=prompt_version, schema_version=schema_version, input_value=input_value, behavior=behavior)
+        invalidation_reasons = self.store.invalidation_reasons(descriptor)
 
         def validate(payload: object) -> object:
             return encode(decode(payload))
@@ -102,6 +103,7 @@ class CacheCoordinator:
             )[0]
             if reusable.payload is not None:
                 self._record_cache_hit(work_id)
+                self.store.record_descriptor_projection(descriptor)
                 return decode(reusable.payload)
             miss_reason = (
                 reusable.reason.value if reusable.reason is not None else "missing"
@@ -114,13 +116,16 @@ class CacheCoordinator:
                 result = decode(cached.payload)
                 self._checkpoint(descriptor)
                 self._record_cache_hit(work_id)
+                self.store.record_descriptor_projection(descriptor)
                 return result
             if cached.miss_reason is not None:
                 miss_reason = cached.miss_reason.value
         self._record_cache_miss(work_id, miss_reason)
+        self._record_invalidation_reasons(invalidation_reasons)
         result = compute()
         if cache_if(result):
             self.store.store(descriptor, encode(result), validate)
+            self.store.record_descriptor_projection(descriptor)
             self._checkpoint(descriptor)
         return result
 
@@ -149,6 +154,7 @@ class CacheCoordinator:
                 if reusable.reference is not None and reusable.payload is not None:
                     hits[reusable.reference.work_id] = reusable.payload
                     self._record_cache_hit(work_id)
+                    self.store.record_descriptor_projection(descriptors[work_id])
                 elif reusable.reason is not None:
                     misses[work_id] = reusable.reason.value
 
@@ -156,6 +162,9 @@ class CacheCoordinator:
             for work_id in work_ids:
                 if work_id not in hits:
                     self._record_cache_miss(work_id, misses.get(work_id, "missing"))
+                    self._record_invalidation_reasons(
+                        self.store.invalidation_reasons(descriptors[work_id])
+                    )
             return hits
 
         adopted: list[CompletedRef] = []
@@ -167,6 +176,7 @@ class CacheCoordinator:
             if cached.hit:
                 hits[work_id] = cached.payload
                 self._record_cache_hit(work_id)
+                self.store.record_descriptor_projection(descriptor)
                 adopted.append(
                     CompletedRef(work_id=work_id, cache_key=descriptor.key)
                 )
@@ -182,6 +192,9 @@ class CacheCoordinator:
         for work_id in work_ids:
             if work_id not in hits:
                 self._record_cache_miss(work_id, misses.get(work_id, "missing"))
+                self._record_invalidation_reasons(
+                    self.store.invalidation_reasons(descriptors[work_id])
+                )
         return hits
 
     def _record_cache_hit(self, work_id: str) -> None:
@@ -191,6 +204,10 @@ class CacheCoordinator:
     def _record_cache_miss(self, work_id: str, reason: str) -> None:
         if self.reliability_tracker is not None:
             self.reliability_tracker.record_cache_miss(work_id, reason)
+
+    def _record_invalidation_reasons(self, reasons: tuple[str, ...]) -> None:
+        if self.reliability_tracker is not None:
+            self.reliability_tracker.record_invalidation_reasons(reasons)
 
     def _checkpoint(self, descriptor: CacheDescriptor) -> None:
         if self.session is not None:

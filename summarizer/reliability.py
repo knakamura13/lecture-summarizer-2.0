@@ -8,6 +8,16 @@ from threading import Lock
 
 from summarizer.providers.base import GenerationRequest, GenerationResult, RetryAttempt
 
+_INVALIDATION_CODES = frozenset(
+    {
+        "source_changed",
+        "prompt_changed",
+        "schema_changed",
+        "model_changed",
+        "behavior_changed",
+    }
+)
+
 
 @dataclass(frozen=True)
 class ReliabilitySnapshot:
@@ -27,6 +37,7 @@ class ReliabilityTracker:
         self._work_order = work_order
         self._resumed = resumed
         self._cache: dict[str, tuple[bool, str]] = {}
+        self._invalidation_reasons: set[str] = set()
         self._attempt_counts: dict[str, int] = {}
         self._failures: dict[str, list[str]] = {}
         self._lock = Lock()
@@ -42,6 +53,12 @@ class ReliabilityTracker:
             return
         with self._lock:
             self._cache[work_id] = (hit, code)
+
+    def record_invalidation_reasons(self, reasons: tuple[str, ...]) -> None:
+        with self._lock:
+            self._invalidation_reasons.update(
+                reason for reason in reasons if reason in _INVALIDATION_CODES
+            )
 
     def record_generation(
         self, request: GenerationRequest, result: GenerationResult
@@ -91,6 +108,7 @@ class ReliabilityTracker:
         order = self._work_order()
         with self._lock:
             cache = dict(self._cache)
+            invalidation_reasons = tuple(sorted(self._invalidation_reasons))
             attempt_counts = dict(self._attempt_counts)
             failures = {
                 work_id: tuple(sorted(set(codes)))
@@ -112,7 +130,7 @@ class ReliabilityTracker:
             cache={
                 "cache_hits": hits,
                 "cache_misses": misses,
-                "invalidation_reasons": (),
+                "invalidation_reasons": invalidation_reasons,
             },
             resumed=self._resumed,
             reused_count=len(hits),

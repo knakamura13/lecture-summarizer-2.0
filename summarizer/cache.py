@@ -19,9 +19,11 @@ from typing import TypeVar
 
 
 CACHE_FORMAT_VERSION = "cache/1"
+_PROJECTION_FORMAT_VERSION = "cache-projection/1"
 _ENVELOPE_FIELDS = frozenset(
     {"descriptor", "format_version", "payload", "payload_kind", "payload_sha256"}
 )
+_PROJECTION_ENVELOPE_FIELDS = frozenset({"descriptor", "format_version"})
 _Payload = TypeVar("_Payload")
 _STAGES = frozenset(
     {"segmentation", "direct", "leaf", "merge", "editorial", "verification"}
@@ -289,6 +291,29 @@ class CacheDescriptor:
         return hashlib.sha256(self.canonical_bytes()).hexdigest()
 
 
+def _descriptor_invalidation_reasons(
+    previous: CacheDescriptor, current: CacheDescriptor
+) -> tuple[str, ...]:
+    reasons: list[str] = []
+    if previous.source_id != current.source_id:
+        reasons.append("source_changed")
+    if previous.prompt_version != current.prompt_version:
+        reasons.append("prompt_changed")
+    if previous.schema_version != current.schema_version:
+        reasons.append("schema_changed")
+    if (previous.provider, previous.model) != (current.provider, current.model):
+        reasons.append("model_changed")
+    behavior_changed = (
+        previous.counter_identity != current.counter_identity
+        or previous.counter_exact != current.counter_exact
+        or previous.context_window_tokens != current.context_window_tokens
+        or previous._behavior_bytes != current._behavior_bytes
+    )
+    if behavior_changed:
+        reasons.append("behavior_changed")
+    return tuple(reasons)
+
+
 class CacheMissReason(str, Enum):
     MISSING = "missing"
     CORRUPT = "corrupt"
@@ -323,6 +348,34 @@ class CacheStore:
         self, descriptor: CacheDescriptor, validate: Callable[[object], _Payload]
     ) -> CacheLookup:
         return self._load(descriptor, validate)
+
+    def invalidation_reasons(self, descriptor: CacheDescriptor) -> tuple[str, ...]:
+        """Compare a safe prior projection for this logical cache work item."""
+        try:
+            with self._open_projection_directory(create=False) as directory_fd:
+                previous = self._load_projection(
+                    directory_fd, self._projection_key(descriptor)
+                )
+        except (FileNotFoundError, _UnsafeCachePath):
+            return ()
+        if previous is None:
+            return ()
+        return _descriptor_invalidation_reasons(previous, descriptor)
+
+    def record_descriptor_projection(self, descriptor: CacheDescriptor) -> None:
+        """Advance the private safe projection after a validated terminal result."""
+        projection_key = self._projection_key(descriptor)
+        envelope = {
+            "descriptor": descriptor.canonical_value(),
+            "format_version": _PROJECTION_FORMAT_VERSION,
+        }
+        with self._open_projection_directory(create=True) as directory_fd:
+            with self._key_lock(directory_fd, projection_key):
+                self._atomic_write(
+                    directory_fd,
+                    f"{projection_key}.json",
+                    _canonical_json(envelope),
+                )
 
     def store(
         self,
@@ -367,6 +420,41 @@ class CacheStore:
             return CacheLookup(None, CacheMissReason.MISSING)
         except _UnsafeCachePath:
             return CacheLookup(None, CacheMissReason.CORRUPT)
+
+    @staticmethod
+    def _projection_key(descriptor: CacheDescriptor) -> str:
+        return hashlib.sha256(
+            _canonical_json({"stage": descriptor.stage, "work_id": descriptor.work_id})
+        ).hexdigest()
+
+    def _load_projection(
+        self, directory_fd: int, projection_key: str
+    ) -> CacheDescriptor | None:
+        try:
+            projection_fd = self._open_regular_file(
+                directory_fd,
+                f"{projection_key}.json",
+                os.O_RDONLY,
+                expected_mode=0o600,
+            )
+        except FileNotFoundError:
+            return None
+        try:
+            with os.fdopen(projection_fd, "rb") as handle:
+                envelope = json.loads(handle.read())
+            if (
+                not isinstance(envelope, dict)
+                or set(envelope) != _PROJECTION_ENVELOPE_FIELDS
+                or envelope.get("format_version") != _PROJECTION_FORMAT_VERSION
+                or not isinstance(envelope.get("descriptor"), dict)
+            ):
+                return None
+            descriptor = CacheDescriptor(**envelope["descriptor"])
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError, TypeError, ValueError):
+            return None
+        if self._projection_key(descriptor) != projection_key:
+            return None
+        return descriptor
 
     def _load_from_directory(
         self,
@@ -452,6 +540,25 @@ class CacheStore:
             for descriptor_fd in (shard_fd, objects_fd, root_fd):
                 if descriptor_fd is not None:
                     os.close(descriptor_fd)
+
+    @contextmanager
+    def _open_projection_directory(self, *, create: bool):
+        root_fd: int | None = None
+        projections_fd: int | None = None
+        try:
+            root_fd = self._open_root_directory(create=create)
+            projections_fd = self._open_directory(
+                root_fd,
+                "projections",
+                create=create,
+                require_private=True,
+            )
+            yield projections_fd
+        finally:
+            if projections_fd is not None:
+                os.close(projections_fd)
+            if root_fd is not None:
+                os.close(root_fd)
 
     def _open_root_directory(self, *, create: bool) -> int:
         root = self._root

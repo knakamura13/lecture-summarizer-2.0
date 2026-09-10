@@ -92,6 +92,7 @@ class BoundedScheduler:
             try:
                 validated = item.validate(payload)
                 self._cache.store(item.descriptor, validated, item.validate)
+                self._cache.record_descriptor_projection(item.descriptor)
             except Exception as error:  # noqa: BLE001 - preserve validation failures
                 record_non_reusable(item.work_id, NonReusableReason.FAILED)
                 return error

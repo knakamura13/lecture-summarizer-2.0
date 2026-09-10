@@ -24,8 +24,18 @@ def test_help_lists_every_documented_flag() -> None:
         "--ollama-host",
         "--timeout",
         "--max-retries",
-        "--chunk-size",
-        "--max-chunks",
+        "--target-words",
+        "--chunk-tokens",
+        "--overlap-tokens",
+        "--max-merge-children",
+        "--verify",
+        "--max-repair-passes",
+        "--citations",
+        "--audit",
+        "--cache-dir",
+        "--run-id",
+        "--resume",
+        "--max-concurrency",
         "--dry-run",
         "--strategy",
         "--context-window",
@@ -35,7 +45,6 @@ def test_help_lists_every_documented_flag() -> None:
         "--max-direct-tokens",
     ):
         assert flag in result.stdout
-
 
 def test_readme_documents_current_cli_and_credentials() -> None:
     readme = (PROJECT_ROOT / "README.md").read_text(encoding="utf-8")

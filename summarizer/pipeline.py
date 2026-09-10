@@ -74,6 +74,13 @@ class PipelineResult:
 _DEFAULT_PIPELINE_CONFIG = PipelineConfig()
 
 
+@dataclass(frozen=True)
+class _RecordedGeneration:
+    work_id: str | None
+    sequence: int
+    result: GenerationResult
+
+
 class _RecordingProvider:
     """Capture completed logical calls without exposing request prompts to audit."""
 
@@ -86,10 +93,15 @@ class _RecordingProvider:
         self._delegate = delegate
         self.cache_coordinator = coordinator
         self._reliability_tracker = reliability_tracker
-        self._generations: list[GenerationResult] = []
+        self._generations: list[_RecordedGeneration] = []
+        self._next_sequence: dict[str | None, int] = {}
         self._lock = Lock()
 
     def generate(self, request: GenerationRequest) -> GenerationResult:
+        work_id = request.audit_work_id or request.operation_id
+        with self._lock:
+            sequence = self._next_sequence.get(work_id, 0)
+            self._next_sequence[work_id] = sequence + 1
         try:
             result = self._delegate.generate(request)
         except ProviderRetriesExhaustedError as error:
@@ -101,7 +113,7 @@ class _RecordingProvider:
                 )
             raise
         with self._lock:
-            self._generations.append(result)
+            self._generations.append(_RecordedGeneration(work_id, sequence, result))
         if self._reliability_tracker is not None:
             self._reliability_tracker.record_generation(request, result)
         return result
@@ -109,7 +121,24 @@ class _RecordingProvider:
     @property
     def generations(self) -> tuple[GenerationResult, ...]:
         with self._lock:
-            return tuple(self._generations)
+            records = tuple(self._generations)
+        if self._reliability_tracker is None:
+            return tuple(record.result for record in records)
+        positions = {
+            work_id: index
+            for index, work_id in enumerate(
+                self._reliability_tracker.manifest_work_order()
+            )
+        }
+        ordered = sorted(
+            enumerate(records),
+            key=lambda item: (
+                positions.get(item[1].work_id, len(positions)),
+                item[1].sequence,
+                item[0],
+            ),
+        )
+        return tuple(record.result for _, record in ordered)
 
 
 def _hierarchical_capacity(

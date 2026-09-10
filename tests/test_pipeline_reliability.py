@@ -1,5 +1,7 @@
 import json
 import re
+from concurrent.futures import ThreadPoolExecutor
+from threading import Event
 
 import pytest
 
@@ -135,6 +137,101 @@ class MalformedVerificationProvider(CountingProvider):
 class AlwaysTimeoutProvider:
     def generate(self, request: GenerationRequest) -> GenerationResult:
         raise ProviderTimeoutError("credential-like secret detail")
+
+
+class RepairingVerifierTimeoutOnceProvider(CountingProvider):
+    def __init__(self) -> None:
+        super().__init__()
+        self._timed_out = False
+
+    def generate(self, request: GenerationRequest) -> GenerationResult:
+        operation = request.operation_id or ""
+        if not operation.startswith("verification-"):
+            if operation == "editorial-final":
+                self.requests.append(request)
+                return GenerationResult(
+                    json.dumps({"text": "42."}), "fake", request.model
+                )
+            return super().generate(request)
+        self.requests.append(request)
+        if operation == "verification-decompose:V02" and not self._timed_out:
+            self._timed_out = True
+            raise ProviderTimeoutError("secret post-repair timeout detail")
+        if operation == "verification-decompose:V01":
+            payload = {"spans": [{"span_id": "V01S000001", "anchors": ["42"]}]}
+        elif operation == "verification-classify:V01":
+            payload = {
+                "findings": [
+                    {
+                        "claim_id": claim_id,
+                        "verdict": "contradicted",
+                        "evidence": [{"segment_id": "D000001", "exact_quote": "41."}],
+                    }
+                    for claim_id in ("V01C000001", "V01C000002")
+                ]
+            }
+        elif operation == "verification-repair:V01":
+            original_hash = re.search(
+                r'"original_hash":"([0-9a-f]{64})"', request.input_text
+            )
+            assert original_hash is not None
+            payload = {
+                "repairs": [
+                    {
+                        "span_id": "V01S000001",
+                        "original_hash": original_hash.group(1),
+                        "action": "replace",
+                        "replacement": "41.",
+                    }
+                ]
+            }
+        elif operation == "verification-decompose:V02":
+            payload = {"spans": [{"span_id": "V02S000001", "anchors": []}]}
+        elif operation == "verification-classify:V02":
+            payload = {
+                "findings": [
+                    {
+                        "claim_id": "V02C000001",
+                        "verdict": "supported",
+                        "evidence": [{"segment_id": "D000001", "exact_quote": "41."}],
+                    }
+                ]
+            }
+        else:  # pragma: no cover - unexpected requests should stay visible
+            raise AssertionError(f"unexpected operation {operation}")
+        return GenerationResult(json.dumps(payload), "fake", request.model, 1, 1)
+
+
+class ReverseLeafCompletionProvider(CountingProvider):
+    def __init__(self) -> None:
+        super().__init__()
+        self.started = {
+            work_id: Event() for work_id in ("S000001", "S000002", "S000003")
+        }
+        self.release = {work_id: Event() for work_id in self.started}
+
+    def generate(self, request: GenerationRequest) -> GenerationResult:
+        operation = request.operation_id or ""
+        if operation in self.started:
+            self.started[operation].set()
+            assert self.release[operation].wait(timeout=5)
+            self.requests.append(request)
+            payload = {
+                "summary": "A grounded leaf.",
+                "content_units": [],
+                "entities": [],
+                "qualifications": [],
+                "contradictions": [],
+                "quotations": [],
+                "provenance": [operation],
+                "level": 0,
+            }
+            return GenerationResult(
+                json.dumps(payload), "fake", request.model, int(operation[-1]), 1
+            )
+        result = super().generate(request)
+        marker = 200 if operation == "editorial-final" else 100
+        return GenerationResult(result.text, result.provider, result.model, marker, 1)
 
 
 def test_published_audit_records_real_cache_outcomes_reuse_and_retry(tmp_path) -> None:
@@ -374,6 +471,133 @@ def test_exhausted_injected_verifier_attempts_are_audited_without_detail(
     assert audit["citations"] == []
     assert not summary_path.exists()
     assert "credential-like secret detail" not in encoded_audit
+
+
+def test_reverification_retries_share_the_manifest_verification_work_id(
+    tmp_path,
+) -> None:
+    audit_path = tmp_path / "audit.json"
+    delegate = RepairingVerifierTimeoutOnceProvider()
+    provider = RetryingProvider(
+        delegate,
+        RetryPolicy(
+            max_attempts=2,
+            initial_delay_seconds=0.001,
+            max_delay_seconds=0.001,
+            jitter_fraction=0,
+        ),
+        sleeper=lambda _: None,
+    )
+
+    result = run_pipeline(
+        ingest_text("The source confirms the value is 41."),
+        provider,
+        Counter(),
+        app=AppConfig(
+            output_path=tmp_path / "summary.txt",
+            model="gpt-4o-mini",
+            timeout_seconds=30,
+        ),
+        strategy=_direct_strategy(),
+        config=PipelineConfig(
+            target_words=40,
+            audit_path=audit_path,
+            verification=VerificationConfig(enabled=True),
+            cache=CacheConfig(enabled=True, root=tmp_path / "cache"),
+            reliability=ReliabilityConfig(run_id="reverification-retry"),
+        ),
+    )
+
+    verification_requests = [
+        request
+        for request in delegate.requests
+        if (request.operation_id or "").startswith("verification-")
+    ]
+    assert result.final.text == "41."
+    assert {request.audit_work_id for request in verification_requests} == {"V01"}
+    assert [request.operation_id for request in verification_requests] == [
+        "verification-decompose:V01",
+        "verification-classify:V01",
+        "verification-repair:V01",
+        "verification-decompose:V02",
+        "verification-decompose:V02",
+        "verification-classify:V02",
+    ]
+    encoded_audit = audit_path.read_text()
+    audit = json.loads(encoded_audit)
+    assert [
+        attempt
+        for attempt in audit["reliability"]["attempts"]
+        if attempt["work_id"] == "V01"
+    ] == [
+        {
+            "work_id": "V01",
+            "attempt_count": 6,
+            "failure_reasons": ["timeout"],
+        }
+    ]
+    assert "secret post-repair timeout detail" not in encoded_audit
+
+
+def test_concurrent_generation_usage_follows_manifest_order_across_runs(
+    tmp_path,
+) -> None:
+    observed_usage = []
+    for run_index in range(2):
+        provider = ReverseLeafCompletionProvider()
+        audit_path = tmp_path / f"audit-{run_index}.json"
+        config = PipelineConfig(
+            target_words=40,
+            segmentation=SegmentationConfig(max_tokens=35),
+            max_merge_children=3,
+            audit_path=audit_path,
+            cache=CacheConfig(enabled=True, root=tmp_path / f"cache-{run_index}"),
+            reliability=ReliabilityConfig(
+                run_id=f"reverse-completion-{run_index}", max_in_flight=2
+            ),
+        )
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(
+                run_pipeline,
+                ingest_text("one two three four five six seven eight nine ten " * 2),
+                provider,
+                Counter(),
+                app=AppConfig(
+                    output_path=tmp_path / f"summary-{run_index}.txt",
+                    model="gpt-4o-mini",
+                    timeout_seconds=30,
+                ),
+                strategy=_strategy(),
+                config=config,
+            )
+            assert provider.started["S000001"].wait(timeout=5)
+            assert provider.started["S000002"].wait(timeout=5)
+            provider.release["S000002"].set()
+            assert provider.started["S000003"].wait(timeout=5)
+            provider.release["S000001"].set()
+            provider.release["S000003"].set()
+            future.result(timeout=10)
+
+        manifest = json.loads(
+            (
+                tmp_path
+                / f"cache-{run_index}"
+                / "runs"
+                / f"reverse-completion-{run_index}.json"
+            ).read_text()
+        )
+        assert manifest["work_ids"][:4] == [
+            "segmentation",
+            "S000001",
+            "S000002",
+            "S000003",
+        ]
+        usage = [
+            item["input_tokens"] for item in json.loads(audit_path.read_text())["usage"]
+        ]
+        observed_usage.append(usage)
+
+    assert observed_usage == [[1, 2, 3, 100, None], [1, 2, 3, 100, None]]
 
 
 def test_compatible_hierarchical_pipeline_reuses_segment_leaf_merge_and_editorial(

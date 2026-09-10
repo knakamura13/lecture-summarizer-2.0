@@ -52,6 +52,10 @@ class ReliabilityTracker:
             retry_attempts=result.retry_attempts,
         )
 
+    def manifest_work_order(self) -> tuple[str, ...]:
+        """Return the stable work order used by reliability projections."""
+        return self._work_order()
+
     def record_retry_exhaustion(
         self,
         request: GenerationRequest,

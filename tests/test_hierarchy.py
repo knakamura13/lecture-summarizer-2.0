@@ -259,6 +259,56 @@ def test_the_models_own_provenance_is_canonicalized_to_selected_source_order() -
     assert root.summary.provenance == ("S000001",)
 
 
+def test_merged_provenance_uses_document_order_not_grounding_priority() -> None:
+    class RetainingProvider:
+        def generate(self, request: GenerationRequest) -> GenerationResult:
+            return GenerationResult(
+                text=json.dumps(
+                    {
+                        "summary": "Merged.",
+                        "content_units": [],
+                        "entities": [],
+                        "qualifications": [],
+                        "contradictions": [],
+                        "quotations": [],
+                        "provenance": ["S000003", "S000001", "S000002"],
+                        "level": 1,
+                    }
+                ),
+                provider="fake",
+                model=request.model,
+            )
+
+    third = leaf(
+        3,
+        content_units=[
+            {
+                "text": "The uncertain third part.",
+                "kind": "fact",
+                "evidence": [{"segment_id": "S000003", "quote": "Part 3"}],
+                "qualification": "uncertain",
+                "uncertain": True,
+            }
+        ],
+    )
+    root, _, _ = build_hierarchy(
+        [leaf(1), leaf(2), third],
+        RetainingProvider(),
+        CharacterCounter(),
+        source_id=SOURCE_ID,
+        covered=covered_for(3),
+        attributable=attributable_for(3),
+        usable_tokens=100_000,
+        model="m",
+        timeout_seconds=30,
+        max_merge_children=3,
+        grounding_policy=GroundingPolicy(max_tokens=1_000),
+    )
+
+    assert root.covered_segments == ("S000001", "S000002", "S000003")
+    assert root.summary.provenance == ("S000001", "S000002", "S000003")
+
+
 def test_every_grounded_merge_request_fits_the_usable_budget() -> None:
     _, _, _, provider = build(4, ceiling=2, usable=10_000, grounding_tokens=1_000)
 

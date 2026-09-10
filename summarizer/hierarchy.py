@@ -507,7 +507,10 @@ def _prepare_merge(
                 "grounding_max_tokens": grounding_policy.max_tokens,
                 "usable_tokens": usable_tokens,
             },
-            behavior={"grounding_policy": "grounding/1"},
+            behavior={
+                "grounding": {"max_tokens": grounding_policy.max_tokens},
+                "grounding_policy": "grounding/1",
+            },
         )
     return _PreparedMerge(
         node_id=node_id,

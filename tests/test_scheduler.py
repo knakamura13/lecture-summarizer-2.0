@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 from collections.abc import Callable
-from concurrent.futures import CancelledError, Future
+from concurrent.futures import CancelledError, Future, ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 from threading import Event, Lock, Thread
@@ -149,6 +149,60 @@ def test_scheduler_waits_for_an_entire_level_before_submitting_the_next(
         assert not thread.is_alive()
 
     assert next_level_started.is_set()
+
+
+def test_scheduler_returns_the_locked_first_writer_payload_for_concurrent_runs(
+    tmp_path: Path,
+) -> None:
+    cache_root = tmp_path / "cache"
+    checkpoint_store = CheckpointStore(cache_root)
+    descriptor = _descriptor("D000001")
+    started = Event()
+    release = Event()
+
+    def delayed_loser() -> object:
+        started.set()
+        assert release.wait(timeout=2)
+        return {"summary": "loser"}
+
+    def plan(run_id: str) -> RunPlan:
+        return RunPlan(
+            run_id=run_id,
+            descriptor_sha256=_digest(run_id.encode("utf-8")),
+            source_sha256=_digest(b"canonical source"),
+            work_ids=("D000001",),
+        )
+
+    with checkpoint_store.open(plan("scheduler-race-first"), resume=False) as first:
+        with checkpoint_store.open(plan("scheduler-race-second"), resume=False) as second:
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                first_result = executor.submit(
+                    BoundedScheduler(
+                        max_in_flight=1, cache=CacheStore(cache_root)
+                    ).run,
+                    (_work("D000001", delayed_loser),),
+                    first,
+                )
+                assert started.wait(timeout=2)
+                second_result = BoundedScheduler(
+                    max_in_flight=1, cache=CacheStore(cache_root)
+                ).run(
+                    (_work("D000001", lambda: {"summary": "winner"}),),
+                    second,
+                )
+                release.set()
+                first_result_value = first_result.result(timeout=2)
+
+            winner = CacheStore(cache_root).load(descriptor, _validate).payload
+            assert winner == {"summary": "winner"}
+            assert first_result_value[0].payload == winner
+            assert second_result[0].payload == winner
+            for session in (first, second):
+                assert session.reusable_for(
+                    work_ids=("D000001",),
+                    descriptors={"D000001": descriptor},
+                    validators={"D000001": _validate},
+                )[0].payload == winner
 
 
 class _DrainingFuture(Future[object]):

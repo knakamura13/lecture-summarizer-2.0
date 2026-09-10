@@ -11,6 +11,7 @@ from summarizer.checkpoint import (
     CheckpointStore,
     RunPlan,
 )
+from summarizer.cache import CacheStore
 from summarizer.config import (
     AppConfig,
     CacheConfig,
@@ -22,15 +23,18 @@ from summarizer.finalization import (
     FinalizationVerificationError,
     read_published_summary,
 )
+from summarizer.grounding import GroundingPolicy
 from summarizer.ingestion import ingest_text
 from summarizer.pipeline import PipelineConfig, run_pipeline
 from summarizer.providers.base import (
     GenerationRequest,
     GenerationResult,
     ProviderTimeoutError,
+    RetryAttempt,
+    RetryErrorCategory,
 )
 from summarizer.providers.retrying import RetryingProvider
-from summarizer.segmentation import SegmentationConfig
+from summarizer.segmentation import CacheCoordinator, SegmentationConfig
 from summarizer.verification import VerificationConfig, VerificationRuntime
 
 
@@ -100,6 +104,30 @@ class ModelSensitiveLeafProvider(CountingProvider):
             }
             return GenerationResult(json.dumps(payload), "fake", request.model)
         return super().generate(request)
+
+
+class EditorialMetadataProvider(CountingProvider):
+    def generate(self, request: GenerationRequest) -> GenerationResult:
+        if request.operation_id != "editorial-final":
+            return super().generate(request)
+        self.requests.append(request)
+        return GenerationResult(
+            text=json.dumps({"text": "A metadata-bearing final draft."}),
+            provider="editorial-provider",
+            model="editorial-model",
+            input_tokens=17,
+            output_tokens=9,
+            finish_status="stop",
+            retry_attempts=(
+                RetryAttempt(
+                    attempt=1,
+                    error_category=RetryErrorCategory.TIMEOUT,
+                    planned_delay_seconds=0.1,
+                    exhausted=False,
+                    recorded_at_seconds=0,
+                ),
+            ),
+        )
 
 
 def _app() -> AppConfig:
@@ -344,6 +372,73 @@ def test_published_audit_records_real_cache_outcomes_reuse_and_retry(tmp_path) -
     assert resumed_audit["reliability"]["attempts"] == []
 
 
+def test_editorial_cache_miss_keeps_real_generation_metadata_and_hit_is_synthetic(
+    tmp_path,
+) -> None:
+    cache_root = tmp_path / "cache"
+    audit_path = tmp_path / "audit.json"
+    document = ingest_text("A short source for editorial metadata.")
+    app = AppConfig(
+        output_path=tmp_path / "summary.txt",
+        model="gpt-4o-mini",
+        timeout_seconds=30,
+    )
+    config = PipelineConfig(
+        target_words=40,
+        audit_path=audit_path,
+        cache=CacheConfig(enabled=True, root=cache_root),
+        reliability=ReliabilityConfig(run_id="editorial-metadata"),
+    )
+
+    run_pipeline(
+        document,
+        EditorialMetadataProvider(),
+        Counter(),
+        app=app,
+        strategy=_direct_strategy(),
+        config=config,
+    )
+
+    first_audit = json.loads(audit_path.read_text())
+    assert first_audit["usage"][-1] == {
+        "provider": "editorial-provider",
+        "model": "editorial-model",
+        "input_tokens": 17,
+        "output_tokens": 9,
+        "finish_status": "stop",
+    }
+    assert first_audit["reliability"]["attempts"][-1] == {
+        "work_id": "editorial-final",
+        "attempt_count": 2,
+        "failure_reasons": ["timeout"],
+    }
+
+    run_pipeline(
+        document,
+        CountingProvider(),
+        Counter(),
+        app=app,
+        strategy=_direct_strategy(),
+        config=PipelineConfig(
+            **{
+                **config.__dict__,
+                "reliability": ReliabilityConfig(
+                    run_id="editorial-metadata", run_mode="resume"
+                ),
+            }
+        ),
+    )
+
+    resumed_audit = json.loads(audit_path.read_text())
+    assert resumed_audit["usage"][-1] == {
+        "provider": "cache",
+        "model": "gpt-4o-mini",
+        "input_tokens": None,
+        "output_tokens": None,
+        "finish_status": None,
+    }
+
+
 def _run_direct_with_audit(
     *,
     document,
@@ -401,6 +496,98 @@ def _run_hierarchical_with_audit(
             reliability=ReliabilityConfig(run_id=run_id),
         ),
     )
+
+
+def test_cache_coordinator_returns_the_locked_first_writer_payload_for_concurrent_runs(
+    tmp_path,
+) -> None:
+    cache_root = tmp_path / "cache"
+    document = ingest_text("concurrent source")
+    checkpoint_store = CheckpointStore(cache_root)
+    descriptor_sha256 = "a" * 64
+    started = Event()
+    release = Event()
+
+    def decode(payload: object) -> dict[str, str]:
+        if not isinstance(payload, dict) or set(payload) != {"summary"}:
+            raise ValueError("expected one summary")
+        summary = payload["summary"]
+        if not isinstance(summary, str) or not summary:
+            raise ValueError("summary must be nonblank")
+        return {"summary": summary}
+
+    def coordinator(session) -> CacheCoordinator:
+        return CacheCoordinator(
+            store=CacheStore(cache_root),
+            source_id=document.source_id,
+            provider="openai",
+            model="gpt-4o-mini",
+            counter_identity="test:characters",
+            counter_exact=True,
+            context_window_tokens=100_000,
+            behavior={},
+            session=session,
+        )
+
+    def resolve(instance: CacheCoordinator, compute):
+        return instance.resolve(
+            stage="direct",
+            work_id="D000001",
+            prompt_version="leaf-prompt/1",
+            schema_version="leaf-schema/1",
+            input_value={"source_id": document.source_id},
+            behavior={"max_output_tokens": 1},
+            decode=decode,
+            encode=lambda payload: payload,
+            compute=compute,
+        )
+
+    def delayed_loser() -> dict[str, str]:
+        started.set()
+        assert release.wait(timeout=2)
+        return {"summary": "loser"}
+
+    first_plan = RunPlan(
+        run_id="cache-race-first",
+        descriptor_sha256=descriptor_sha256,
+        source_sha256=document.source_id,
+        work_ids=("D000001",),
+    )
+    second_plan = RunPlan(
+        run_id="cache-race-second",
+        descriptor_sha256=descriptor_sha256,
+        source_sha256=document.source_id,
+        work_ids=("D000001",),
+    )
+    with checkpoint_store.open(first_plan, resume=False) as first_session:
+        with checkpoint_store.open(second_plan, resume=False) as second_session:
+            first = coordinator(first_session)
+            second = coordinator(second_session)
+            descriptor = first.descriptor_for(
+                stage="direct",
+                work_id="D000001",
+                prompt_version="leaf-prompt/1",
+                schema_version="leaf-schema/1",
+                input_value={"source_id": document.source_id},
+                behavior={"max_output_tokens": 1},
+            )
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                first_result = executor.submit(resolve, first, delayed_loser)
+                assert started.wait(timeout=2)
+                second_result = resolve(second, lambda: {"summary": "winner"})
+                release.set()
+                first_result_value = first_result.result(timeout=2)
+
+            winner = CacheStore(cache_root).load(descriptor, decode).payload
+            assert winner == {"summary": "winner"}
+            assert first_result_value == winner
+            assert second_result == winner
+            for session in (first_session, second_session):
+                assert session.reusable_for(
+                    work_ids=("D000001",),
+                    descriptors={"D000001": descriptor},
+                    validators={"D000001": decode},
+                )[0].payload == winner
 
 
 def test_pipeline_audit_reports_source_descriptor_invalidation(tmp_path) -> None:
@@ -616,6 +803,36 @@ def test_hierarchical_model_change_with_changed_leaf_output_reports_only_model_i
     assert changed_provider.leaf_summaries
     assert initial_provider.leaf_summaries != changed_provider.leaf_summaries
     assert _invalidation_reasons(changed_audit) == ["model_changed"]
+
+
+def test_hierarchical_grounding_budget_change_reports_behavior_invalidation(
+    tmp_path, monkeypatch
+) -> None:
+    cache_root = tmp_path / "cache"
+    output_path = tmp_path / "summary.txt"
+    document = ingest_text("one two three four five six seven eight nine ten " * 12)
+    _run_hierarchical_with_audit(
+        document=document,
+        cache_root=cache_root,
+        audit_path=tmp_path / "initial-audit.json",
+        output_path=output_path,
+        run_id="hierarchical-grounding-initial",
+    )
+    monkeypatch.setattr(
+        "summarizer.hierarchy.DEFAULT_GROUNDING_POLICY",
+        GroundingPolicy(max_tokens=512),
+    )
+    changed_audit = tmp_path / "changed-audit.json"
+
+    _run_hierarchical_with_audit(
+        document=document,
+        cache_root=cache_root,
+        audit_path=changed_audit,
+        output_path=output_path,
+        run_id="hierarchical-grounding-changed",
+    )
+
+    assert _invalidation_reasons(changed_audit) == ["behavior_changed"]
 
 
 def test_concurrent_retry_audit_follows_manifest_work_order(tmp_path) -> None:
@@ -895,7 +1112,7 @@ def test_concurrent_generation_usage_follows_manifest_order_across_runs(
         ]
         observed_usage.append(usage)
 
-    assert observed_usage == [[1, 2, 3, 100, None], [1, 2, 3, 100, None]]
+    assert observed_usage == [[1, 2, 3, 100, 200], [1, 2, 3, 100, 200]]
 
 
 def test_compatible_hierarchical_pipeline_reuses_segment_leaf_merge_and_editorial(

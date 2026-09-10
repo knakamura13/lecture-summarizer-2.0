@@ -70,6 +70,7 @@ _NULLABLE_POSITIVE_INTEGER_FIELDS = frozenset(
 )
 _VERSION_FIELDS = frozenset({"editorial_version", "grounding_policy"})
 _BEHAVIOR_GROUPS = {
+    "grounding": frozenset({"max_tokens"}),
     "segmentation": frozenset({"max_tokens", "overlap_tokens"}),
     "strategy_config": frozenset(
         {
@@ -383,6 +384,25 @@ class CacheStore:
         payload: object,
         validate: Callable[[object], _Payload],
     ) -> Path:
+        path, _ = self._store_winner(descriptor, payload, validate)
+        return path
+
+    def store_winner(
+        self,
+        descriptor: CacheDescriptor,
+        payload: object,
+        validate: Callable[[object], _Payload],
+    ) -> _Payload:
+        """Store one validated payload and return the locked first-writer value."""
+        _, winner = self._store_winner(descriptor, payload, validate)
+        return winner
+
+    def _store_winner(
+        self,
+        descriptor: CacheDescriptor,
+        payload: object,
+        validate: Callable[[object], _Payload],
+    ) -> tuple[Path, _Payload]:
         validated = validate(payload)
         _require_json_value(validated, label="validated payload")
         path = self.object_path(descriptor)
@@ -395,7 +415,7 @@ class CacheStore:
                     strict_paths=True,
                 )
                 if existing.hit:
-                    return path
+                    return path, validate(existing.payload)
                 envelope = {
                     "descriptor": descriptor.canonical_value(),
                     "format_version": CACHE_FORMAT_VERSION,
@@ -408,7 +428,7 @@ class CacheStore:
                     f"{descriptor.key}.json",
                     _canonical_json(envelope),
                 )
-        return path
+        return path, validated
 
     def _load(
         self, descriptor: CacheDescriptor, validate: Callable[[object], _Payload]

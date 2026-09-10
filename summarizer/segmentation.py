@@ -124,7 +124,9 @@ class CacheCoordinator:
         self._record_invalidation_reasons(invalidation_reasons)
         result = compute()
         if cache_if(result):
-            self.store.store(descriptor, encode(result), validate)
+            result = decode(
+                self.store.store_winner(descriptor, encode(result), validate)
+            )
             self.store.record_descriptor_projection(descriptor)
             self._checkpoint(descriptor)
         return result

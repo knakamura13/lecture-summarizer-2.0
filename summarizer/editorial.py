@@ -142,7 +142,10 @@ def write_editorial(
     def decode(payload: object) -> str:
         return redact_text(FinalDraft.model_validate(payload).text).strip()
 
+    generation: GenerationResult | None = None
+
     def compute() -> str:
+        nonlocal generation
         generation = provider.generate(request)
         return redact_text(parse_final_draft(generation.text).text).strip()
 
@@ -162,6 +165,8 @@ def write_editorial(
             encode=lambda value: {"text": value},
             compute=compute,
         )
+        if generation is not None:
+            return EditorialResult(text=text, generation=generation)
         return EditorialResult(
             text=text,
             generation=GenerationResult(

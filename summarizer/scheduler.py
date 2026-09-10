@@ -90,8 +90,9 @@ class BoundedScheduler:
                 record_non_reusable(item.work_id, NonReusableReason.FAILED)
                 return error
             try:
-                validated = item.validate(payload)
-                self._cache.store(item.descriptor, validated, item.validate)
+                validated = self._cache.store_winner(
+                    item.descriptor, payload, item.validate
+                )
                 self._cache.record_descriptor_projection(item.descriptor)
             except Exception as error:  # noqa: BLE001 - preserve validation failures
                 record_non_reusable(item.work_id, NonReusableReason.FAILED)

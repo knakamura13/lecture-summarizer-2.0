@@ -46,6 +46,7 @@ class _PreparedMerge:
         return parse_merged_summary(
             json.dumps(payload),
             legal=self.legal,
+            source_order=self.covered_segments,
             subject=self.node_id,
             level=self.level,
         )
@@ -580,6 +581,7 @@ def _execute_prepared_merge(
     return parse_merged_summary(
         result.text,
         legal=prepared.legal,
+        source_order=prepared.covered_segments,
         subject=prepared.node_id,
         level=prepared.level,
     ).model_dump(mode="json")

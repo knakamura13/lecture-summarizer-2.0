@@ -237,6 +237,7 @@ def parse_merged_summary(
     text: str,
     *,
     legal: Mapping[str, str],
+    source_order: Sequence[str] | None = None,
     subject: str,
     level: int,
 ) -> SummaryNode:
@@ -263,5 +264,9 @@ def parse_merged_summary(
 
     validate_provenance(node, legal=legal, subject=subject)
     return node.model_copy(
-        update={"provenance": derive_provenance(node, source_order=tuple(legal))}
+        update={
+            "provenance": derive_provenance(
+                node, source_order=source_order or tuple(legal)
+            )
+        }
     )

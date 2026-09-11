@@ -43,6 +43,12 @@ narrower fanout before failing. A caller that supplies an explicit
 `GroundingPolicy` instead gets the fixed `max_tokens` reserve represented by
 that policy.
 
+The pipeline caps automatically sized source-segment cores at one quarter of
+the safely measured leaf input capacity. This is not a fixed grounding
+reserve: it keeps complete cores small enough for adaptive merge planning to
+have a viable two-child fallback. Explicit `SegmentationConfig` values remain
+authoritative and every concrete merge request is still measured before use.
+
 Within a concrete group, the selector considers candidate IDs in deterministic
 priority order:
 

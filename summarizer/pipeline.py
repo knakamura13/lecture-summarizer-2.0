@@ -72,6 +72,7 @@ class PipelineResult:
 
 
 _DEFAULT_PIPELINE_CONFIG = PipelineConfig()
+_DEFAULT_SEGMENT_CAPACITY_DIVISOR = 4
 
 
 @dataclass(frozen=True)
@@ -328,7 +329,11 @@ def _run_pipeline(
         segments = (segment,)
     else:
         requested_segmentation = config.segmentation or SegmentationConfig(
-            max_tokens=report.usable_input_capacity
+            max_tokens=max(
+                1,
+                report.usable_input_capacity
+                // _DEFAULT_SEGMENT_CAPACITY_DIVISOR,
+            )
         )
         capacity = _hierarchical_capacity(
             report, counter, app, strategy, requested_segmentation

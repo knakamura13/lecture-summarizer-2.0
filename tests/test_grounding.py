@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import pytest
 
+from summarizer.budget import BudgetError
 from summarizer.grounding import GroundingPolicy, select_source_passages
 from summarizer.summaries import SummaryNode
 
@@ -107,4 +108,39 @@ def test_counts_separators_between_selected_source_blocks() -> None:
             counter=CharacterCounter(),
             policy=GroundingPolicy(max_tokens=20),
             selection_cost=section_cost,
+        )
+
+
+def test_empty_selection_reports_reserve_and_smallest_candidate() -> None:
+    source = {
+        "S000001": "x" * 30,
+        "S000002": "y" * 20,
+    }
+    children = (
+        SummaryNode.model_validate(
+            {
+                "summary": "Two sources.",
+                "content_units": [],
+                "entities": [],
+                "qualifications": [],
+                "contradictions": [],
+                "quotations": [],
+                "provenance": ["S000001", "S000002"],
+                "level": 0,
+            }
+        ),
+    )
+
+    with pytest.raises(
+        BudgetError,
+        match=(
+            r"grounding reserve of 10 tokens cannot hold source passage "
+            r"S000002 costing 54 tokens"
+        ),
+    ):
+        select_source_passages(
+            children,
+            source=source,
+            counter=CharacterCounter(),
+            policy=GroundingPolicy(max_tokens=10),
         )

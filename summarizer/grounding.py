@@ -104,6 +104,7 @@ def select_source_passages(
     candidates = _candidates(children)
     passages: list[SourcePassage] = []
     selected_ids: list[str] = []
+    rejected: list[tuple[int, str]] = []
     for identifier, mandatory in candidates:
         if identifier not in source:
             raise ValueError(f"source text is missing for segment {identifier}")
@@ -117,13 +118,20 @@ def select_source_passages(
         if cost <= policy.max_tokens:
             passages.append(passage)
             selected_ids.append(identifier)
-        elif mandatory:
-            raise BudgetError(
-                f"grounding reserve cannot hold mandatory evidence for {identifier}"
-            )
+        else:
+            rejected.append((cost, identifier))
+            if mandatory:
+                raise BudgetError(
+                    f"grounding reserve of {policy.max_tokens} tokens cannot hold "
+                    f"mandatory source passage {identifier} costing {cost} tokens"
+                )
 
     if not passages:
-        raise BudgetError("grounding reserve cannot hold a source passage")
+        smallest_cost, smallest_id = min(rejected)
+        raise BudgetError(
+            f"grounding reserve of {policy.max_tokens} tokens cannot hold source "
+            f"passage {smallest_id} costing {smallest_cost} tokens"
+        )
     omitted_ids = tuple(identifier for identifier, _ in candidates if identifier not in selected_ids)
     return GroundingSelection(
         passages=tuple(passages),

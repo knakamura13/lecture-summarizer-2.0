@@ -159,7 +159,9 @@ def test_prompt_does_not_enumerate_the_legal_identifiers() -> None:
     ).instructions
 
     assert "S000001" not in instructions
-    assert "authoritative source passages below" in instructions
+    assert "shown in the generated child summaries" in instructions
+    assert "not selected for authoritative grounding" in instructions
+    assert "Cite only identifiers in the authoritative source passages" not in instructions
 
 
 def test_request_carries_the_shared_schema_under_a_merge_name() -> None:
@@ -231,6 +233,45 @@ def test_parsing_rejects_an_injected_citation() -> None:
         )
 
 
+def test_parsing_accepts_a_covered_citation_not_selected_for_grounding() -> None:
+    node = parse_merged_summary(
+        merged_payload(provenance=["S000002"]),
+        legal=LEGAL,
+        quotation_sources={"S000001": LEGAL["S000001"]},
+        subject="L1N001",
+        level=1,
+    )
+
+    assert node.provenance == ("S000002",)
+
+
+def test_quotation_verbatim_checks_use_only_selected_grounding_passages() -> None:
+    ungrounded = parse_merged_summary(
+        merged_payload(
+            provenance=["S000002"],
+            quotations=[{"segment_id": "S000002", "quote": "child quotation"}],
+        ),
+        legal=LEGAL,
+        quotation_sources={"S000001": LEGAL["S000001"]},
+        subject="L1N001",
+        level=1,
+    )
+
+    assert ungrounded.provenance == ("S000002",)
+
+    with pytest.raises(LeafSummaryError, match="quotation"):
+        parse_merged_summary(
+            merged_payload(
+                provenance=["S000001"],
+                quotations=[{"segment_id": "S000001", "quote": "not in source"}],
+            ),
+            legal=LEGAL,
+            quotation_sources={"S000001": LEGAL["S000001"]},
+            subject="L1N001",
+            level=1,
+        )
+
+
 def test_parsing_rejects_malformed_output_naming_the_subject() -> None:
     with pytest.raises(LeafSummaryError, match="L1N001"):
         parse_merged_summary(
@@ -253,4 +294,4 @@ def test_prompt_version_is_bound_into_the_fences() -> None:
     finally:
         merge.MERGE_PROMPT_VERSION = original
 
-    assert MERGE_PROMPT_VERSION == "merge-prompt/2"
+    assert MERGE_PROMPT_VERSION == "merge-prompt/3"

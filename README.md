@@ -125,7 +125,7 @@ Run `python main.py --help` for parser-generated help. The complete options are:
 
 ## Output and audit artifacts
 
-The output path contains the final editorial text. Without `--citations`, it contains only that text. With citations, a source-ordered list such as `Sources: [S000001, S000004]` is appended from validated root provenance; the citation projection sorts by source-segment order even when internal merged provenance follows selection priority. Citations are not invented by the editorial model.
+The output path contains the final editorial text. Without `--citations`, it contains only that text. With citations, a source-ordered list such as `Sources: [S000001, S000004]` is appended from validated root provenance. Merge references remain valid across all segments covered by their children even when the grounding budget supplies only a subset of source passages: omitted child references are preserved locally, while grounded references may be explicitly dropped after correction. Verbatim quotation checks apply only to passages actually supplied. Citations are not invented by the editorial model.
 
 `--audit PATH` writes a canonical, validated JSON artifact. The top-level audit fields are:
 

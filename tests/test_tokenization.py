@@ -98,6 +98,34 @@ def test_openai_explicit_encoding_fallback_is_exact_for_that_encoding(
     assert counter.monotonic is False
 
 
+def test_non_openai_explicit_encoding_is_exact_for_that_encoding(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import tiktoken
+
+    encoding = SimpleNamespace(
+        name="cl100k_base",
+        encode_ordinary=lambda text: [text],
+    )
+
+    def get_encoding(name: str) -> SimpleNamespace:
+        assert name == "cl100k_base"
+        return encoding
+
+    monkeypatch.setattr(tiktoken, "get_encoding", get_encoding)
+
+    counter = resolve_token_counter(
+        provider="ollama",
+        model="qwen3.8",
+        encoding_name="cl100k_base",
+    )
+
+    assert isinstance(counter, TiktokenCounter)
+    assert counter.identity == "tiktoken:cl100k_base"
+    assert counter.exact is True
+    assert counter.monotonic is False
+
+
 def test_conservative_counter_uses_utf8_byte_length() -> None:
     counter = ConservativeUtf8TokenCounter()
 

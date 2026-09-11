@@ -24,9 +24,11 @@ _MODEL_CONTEXT_WINDOWS: dict[str, int] = {
 }
 
 # Consulted by longest prefix after the exact table. Only model families listed
-# here accept suffixed names; an exact entry such as `gpt-4` does not implicitly
-# make every `gpt-4-*` snapshot known.
+# here accept suffixed names; repeating an exact entry here explicitly opts its
+# dated snapshots into family resolution.
 _MODEL_PREFIX_CONTEXT_WINDOWS: dict[str, int] = {
+    "gpt-4": 8_192,
+    "gpt-4-32k": 32_768,
     "gpt-4o": 128_000,
     "gpt-4o-mini": 128_000,
     "gpt-4-turbo": 128_000,

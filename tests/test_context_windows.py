@@ -23,6 +23,31 @@ def test_resolves_a_known_model_family_by_prefix() -> None:
     assert variant.assumed is False
 
 
+@pytest.mark.parametrize(
+    ("model", "expected_tokens"),
+    [
+        ("gpt-4-0613", 8_192),
+        ("gpt-4-32k-0613", 32_768),
+    ],
+)
+def test_resolves_dated_gpt_4_snapshots_by_family(
+    model: str,
+    expected_tokens: int,
+) -> None:
+    window = resolve_context_window(provider="openai", model=model)
+
+    assert window == ContextWindow(tokens=expected_tokens, assumed=False)
+
+
+def test_does_not_prefix_match_gpt_3_5_turbo_snapshots() -> None:
+    window = resolve_context_window(
+        provider="openai",
+        model="gpt-3.5-turbo-0613",
+    )
+
+    assert window == ContextWindow(tokens=ASSUMED_CONTEXT_WINDOW, assumed=True)
+
+
 def test_prefers_the_longest_matching_prefix() -> None:
     """A more specific family must win over a shorter one that also matches.
 

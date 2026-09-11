@@ -212,11 +212,11 @@ def resolve_token_counter(
 ) -> TokenCounter:
     """Resolve a counter without constructing or calling a model provider.
 
-    Constructing an OpenAI counter may download an uncached tiktoken vocabulary.
+    Constructing a tiktoken counter may download an uncached vocabulary.
     Once constructed, counter calls perform local encoding only.
     """
-    if provider.strip().lower() != "openai":
-        return ConservativeUtf8TokenCounter()
     if encoding_name is not None:
         return TiktokenCounter.for_encoding(encoding_name)
+    if provider.strip().lower() != "openai":
+        return ConservativeUtf8TokenCounter()
     return TiktokenCounter.for_model(model)

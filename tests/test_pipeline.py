@@ -1,12 +1,15 @@
 import json
 import re
 
+from tiktoken.core import Encoding
+
+from summarizer.budget import select_strategy
 from summarizer.config import AppConfig, StrategyConfig
 from summarizer.ingestion import ingest_text
 from summarizer.pipeline import PipelineConfig, run_pipeline
 from summarizer.providers.base import GenerationRequest, GenerationResult
 from summarizer.segmentation import SegmentationConfig
-from summarizer.tokenization import resolve_token_counter
+from summarizer.tokenization import TiktokenCounter, resolve_token_counter
 from summarizer.verification import VerificationConfig
 
 
@@ -135,3 +138,42 @@ def test_hierarchical_pipeline_runs_offline_with_ollama_defaults_and_explicit_wi
         "S000001",
         "editorial-final",
     ]
+
+
+def test_default_pipeline_merges_full_capacity_segments_with_a_real_tokenizer() -> None:
+    encoding = Encoding(
+        name="offline-byte-bpe",
+        pat_str=r"(?s).",
+        mergeable_ranks={bytes([value]): value for value in range(256)},
+        special_tokens={},
+    )
+    counter = TiktokenCounter(encoding)
+
+    app_config = AppConfig(model="gpt-4", timeout_seconds=30)
+    strategy = StrategyConfig(context_window=32_768)
+    capacity = select_strategy(
+        ingest_text("alpha"),
+        counter,
+        provider=app_config.provider,
+        model=app_config.model,
+        config=strategy,
+    ).usable_input_capacity
+    document = ingest_text("alpha " * (2 * capacity - 1))
+    provider = PipelineProvider()
+
+    result = run_pipeline(
+        document,
+        provider,
+        counter,
+        app=app_config,
+        strategy=strategy,
+        config=PipelineConfig(),
+    )
+
+    assert counter.count(document.text) > capacity
+    assert result.strategy.strategy == "hierarchical"
+    assert result.root.level >= 1
+    assert any(
+        (request.operation_id or "").startswith("merge-L")
+        for request in provider.requests
+    )

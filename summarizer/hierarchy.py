@@ -40,12 +40,16 @@ class _PreparedMerge:
     covered_segments: tuple[str, ...]
     request: GenerationRequest
     legal: Mapping[str, str]
+    quotation_sources: Mapping[str, str]
+    preserved_provenance: tuple[str, ...]
     descriptor: CacheDescriptor | None
 
     def decode(self, payload: object) -> SummaryNode:
         return parse_merged_summary(
             json.dumps(payload),
             legal=self.legal,
+            quotation_sources=self.quotation_sources,
+            preserved_provenance=self.preserved_provenance,
             source_order=self.covered_segments,
             subject=self.node_id,
             level=self.level,
@@ -521,6 +525,14 @@ def _prepare_merge(
         selection_cost=selection_cost,
     )
     grounded = {passage.segment_id: passage.text for passage in selection.passages}
+    preserved_provenance = tuple(
+        dict.fromkeys(
+            identifier
+            for member in members
+            for identifier in member.summary.provenance
+            if identifier not in grounded
+        )
+    )
     request = build_merge_request(
         [member.summary for member in members],
         passages=selection.passages,
@@ -549,6 +561,7 @@ def _prepare_merge(
                 "grounding_source_ids": [
                     passage.segment_id for passage in selection.passages
                 ],
+                "preserved_ungrounded_provenance": list(preserved_provenance),
                 "instructions": request.instructions,
                 "input_text": request.input_text,
                 "schema": request.response_schema,
@@ -568,7 +581,9 @@ def _prepare_merge(
         children=tuple(member.node_id for member in members),
         covered_segments=covered,
         request=request,
-        legal=grounded,
+        legal=legal,
+        quotation_sources=grounded,
+        preserved_provenance=preserved_provenance,
         descriptor=descriptor,
     )
 
@@ -581,6 +596,8 @@ def _execute_prepared_merge(
     return parse_merged_summary(
         result.text,
         legal=prepared.legal,
+        quotation_sources=prepared.quotation_sources,
+        preserved_provenance=prepared.preserved_provenance,
         source_order=prepared.covered_segments,
         subject=prepared.node_id,
         level=prepared.level,

@@ -13,8 +13,10 @@ source-segment ID to its citable core text. That mapping is controlled by the
 application, not model output, and is therefore the only valid source for
 grounding passages. A merge request serializes generated children separately
 from selected authoritative source passages; its parser validates model
-references against those selected passages and narrows provenance to retained
-claims. Structural reachability remains available independently on the tree.
+references against the full segment set covered by the children, checks
+quotations only where authoritative passages were supplied, and narrows
+provenance to retained claims. Structural reachability remains available
+independently on the tree.
 
 ## Considered approaches
 
@@ -67,23 +69,28 @@ into an ungrounded one.
 
 The merge request has separate generated-summary and authoritative-source
 blocks, each individually fenced. Its instructions say source passages are
-authoritative, child summaries are provisional, and an output claim or
-reference must be supported by the supplied passages. Source text remains data
-and cannot override those instructions.
+authoritative for the material they cover and child summaries are provisional.
+References already carried by children remain citable when budget selection
+omits their source passages; omission is not evidence against them. Source text
+remains data and cannot override those instructions.
 
 ## Provenance policy
 
-Only selected passage IDs are legal in a merge response. The shared validator
-checks every content-unit evidence item, grounded qualification,
-grounded contradiction, and quotation against those passages. It requires every
-content unit and grounded annotation to name at least one source. Merged
-responses must record provenance. The parser then canonicalizes every declared
-and direct-evidence reference to the selected candidate order and stores that
-narrowed sequence; it no longer replaces it with the whole child union. The
-tree's `covered_segments` continues to preserve the full structural
-reachability independently, in document order. Final citations are derived
-separately by `resolve_citations`, which sorts the cited IDs by source segment
-order before they are written to output or audit metadata.
+Every segment ID covered by the merged children is legal in a merge response;
+an ID outside that group remains an error. The shared validator checks every
+content-unit evidence item, grounded qualification, grounded contradiction,
+quotation, and declared provenance against that full set. Verbatim quotation
+checks use only the budget-selected authoritative passages actually supplied
+to the model. It requires every content unit and grounded annotation to name at
+least one source, and merged responses must record provenance. The parser then
+canonicalizes the response's declared and direct-evidence references to
+document order. References inherited from children whose passages were omitted
+from grounding are unioned locally because the model cannot evaluate them;
+this omitted-reference set is included in the merge cache descriptor. A
+grounded reference remains under model control and may be explicitly dropped
+when correction removes its material. The tree's `covered_segments` continues
+to preserve full structural reachability independently. Final citations are
+derived separately by `resolve_citations`.
 
 This makes the two notions explicit:
 
@@ -114,5 +121,6 @@ that restores source order for rendered citations.
 Offline tests will pin passage priority, whole-passage budget accounting,
 separation/fencing, invalid references, contradictory or
 ambiguous child grounding, and a misleading child summary corrected against
-an authoritative passage. Existing hierarchy tests will prove full tree
-coverage remains available while root `SummaryNode.provenance` narrows.
+an authoritative passage. Hierarchy regressions also prove that a merge can
+retain the full union of child references when its grounding budget supplies
+only a subset of their passages.

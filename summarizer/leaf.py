@@ -281,16 +281,22 @@ def validate_provenance(
     node: SummaryNode,
     *,
     legal: Mapping[str, str],
+    quotation_sources: Mapping[str, str] | None = None,
     subject: str,
     require_provenance: bool = True,
 ) -> None:
     """Check every reference against the identifiers the caller supplied.
 
-    `legal` maps each citable identifier to the text a quotation from it may
-    be drawn from. The mapping never comes from the payload, which is what
-    makes a citation injected through the source - or laundered through a
-    child summary - a validation failure rather than a dangling reference
-    carried up the hierarchy.
+    `legal` maps each citable identifier to its source text. The mapping never
+    comes from the payload, which is what makes a citation injected through
+    the source - or laundered through a child summary - a validation failure
+    rather than a dangling reference carried up the hierarchy.
+
+    `quotation_sources` narrows verbatim checks when a caller supplied only a
+    budgeted subset of the legal source passages. Citations remain legal for
+    the full caller-owned set, while quotes are checked only where the
+    authoritative passage was actually available to the model. By default all
+    legal passages are available, as they are for leaf summaries.
 
     A quotation is checked against the text of the segment it cites, never
     against a concatenation of all of them: a concatenation would let a quote
@@ -347,8 +353,14 @@ def validate_provenance(
         for item in annotation.evidence
         if item.quote is not None
     )
+    available_quotation_sources = (
+        legal if quotation_sources is None else quotation_sources
+    )
     for segment_id, quote in cited_quotes:
-        if quote not in legal[segment_id]:
+        if (
+            segment_id in available_quotation_sources
+            and quote not in available_quotation_sources[segment_id]
+        ):
             raise LeafSummaryError(
                 f"{subject}: a quotation does not occur in the segment it cites"
             )

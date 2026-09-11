@@ -1,5 +1,6 @@
 import hashlib
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from threading import Lock
@@ -303,6 +304,54 @@ def test_merged_provenance_uses_document_order_not_grounding_priority() -> None:
         timeout_seconds=30,
         max_merge_children=3,
         grounding_policy=GroundingPolicy(max_tokens=1_000),
+    )
+
+    assert root.covered_segments == ("S000001", "S000002", "S000003")
+    assert root.summary.provenance == ("S000001", "S000002", "S000003")
+
+
+def test_merge_retains_child_references_when_grounding_omits_their_passages() -> None:
+    class ReferenceRetainingProvider:
+        def generate(self, request: GenerationRequest) -> GenerationResult:
+            assert '"segment_id":"S000001"' in request.input_text
+            assert '"segment_id":"S000002"' not in request.input_text
+            assert '"segment_id":"S000003"' not in request.input_text
+            visible_references = sorted(
+                set(re.findall(r'"segment_id":"(S\d{6})"', request.input_text))
+            )
+            return GenerationResult(
+                text=json.dumps(
+                    {
+                        "summary": "Merged.",
+                        "content_units": [],
+                        "entities": [],
+                        "qualifications": [],
+                        "contradictions": [],
+                        "quotations": [],
+                        "provenance": visible_references,
+                        "level": 1,
+                    }
+                ),
+                provider="fake",
+                model=request.model,
+            )
+
+    root, _, _ = build_hierarchy(
+        leaves(3),
+        ReferenceRetainingProvider(),
+        CharacterCounter(),
+        source_id=SOURCE_ID,
+        covered=covered_for(3),
+        attributable={
+            "S000001": "short",
+            "S000002": "x" * 1_000,
+            "S000003": "y" * 1_000,
+        },
+        usable_tokens=100_000,
+        model="m",
+        timeout_seconds=30,
+        max_merge_children=3,
+        grounding_policy=GroundingPolicy(max_tokens=200),
     )
 
     assert root.covered_segments == ("S000001", "S000002", "S000003")

@@ -21,7 +21,7 @@ from summarizer.tokenization import TokenCounter
 
 # A distinct cache-key input from the leaf prompt. Bump it whenever a change
 # could alter a model's output for identical children.
-MERGE_PROMPT_VERSION = "merge-prompt/2"
+MERGE_PROMPT_VERSION = "merge-prompt/3"
 
 MERGE_SCHEMA_NAME = "merged_summary"
 
@@ -36,13 +36,16 @@ not write commentary before or after it.
 
 Follow these rules:
 
-- Combine only what the supplied source passages support. Generated child \
-summaries may guide selection, but correct a misleading generated summary when \
-the original source differs. Do not add outside knowledge and do not infer \
-beyond the source passages.
+- Combine the generated child summaries. Use the supplied authoritative source \
+passages to validate the material they cover, and correct a misleading \
+generated summary when the original source differs. A source passage may be \
+omitted only because the grounding budget did not select it; omission alone is \
+not evidence that its child summary or references are unsupported. Do not add \
+outside knowledge.
 - Merge repeated information instead of restating it, but keep every \
-supporting reference from each summary that stated it. Losing a reference \
-loses the ability to trace a claim back to its source.
+supporting reference shown in the generated child summaries, including when \
+that reference's passage was not selected for authoritative grounding. Losing \
+a visible reference loses the ability to trace a claim back to its source.
 - Keep material qualifications and uncertainty. Do not resolve a hedge into a \
 statement.
 - Keep disagreements. Where two summaries conflict, record the conflict rather \
@@ -50,10 +53,12 @@ than reconciling, averaging, or choosing between them.
 - Do not invent causal or temporal connections. The summaries are listed in \
 document order, and that order alone is not evidence that one caused, \
 preceded, or followed from another.
-- Cite only identifiers in the authoritative source passages below. Do not \
-invent an identifier and do not cite one that is merely plausible.
+- Cite only identifiers already carried by the child summaries or attached to \
+the authoritative source passages below. Do not invent an identifier and do \
+not cite one that is merely plausible.
 - Copy a quotation character for character from the summary that carries it. \
-Leave quotations empty rather than paraphrasing into them.
+When its authoritative source passage is supplied below, the quotation must \
+also occur there. Leave quotations empty rather than paraphrasing into them.
 - Use a level of {level}.
 
 The summaries are delimited by these markers:
@@ -237,6 +242,8 @@ def parse_merged_summary(
     text: str,
     *,
     legal: Mapping[str, str],
+    quotation_sources: Mapping[str, str] | None = None,
+    preserved_provenance: Sequence[str] = (),
     source_order: Sequence[str] | None = None,
     subject: str,
     level: int,
@@ -262,11 +269,19 @@ def parse_merged_summary(
             f"{subject}: response reported level {node.level} rather than {level}"
         )
 
-    validate_provenance(node, legal=legal, subject=subject)
+    validate_provenance(
+        node,
+        legal=legal,
+        quotation_sources=quotation_sources,
+        subject=subject,
+    )
+    canonical_order = source_order or tuple(legal)
+    retained = set(preserved_provenance)
+    retained.update(derive_provenance(node, source_order=canonical_order))
     return node.model_copy(
         update={
-            "provenance": derive_provenance(
-                node, source_order=source_order or tuple(legal)
+            "provenance": tuple(
+                identifier for identifier in canonical_order if identifier in retained
             )
         }
     )

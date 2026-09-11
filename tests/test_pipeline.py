@@ -6,6 +6,7 @@ from summarizer.ingestion import ingest_text
 from summarizer.pipeline import PipelineConfig, run_pipeline
 from summarizer.providers.base import GenerationRequest, GenerationResult
 from summarizer.segmentation import SegmentationConfig
+from summarizer.tokenization import resolve_token_counter
 from summarizer.verification import VerificationConfig
 
 
@@ -104,3 +105,33 @@ def test_hierarchical_pipeline_forces_multiple_levels_then_edits_and_cites(tmp_p
     assert provider.requests[-1].operation_id == "editorial-final"
     assert result.final.audit is not None
     assert len(result.final.audit.tree_nodes) == len(result.nodes)
+
+
+def test_hierarchical_pipeline_runs_offline_with_ollama_defaults_and_explicit_window(
+    tmp_path,
+) -> None:
+    provider = PipelineProvider()
+    app_config = AppConfig(provider="ollama", model="qwen3.8")
+    counter = resolve_token_counter(
+        provider=app_config.provider,
+        model=app_config.model,
+    )
+
+    result = run_pipeline(
+        ingest_text("A short source."),
+        provider,
+        counter,
+        app=app_config,
+        strategy=StrategyConfig(
+            strategy="hierarchical",
+            context_window=32_768,
+        ),
+        config=PipelineConfig(audit_path=tmp_path / "audit.json"),
+    )
+
+    assert counter.identity == "estimate:utf8-bytes"
+    assert result.strategy.strategy == "hierarchical"
+    assert [request.operation_id for request in provider.requests] == [
+        "S000001",
+        "editorial-final",
+    ]

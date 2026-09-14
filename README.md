@@ -195,6 +195,25 @@ python -m tests.support.evaluation --output-dir <temporary-directory>
 
 It writes one `evaluation.json` plus per-case audit artifacts in the requested temporary directory. `tests/test_evaluation.py` validates the deterministic fake, direct/auto paths, multi-level hierarchy, citations, provenance, audit links, and source-sensitive mutation behavior. See [docs/evaluation.md](docs/evaluation.md) for the rubric, output schema, manual inspection procedure, regression dispositions, and parent definition-of-done evidence map. Do not commit evaluator output, caches, credentials, or temporary files.
 
+## Contributing
+
+Before closing an implementation issue, the merged diff must pass an adversarial review against the issue's acceptance criteria. Green CI is not sufficient on its own.
+
+**Reviewer checklist before closing:**
+
+- **Diff review**: Read the actual merged diff against each acceptance criterion. Confirm the implementation satisfies them, not merely that tests pass.
+- **Real-dependency checks**: Where behavior depends on a real provider, file format, or external integration, verify against those real dependencies—not only mock-based coverage.
+- **Documentation vs. executable behavior**: Run the documented commands (CLI flags, example invocations, README snippets). Confirm the documented behavior matches the code path reached by those commands.
+- **Test mutation**: Where practical, mutate or negate new tests (remove an assertion, invert a condition) to confirm they fail when the implementation is broken. A test that passes under mutation is not providing coverage.
+- **Source-tree verification**: Check the actual merged source tree for the fix—locate the changed function or module and read it. Do not rely on CI artifact reports as a proxy for reading the code.
+
+**Closing comment requirements:**
+
+The closing issue comment must record:
+1. The merge evidence (PR number, merge commit SHA).
+2. Which acceptance criteria were verified and how (commands run, files read, tests mutated).
+3. Any findings or limitations discovered during the review.
+
 ## Limitations
 
 The system is an orchestration and grounding implementation, not a guarantee of model truth. Conservative token estimates can reduce packing efficiency; context-window tables are maintained metadata and may require `--context-window`; large or unusual blocks can be split at a hard fallback boundary. Ollama and OpenAI differ in transport behavior, so provider errors remain possible. Verification is best effort and bounded. OCR, audio, external research, GUI operation, and cross-process shared publication are outside the supported scope.

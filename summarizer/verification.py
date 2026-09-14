@@ -1870,7 +1870,7 @@ def _verify_and_repair(
     )
     if failed and not second.failed and config.max_repair_passes > 1:
         continued = _verify_and_repair(
-            draft,
+            repaired,
             source_id=source_id,
             source_index=source_index,
             runtime=runtime,
@@ -1906,7 +1906,7 @@ def _verify_and_repair(
         )
         if continued.failed:
             return _terminal_result(
-                text=draft,
+                text=repaired,
                 pass_results=combined_passes,
                 repairs=(*events, *continued.repairs),
                 generations=combined_generations,

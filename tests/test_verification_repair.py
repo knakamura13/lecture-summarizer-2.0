@@ -466,11 +466,17 @@ def test_verify_and_repair_uses_each_configured_repair_pass_at_most_once() -> No
         def __init__(self) -> None:
             self.responses = iter(
                 (
+                    # Pass 1 (V01): verify first="The value is 42." → contradicted on "42"
                     *contradicted_atomic_and_fallback(1, "value is 40"),
+                    # Pass 1 repair: replace first → second; hash is sha256(first)
                     '{"repairs":[{"span_id":"V01S000001","original_hash":"%s","action":"replace","replacement":"%s"}]}' % (hashlib.sha256(first.encode()).hexdigest(), second),
+                    # Pass 2 (V02): verify repaired=second="The value is 41." → contradicted on "41"
                     *contradicted_atomic_and_fallback(2, "value is 40", anchor="41"),
-                    *contradicted_atomic_and_fallback(3, "value is 40"),
-                    '{"repairs":[{"span_id":"V03S000001","original_hash":"%s","action":"replace","replacement":"%s"}]}' % (hashlib.sha256(first.encode()).hexdigest(), third),
+                    # Pass 3 (V03): verify second="The value is 41." again → contradicted on "41"
+                    # (pass 3 receives second, the repaired output of pass 1, not the original first)
+                    *contradicted_atomic_and_fallback(3, "value is 40", anchor="41"),
+                    # Pass 3 repair: replace second → third; hash is sha256(second)
+                    '{"repairs":[{"span_id":"V03S000001","original_hash":"%s","action":"replace","replacement":"%s"}]}' % (hashlib.sha256(second.encode()).hexdigest(), third),
                     '{"spans":[{"span_id":"V04S000001","anchors":[]}]}',
                     '{"findings":[{"claim_id":"V04C000001","verdict":"supported","evidence":[{"segment_id":"S000001","exact_quote":"value is 40"}]}]}',
                 )
@@ -490,6 +496,63 @@ def test_verify_and_repair_uses_each_configured_repair_pass_at_most_once() -> No
     )
 
     assert result.text == third
+    assert not result.failed
+    assert [event.span_id for event in result.repairs] == ["V01S000001", "V03S000001"]
+    assert [item.pass_index for item in result.phase_generations if item.phase == "repair"] == [1, 3]
+
+
+def test_verify_and_repair_multipass_each_pass_receives_previous_repaired_output() -> None:
+    """Regression test: pass 2 must receive the repaired output of pass 1, not the
+    original draft.  With the bug (recursing on `draft`), pass 3 would hash against
+    sha256(draft_a) instead of sha256(draft_b), causing the repair to be rejected as
+    a stale-span and returning the original draft rather than the doubly-repaired text.
+
+    Pass 1 fixes draft_a -> draft_b; pass 2 re-verifies draft_b and still finds a
+    contradiction; pass 3 fixes draft_b -> draft_c.  The returned text must be
+    draft_c and repairs must list exactly the two events V01S000001 and V03S000001.
+    """
+    draft_a = "The score is 10."
+    draft_b = "The score is 20."
+    draft_c = "The score is 30."
+
+    class ScriptedProvider:
+        def __init__(self) -> None:
+            self.responses = iter(
+                (
+                    # Pass 1 (V01): verify draft_a, anchor "10" present → contradicted
+                    *contradicted_atomic_and_fallback(1, "score is 30", anchor="10"),
+                    # Pass 1 repair: replace draft_a → draft_b; hash against draft_a
+                    '{"repairs":[{"span_id":"V01S000001","original_hash":"%s","action":"replace","replacement":"%s"}]}'
+                    % (hashlib.sha256(draft_a.encode()).hexdigest(), draft_b),
+                    # Pass 2 (V02): verify draft_b, anchor "20" present → contradicted
+                    *contradicted_atomic_and_fallback(2, "score is 30", anchor="20"),
+                    # Pass 3 (V03): verify draft_b (pass 2 receives the repaired output of pass 1)
+                    # anchor "20" is in draft_b; hash for repair must be sha256(draft_b)
+                    *contradicted_atomic_and_fallback(3, "score is 30", anchor="20"),
+                    # Pass 3 repair: replace draft_b → draft_c; hash against draft_b
+                    '{"repairs":[{"span_id":"V03S000001","original_hash":"%s","action":"replace","replacement":"%s"}]}'
+                    % (hashlib.sha256(draft_b.encode()).hexdigest(), draft_c),
+                    # Pass 4 (V04): verify draft_c → supported
+                    '{"spans":[{"span_id":"V04S000001","anchors":[]}]}',
+                    '{"findings":[{"claim_id":"V04C000001","verdict":"supported","evidence":[{"segment_id":"S000001","exact_quote":"score is 30"}]}]}',
+                )
+            )
+
+        def generate(self, request):
+            return GenerationResult(next(self.responses), "scripted", "model")
+
+    result = verify_and_repair(
+        draft_a,
+        source_id="a" * 64,
+        source_index=build_source_lexical_index(
+            provenance_ids=("S000001",), source={"S000001": draft_c}
+        ),
+        runtime=VerificationRuntime(ScriptedProvider(), ConservativeUtf8TokenCounter(), "model", 30, 10_000),
+        config=VerificationConfig(enabled=True, max_repair_passes=2),
+    )
+
+    # Both fixes must be present: draft_a → draft_b (pass 1), draft_b → draft_c (pass 3)
+    assert result.text == draft_c
     assert not result.failed
     assert [event.span_id for event in result.repairs] == ["V01S000001", "V03S000001"]
     assert [item.pass_index for item in result.phase_generations if item.phase == "repair"] == [1, 3]

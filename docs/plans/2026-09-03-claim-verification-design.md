@@ -73,7 +73,11 @@ provider call per claim:
    qualify, replace, or remove a span but may not alter a span whose hash no
    longer matches or discard a supported sibling claim.
 9. Re-split, re-decompose, and re-verify the entire repaired draft. The repair
-   call never certifies its own output.
+   call never certifies its own output. When `max_repair_passes > 1`, each
+   subsequent pass receives the repaired output of the previous pass, not the
+   original draft. `repairs` lists only the events present in the final returned
+   text; no repair event from an earlier pass is re-listed if it was superseded
+   by a later pass.
 10. Stop at the configured limit. Any remaining material contradiction fails
     closed. Insufficient evidence remains an audit-visible limitation.
 

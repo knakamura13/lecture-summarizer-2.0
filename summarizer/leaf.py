@@ -171,6 +171,11 @@ def _top_level_objects(text: str) -> list[str]:
     Constrained decoding reduces slop rather than eliminating it: the native
     Ollama format argument is best effort, and a small local model may still
     wrap its answer in a code fence or introduce it with a sentence.
+
+    Only brace-balanced spans that also parse as valid JSON are returned.
+    This prevents brace-bearing prose (e.g. ``Sure, I will use the {summary}
+    field as requested.``) from being counted as an object and triggering a
+    spurious "found 2" rejection on an otherwise valid response.
     """
     objects = []
     depth = 0
@@ -195,7 +200,12 @@ def _top_level_objects(text: str) -> list[str]:
         elif character == "}" and depth:
             depth -= 1
             if depth == 0 and start is not None:
-                objects.append(text[start : index + 1])
+                span = text[start : index + 1]
+                try:
+                    json.loads(span)
+                    objects.append(span)
+                except json.JSONDecodeError:
+                    pass
                 start = None
     return objects
 
@@ -274,6 +284,13 @@ def parse_leaf_summary(text: str, *, segment: SourceSegment) -> SummaryNode:
         legal={segment.segment_id: core_text(segment)},
         subject=segment.segment_id,
     )
+
+    if node.level != 0:
+        raise LeafSummaryError(
+            f"{segment.segment_id}: leaf response reported level {node.level}; "
+            f"leaf summaries must have level 0"
+        )
+
     return node
 
 

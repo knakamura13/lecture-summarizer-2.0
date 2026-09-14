@@ -343,3 +343,33 @@ def test_error_messages_bound_payload_controlled_text() -> None:
 
     assert "\n" not in str(error.value)
     assert len(str(error.value)) < 140
+
+
+def test_prose_with_braces_before_valid_json_is_accepted() -> None:
+    """Brace-bearing prose before the real JSON payload must not be counted.
+
+    A model may introduce its answer with a sentence like
+    ``Sure, I will use the {summary} field as requested.`` before emitting
+    the actual JSON object.  The span ``{summary}`` is brace-balanced but is
+    not valid JSON, so after the json.loads filter only the real payload
+    remains and the response parses successfully.
+    """
+    preamble = "Sure, I will use the {summary} field as requested.\n"
+    node = parse_leaf_summary(preamble + payload(), segment=segment())
+    assert node.level == 0
+
+
+def test_rejects_leaf_response_with_nonzero_level() -> None:
+    """A leaf summary must report level 0.
+
+    Accepting level=3 (or any non-zero value) silently creates a mismatch
+    between AuditNode.level and AuditSummary.level, which corrupts the merge
+    payload downstream.  The error must name both the segment and the
+    reported level so the failure is actionable.
+    """
+    with pytest.raises(LeafSummaryError) as error:
+        parse_leaf_summary(payload(level=3), segment=segment())
+
+    message = str(error.value)
+    assert "S000001" in message
+    assert "3" in message

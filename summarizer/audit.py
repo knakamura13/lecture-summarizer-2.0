@@ -303,6 +303,7 @@ class AuditVerificationUsage(_AuditRecord):
 
 
 class AuditVerification(_AuditRecord):
+    diagnostic_codes: tuple[str, ...]
     enabled: bool
     pass_count: int
     exhausted: bool
@@ -1068,6 +1069,7 @@ def _audit_verification(
             passes=(),
             repairs=(),
             usage=(),
+            diagnostic_codes=(),
             warning_codes=(),
             limitation_codes=(),
             failure_codes=(),
@@ -1096,6 +1098,7 @@ def _audit_verification(
             passes=(),
             repairs=(),
             usage=(),
+            diagnostic_codes=(),
             warning_codes=(),
             limitation_codes=(),
             failure_codes=(),
@@ -1230,6 +1233,7 @@ def _audit_verification(
         ),
         warning_codes=verification.warning_codes,
         limitation_codes=verification.limitation_codes,
+        diagnostic_codes=verification.diagnostic_codes,
         failure_codes=verification.failure_codes,
     )
 

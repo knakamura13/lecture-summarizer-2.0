@@ -66,15 +66,18 @@ class EvidenceItem(_Record):
 
     @field_validator("quote")
     @classmethod
-    def _reject_blank_quote(cls, value: str | None) -> str | None:
-        """Absent means null, not empty.
+    def _validate_quote(cls, value: str | None) -> str | None:
+        """Absent means null, not empty. Also enforces a length cap.
 
         A blank quote would otherwise pass a verbatim check trivially, since
         every string contains the empty string, and code reading `quote is not
         None` as "has a quotation" would get nothing.
         """
-        if value is not None and not value.strip():
-            raise ValueError("quote must be null rather than blank")
+        if value is not None:
+            if not value.strip():
+                raise ValueError("quote must be null rather than blank")
+            if len(value) > 500:
+                raise ValueError("quote must not exceed 500 characters")
         return value
 
 
@@ -134,6 +137,13 @@ class SummaryNode(_Record):
     def _reject_negative_level(cls, value: int) -> int:
         if value < 0:
             raise ValueError("level must not be negative")
+        return value
+
+    @field_validator("quotations")
+    @classmethod
+    def _validate_quotation_count(cls, value: tuple[EvidenceItem, ...]) -> tuple[EvidenceItem, ...]:
+        if len(value) > 5:
+            raise ValueError("must not exceed 5 quotations")
         return value
 
 

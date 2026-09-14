@@ -89,7 +89,7 @@ The evaluator's top-level object has this shape (field names are contractual; va
 
 The example shows types and required keys, not a result. The report records requested and selected strategies, measured document tokens, provider call count, root depth, final text, source-resolving citations, five rubric dimensions, and an aggregate `passed` value. `rubric.*.observed` and `.evidence` are explicit observations rather than hidden model judgments; coverage additionally records curated claim IDs and source spans. `heuristic_vs_human` keeps automated signals separate from human review and explicitly sets `live_model_evaluation` to false.
 
-Each audit artifact uses the pipeline audit contract: `audit/2` for an ordinary case, or `audit/3` when reliability metadata is enabled. Its source segment identifiers, tree nodes, citations, evidence links, and root identifier must resolve internally. The audit intentionally omits raw source prose, generated prose, quotations, prompts, request bodies, and credentials. See the README's [audit section](../README.md#output-and-audit-artifacts) for the field-level contract.
+Each audit artifact uses the pipeline audit contract: `audit/2` for an ordinary direct case, `audit/3` for direct output with reliability metadata, or `audit/4` when a hierarchy executes a merge. Its source segment identifiers, tree nodes, citations, evidence links, and root identifier must resolve internally. The audit intentionally omits raw source prose, generated prose, quotations, prompts, request bodies, and credentials. See the README's [audit section](../README.md#output-and-audit-artifacts) for the field-level contract.
 
 ## Five-dimension rubric
 

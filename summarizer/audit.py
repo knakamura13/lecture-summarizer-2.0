@@ -32,6 +32,7 @@ if TYPE_CHECKING:
 
 AUDIT_SCHEMA_VERSION = "audit/2"
 AUDIT_SCHEMA_VERSION_V3 = "audit/3"
+AUDIT_SCHEMA_VERSION_V4 = "audit/4"
 
 
 class AuditError(ValueError):
@@ -431,6 +432,17 @@ class AuditSummary(_AuditRecord):
     _valid_provenance = field_validator("provenance")(_audit_segment_ids)
 
 
+class AuditGroundingSelection(_AuditRecord):
+    selected_ids: tuple[str, ...]
+    omitted_ids: tuple[str, ...]
+    reserve_tokens: int | None = Field(default=None, ge=1)
+    request_capacity_tokens: int | None = Field(default=None, ge=1)
+    omission_reason: Literal["budget"]
+
+    _valid_selected_ids = field_validator("selected_ids")(_audit_segment_ids)
+    _valid_omitted_ids = field_validator("omitted_ids")(_audit_segment_ids)
+
+
 class AuditNode(_AuditRecord):
     node_id: str
     level: int
@@ -438,10 +450,13 @@ class AuditNode(_AuditRecord):
     children: tuple[str, ...]
     covered_segments: tuple[str, ...]
     summary: AuditSummary
-
     _valid_node_id = field_validator("node_id")(_audit_node_id)
     _valid_children = field_validator("children")(_audit_node_ids)
     _valid_covered_segments = field_validator("covered_segments")(_audit_segment_ids)
+
+
+class AuditNodeV4(AuditNode):
+    grounding: AuditGroundingSelection | None
 
 
 class _AuditArtifactBase(_AuditRecord):
@@ -495,6 +510,29 @@ class _AuditArtifactBase(_AuditRecord):
             unknown_covered = set(node.covered_segments) - set(segments)
             if unknown_covered:
                 raise ValueError("tree coverage must resolve to source segments")
+            grounding = getattr(node, "grounding", None)
+            if isinstance(node, AuditNodeV4):
+                if len(node.children) > 1 and grounding is None:
+                    raise ValueError("executed merges must record grounding")
+                if len(node.children) <= 1 and grounding is not None:
+                    raise ValueError("only executed merges may record grounding")
+            if grounding is not None:
+                selected = set(grounding.selected_ids)
+                omitted = set(grounding.omitted_ids)
+                if (
+                    len(selected) != len(grounding.selected_ids)
+                    or len(omitted) != len(grounding.omitted_ids)
+                    or selected & omitted
+                ):
+                    raise ValueError("grounding selection identifiers must not overlap")
+                if (selected | omitted) - set(node.covered_segments):
+                    raise ValueError(
+                        "grounding selection must resolve to tree coverage"
+                    )
+                if (grounding.reserve_tokens is None) == (
+                    grounding.request_capacity_tokens is None
+                ):
+                    raise ValueError("grounding selection must record one budget mode")
             for child_id in node.children:
                 child = nodes.get(child_id)
                 if child is None:
@@ -544,8 +582,16 @@ class AuditArtifactV3(_AuditArtifactBase):
     reliability: AuditReliability
 
 
+class AuditArtifactV4(_AuditArtifactBase):
+    """The audit/4 contract with per-merge grounding metadata."""
+
+    schema_version: Literal["audit/4"]
+    tree_nodes: tuple[AuditNodeV4, ...]
+    reliability: AuditReliability | None = None
+
+
 _AuditArtifactRecord = Annotated[
-    AuditArtifactV2 | AuditArtifactV3,
+    AuditArtifactV2 | AuditArtifactV3 | AuditArtifactV4,
     Field(discriminator="schema_version"),
 ]
 _AUDIT_ARTIFACT_ADAPTER = TypeAdapter(_AuditArtifactRecord)
@@ -554,15 +600,15 @@ _AUDIT_ARTIFACT_ADAPTER = TypeAdapter(_AuditArtifactRecord)
 class AuditArtifact:
     """Version-discriminated audit artifact reader compatibility facade."""
 
-    def __new__(cls, **value: object) -> AuditArtifactV2 | AuditArtifactV3:
+    def __new__(cls, **value: object) -> AuditArtifactV2 | AuditArtifactV3 | AuditArtifactV4:
         return _AUDIT_ARTIFACT_ADAPTER.validate_python(value)
 
     @staticmethod
-    def model_validate(value: object) -> AuditArtifactV2 | AuditArtifactV3:
+    def model_validate(value: object) -> AuditArtifactV2 | AuditArtifactV3 | AuditArtifactV4:
         return _AUDIT_ARTIFACT_ADAPTER.validate_python(value)
 
     @staticmethod
-    def model_validate_json(value: str | bytes) -> AuditArtifactV2 | AuditArtifactV3:
+    def model_validate_json(value: str | bytes) -> AuditArtifactV2 | AuditArtifactV3 | AuditArtifactV4:
         return _AUDIT_ARTIFACT_ADAPTER.validate_json(value)
 
 
@@ -790,7 +836,7 @@ def _audit_segment(segment: SourceSegment) -> AuditSegment:
     )
 
 
-def _audit_node(node: TreeNode) -> AuditNode:
+def _audit_node(node: TreeNode, *, include_grounding: bool) -> AuditNode | AuditNodeV4:
     summary = node.summary
     audit_summary = AuditSummary(
         level=summary.level,
@@ -842,13 +888,29 @@ def _audit_node(node: TreeNode) -> AuditNode:
             for evidence in summary.quotations
         ),
     )
-    return AuditNode(
-        node_id=node.node_id,
-        level=node.level,
-        order=node.order,
-        children=node.children,
-        covered_segments=node.covered_segments,
-        summary=audit_summary,
+    values = {
+        "node_id": node.node_id,
+        "level": node.level,
+        "order": node.order,
+        "children": node.children,
+        "covered_segments": node.covered_segments,
+        "summary": audit_summary,
+    }
+    if not include_grounding:
+        return AuditNode(**values)
+    return AuditNodeV4(
+        **values,
+        grounding=(
+            AuditGroundingSelection(
+                selected_ids=node.grounding.selection.selected_ids,
+                omitted_ids=node.grounding.selection.omitted_ids,
+                reserve_tokens=node.grounding.reserve_tokens,
+                request_capacity_tokens=node.grounding.request_capacity_tokens,
+                omission_reason="budget",
+            )
+            if node.grounding is not None
+            else None
+        ),
     )
 
 
@@ -1252,7 +1314,7 @@ def build_audit_artifact(
     reliability_cache: Mapping[str, Sequence[str]] | None = None,
     reliability_resume: Mapping[str, object] | None = None,
     reliability_attempts: Sequence[Mapping[str, object]] | None = None,
-) -> AuditArtifactV2 | AuditArtifactV3:
+) -> AuditArtifactV2 | AuditArtifactV3 | AuditArtifactV4:
     """Build a validated artifact without retaining source text or request data."""
     # Determine if we have reliability metadata
     has_reliability = (
@@ -1297,13 +1359,18 @@ def build_audit_artifact(
             cache=cache_obj, attempts=attempts, **resume_values
         )
 
+    has_merges = any(len(node.children) > 1 for node in nodes)
+    has_grounding = any(node.grounding is not None for node in nodes)
+    uses_audit_v4 = has_merges or has_grounding
     common = {
         "source_id": source_id,
         "strategy": strategy,
         "model": redact_text(model),
         "configuration": _allowlisted_configuration(configuration),
         "source_segments": tuple(_audit_segment(segment) for segment in segments),
-        "tree_nodes": tuple(_audit_node(node) for node in nodes),
+        "tree_nodes": tuple(
+            _audit_node(node, include_grounding=uses_audit_v4) for node in nodes
+        ),
         "root_node_id": root_node_id,
         "citations": tuple(
             AuditCitation(
@@ -1330,6 +1397,12 @@ def build_audit_artifact(
             ),
         ),
     }
+    if uses_audit_v4:
+        return AuditArtifactV4(
+            schema_version=AUDIT_SCHEMA_VERSION_V4,
+            reliability=reliability_obj,
+            **common,
+        )
     if reliability_obj is None:
         return AuditArtifactV2(schema_version=AUDIT_SCHEMA_VERSION, **common)
     return AuditArtifactV3(
@@ -1339,7 +1412,7 @@ def build_audit_artifact(
     )
 
 
-def serialize_audit(artifact: AuditArtifactV2 | AuditArtifactV3) -> bytes:
+def serialize_audit(artifact: AuditArtifactV2 | AuditArtifactV3 | AuditArtifactV4) -> bytes:
     """Serialize canonically and prove the written representation is valid."""
     encoded = json.dumps(
         artifact.model_dump(mode="json"),

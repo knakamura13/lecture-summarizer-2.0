@@ -6,7 +6,11 @@ from dataclasses import dataclass, field, replace
 
 from summarizer.budget import BudgetError
 from summarizer.cache import CacheDescriptor
-from summarizer.grounding import GroundingPolicy, select_source_passages
+from summarizer.grounding import (
+    GroundingPolicy,
+    GroundingSelection,
+    select_source_passages,
+)
 from summarizer.leaf import derive_provenance, validate_provenance
 from summarizer.merge import (
     MERGE_PROMPT_VERSION,
@@ -30,6 +34,28 @@ class HierarchyError(ValueError):
 
 
 @dataclass(frozen=True)
+class MergeGrounding:
+    """Selection metadata retained for an executed merge."""
+
+    selection: GroundingSelection
+    reserve_tokens: int | None
+    request_capacity_tokens: int | None
+
+    def __post_init__(self) -> None:
+        if (self.reserve_tokens is None) == (
+            self.request_capacity_tokens is None
+        ):
+            raise ValueError("merge grounding needs one budget mode")
+        if self.reserve_tokens is not None and self.reserve_tokens <= 0:
+            raise ValueError("grounding reserve must be positive")
+        if (
+            self.request_capacity_tokens is not None
+            and self.request_capacity_tokens <= 0
+        ):
+            raise ValueError("grounding request capacity must be positive")
+
+
+@dataclass(frozen=True)
 class _PreparedMerge:
     """Frozen, independently executable work for one non-singleton merge."""
 
@@ -42,6 +68,7 @@ class _PreparedMerge:
     legal: Mapping[str, str]
     quotation_sources: Mapping[str, str]
     preserved_provenance: tuple[str, ...]
+    grounding: MergeGrounding
     descriptor: CacheDescriptor | None
 
     def decode(self, payload: object) -> SummaryNode:
@@ -63,6 +90,7 @@ class _PreparedMerge:
             summary=self.decode(payload),
             children=self.children,
             covered_segments=self.covered_segments,
+            grounding=self.grounding,
         )
 
 
@@ -84,6 +112,7 @@ class TreeNode:
     summary: SummaryNode
     children: tuple[str, ...]
     covered_segments: tuple[str, ...]
+    grounding: MergeGrounding | None = None
 
     def __post_init__(self) -> None:
         if not self.node_id.strip():
@@ -584,6 +613,13 @@ def _prepare_merge(
         legal=legal,
         quotation_sources=grounded,
         preserved_provenance=preserved_provenance,
+        grounding=MergeGrounding(
+            selection=selection,
+            reserve_tokens=(
+                None if adaptive_grounding else grounding_policy.max_tokens
+            ),
+            request_capacity_tokens=(usable_tokens if adaptive_grounding else None),
+        ),
         descriptor=descriptor,
     )
 

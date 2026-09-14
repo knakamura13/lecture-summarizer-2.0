@@ -72,3 +72,21 @@ def test_read_error_mentions_path_and_encoding(tmp_path: Path) -> None:
     assert str(path) in str(caught.value)
     assert "utf-8" in str(caught.value).lower()
     assert isinstance(caught.value.__cause__, OSError)
+
+
+@pytest.mark.parametrize(
+    "source",
+    ["\xa0", "\u3000\u3000", "\x0b", "\x0c", "\xa0\t\xa0"],
+)
+def test_unicode_whitespace_only_input_is_rejected(source: str) -> None:
+    with pytest.raises(EmptySourceError, match="empty"):
+        ingest_text(source)
+
+
+def test_interior_nbsp_in_real_prose_is_accepted_with_unchanged_offsets() -> None:
+    # U+00A0 is legitimate content inside prose; only the surrounding whitespace
+    # should be stripped by normalize_source_text, not interior NBSP characters.
+    prose = "Hello\xa0world"
+    document = ingest_text(prose)
+    assert "\xa0" in document.text
+    assert document.text.index("\xa0") == prose.index("\xa0")

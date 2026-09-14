@@ -34,6 +34,9 @@ class BoundaryKind(str, Enum):
     # Segmentation never produces this kind; the direct path does, and it tells
     # a later stage that provenance covers everything rather than a region.
     DOCUMENT = "document"
+    # An opaque fenced code block (``` ... ```); heading/list detection is
+    # suppressed for lines inside a fence.
+    CODE_FENCE = "code_fence"
 
 
 class SegmentationError(ValueError):
@@ -288,6 +291,7 @@ class SourceSegment:
 _ATX_HEADING = re.compile(r" {0,3}#{1,6}(?:[ \t]+|$)")
 _SETEXT_UNDERLINE = re.compile(r" {0,3}(?:=+|-+)[ \t]*$")
 _LIST_ITEM = re.compile(r" {0,3}(?:[-+*][ \t]+|\d+[.)][ \t]+)")
+_FENCE_OPEN = re.compile(r"(`{3,}|~{3,})")
 
 
 @dataclass(frozen=True)
@@ -327,13 +331,34 @@ def _consume_blank_lines(lines: list[_LineSpan], index: int) -> int:
 
 
 def detect_structural_blocks(text: str) -> list[StructuralBlock]:
-    """Return contiguous heading, paragraph, and list ranges."""
+    """Return contiguous heading, paragraph, list, and fenced-code ranges."""
     lines = _line_spans(text)
     blocks: list[StructuralBlock] = []
     index = 0
     while index < len(lines):
         start_index = index
         content = lines[index].content
+        # Detect the opening of a fenced code block (``` or ~~~, 3+ chars).
+        fence_match = _FENCE_OPEN.match(content)
+        if fence_match:
+            fence_marker = fence_match.group(1)
+            close_pattern = re.compile(r"^\s*" + re.escape(fence_marker[0] * len(fence_marker)) + r"+\s*$")
+            index += 1
+            while index < len(lines):
+                if close_pattern.match(lines[index].content):
+                    index += 1
+                    break
+                index += 1
+            # Include any trailing blank lines as part of the fence block.
+            index = _consume_blank_lines(lines, index)
+            blocks.append(
+                StructuralBlock(
+                    start=lines[start_index].start,
+                    end=lines[index - 1].end,
+                    boundary_kind=BoundaryKind.CODE_FENCE,
+                )
+            )
+            continue
         if _ATX_HEADING.match(content):
             kind = BoundaryKind.HEADING
             index += 1
@@ -348,6 +373,8 @@ def detect_structural_blocks(text: str) -> list[StructuralBlock]:
                     lines, index
                 ):
                     break
+                if _FENCE_OPEN.match(lines[index].content):
+                    break
                 index += 1
         else:
             kind = BoundaryKind.PARAGRAPH
@@ -357,6 +384,7 @@ def detect_structural_blocks(text: str) -> list[StructuralBlock]:
                     _ATX_HEADING.match(lines[index].content)
                     or _LIST_ITEM.match(lines[index].content)
                     or _is_setext_heading(lines, index)
+                    or _FENCE_OPEN.match(lines[index].content)
                 ):
                     break
                 index += 1
@@ -371,7 +399,30 @@ def detect_structural_blocks(text: str) -> list[StructuralBlock]:
     return blocks
 
 
+_SENTENCE_ABBREVS = {
+    "co",
+    "dept",
+    "dr",
+    "e.g",
+    "etc",
+    "fig",
+    "i.e",
+    "inc",
+    "jr",
+    "ltd",
+    "mr",
+    "mrs",
+    "ms",
+    "no",
+    "prof",
+    "sr",
+    "st",
+    "u.k",
+    "u.s",
+    "vs",
+}
 _SENTENCE_TOKENIZER = PunktSentenceTokenizer()
+_SENTENCE_TOKENIZER._params.abbrev_types.update(_SENTENCE_ABBREVS)
 
 
 def _count_tokens(counter: TokenCounter, text: str) -> int:

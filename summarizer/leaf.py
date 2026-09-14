@@ -18,15 +18,15 @@ class LeafSummaryError(ValueError):
 
 # Identifies the prompt wording for cache keys and audit artifacts. Bump it
 # whenever a change could alter a model's output for identical input.
-LEAF_PROMPT_VERSION = "leaf-prompt/2"
+LEAF_PROMPT_VERSION = "leaf-prompt/3"
 
 LEAF_SCHEMA_NAME = "leaf_summary"
 
 # A direct run holds everything there is. Telling a model it is reading a
 # fragment invites it to hedge about context it supposedly lacks, which is the
 # opposite of the cohesive result a whole-document summary is meant to give.
-# The noun is therefore substituted throughout the instructions rather than in
-# the opening sentence alone: changing the framing while the rules still say
+# The noun is therefore substituted throughout the instructions rather than
+# in the opening sentence alone: changing the framing while the rules still say
 # "region" five more times would not deliver the property.
 _REGION_FRAMING = "one region of a longer document"
 _DOCUMENT_FRAMING = "an entire document"
@@ -47,8 +47,9 @@ not infer beyond it.
 supporting it.
 - Cite evidence with the identifier {segment_id} and no other value. It is the \
 only identifier valid for this request.
-- Copy a quotation character for character from the {noun}. Leave quotations \
-empty rather than paraphrasing into them.
+- Copy a quotation character for character from the {noun}. Keep each quotation \
+under 500 characters, and provide no more than 5 salient quotations in total. \
+Leave quotations empty rather than paraphrasing into them.
 - Record qualifications, and mark a content unit uncertain, wherever the \
 {noun} hedges. Leave contradictions empty when the {noun} states none.
 - Use a level of 0.
@@ -105,7 +106,7 @@ def _core_bounds(segment: SourceSegment) -> tuple[int, int]:
     """
     return (
         segment.core_start - segment.context_start,
-        segment.core_end - segment.context_start,
+        segment.core_end - segment.context_end,
     )
 
 
@@ -288,8 +289,8 @@ def validate_provenance(
     """Check every reference against the identifiers the caller supplied.
 
     `legal` maps each citable identifier to its source text. The mapping never
-    comes from the payload, which is what makes a citation injected through
-    the source - or laundered through a child summary - a validation failure
+    comes from the payload, which is what makes a citation injected through the
+    source - or laundered through a child summary - a validation failure
     rather than a dangling reference carried up the hierarchy.
 
     `quotation_sources` narrows verbatim checks when a caller supplied only a

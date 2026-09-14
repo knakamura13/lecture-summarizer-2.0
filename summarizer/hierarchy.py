@@ -6,7 +6,11 @@ from dataclasses import dataclass, field, replace
 
 from summarizer.budget import BudgetError
 from summarizer.cache import CacheDescriptor
-from summarizer.grounding import GroundingPolicy, select_source_passages
+from summarizer.grounding import (
+    GroundingPolicy,
+    GroundingSelection,
+    select_source_passages,
+)
 from summarizer.leaf import derive_provenance, validate_provenance
 from summarizer.merge import (
     MERGE_PROMPT_VERSION,
@@ -42,6 +46,8 @@ class _PreparedMerge:
     legal: Mapping[str, str]
     quotation_sources: Mapping[str, str]
     preserved_provenance: tuple[str, ...]
+    grounding: GroundingSelection
+    grounding_reserve_tokens: int
     descriptor: CacheDescriptor | None
 
     def decode(self, payload: object) -> SummaryNode:
@@ -63,6 +69,8 @@ class _PreparedMerge:
             summary=self.decode(payload),
             children=self.children,
             covered_segments=self.covered_segments,
+            grounding=self.grounding,
+            grounding_reserve_tokens=self.grounding_reserve_tokens,
         )
 
 
@@ -84,6 +92,8 @@ class TreeNode:
     summary: SummaryNode
     children: tuple[str, ...]
     covered_segments: tuple[str, ...]
+    grounding: GroundingSelection | None = None
+    grounding_reserve_tokens: int | None = None
 
     def __post_init__(self) -> None:
         if not self.node_id.strip():
@@ -94,6 +104,13 @@ class TreeNode:
             raise ValueError("order must not be negative")
         if not self.covered_segments:
             raise ValueError("a node must cover at least one segment")
+        if (self.grounding is None) != (self.grounding_reserve_tokens is None):
+            raise ValueError("grounding selection and reserve must be recorded together")
+        if (
+            self.grounding_reserve_tokens is not None
+            and self.grounding_reserve_tokens <= 0
+        ):
+            raise ValueError("grounding reserve must be positive")
 
 
 @dataclass(frozen=True)
@@ -584,6 +601,8 @@ def _prepare_merge(
         legal=legal,
         quotation_sources=grounded,
         preserved_provenance=preserved_provenance,
+        grounding=selection,
+        grounding_reserve_tokens=grounding_policy.max_tokens,
         descriptor=descriptor,
     )
 

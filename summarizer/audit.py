@@ -431,6 +431,16 @@ class AuditSummary(_AuditRecord):
     _valid_provenance = field_validator("provenance")(_audit_segment_ids)
 
 
+class AuditGroundingSelection(_AuditRecord):
+    selected_ids: tuple[str, ...]
+    omitted_ids: tuple[str, ...]
+    reserve_tokens: int = Field(ge=1)
+    omission_reason: Literal["budget"]
+
+    _valid_selected_ids = field_validator("selected_ids")(_audit_segment_ids)
+    _valid_omitted_ids = field_validator("omitted_ids")(_audit_segment_ids)
+
+
 class AuditNode(_AuditRecord):
     node_id: str
     level: int
@@ -438,6 +448,7 @@ class AuditNode(_AuditRecord):
     children: tuple[str, ...]
     covered_segments: tuple[str, ...]
     summary: AuditSummary
+    grounding: AuditGroundingSelection | None = None
 
     _valid_node_id = field_validator("node_id")(_audit_node_id)
     _valid_children = field_validator("children")(_audit_node_ids)
@@ -495,6 +506,17 @@ class _AuditArtifactBase(_AuditRecord):
             unknown_covered = set(node.covered_segments) - set(segments)
             if unknown_covered:
                 raise ValueError("tree coverage must resolve to source segments")
+            if node.grounding is not None:
+                selected = set(node.grounding.selected_ids)
+                omitted = set(node.grounding.omitted_ids)
+                if (
+                    len(selected) != len(node.grounding.selected_ids)
+                    or len(omitted) != len(node.grounding.omitted_ids)
+                    or selected & omitted
+                ):
+                    raise ValueError("grounding selection identifiers must not overlap")
+                if (selected | omitted) - set(segments):
+                    raise ValueError("grounding selection must resolve to source segments")
             for child_id in node.children:
                 child = nodes.get(child_id)
                 if child is None:
@@ -849,6 +871,16 @@ def _audit_node(node: TreeNode) -> AuditNode:
         children=node.children,
         covered_segments=node.covered_segments,
         summary=audit_summary,
+        grounding=(
+            AuditGroundingSelection(
+                selected_ids=node.grounding.selected_ids,
+                omitted_ids=node.grounding.omitted_ids,
+                reserve_tokens=node.grounding_reserve_tokens,
+                omission_reason="budget",
+            )
+            if node.grounding is not None
+            else None
+        ),
     )
 
 

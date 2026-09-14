@@ -133,7 +133,7 @@ The output path contains the final editorial text. Without `--citations`, it con
 - `source_id`, `strategy`, and `model`;
 - safe `configuration` and budget metadata;
 - `source_segments` with identifiers, source order, core/context ranges, token counts, overlap counts, and boundary kind;
-- `tree_nodes` and `root_node_id`, including levels, child links, structural covered segments, narrowed provenance, content-unit classifications, and evidence links;
+- `tree_nodes` and `root_node_id`, including levels, child links, structural covered segments, narrowed provenance, content-unit classifications, evidence links, and per-merge source-grounding selections (selected IDs, budget omissions, reserve, and reason);
 - source-ordered `citations` and provider `usage` metadata when available;
 - closed-code `warnings` and `failures`;
 - `verification`, including pass/claim/evidence links, verdicts, repair actions, usage, warnings, limitations, and failures;

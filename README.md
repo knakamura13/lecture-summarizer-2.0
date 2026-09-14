@@ -114,7 +114,7 @@ Run `python main.py --help` for parser-generated help. The complete options are:
 | `--verify` | off | Verify final-draft claims against bounded source evidence. |
 | `--max-repair-passes N` | `1` | Maximum verification repair passes (`0` disables repairs while verification remains enabled). |
 | `--citations` | off | Append a deterministic, source-ordered `Sources:` list. |
-| `--audit PATH` | unset | Write validated audit JSON (`audit/2`, or `audit/3` with reliability enabled). |
+| `--audit PATH` | unset | Write validated audit JSON (`audit/2`, `audit/3` with direct-run reliability metadata, or `audit/4` for hierarchical merge grounding). |
 | `--cache-dir PATH` | unset | Opt into the local JSON cache and resumable run manifest. An actual cached run also requires `--run-id` and `--audit`. |
 | `--run-id ID` | unset | Stable identifier required when cache is enabled. |
 | `--resume` | off | Resume the manifest named by `--run-id`; requires `--cache-dir` and `--run-id`. |
@@ -129,15 +129,15 @@ The output path contains the final editorial text. Without `--citations`, it con
 
 `--audit PATH` writes a canonical, validated JSON artifact. The top-level audit fields are:
 
-- `schema_version`: `audit/2` for ordinary audit output, or `audit/3` when cache/reliability metadata is active;
+- `schema_version`: `audit/2` for ordinary direct output, `audit/3` for direct output with reliability metadata, or `audit/4` when a hierarchy executes a merge;
 - `source_id`, `strategy`, and `model`;
 - safe `configuration` and budget metadata;
 - `source_segments` with identifiers, source order, core/context ranges, token counts, overlap counts, and boundary kind;
-- `tree_nodes` and `root_node_id`, including levels, child links, structural covered segments, narrowed provenance, content-unit classifications, evidence links, and per-merge source-grounding selections (selected IDs, budget omissions, reserve, and reason);
+- `tree_nodes` and `root_node_id`, including levels, child links, structural covered segments, narrowed provenance, content-unit classifications, and evidence links. `audit/4` additionally records each executed merge's selected IDs, budget omissions, fixed reserve or adaptive request capacity, and reason;
 - source-ordered `citations` and provider `usage` metadata when available;
 - closed-code `warnings` and `failures`;
 - `verification`, including pass/claim/evidence links, verdicts, repair actions, usage, warnings, limitations, and failures;
-- `reliability` in `audit/3`, including cache outcomes, retry categories, resume state, reuse count, and recomputation count.
+- `reliability` in `audit/3` and reliable `audit/4` output, including cache outcomes, retry categories, resume state, reuse count, and recomputation count.
 
 Audit artifacts deliberately do not contain raw source text, generated summary prose, quotations, prompts, request bodies, provider request IDs, or authentication data. Source-derived text may still exist in cache payloads, so cache directories are sensitive local data even though descriptors and audit projections are secret-safe.
 
@@ -147,7 +147,7 @@ Caching is opt-in. `--cache-dir` enables a JSON object store and run manifests; 
 
 Only parsed and locally validated terminal results are reusable. Raw provider responses, exceptions, failed work items, and failed verification do not become cache references. Cache directories are created with restrictive permissions, but the cache is not encrypted. Do not commit it.
 
-Retryable timeout, rate-limit, connection, and server failures use bounded exponential backoff; non-retryable authentication, request, response, and configuration errors fail immediately. `--max-retries` controls the attempt limit. Concurrent independent work is bounded by `--max-concurrency` when cache reliability is enabled, while manifest order, source order, merge-level barriers, and audit entries remain deterministic. Final paired publication (summary plus reliable audit/3) uses a manifest witness so an incomplete run is not accepted as complete; separate processes must not publish different runs to the same output pair.
+Retryable timeout, rate-limit, connection, and server failures use bounded exponential backoff; non-retryable authentication, request, response, and configuration errors fail immediately. `--max-retries` controls the attempt limit. Concurrent independent work is bounded by `--max-concurrency` when cache reliability is enabled, while manifest order, source order, merge-level barriers, and audit entries remain deterministic. Final paired publication (summary plus reliable audit/3 or audit/4) uses a manifest witness so an incomplete run is not accepted as complete; separate processes must not publish different runs to the same output pair.
 
 ## Verification limitations
 

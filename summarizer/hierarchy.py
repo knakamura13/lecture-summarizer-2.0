@@ -34,6 +34,28 @@ class HierarchyError(ValueError):
 
 
 @dataclass(frozen=True)
+class MergeGrounding:
+    """Selection metadata retained for an executed merge."""
+
+    selection: GroundingSelection
+    reserve_tokens: int | None
+    request_capacity_tokens: int | None
+
+    def __post_init__(self) -> None:
+        if (self.reserve_tokens is None) == (
+            self.request_capacity_tokens is None
+        ):
+            raise ValueError("merge grounding needs one budget mode")
+        if self.reserve_tokens is not None and self.reserve_tokens <= 0:
+            raise ValueError("grounding reserve must be positive")
+        if (
+            self.request_capacity_tokens is not None
+            and self.request_capacity_tokens <= 0
+        ):
+            raise ValueError("grounding request capacity must be positive")
+
+
+@dataclass(frozen=True)
 class _PreparedMerge:
     """Frozen, independently executable work for one non-singleton merge."""
 
@@ -46,8 +68,7 @@ class _PreparedMerge:
     legal: Mapping[str, str]
     quotation_sources: Mapping[str, str]
     preserved_provenance: tuple[str, ...]
-    grounding: GroundingSelection
-    grounding_reserve_tokens: int
+    grounding: MergeGrounding
     descriptor: CacheDescriptor | None
 
     def decode(self, payload: object) -> SummaryNode:
@@ -70,7 +91,6 @@ class _PreparedMerge:
             children=self.children,
             covered_segments=self.covered_segments,
             grounding=self.grounding,
-            grounding_reserve_tokens=self.grounding_reserve_tokens,
         )
 
 
@@ -92,8 +112,7 @@ class TreeNode:
     summary: SummaryNode
     children: tuple[str, ...]
     covered_segments: tuple[str, ...]
-    grounding: GroundingSelection | None = None
-    grounding_reserve_tokens: int | None = None
+    grounding: MergeGrounding | None = None
 
     def __post_init__(self) -> None:
         if not self.node_id.strip():
@@ -104,13 +123,6 @@ class TreeNode:
             raise ValueError("order must not be negative")
         if not self.covered_segments:
             raise ValueError("a node must cover at least one segment")
-        if (self.grounding is None) != (self.grounding_reserve_tokens is None):
-            raise ValueError("grounding selection and reserve must be recorded together")
-        if (
-            self.grounding_reserve_tokens is not None
-            and self.grounding_reserve_tokens <= 0
-        ):
-            raise ValueError("grounding reserve must be positive")
 
 
 @dataclass(frozen=True)
@@ -601,8 +613,13 @@ def _prepare_merge(
         legal=legal,
         quotation_sources=grounded,
         preserved_provenance=preserved_provenance,
-        grounding=selection,
-        grounding_reserve_tokens=grounding_policy.max_tokens,
+        grounding=MergeGrounding(
+            selection=selection,
+            reserve_tokens=(
+                None if adaptive_grounding else grounding_policy.max_tokens
+            ),
+            request_capacity_tokens=(usable_tokens if adaptive_grounding else None),
+        ),
         descriptor=descriptor,
     )
 

@@ -175,6 +175,7 @@ def test_audit_v2_compatibility_no_reliability_fields() -> None:
     # audit/2 default when no reliability data
     assert body["schema_version"] == "audit/2"
     assert "reliability" not in body
+    assert "grounding" not in body["tree_nodes"][0]
 
 
 def test_audit_v3_all_reliability_fields_optional() -> None:

@@ -1,4 +1,5 @@
 import json
+from dataclasses import replace
 
 import pytest
 
@@ -167,14 +168,26 @@ def test_audit_records_merge_grounding_omissions_from_a_small_reserve() -> None:
         citations=(),
     )
 
+    assert artifact.schema_version == "audit/4"
     selections = [
         node.grounding for node in artifact.tree_nodes if node.grounding
     ]
-    assert any(selection.omitted_ids for selection in selections)
     serialized = json.loads(serialize_audit(artifact))
-    assert any(
-        node["grounding"] and node["grounding"]["omitted_ids"]
-        for node in serialized["tree_nodes"]
+    merge_nodes = [
+        node for node in serialized["tree_nodes"] if len(node["children"]) > 1
+    ]
+    assert len(selections) == len(merge_nodes)
+    assert any(node["grounding"]["omitted_ids"] for node in merge_nodes)
+    assert all(
+        set(node["grounding"])
+        == {
+            "omission_reason",
+            "omitted_ids",
+            "request_capacity_tokens",
+            "reserve_tokens",
+            "selected_ids",
+        }
+        for node in merge_nodes
     )
     recorded_ids = {segment.segment_id for segment in artifact.source_segments}
     for selection in selections:
@@ -187,9 +200,80 @@ def test_audit_records_merge_grounding_omissions_from_a_small_reserve() -> None:
         for index, node in enumerate(invalid["tree_nodes"])
         if node["grounding"]
     )
-    invalid["tree_nodes"][merge_index]["grounding"]["omitted_ids"] = ["S999999"]
-    with pytest.raises(ValueError, match="grounding selection must resolve"):
+    sibling_segment_id = next(
+        segment_id
+        for segment_id in recorded_ids
+        if segment_id not in invalid["tree_nodes"][merge_index]["covered_segments"]
+    )
+    invalid["tree_nodes"][merge_index]["grounding"]["omitted_ids"] = [
+        sibling_segment_id
+    ]
+    with pytest.raises(
+        ValueError, match="grounding selection must resolve to tree coverage"
+    ):
         type(artifact).model_validate(invalid)
+
+    invalid = artifact.model_dump(mode="json")
+    original_grounding = invalid["tree_nodes"][merge_index]["grounding"]
+    invalid["tree_nodes"][merge_index]["grounding"] = None
+    with pytest.raises(ValueError, match="executed merges must record grounding"):
+        type(artifact).model_validate(invalid)
+
+    leaf_index = next(
+        index
+        for index, node in enumerate(invalid["tree_nodes"])
+        if not node["children"]
+    )
+    invalid["tree_nodes"][merge_index]["grounding"] = original_grounding
+    invalid["tree_nodes"][leaf_index]["grounding"] = original_grounding
+    with pytest.raises(ValueError, match="only executed merges may record grounding"):
+        type(artifact).model_validate(invalid)
+
+    adaptive_root, adaptive_nodes, _ = build_hierarchy(
+        leaves,
+        Provider(),
+        CharacterCounter(),
+        source_id=document.source_id,
+        covered=tuple((segment.segment_id,) for segment in segments),
+        attributable={segment.segment_id: segment.text for segment in segments},
+        usable_tokens=100_000,
+        model="m",
+        timeout_seconds=30,
+        max_merge_children=3,
+    )
+    adaptive_artifact = build_audit_artifact(
+        source_id=document.source_id,
+        strategy="hierarchical",
+        model="m",
+        configuration={},
+        segments=segments,
+        nodes=adaptive_nodes,
+        root_node_id=adaptive_root.node_id,
+        citations=(),
+    )
+    adaptive_merge = next(
+        node.grounding
+        for node in adaptive_artifact.tree_nodes
+        if node.grounding is not None
+    )
+    assert adaptive_merge.reserve_tokens is None
+    assert adaptive_merge.request_capacity_tokens == 100_000
+
+    unrecorded_nodes = tuple(
+        replace(node, grounding=None) if len(node.children) > 1 else node
+        for node in nodes
+    )
+    with pytest.raises(ValueError, match="executed merges must record grounding"):
+        build_audit_artifact(
+            source_id=document.source_id,
+            strategy="hierarchical",
+            model="m",
+            configuration={},
+            segments=segments,
+            nodes=unrecorded_nodes,
+            root_node_id=root.node_id,
+            citations=(),
+        )
 
 
 def test_citations_are_source_ordered_and_unknown_provenance_fails() -> None:

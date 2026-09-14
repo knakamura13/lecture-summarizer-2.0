@@ -132,11 +132,18 @@ def publish_final_output(
     session: CheckpointSession,
     atomic_replace: Callable[[Path, bytes], None] = _atomic_replace,
 ) -> None:
-    """Publish an audit/3 first and use the summary plus manifest as its witness."""
+    """Publish a reliable audit before using the summary as its witness."""
     if summary_path.resolve(strict=False) == audit_path.resolve(strict=False):
         raise PublicationError("summary_path and audit_path must differ")
-    if result.audit is None or result.audit.schema_version != "audit/3":
-        raise PublicationError("reliable publication requires a validated audit/3")
+    if (
+        result.audit is None
+        or result.audit.schema_version not in {"audit/3", "audit/4"}
+        or (
+            result.audit.schema_version == "audit/4"
+            and result.audit.reliability is None
+        )
+    ):
+        raise PublicationError("reliable publication requires a validated reliable audit")
     audit_payload = serialize_audit(result.audit)
     summary_payload = result.text.encode("utf-8")
     audit_digest = _sha256(audit_payload)

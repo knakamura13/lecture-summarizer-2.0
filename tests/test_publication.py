@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from summarizer.audit import build_audit_artifact
+from summarizer.audit import AuditArtifact, build_audit_artifact, serialize_audit
 from summarizer.checkpoint import CheckpointStore, PublicationState, RunPlan
 from summarizer.direct import whole_document_segment
 from summarizer.finalization import (
@@ -102,6 +102,27 @@ def test_publication_writes_audit_first_before_summary(tmp_path: Path) -> None:
         read_published_summary(summary_path, audit_path, session.manifest)
         == "Final summary text."
     )
+
+
+def test_publication_rejects_unreliable_audit_v4(tmp_path: Path) -> None:
+    result = _result()
+    assert result.audit is not None
+    body = json.loads(serialize_audit(result.audit))
+    body["schema_version"] = "audit/4"
+    body.pop("reliability")
+    for node in body["tree_nodes"]:
+        node["grounding"] = None
+    audit_v4 = AuditArtifact.model_validate(body)
+
+    with CheckpointStore(tmp_path / "cache").open(
+        _plan("reject-unreliable-v4"), resume=False
+    ) as session, pytest.raises(PublicationError, match="reliable audit"):
+        publish_final_output(
+            FinalizationResult(result.text, result.citations, audit_v4),
+            summary_path=tmp_path / "summary.txt",
+            audit_path=tmp_path / "audit.json",
+            session=session,
+        )
 
 
 def test_audit_failure_never_writes_summary(tmp_path: Path) -> None:

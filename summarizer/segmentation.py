@@ -30,6 +30,7 @@ class BoundaryKind(str, Enum):
     LIST = "list"
     SENTENCE = "sentence"
     HARD = "hard"
+    CODE = "code"
     # A unit that is the entire document has no boundary *within* a document.
     # Segmentation never produces this kind; the direct path does, and it tells
     # a later stage that provenance covers everything rather than a region.
@@ -288,6 +289,7 @@ class SourceSegment:
 _ATX_HEADING = re.compile(r" {0,3}#{1,6}(?:[ \t]+|$)")
 _SETEXT_UNDERLINE = re.compile(r" {0,3}(?:=+|-+)[ \t]*$")
 _LIST_ITEM = re.compile(r" {0,3}(?:[-+*][ \t]+|\d+[.)][ \t]+)")
+_FENCED_CODE = re.compile(r" {0,3}```")
 
 
 @dataclass(frozen=True)
@@ -334,7 +336,15 @@ def detect_structural_blocks(text: str) -> list[StructuralBlock]:
     while index < len(lines):
         start_index = index
         content = lines[index].content
-        if _ATX_HEADING.match(content):
+        
+        if _FENCED_CODE.match(content):
+            kind = BoundaryKind.CODE
+            index += 1
+            while index < len(lines) and not _FENCED_CODE.match(lines[index].content):
+                index += 1
+            if index < len(lines):
+                index += 1
+        elif _ATX_HEADING.match(content):
             kind = BoundaryKind.HEADING
             index += 1
         elif _is_setext_heading(lines, index):
@@ -372,6 +382,30 @@ def detect_structural_blocks(text: str) -> list[StructuralBlock]:
 
 
 _SENTENCE_TOKENIZER = PunktSentenceTokenizer()
+_SENTENCE_TOKENIZER._params.abbrev_types.update(
+    {
+        "co",
+        "dept",
+        "dr",
+        "e.g",
+        "etc",
+        "fig",
+        "i.e",
+        "inc",
+        "jr",
+        "ltd",
+        "mr",
+        "mrs",
+        "ms",
+        "no",
+        "prof",
+        "sr",
+        "st",
+        "u.k",
+        "u.s",
+        "vs",
+    }
+)
 
 
 def _count_tokens(counter: TokenCounter, text: str) -> int:

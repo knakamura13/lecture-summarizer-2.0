@@ -1290,7 +1290,9 @@ def _audit_verification(
             )
             for item in phase_generations
         ),
-        warning_codes=verification.warning_codes,
+        warning_codes=tuple(
+            dict.fromkeys((*verification.warning_codes, *verification.diagnostic_codes))
+        ),
         limitation_codes=verification.limitation_codes,
         failure_codes=verification.failure_codes,
     )

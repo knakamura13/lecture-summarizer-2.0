@@ -226,6 +226,8 @@ def test_verify_once_escalates_raw_contradictions_through_omitted_evidence() -> 
                     '{"spans":[{"span_id":"V01S000001","anchors":[]}]}',
                     '{"findings":[{"claim_id":"V01C000001","verdict":"contradicted","evidence":[{"segment_id":"S000001","exact_quote":"value is 42"}]}]}',
                     '{"findings":[{"claim_id":"V01C000001","verdict":"contradicted","evidence":[{"segment_id":"S000002","exact_quote":"value is 43"}]}]}',
+                    '{"findings":[{"claim_id":"V01C000001","verdict":"contradicted","evidence":[{"segment_id":"S000003","exact_quote":"value is 44"}]}]}',
+                    '{"findings":[{"claim_id":"V01C000001","verdict":"contradicted","evidence":[{"segment_id":"S000004","exact_quote":"value is 45"}]}]}',
                 )
             )
 
@@ -238,8 +240,13 @@ def test_verify_once_escalates_raw_contradictions_through_omitted_evidence() -> 
         "The value is 42.",
         source_id="a" * 64,
         source_index=build_source_lexical_index(
-            provenance_ids=("S000001", "S000002"),
-            source={"S000001": "The value is 42." * 3, "S000002": "The value is 43." * 3},
+            provenance_ids=("S000001", "S000002", "S000003", "S000004"),
+            source={
+                "S000001": "The value is 42." * 3,
+                "S000002": "The value is 43." * 3,
+                "S000003": "The value is 44." * 3,
+                "S000004": "The value is 45." * 3,
+            },
         ),
         runtime=VerificationRuntime(provider, ConservativeUtf8TokenCounter(), "model", 30, 10_000),
         config=VerificationConfig(enabled=True, evidence_tokens=120),
@@ -253,6 +260,8 @@ def test_verify_once_escalates_raw_contradictions_through_omitted_evidence() -> 
         "verification-classify:V01",
         "verification-classify:V01",
     ]
+    escalation_request = provider.requests[-1]
+    assert all(segment_id in escalation_request.input_text for segment_id in ("S000002", "S000003", "S000004"))
 
 
 def test_verify_and_repair_reverifies_the_complete_repaired_draft() -> None:

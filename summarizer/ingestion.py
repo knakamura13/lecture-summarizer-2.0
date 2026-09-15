@@ -46,7 +46,7 @@ def normalize_source_text(text: str) -> str:
 def ingest_text(text: str, *, path: Path | None = None) -> SourceDocument:
     """Create an immutable document from canonicalized source text."""
     canonical_text = normalize_source_text(text)
-    if not canonical_text:
+    if not canonical_text.strip():
         raise EmptySourceError("source is empty after normalization")
     source_id = sha256(canonical_text.encode("utf-8")).hexdigest()
     return SourceDocument(text=canonical_text, source_id=source_id, path=path)

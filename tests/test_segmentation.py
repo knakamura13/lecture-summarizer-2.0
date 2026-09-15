@@ -521,3 +521,17 @@ def test_overlap_rejects_a_non_monotonic_counter_without_a_backward_search() -> 
             ForwardOnlyCounter(),
             SegmentationConfig(max_tokens=40, overlap_tokens=5),
         )
+
+
+# ---------------------------------------------------------------------------
+# Bug 2: abbreviation-aware sentence tokenizer
+# ---------------------------------------------------------------------------
+
+def test_abbreviation_tokenizer_does_not_split_on_dr_and_us() -> None:
+    from summarizer.segmentation import _SENTENCE_TOKENIZER
+
+    text = "Dr. Smith reviewed the U.S. market. It rose."
+    spans = list(_SENTENCE_TOKENIZER.span_tokenize(text))
+    assert len(spans) == 2, (
+        f"Expected 2 sentences, got {len(spans)}: {[text[s:e] for s, e in spans]}"
+    )

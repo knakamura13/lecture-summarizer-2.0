@@ -83,3 +83,43 @@ def test_blocks_are_contiguous_and_reconstruct_unicode_source() -> None:
 
 def test_empty_source_has_no_structural_blocks() -> None:
     assert detect_structural_blocks("") == []
+
+
+def test_fenced_code_block_is_opaque_code_fence_block() -> None:
+    text = (
+        "Intro paragraph.\n\n"
+        "```python\n"
+        "# configure the client before use\n"
+        "- not a list\n"
+        "```\n\n"
+        "Outro paragraph."
+    )
+    blocks = block_slices(text)
+    kinds = [kind for kind, _ in blocks]
+    assert BoundaryKind.CODE_FENCE in kinds
+    assert BoundaryKind.HEADING not in kinds
+    assert BoundaryKind.LIST not in kinds
+
+
+def test_fenced_code_block_heading_and_list_lines_not_emitted_as_structural() -> None:
+    text = "```\n# heading-like line\n- list-like line\n```\n"
+    blocks = block_slices(text)
+    assert len(blocks) == 1
+    assert blocks[0][0] is BoundaryKind.CODE_FENCE
+    assert BoundaryKind.HEADING not in [k for k, _ in blocks]
+    assert BoundaryKind.LIST not in [k for k, _ in blocks]
+
+
+def test_tilde_fence_is_also_detected() -> None:
+    text = "~~~\n# heading inside\n~~~\n"
+    blocks = block_slices(text)
+    assert blocks[0][0] is BoundaryKind.CODE_FENCE
+
+
+def test_blocks_outside_fence_still_detected_normally() -> None:
+    text = "# Real heading\n\n```\n# fake\n```\n\nReal paragraph."
+    blocks = block_slices(text)
+    kinds = [k for k, _ in blocks]
+    assert kinds[0] is BoundaryKind.HEADING
+    assert BoundaryKind.CODE_FENCE in kinds
+    assert kinds[-1] is BoundaryKind.PARAGRAPH

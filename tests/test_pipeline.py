@@ -222,7 +222,13 @@ def test_default_pipeline_hierarchy_with_a_real_model_tokenizer_keeps_references
         model=app_config.model,
         config=strategy,
     ).usable_input_capacity
-    document = ingest_text("alpha " * (capacity + 1))
+    # Two full-capacity leaves, not one full leaf plus a near-empty tail:
+    # a tail segment's tiny source passage always fits the (pre-#26) flat
+    # 1,024-token grounding reserve on its own, masking the reserve-sizing
+    # defect. Both leaves here exceed the reserve, so the merge only
+    # succeeds once the reserve scales with merge capacity (#26) and the
+    # keep-every-reference merge output is accepted as grounded (#27).
+    document = ingest_text("alpha " * int(capacity * 1.5))
     provider = GroundedPipelineProvider()
 
     result = run_pipeline(

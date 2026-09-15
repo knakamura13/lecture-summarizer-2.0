@@ -1926,13 +1926,14 @@ def _verify_and_repair(
             *continued.diagnostic_codes,
         )
         if continued.failed:
-            # The deeper pass never reached an accepted repaired draft, so the
-            # whole chain is rejected back to this level's prior draft; no
-            # repair from this level or beyond is reported as applied.
+            # The deeper pass never reached an accepted repaired draft, so its
+            # own candidate is rejected. This level's own repair was already
+            # independently re-verified and committed, though, so it is kept:
+            # only events belonging to the discarded continuation are dropped.
             return _terminal_result(
-                text=draft,
+                text=repaired,
                 pass_results=combined_passes,
-                repairs=(),
+                repairs=events,
                 generations=combined_generations,
                 diagnostic_codes=combined_diagnostics,
                 exhausted=continued.exhausted,

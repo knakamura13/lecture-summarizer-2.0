@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, field_validator
 # Identifies the record shape for cache keys and audit artifacts. Bump it
 # whenever a change would make a previously stored record invalid or mean
 # something different.
-LEAF_SCHEMA_VERSION = "leaf/1"
+LEAF_SCHEMA_VERSION = "leaf/2"
 
 # A quote is a pull-quote, not a transcription. Both caps bound how much a
 # single node's quotations can inflate `serialize_child` (summarizer/merge.py)

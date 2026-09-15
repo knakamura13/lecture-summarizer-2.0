@@ -232,6 +232,30 @@ def test_audit_v2_explicitly_records_disabled_verification() -> None:
     assert with_result["verification"] == body["verification"]
 
 
+def test_audit_projects_repairs_from_a_failed_result_that_kept_its_own_lineage() -> None:
+    """A failed result can still carry non-empty repairs: its own re-verified
+    fix survived even though a deeper continuation later failed closed."""
+    failed_with_repair = replace(
+        _verification("D000001"),
+        failed=True,
+        exhausted=True,
+        failure_codes=("repair_reverification_failed",),
+    )
+
+    body = json.loads(serialize_audit(_artifact(verification=failed_with_repair)))
+
+    verification = body["verification"]
+    assert verification["failed"] is True
+    assert verification["repairs"] == [
+        {
+            "action": "qualify",
+            "original_hash": hashlib.sha256(b"Claim prose must not persist.").hexdigest(),
+            "span_id": "V01S000001",
+            "triggering_claim_ids": ["V01C000001"],
+        }
+    ]
+
+
 @pytest.mark.parametrize(
     "configuration",
     (

@@ -228,12 +228,14 @@ output, capacity failures, and unresolved material contradictions therefore
 never return a summary labeled as verified. Pass exhaustion is explicit and
 finite.
 
-A terminal failed result always reverts to the draft that was current before
-the repair attempt that could not be re-verified, whether that re-verification
-errored outright or a later pass in the same chain ultimately failed closed.
-The repair events for that attempt are excluded from the result rather than
-listed against text that no longer contains them: a repair is reported only
-when it is present in the returned text.
+`repairs` records the returned text's committed lineage, not a history of
+attempted repairs. A pass that proposes a repair and fails its own
+re-verification (or errors outright) reverts to the draft that was current
+before that attempt, with that attempt's events excluded. A pass whose own
+repair *is* re-verified successfully, but whose deeper continuation
+subsequently fails closed, keeps its own repaired text and its own events;
+only the events belonging to the discarded continuation are dropped. Either
+way, a repair is reported only when it is present in the returned text.
 
 Insufficiently supported claims may return the unchanged or repaired summary
 only with audit-visible warnings and limitations. This preserves signal without

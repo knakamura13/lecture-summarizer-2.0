@@ -421,6 +421,7 @@ def test_verify_and_repair_closes_post_repair_provider_failure_without_retrying(
 
     assert result.failed
     assert result.text == draft
+    assert result.repairs == ()
     assert result.failure_codes == ("decomposition_provider_failed",)
     assert len(result.phase_generations) == 4
     assert result.phase_generations[-1].generation is None
@@ -505,20 +506,193 @@ def test_verify_and_repair_uses_each_configured_repair_pass_at_most_once() -> No
     assert [item.pass_index for item in result.phase_generations if item.phase == "repair"] == [1, 3]
 
 
-def test_verify_and_repair_reports_no_repairs_when_a_later_pass_fails_closed() -> None:
-    """Pass 1's fix must not be reported once the chain fails closed on pass 2."""
-    first = "The value is 42."
-    second = "The value is 41."
+def test_verify_and_repair_keeps_independent_repairs_in_returned_text() -> None:
+    """Pass 1 fixes claim A and pass 3 fixes independent claim B; both survive."""
+    draft = "Claim A is wrong. Claim B is wrong."
+    fully_repaired = "Claim A is fixed. Claim B is fixed."
+
+    def decomposition(pass_index: int, first_anchor: str, second_anchor: str) -> str:
+        return json.dumps(
+            {
+                "spans": [
+                    {"span_id": f"V{pass_index:02d}S000001", "anchors": [first_anchor]},
+                    {"span_id": f"V{pass_index:02d}S000002", "anchors": [second_anchor]},
+                ]
+            }
+        )
+
+    def findings(pass_index: int, first_verdict: str, second_verdict: str) -> str:
+        return json.dumps(
+            {
+                "findings": [
+                    *[
+                        {
+                            "claim_id": f"V{pass_index:02d}C{claim_number:06d}",
+                            "verdict": first_verdict,
+                            "evidence": [
+                                {"segment_id": "S000001", "exact_quote": "Claim A is fixed."}
+                            ],
+                        }
+                        for claim_number in (1, 2)
+                    ],
+                    *[
+                        {
+                            "claim_id": f"V{pass_index:02d}C{claim_number:06d}",
+                            "verdict": second_verdict,
+                            "evidence": [
+                                {"segment_id": "S000001", "exact_quote": "Claim B is fixed."}
+                            ],
+                        }
+                        for claim_number in (3, 4)
+                    ],
+                ]
+            }
+        )
 
     class ScriptedProvider:
         def __init__(self) -> None:
             self.responses = iter(
                 (
-                    *contradicted_atomic_and_fallback(1, "value is 40"),
-                    '{"repairs":[{"span_id":"V01S000001","original_hash":"%s","action":"replace","replacement":"%s"}]}'
-                    % (hashlib.sha256(first.encode()).hexdigest(), second),
-                    *contradicted_atomic_and_fallback(2, "value is 40", anchor="41"),
-                    *contradicted_atomic_and_fallback(3, "value is 40", anchor="41"),
+                    decomposition(1, "Claim A is wrong", "Claim B is wrong"),
+                    findings(1, "contradicted", "supported"),
+                    json.dumps(
+                        {
+                            "repairs": [
+                                {
+                                    "span_id": "V01S000001",
+                                    "original_hash": hashlib.sha256(
+                                        "Claim A is wrong. ".encode()
+                                    ).hexdigest(),
+                                    "action": "replace",
+                                    "replacement": "Claim A is fixed. ",
+                                }
+                            ]
+                        }
+                    ),
+                    decomposition(2, "Claim A is fixed", "Claim B is wrong"),
+                    findings(2, "supported", "contradicted"),
+                    decomposition(3, "Claim A is fixed", "Claim B is wrong"),
+                    findings(3, "supported", "contradicted"),
+                    json.dumps(
+                        {
+                            "repairs": [
+                                {
+                                    "span_id": "V03S000002",
+                                    "original_hash": hashlib.sha256(
+                                        "Claim B is wrong.".encode()
+                                    ).hexdigest(),
+                                    "action": "replace",
+                                    "replacement": "Claim B is fixed.",
+                                }
+                            ]
+                        }
+                    ),
+                    decomposition(4, "Claim A is fixed", "Claim B is fixed"),
+                    findings(4, "supported", "supported"),
+                )
+            )
+
+        def generate(self, request):
+            return GenerationResult(next(self.responses), "scripted", "model")
+
+    result = verify_and_repair(
+        draft,
+        source_id="a" * 64,
+        source_index=build_source_lexical_index(
+            provenance_ids=("S000001",), source={"S000001": fully_repaired}
+        ),
+        runtime=VerificationRuntime(ScriptedProvider(), ConservativeUtf8TokenCounter(), "model", 30, 10_000),
+        config=VerificationConfig(enabled=True, max_repair_passes=2),
+    )
+
+    assert "Claim A is fixed." in result.text
+    assert "Claim B is fixed." in result.text
+    assert not result.failed
+    assert [event.span_id for event in result.repairs] == ["V01S000001", "V03S000002"]
+    assert [item.pass_index for item in result.phase_generations if item.phase == "repair"] == [1, 3]
+
+
+def test_verify_and_repair_discards_nested_repairs_when_continuation_fails() -> None:
+    """The outer pass's own committed repair survives a deeper pass that fails closed."""
+    draft = "Claim A is wrong. Claim B is wrong."
+    outer_repaired = "Claim A is fixed. Claim B is wrong."
+
+    def decomposition(pass_index: int, first_anchor: str, second_anchor: str) -> str:
+        return json.dumps(
+            {
+                "spans": [
+                    {"span_id": f"V{pass_index:02d}S000001", "anchors": [first_anchor]},
+                    {"span_id": f"V{pass_index:02d}S000002", "anchors": [second_anchor]},
+                ]
+            }
+        )
+
+    def findings(pass_index: int, first_verdict: str, second_verdict: str) -> str:
+        return json.dumps(
+            {
+                "findings": [
+                    *[
+                        {
+                            "claim_id": f"V{pass_index:02d}C{claim_number:06d}",
+                            "verdict": first_verdict,
+                            "evidence": [
+                                {"segment_id": "S000001", "exact_quote": "Claim A is fixed."}
+                            ],
+                        }
+                        for claim_number in (1, 2)
+                    ],
+                    *[
+                        {
+                            "claim_id": f"V{pass_index:02d}C{claim_number:06d}",
+                            "verdict": second_verdict,
+                            "evidence": [
+                                {"segment_id": "S000001", "exact_quote": "Claim B is fixed."}
+                            ],
+                        }
+                        for claim_number in (3, 4)
+                    ],
+                ]
+            }
+        )
+
+    class ScriptedProvider:
+        def __init__(self) -> None:
+            self.responses = iter(
+                (
+                    decomposition(1, "Claim A is wrong", "Claim B is wrong"),
+                    findings(1, "contradicted", "supported"),
+                    json.dumps(
+                        {
+                            "repairs": [
+                                {
+                                    "span_id": "V01S000001",
+                                    "original_hash": hashlib.sha256(
+                                        "Claim A is wrong. ".encode()
+                                    ).hexdigest(),
+                                    "action": "replace",
+                                    "replacement": "Claim A is fixed. ",
+                                }
+                            ]
+                        }
+                    ),
+                    decomposition(2, "Claim A is fixed", "Claim B is wrong"),
+                    findings(2, "supported", "contradicted"),
+                    decomposition(3, "Claim A is fixed", "Claim B is wrong"),
+                    findings(3, "supported", "contradicted"),
+                    json.dumps(
+                        {
+                            "repairs": [
+                                {
+                                    "span_id": "V03S000002",
+                                    "original_hash": hashlib.sha256(
+                                        "Claim B is wrong.".encode()
+                                    ).hexdigest(),
+                                    "action": "replace",
+                                    "replacement": "Claim B is fixed.",
+                                }
+                            ]
+                        }
+                    ),
                     "not-json",
                 )
             )
@@ -527,19 +701,18 @@ def test_verify_and_repair_reports_no_repairs_when_a_later_pass_fails_closed() -
             return GenerationResult(next(self.responses), "scripted", "model")
 
     result = verify_and_repair(
-        first,
+        draft,
         source_id="a" * 64,
         source_index=build_source_lexical_index(
-            provenance_ids=("S000001",), source={"S000001": "The value is 40."}
+            provenance_ids=("S000001",), source={"S000001": "Claim A is fixed. Claim B is fixed."}
         ),
         runtime=VerificationRuntime(ScriptedProvider(), ConservativeUtf8TokenCounter(), "model", 30, 10_000),
         config=VerificationConfig(enabled=True, max_repair_passes=2),
     )
 
     assert result.failed
-    assert result.text == first
-    assert result.repairs == ()
-    assert result.failure_codes == ("repair_failed",)
+    assert result.text == outer_repaired
+    assert [event.span_id for event in result.repairs] == ["V01S000001"]
 
 
 def test_verify_and_repair_never_repairs_a_contradicted_fallback_by_itself() -> None:

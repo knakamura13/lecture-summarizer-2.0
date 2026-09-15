@@ -4,6 +4,7 @@ from dataclasses import replace
 import pytest
 
 from summarizer.audit import (
+    AuditArtifact,
     AuditError,
     build_audit_artifact,
     render_citations,
@@ -94,6 +95,49 @@ def test_audit_is_canonical_redacted_and_contains_only_segment_metadata(tmp_path
     path = tmp_path / "audit.json"
     write_audit(path, artifact)
     assert path.read_bytes() == first
+
+
+@pytest.mark.parametrize(
+    ("mutate", "message"),
+    (
+        (
+            lambda body: body["tree_nodes"][0].update({"covered_segments": ["S000001"]}),
+            "tree coverage",
+        ),
+        (
+            lambda body: body.update({"root_node_id": "L9N9999"}),
+            "root_node_id",
+        ),
+        (
+            lambda body: body["citations"][0].update({"order": 1}),
+            "citation mappings",
+        ),
+        (
+            lambda body: body["source_segments"].append(body["source_segments"][0]),
+            "source segment identifiers",
+        ),
+        (
+            lambda body: body.update({"warnings": ["not a closed code"]}),
+            "closed identifiers",
+        ),
+    ),
+)
+def test_audit_rejects_invalid_link_invariants(mutate, message: str) -> None:
+    document, segment, node, citations = fixture()
+    body = build_audit_artifact(
+        source_id=document.source_id,
+        strategy="direct",
+        model="m",
+        configuration={},
+        segments=(segment,),
+        nodes=(node,),
+        root_node_id=node.node_id,
+        citations=citations,
+    ).model_dump(mode="json")
+    mutate(body)
+
+    with pytest.raises(ValueError, match=message):
+        AuditArtifact.model_validate(body)
 
 
 def test_audit_records_merge_grounding_omissions_from_a_small_reserve() -> None:

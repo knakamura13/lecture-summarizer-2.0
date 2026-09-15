@@ -1,8 +1,10 @@
 import json
 import re
 
+import pytest
 from tiktoken.core import Encoding
 
+import summarizer.pipeline as pipeline
 from summarizer.budget import select_strategy
 from summarizer.config import AppConfig, StrategyConfig
 from summarizer.ingestion import ingest_text
@@ -52,6 +54,27 @@ class PipelineProvider:
             "provenance": [identifier],
             "level": level,
         }
+
+
+class GroundedPipelineProvider(PipelineProvider):
+    """Return every reference the merge prompt supplies to exercise grounding."""
+
+    def generate(self, request: GenerationRequest) -> GenerationResult:
+        self.requests.append(request)
+        if request.operation_id == "editorial-final":
+            payload = {"text": "A concise, coherent final summary."}
+        elif request.operation_id == "D000001":
+            payload = self._node(0, "D000001")
+        elif (request.operation_id or "").startswith("S"):
+            payload = self._node(0, request.operation_id or "S000001")
+        else:
+            level = int((request.operation_id or "merge-L1").rsplit("L", 1)[1])
+            identifiers = tuple(dict.fromkeys(
+                re.findall(r'"segment_id":"([SD]\d+)"', request.input_text)
+            ))
+            payload = self._node(level, identifiers[0])
+            payload["provenance"] = list(identifiers)
+        return GenerationResult(json.dumps(payload), "fake", request.model, 1, 1, "stop")
 
 
 def app() -> AppConfig:
@@ -177,3 +200,103 @@ def test_default_pipeline_merges_full_capacity_segments_with_a_real_tokenizer() 
         (request.operation_id or "").startswith("merge-L")
         for request in provider.requests
     )
+
+
+def test_default_pipeline_hierarchy_with_a_real_model_tokenizer_keeps_references(tmp_path) -> None:
+    import tiktoken
+
+    try:
+        tiktoken.encoding_for_model("gpt-4o-mini")
+    except Exception as error:  # pragma: no cover - depends on the local cache
+        import pytest
+
+        pytest.skip(f"tiktoken vocabulary is unavailable offline: {error}")
+
+    counter = TiktokenCounter.for_model("gpt-4o-mini")
+    app_config = AppConfig(model="gpt-4o-mini", timeout_seconds=30)
+    strategy = StrategyConfig(context_window=8_192)
+    capacity = select_strategy(
+        ingest_text("alpha"),
+        counter,
+        provider=app_config.provider,
+        model=app_config.model,
+        config=strategy,
+    ).usable_input_capacity
+    # Two full-capacity leaves, not one full leaf plus a near-empty tail:
+    # a tail segment's tiny source passage always fits the (pre-#26) flat
+    # 1,024-token grounding reserve on its own, masking the reserve-sizing
+    # defect. Both leaves here exceed the reserve, so the merge only
+    # succeeds once the reserve scales with merge capacity (#26) and the
+    # keep-every-reference merge output is accepted as grounded (#27).
+    document = ingest_text("alpha " * int(capacity * 1.5))
+    provider = GroundedPipelineProvider()
+
+    result = run_pipeline(
+        document,
+        provider,
+        counter,
+        app=app_config,
+        strategy=strategy,
+        config=PipelineConfig(audit_path=tmp_path / "audit.json"),
+    )
+
+    assert result.strategy.strategy == "hierarchical"
+    assert set(result.root.covered_segments) == {
+        segment.segment_id for segment in result.final.audit.source_segments
+    }
+
+
+def test_pipeline_recomputes_hierarchical_capacity_when_segments_overlap() -> None:
+    counter = CharacterCounter()
+    app_config = AppConfig(model="gpt-4o-mini", timeout_seconds=30)
+    strategy = StrategyConfig(
+        strategy="hierarchical",
+        context_window=10_000,
+        max_output_tokens=1,
+        safety_margin_tokens=0,
+        safety_margin_fraction=0,
+    )
+    document = ingest_text("alpha " * 800)
+    report = select_strategy(
+        document,
+        counter,
+        provider=app_config.provider,
+        model=app_config.model,
+        config=strategy,
+    )
+    overlap = SegmentationConfig(
+        max_tokens=1, overlap_tokens=50
+    )
+    overlap_capacity = pipeline._hierarchical_capacity(
+        report, counter, app_config, strategy, overlap
+    )
+
+    assert overlap_capacity < report.usable_input_capacity
+    with pytest.raises(Exception, match="safely measured leaf capacity"):
+        run_pipeline(
+            document,
+            PipelineProvider(),
+            counter,
+            app=app_config,
+            strategy=strategy,
+            config=PipelineConfig(
+                segmentation=SegmentationConfig(
+                    max_tokens=report.usable_input_capacity, overlap_tokens=50
+                )
+            ),
+        )
+
+    result = run_pipeline(
+        document,
+        GroundedPipelineProvider(),
+        counter,
+        app=app_config,
+        strategy=strategy,
+        config=PipelineConfig(
+            segmentation=SegmentationConfig(
+                max_tokens=overlap_capacity, overlap_tokens=50
+            )
+        ),
+    )
+
+    assert result.strategy.strategy == "hierarchical"

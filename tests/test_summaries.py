@@ -3,6 +3,7 @@ from pydantic import ValidationError
 
 from summarizer.summaries import (
     LEAF_SCHEMA_VERSION,
+    MAX_QUOTE_CHARS,
     ContentKind,
     ContentUnit,
     EvidenceItem,
@@ -196,3 +197,34 @@ def test_rejects_too_many_quotations() -> None:
     # 5 should be accepted
     quotes_5 = tuple(evidence(quote="quote") for _ in range(5))
     summary_node(quotations=quotes_5)
+
+
+def test_oversized_quote_is_rejected_wherever_it_appears() -> None:
+    """The length cap applies to every `EvidenceItem`, not only `quotations`.
+
+    A content unit's or annotation's own evidence quote inflates a node's
+    serialized size exactly as a top-level quotation does, so the same cap
+    has to reach both. Payloads are raw dicts, as a provider response would
+    be, since an already-validated `EvidenceItem` could not carry the
+    oversized quote in the first place.
+    """
+    oversized_evidence = {
+        "segment_id": "S000001",
+        "quote": "x" * (MAX_QUOTE_CHARS + 1),
+    }
+
+    with pytest.raises(ValidationError):
+        ContentUnit.model_validate(
+            {
+                "text": "The archive was moved in March.",
+                "kind": "fact",
+                "evidence": [oversized_evidence],
+                "qualification": None,
+                "uncertain": False,
+            }
+        )
+
+    with pytest.raises(ValidationError):
+        GroundedAnnotation.model_validate(
+            {"text": "A hedge.", "evidence": [oversized_evidence]}
+        )

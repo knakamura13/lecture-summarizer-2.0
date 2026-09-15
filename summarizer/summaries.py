@@ -10,6 +10,16 @@ from pydantic import BaseModel, ConfigDict, field_validator
 # something different.
 LEAF_SCHEMA_VERSION = "leaf/1"
 
+# A quote is a pull-quote, not a transcription. Both caps bound how much a
+# single node's quotations can inflate `serialize_child` (summarizer/merge.py)
+# and trip the merge budget check. The per-quote cap applies everywhere an
+# `EvidenceItem.quote` appears, since any one of them serializes into the
+# node; the per-node cap applies only to `SummaryNode.quotations`, the
+# "salient quotations" the master plan bounds. Shared here so the leaf and
+# merge prompts state the same limit the validators enforce.
+MAX_QUOTE_CHARS = 500
+MAX_QUOTATIONS_PER_NODE = 5
+
 
 class ContentKind(str, Enum):
     """What kind of thing a content unit asserts.
@@ -71,13 +81,15 @@ class EvidenceItem(_Record):
 
         A blank quote would otherwise pass a verbatim check trivially, since
         every string contains the empty string, and code reading `quote is not
-        None` as "has a quotation" would get nothing.
+        None` as "has a quotation" would get nothing. The length cap bounds
+        one quote's contribution to its node's serialized size: a model asked
+        to copy verbatim has no natural stopping point.
         """
         if value is not None:
             if not value.strip():
                 raise ValueError("quote must be null rather than blank")
-            if len(value) > 500:
-                raise ValueError("quote must not exceed 500 characters")
+            if len(value) > MAX_QUOTE_CHARS:
+                raise ValueError(f"quote must not exceed {MAX_QUOTE_CHARS} characters")
         return value
 
 
@@ -142,8 +154,8 @@ class SummaryNode(_Record):
     @field_validator("quotations")
     @classmethod
     def _validate_quotation_count(cls, value: tuple[EvidenceItem, ...]) -> tuple[EvidenceItem, ...]:
-        if len(value) > 5:
-            raise ValueError("must not exceed 5 quotations")
+        if len(value) > MAX_QUOTATIONS_PER_NODE:
+            raise ValueError(f"must not exceed {MAX_QUOTATIONS_PER_NODE} quotations")
         return value
 
 

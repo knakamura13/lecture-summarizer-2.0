@@ -9,7 +9,13 @@ from pydantic import ValidationError
 from summarizer.providers.base import GenerationRequest, ModelProvider
 from summarizer.scheduler import BoundedScheduler, ScheduledWork
 from summarizer.segmentation import BoundaryKind, CacheCoordinator, SourceSegment
-from summarizer.summaries import LEAF_SCHEMA_VERSION, SummaryNode, leaf_summary_schema
+from summarizer.summaries import (
+    LEAF_SCHEMA_VERSION,
+    MAX_QUOTATIONS_PER_NODE,
+    MAX_QUOTE_CHARS,
+    SummaryNode,
+    leaf_summary_schema,
+)
 
 
 class LeafSummaryError(ValueError):
@@ -48,8 +54,9 @@ supporting it.
 - Cite evidence with the identifier {segment_id} and no other value. It is the \
 only identifier valid for this request.
 - Copy a quotation character for character from the {noun}. Keep each quotation \
-under 500 characters, and provide no more than 5 salient quotations in total. \
-Leave quotations empty rather than paraphrasing into them.
+under {max_quote_chars} characters, and provide no more than {max_quotations} \
+salient quotations in total. Leave quotations empty rather than paraphrasing \
+into them.
 - Record qualifications, and mark a content unit uncertain, wherever the \
 {noun} hedges. Leave contradictions empty when the {noun} states none.
 - Use a level of 0.
@@ -137,6 +144,8 @@ def build_leaf_request(
         segment_id=segment.segment_id,
         begin=begin,
         end=end,
+        max_quote_chars=MAX_QUOTE_CHARS,
+        max_quotations=MAX_QUOTATIONS_PER_NODE,
     )
 
     body = segment.text

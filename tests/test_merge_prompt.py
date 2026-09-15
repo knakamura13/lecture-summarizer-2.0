@@ -11,7 +11,12 @@ from summarizer.merge import (
     parse_merged_summary,
     serialize_child,
 )
-from summarizer.summaries import SummaryNode, leaf_summary_schema
+from summarizer.summaries import (
+    MAX_QUOTATIONS_PER_NODE,
+    MAX_QUOTE_CHARS,
+    SummaryNode,
+    leaf_summary_schema,
+)
 
 LEGAL = {
     "S000001": "The archive moved in March.",
@@ -87,6 +92,13 @@ def test_authoritative_source_is_fenced_separately_from_generated_children() -> 
     assert "AUTHORITATIVE-ORIGINAL-SOURCE-PASSAGES" in request.instructions
     assert "authoritative" in request.instructions.lower()
     assert "correct a misleading generated summary" in request.instructions.lower()
+
+
+def test_instructions_state_the_quotation_limits() -> None:
+    request = request_for()
+
+    assert str(MAX_QUOTATIONS_PER_NODE) in request.instructions
+    assert str(MAX_QUOTE_CHARS) in request.instructions
 
 
 def test_a_merge_requires_authoritative_source_passages() -> None:
@@ -294,4 +306,4 @@ def test_prompt_version_is_bound_into_the_fences() -> None:
     finally:
         merge.MERGE_PROMPT_VERSION = original
 
-    assert MERGE_PROMPT_VERSION == "merge-prompt/3"
+    assert MERGE_PROMPT_VERSION == "merge-prompt/4"

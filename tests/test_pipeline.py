@@ -1,8 +1,10 @@
 import json
 import re
 
+import pytest
 from tiktoken.core import Encoding
 
+import summarizer.pipeline as pipeline
 from summarizer.budget import select_strategy
 from summarizer.config import AppConfig, StrategyConfig
 from summarizer.ingestion import ingest_text
@@ -236,3 +238,59 @@ def test_default_pipeline_hierarchy_with_a_real_model_tokenizer_keeps_references
     assert set(result.root.covered_segments) == {
         segment.segment_id for segment in result.final.audit.source_segments
     }
+
+
+def test_pipeline_recomputes_hierarchical_capacity_when_segments_overlap() -> None:
+    counter = CharacterCounter()
+    app_config = AppConfig(model="gpt-4o-mini", timeout_seconds=30)
+    strategy = StrategyConfig(
+        strategy="hierarchical",
+        context_window=10_000,
+        max_output_tokens=1,
+        safety_margin_tokens=0,
+        safety_margin_fraction=0,
+    )
+    document = ingest_text("alpha " * 800)
+    report = select_strategy(
+        document,
+        counter,
+        provider=app_config.provider,
+        model=app_config.model,
+        config=strategy,
+    )
+    overlap = SegmentationConfig(
+        max_tokens=1, overlap_tokens=50
+    )
+    overlap_capacity = pipeline._hierarchical_capacity(
+        report, counter, app_config, strategy, overlap
+    )
+
+    assert overlap_capacity < report.usable_input_capacity
+    with pytest.raises(Exception, match="safely measured leaf capacity"):
+        run_pipeline(
+            document,
+            PipelineProvider(),
+            counter,
+            app=app_config,
+            strategy=strategy,
+            config=PipelineConfig(
+                segmentation=SegmentationConfig(
+                    max_tokens=report.usable_input_capacity, overlap_tokens=50
+                )
+            ),
+        )
+
+    result = run_pipeline(
+        document,
+        GroundedPipelineProvider(),
+        counter,
+        app=app_config,
+        strategy=strategy,
+        config=PipelineConfig(
+            segmentation=SegmentationConfig(
+                max_tokens=overlap_capacity, overlap_tokens=50
+            )
+        ),
+    )
+
+    assert result.strategy.strategy == "hierarchical"

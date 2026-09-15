@@ -73,7 +73,9 @@ provider call per claim:
    qualify, replace, or remove a span but may not alter a span whose hash no
    longer matches or discard a supported sibling claim.
 9. Re-split, re-decompose, and re-verify the entire repaired draft. The repair
-   call never certifies its own output.
+   call never certifies its own output. Each further repair pass continues from
+   the most recently repaired draft, never the original input, so consecutive
+   passes accumulate fixes instead of re-deriving the same one.
 10. Stop at the configured limit. Any remaining material contradiction fails
     closed. Insufficient evidence remains an audit-visible limitation.
 
@@ -225,6 +227,13 @@ error. Citations are not resolved or rendered on that terminal path. Malformed
 output, capacity failures, and unresolved material contradictions therefore
 never return a summary labeled as verified. Pass exhaustion is explicit and
 finite.
+
+A terminal failed result always reverts to the draft that was current before
+the repair attempt that could not be re-verified, whether that re-verification
+errored outright or a later pass in the same chain ultimately failed closed.
+The repair events for that attempt are excluded from the result rather than
+listed against text that no longer contains them: a repair is reported only
+when it is present in the returned text.
 
 Insufficiently supported claims may return the unchanged or repaired summary
 only with audit-visible warnings and limitations. This preserves signal without

@@ -1861,10 +1861,12 @@ def _verify_and_repair(
         terminalize_errors=True,
     )
     if second.failed:
+        # Re-verification of the repair errored, so the repair is rejected and
+        # the prior draft is restored; it must not be reported as applied.
         return _terminal_result(
             text=draft,
             pass_results=(first, second),
-            repairs=events,
+            repairs=(),
             generations=(*first.generations, *repair_generations, *second.generations),
             diagnostic_codes=(*first.diagnostic_codes, *second.diagnostic_codes),
             exhausted=True,
@@ -1889,7 +1891,7 @@ def _verify_and_repair(
     )
     if failed and not second.failed and config.max_repair_passes > 1:
         continued = _verify_and_repair(
-            draft,
+            repaired,
             source_id=source_id,
             source_index=source_index,
             runtime=runtime,
@@ -1924,10 +1926,13 @@ def _verify_and_repair(
             *continued.diagnostic_codes,
         )
         if continued.failed:
+            # The deeper pass never reached an accepted repaired draft, so the
+            # whole chain is rejected back to this level's prior draft; no
+            # repair from this level or beyond is reported as applied.
             return _terminal_result(
                 text=draft,
                 pass_results=combined_passes,
-                repairs=(*events, *continued.repairs),
+                repairs=(),
                 generations=combined_generations,
                 diagnostic_codes=combined_diagnostics,
                 exhausted=continued.exhausted,
@@ -1949,10 +1954,13 @@ def _verify_and_repair(
             failure_codes=continued.failure_codes,
         )
     if failed:
+        # Passes are exhausted with a material contradiction still remaining;
+        # this fails closed to the prior draft, so the repair just applied is
+        # rejected rather than reported as part of the returned text.
         return _terminal_result(
             text=draft,
             pass_results=(first, second),
-            repairs=events,
+            repairs=(),
             generations=(*first.generations, *repair_generations, *second.generations),
             diagnostic_codes=(
                 *first.diagnostic_codes,

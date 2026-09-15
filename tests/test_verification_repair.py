@@ -467,6 +467,7 @@ def test_post_repair_malformed_pass_does_not_consume_another_repair_attempt() ->
 
 
 def test_verify_and_repair_uses_each_configured_repair_pass_at_most_once() -> None:
+    """Pass 2 continues from pass 1's repaired draft, keeping both fixes in the final text."""
     first = "The value is 42."
     second = "The value is 41."
     third = "The value is 40."
@@ -478,8 +479,8 @@ def test_verify_and_repair_uses_each_configured_repair_pass_at_most_once() -> No
                     *contradicted_atomic_and_fallback(1, "value is 40"),
                     '{"repairs":[{"span_id":"V01S000001","original_hash":"%s","action":"replace","replacement":"%s"}]}' % (hashlib.sha256(first.encode()).hexdigest(), second),
                     *contradicted_atomic_and_fallback(2, "value is 40", anchor="41"),
-                    *contradicted_atomic_and_fallback(3, "value is 40"),
-                    '{"repairs":[{"span_id":"V03S000001","original_hash":"%s","action":"replace","replacement":"%s"}]}' % (hashlib.sha256(first.encode()).hexdigest(), third),
+                    *contradicted_atomic_and_fallback(3, "value is 40", anchor="41"),
+                    '{"repairs":[{"span_id":"V03S000001","original_hash":"%s","action":"replace","replacement":"%s"}]}' % (hashlib.sha256(second.encode()).hexdigest(), third),
                     '{"spans":[{"span_id":"V04S000001","anchors":[]}]}',
                     '{"findings":[{"claim_id":"V04C000001","verdict":"supported","evidence":[{"segment_id":"S000001","exact_quote":"value is 40"}]}]}',
                 )
@@ -502,6 +503,43 @@ def test_verify_and_repair_uses_each_configured_repair_pass_at_most_once() -> No
     assert not result.failed
     assert [event.span_id for event in result.repairs] == ["V01S000001", "V03S000001"]
     assert [item.pass_index for item in result.phase_generations if item.phase == "repair"] == [1, 3]
+
+
+def test_verify_and_repair_reports_no_repairs_when_a_later_pass_fails_closed() -> None:
+    """Pass 1's fix must not be reported once the chain fails closed on pass 2."""
+    first = "The value is 42."
+    second = "The value is 41."
+
+    class ScriptedProvider:
+        def __init__(self) -> None:
+            self.responses = iter(
+                (
+                    *contradicted_atomic_and_fallback(1, "value is 40"),
+                    '{"repairs":[{"span_id":"V01S000001","original_hash":"%s","action":"replace","replacement":"%s"}]}'
+                    % (hashlib.sha256(first.encode()).hexdigest(), second),
+                    *contradicted_atomic_and_fallback(2, "value is 40", anchor="41"),
+                    *contradicted_atomic_and_fallback(3, "value is 40", anchor="41"),
+                    "not-json",
+                )
+            )
+
+        def generate(self, request):
+            return GenerationResult(next(self.responses), "scripted", "model")
+
+    result = verify_and_repair(
+        first,
+        source_id="a" * 64,
+        source_index=build_source_lexical_index(
+            provenance_ids=("S000001",), source={"S000001": "The value is 40."}
+        ),
+        runtime=VerificationRuntime(ScriptedProvider(), ConservativeUtf8TokenCounter(), "model", 30, 10_000),
+        config=VerificationConfig(enabled=True, max_repair_passes=2),
+    )
+
+    assert result.failed
+    assert result.text == first
+    assert result.repairs == ()
+    assert result.failure_codes == ("repair_failed",)
 
 
 def test_verify_and_repair_never_repairs_a_contradicted_fallback_by_itself() -> None:

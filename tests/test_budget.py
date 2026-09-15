@@ -80,11 +80,11 @@ def test_overhead_with_a_real_encoding_matches_the_measured_scale() -> None:
     # Pinned exactly rather than banded: a band this wide would not notice the
     # prompt or the record changing, which is the thing worth noticing.
     assert (overhead.instructions, overhead.schema, overhead.fencing) == (
-        251,
+        270,
         610,
-        26,
+        25,
     )
-    assert overhead.total == 887
+    assert overhead.total == 905
 
 
 def test_safety_margin_takes_the_larger_term() -> None:

@@ -130,7 +130,7 @@ Implemented as designed, with the selections below confirmed rather than revisit
 2. **`GenerationRequest` extended**, with both new fields appended and defaulted.
 3. **One `SummaryNode` with a `level`**, zero for leaves.
 4. **The whitespace collapse is now conditional** rather than removed. A schema-carrying response is returned unmodified; a prose response is still collapsed, so the legacy workflow is untouched.
-5. **Quotation limits** were left to the prompt and to post-validation rather than encoded as schema constraints; a cap remains a product decision.
+5. **Quotation limits** were left to the prompt and to post-validation rather than encoded as schema constraints; a cap remains a product decision. Resolved in issue #36: a per-quote length cap (`MAX_QUOTE_CHARS`) and a per-node count cap on the `quotations` field (`MAX_QUOTATIONS_PER_NODE`), both in `summarizer/summaries.py`, enforced by pydantic validators on `SummaryNode` and `EvidenceItem` and stated in both the leaf and merge prompts. Post-validation rather than JSON Schema keywords, because OpenAI's strict mode does not support `maxLength`/`maxItems` — the same reason the existing blank-text and negative-level checks are validators rather than schema constraints. The merge prompt states the same limits so a merge is less likely to propose an over-limit quote in the first place, rather than relying solely on post-hoc rejection.
 
 Two details emerged during implementation and are worth recording:
 
@@ -144,5 +144,5 @@ These change the shape of the code and set precedent beyond this issue:
 1. **Pydantic or frozen dataclasses for the leaf records.** Selected above as pydantic, for schema derivation and untrusted-input validation, at the cost of consistency with every other record in the project. It sets the pattern for the whole hierarchy.
 2. **Extending `GenerationRequest`.** Selected above, which touches the provider contract established by issue #3 and both adapters. Keeping structured output entirely above the provider boundary would leave issue #5 self-contained but weaken the parsing and determinism criteria. Any new field is appended with a default, since both request and result records are constructed positionally in the existing tests.
 3. **One `SummaryNode` for leaves and merges, or a leaf-only record that issue #7 generalizes.** Selected above as one record with a `level`.
-4. **Quotation limits.** The epic asks for salient quotations "within reasonable limits." That can be enforced by the schema, by the prompt, by post-validation, or by all three; the cap itself is a product decision.
+4. **Quotation limits.** Resolved in issue #36 - see decision 5 above.
 5. **Whether the whitespace collapse changes now.** The fix above alters observable behaviour of both adapters for schema-carrying requests only. If that is unwelcome in this issue, verbatim quotations should be dropped from the leaf record rather than validated unreliably.

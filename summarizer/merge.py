@@ -16,12 +16,17 @@ from summarizer.leaf import (
     validate_provenance,
 )
 from summarizer.providers.base import GenerationRequest
-from summarizer.summaries import SummaryNode, leaf_summary_schema
+from summarizer.summaries import (
+    MAX_QUOTATIONS_PER_NODE,
+    MAX_QUOTE_CHARS,
+    SummaryNode,
+    leaf_summary_schema,
+)
 from summarizer.tokenization import TokenCounter
 
 # A distinct cache-key input from the leaf prompt. Bump it whenever a change
 # could alter a model's output for identical children.
-MERGE_PROMPT_VERSION = "merge-prompt/3"
+MERGE_PROMPT_VERSION = "merge-prompt/4"
 
 MERGE_SCHEMA_NAME = "merged_summary"
 
@@ -59,6 +64,9 @@ not cite one that is merely plausible.
 - Copy a quotation character for character from the summary that carries it. \
 When its authoritative source passage is supplied below, the quotation must \
 also occur there. Leave quotations empty rather than paraphrasing into them.
+- Keep at most {max_quotations} quotations, each at most {max_quote_chars} \
+characters. Where the children together carry more, keep only the most \
+salient rather than exceed either limit.
 - Use a level of {level}.
 
 The summaries are delimited by these markers:
@@ -117,7 +125,11 @@ def measure_merge_overhead(counter: TokenCounter, *, level: int = 1) -> int:
     a few tokens across plausible levels; the safety margin absorbs that.
     """
     probe = _MERGE_INSTRUCTIONS.format(
-        level=level, begin=_fence("0" * 64, level, "BEGIN"), end=_fence("0" * 64, level, "END")
+        level=level,
+        begin=_fence("0" * 64, level, "BEGIN"),
+        end=_fence("0" * 64, level, "END"),
+        max_quotations=MAX_QUOTATIONS_PER_NODE,
+        max_quote_chars=MAX_QUOTE_CHARS,
     )
     outer = counter.count(
         "\n".join(
@@ -220,7 +232,11 @@ def build_merge_request(
     return GenerationRequest(
         model=model,
         instructions=_MERGE_INSTRUCTIONS.format(
-            level=level, begin=begin, end=end
+            level=level,
+            begin=begin,
+            end=end,
+            max_quotations=MAX_QUOTATIONS_PER_NODE,
+            max_quote_chars=MAX_QUOTE_CHARS,
         ),
         input_text="{}\n{}\n{}\n{}\n{}\n{}\n{}".format(
             begin,

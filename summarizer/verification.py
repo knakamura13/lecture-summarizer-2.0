@@ -1366,55 +1366,69 @@ def verify_draft_once(
         ):
             continue
         extra_passages: list[SourcePassage] = []
-        for segment_id in initial_bundle.selection.omitted_ids:
-            passage = SourcePassage(segment_id, source_by_id[segment_id])
-            extra_bundle = EvidenceBundle(
+        escalation_items = tuple(
+            (claim, SourcePassage(segment_id, source_by_id[segment_id]))
+            for segment_id in initial_bundle.selection.omitted_ids
+        )
+
+        def escalation_bundle(
+            items: tuple[tuple[Claim, SourcePassage], ...],
+        ) -> EvidenceBundle:
+            passages = tuple(item[1] for item in items)
+            return EvidenceBundle(
                 selection=EvidenceSelection(
                     claim_id=claim.claim_id,
-                    selected_ids=(segment_id,),
-                    examined_ids=(segment_id,),
+                    selected_ids=tuple(passage.segment_id for passage in passages),
+                    examined_ids=tuple(passage.segment_id for passage in passages),
                     omitted_ids=(),
-                    token_cost=runtime.counter.count(serialize_source_passage(passage)),
+                    token_cost=runtime.counter.count("\n".join(
+                        serialize_source_passage(passage) for passage in passages
+                    )),
                     retrieval_method="lexical-overlap/1-escalation",
                     retrieval_complete=True,
                 ),
-                passages=(passage,),
+                passages=passages,
             )
-            escalation_item = ((claim, extra_bundle),)
-            try:
-                pack_work_items(
-                    escalation_item,
-                    render_request=lambda items: build_classification_request(
-                        tuple(item[0] for item in items),
-                        evidence={item[0].claim_id: item[1] for item in items},
-                        spans=span_texts, source_id=source_id, runtime=runtime,
-                    ).input_text,
-                    measure_request=lambda items: _measure_request_tokens(
-                        build_classification_request(
-                            tuple(item[0] for item in items),
-                            evidence={item[0].claim_id: item[1] for item in items},
-                            spans=span_texts, source_id=source_id, runtime=runtime,
-                        ), runtime.counter,
-                    ),
-                    runtime=runtime,
-                    config=config,
-                )
-            except VerificationCapacityError:
-                if not terminalize_errors:
-                    raise
-                return _failed_verification_pass(
-                    spans=spans,
-                    claims=claims,
-                    bundles=bundles,
-                    generations=generations,
-                    decomposition_generation_count=len(decomposition_generations),
-                    pass_index=pass_index,
-                    code="classification_capacity_failed",
-                    failed_phase=GenerationPhase.CLASSIFICATION,
-                )
+
+        def build_escalation_request(
+            items: tuple[tuple[Claim, SourcePassage], ...],
+        ) -> GenerationRequest:
+            return build_classification_request(
+                (claim,),
+                evidence={claim.claim_id: escalation_bundle(items)},
+                spans=span_texts,
+                source_id=source_id,
+                runtime=runtime,
+            )
+
+        try:
+            escalation_batches = pack_work_items(
+                escalation_items,
+                render_request=lambda items: build_escalation_request(items).input_text,
+                measure_request=lambda items: _measure_request_tokens(
+                    build_escalation_request(items), runtime.counter
+                ),
+                runtime=runtime,
+                config=config,
+            )
+        except VerificationCapacityError:
+            if not terminalize_errors:
+                raise
+            return _failed_verification_pass(
+                spans=spans,
+                claims=claims,
+                bundles=bundles,
+                generations=generations,
+                decomposition_generation_count=len(decomposition_generations),
+                pass_index=pass_index,
+                code="classification_capacity_failed",
+                failed_phase=GenerationPhase.CLASSIFICATION,
+            )
+        for batch in escalation_batches:
+            extra_bundle = escalation_bundle(batch)
             request = build_classification_request(
-                (claim,), evidence={claim.claim_id: extra_bundle},
-                spans=span_texts, source_id=source_id, runtime=runtime,
+                (claim,), evidence={claim.claim_id: extra_bundle}, spans=span_texts,
+                source_id=source_id, runtime=runtime,
             )
             try:
                 generation = runtime.provider.generate(request)
@@ -1437,7 +1451,12 @@ def verify_draft_once(
                     parse_claim_findings(
                         generation.text,
                         claims=(claim,),
-                        selected={claim.claim_id: {segment_id: passage.text}},
+                        selected={
+                            claim.claim_id: {
+                                passage.segment_id: passage.text
+                                for passage in extra_bundle.passages
+                            }
+                        },
                     )
                 )
             except VerificationResponseError:
@@ -1451,9 +1470,9 @@ def verify_draft_once(
                     decomposition_generation_count=len(decomposition_generations),
                     pass_index=pass_index,
                     code="classification_failed",
-                )
+            )
             finding_generations[claim.claim_id] = generation
-            extra_passages.append(passage)
+            extra_passages.extend(extra_bundle.passages)
         combined_passages = (*initial_bundle.passages, *extra_passages)
         bundles[claim.claim_id] = EvidenceBundle(
             selection=EvidenceSelection(

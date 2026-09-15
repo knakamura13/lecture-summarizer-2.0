@@ -179,3 +179,20 @@ def test_schema_matches_what_the_openai_sdk_would_generate() -> None:
 def test_schema_version_is_recorded_for_cache_keys() -> None:
     assert LEAF_SCHEMA_VERSION
     assert isinstance(LEAF_SCHEMA_VERSION, str)
+
+def test_rejects_overly_long_quotes() -> None:
+    with pytest.raises(ValidationError, match="quote must not exceed 500 characters"):
+        evidence(quote="a" * 501)
+
+    # 500 should be accepted
+    evidence(quote="a" * 500)
+
+
+def test_rejects_too_many_quotations() -> None:
+    quotes = tuple(evidence(quote="quote") for _ in range(6))
+    with pytest.raises(ValidationError, match="must not exceed 5 quotations"):
+        summary_node(quotations=quotes)
+
+    # 5 should be accepted
+    quotes_5 = tuple(evidence(quote="quote") for _ in range(5))
+    summary_node(quotations=quotes_5)

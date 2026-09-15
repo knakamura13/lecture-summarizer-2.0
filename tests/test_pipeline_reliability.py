@@ -624,7 +624,7 @@ def test_pipeline_audit_reports_prompt_descriptor_invalidation(tmp_path, monkeyp
         output_path=output_path,
         run_id="prompt-before",
     )
-    monkeypatch.setattr("summarizer.direct.LEAF_PROMPT_VERSION", "leaf-prompt/3")
+    monkeypatch.setattr("summarizer.direct.LEAF_PROMPT_VERSION", "leaf-prompt/4")
     changed_audit = tmp_path / "changed-audit.json"
 
     _run_direct_with_audit(
@@ -732,7 +732,7 @@ def test_hierarchical_leaf_batch_invalidation_uses_the_successful_next_baseline(
         output_path=output_path,
         run_id="hierarchical-initial",
     )
-    monkeypatch.setattr("summarizer.leaf.LEAF_PROMPT_VERSION", "leaf-prompt/3")
+    monkeypatch.setattr("summarizer.leaf.LEAF_PROMPT_VERSION", "leaf-prompt/4")
     prompt_audit = tmp_path / "prompt-audit.json"
 
     _run_hierarchical_with_audit(

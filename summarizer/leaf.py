@@ -106,7 +106,7 @@ def _core_bounds(segment: SourceSegment) -> tuple[int, int]:
     """
     return (
         segment.core_start - segment.context_start,
-        segment.core_end - segment.context_end,
+        segment.core_end - segment.context_start,
     )
 
 

@@ -54,6 +54,27 @@ class PipelineProvider:
         }
 
 
+class GroundedPipelineProvider(PipelineProvider):
+    """Return every reference the merge prompt supplies to exercise grounding."""
+
+    def generate(self, request: GenerationRequest) -> GenerationResult:
+        self.requests.append(request)
+        if request.operation_id == "editorial-final":
+            payload = {"text": "A concise, coherent final summary."}
+        elif request.operation_id == "D000001":
+            payload = self._node(0, "D000001")
+        elif (request.operation_id or "").startswith("S"):
+            payload = self._node(0, request.operation_id or "S000001")
+        else:
+            level = int((request.operation_id or "merge-L1").rsplit("L", 1)[1])
+            identifiers = tuple(dict.fromkeys(
+                re.findall(r'"segment_id":"([SD]\d+)"', request.input_text)
+            ))
+            payload = self._node(level, identifiers[0])
+            payload["provenance"] = list(identifiers)
+        return GenerationResult(json.dumps(payload), "fake", request.model, 1, 1, "stop")
+
+
 def app() -> AppConfig:
     return AppConfig(model="gpt-4o-mini", timeout_seconds=30)
 
@@ -177,3 +198,41 @@ def test_default_pipeline_merges_full_capacity_segments_with_a_real_tokenizer() 
         (request.operation_id or "").startswith("merge-L")
         for request in provider.requests
     )
+
+
+def test_default_pipeline_hierarchy_with_a_real_model_tokenizer_keeps_references(tmp_path) -> None:
+    import tiktoken
+
+    try:
+        tiktoken.encoding_for_model("gpt-4o-mini")
+    except Exception as error:  # pragma: no cover - depends on the local cache
+        import pytest
+
+        pytest.skip(f"tiktoken vocabulary is unavailable offline: {error}")
+
+    counter = TiktokenCounter.for_model("gpt-4o-mini")
+    app_config = AppConfig(model="gpt-4o-mini", timeout_seconds=30)
+    strategy = StrategyConfig(context_window=8_192)
+    capacity = select_strategy(
+        ingest_text("alpha"),
+        counter,
+        provider=app_config.provider,
+        model=app_config.model,
+        config=strategy,
+    ).usable_input_capacity
+    document = ingest_text("alpha " * (capacity + 1))
+    provider = GroundedPipelineProvider()
+
+    result = run_pipeline(
+        document,
+        provider,
+        counter,
+        app=app_config,
+        strategy=strategy,
+        config=PipelineConfig(audit_path=tmp_path / "audit.json"),
+    )
+
+    assert result.strategy.strategy == "hierarchical"
+    assert set(result.root.covered_segments) == {
+        segment.segment_id for segment in result.final.audit.source_segments
+    }
